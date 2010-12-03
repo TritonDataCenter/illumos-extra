@@ -1,0 +1,11 @@
+--- libxml2-2.7.4/libtool.orig	Sun Sep 13 17:47:18 2009
++++ libxml2-2.7.4/libtool	Sun Sep 13 17:47:34 2009
+@@ -237,7 +237,7 @@
+ finish_eval=""
+ 
+ # Whether we should hardcode library paths into libraries.
+-hardcode_into_libs=yes
++hardcode_into_libs=no
+ 
+ # Compile-time system search path for libraries.
+ sys_lib_search_path_spec="/lib /usr/lib /usr/local/lib"

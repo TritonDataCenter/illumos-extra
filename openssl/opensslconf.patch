@@ -1,0 +1,53 @@
+--- /tmp/opensslconf.h	Wed Apr 29 17:54:38 2009
++++ /tmp/opensslconf.h.new	Thu Apr 30 10:48:35 2009
+@@ -2,6 +2,12 @@
+ /* WARNING: Generated automatically from opensslconf.h.in by Configure. */
+ 
+ /* OpenSSL was configured with the following options: */
++#if defined(__sparcv9)
++#ifndef OPENSSL_SYSNAME_ULTRASPARC                 
++# define OPENSSL_SYSNAME_ULTRASPARC                
++#endif   
++#endif
++
+ #ifndef OPENSSL_DOING_MAKEDEPEND
+ 
+ #ifndef OPENSSL_NO_EC
+@@ -194,13 +200,21 @@
+ /* If this is set to 'unsigned int' on a DEC Alpha, this gives about a
+  * %20 speed up (longs are 8 bytes, int's are 4). */
+ #ifndef DES_LONG
++#if defined(__sparcv9) || defined(__x86_64)
++#define DES_LONG unsigned int
++#else
+ #define DES_LONG unsigned long
+ #endif
+ #endif
++#endif
+ 
+ #if defined(HEADER_BN_H) && !defined(CONFIG_HEADER_BN_H)
+ #define CONFIG_HEADER_BN_H
++#if defined(__sparcv9) || defined(__x86_64)
++#undef BN_LLONG
++#else
+ #define BN_LLONG
++#endif
+ 
+ /* Should we define BN_DIV2W here? */
+ 
+@@ -208,9 +222,14 @@
+ /* The prime number generation stuff may not work when
+  * EIGHT_BIT but I don't care since I've only used this mode
+  * for debuging the bignum libraries */
++#if defined(__sparcv9) || defined(__x86_64)
++#define SIXTY_FOUR_BIT_LONG
++#undef THIRTY_TWO_BIT
++#else
+ #undef SIXTY_FOUR_BIT_LONG
+-#undef SIXTY_FOUR_BIT
+ #define THIRTY_TWO_BIT
++#endif
++#undef SIXTY_FOUR_BIT
+ #undef SIXTEEN_BIT
+ #undef EIGHT_BIT
+ #endif

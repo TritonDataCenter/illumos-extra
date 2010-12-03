@@ -1,0 +1,52 @@
+----------------- 6 Oct. 2006 - update ----------------------
+Previous source patch (gzip.1.3.3.patch) was revised to 
+gzip-6294656-6283819-diff
+Security issue CVE-2006-4334 
+synopsis: gzip multiple issues (CVE-2006-4335, CVE-2006-4336
+, CVE-2006-4337, CVE-2006-4338)
+Is fixed by gzip-security-diff
+"gzip --version" info is updated by gzip.c-message-diff
+------------------- original text ---------------------------
+The version of Gzip contained in this gate, 1.3.3, is the latest
+version released by the official maintainers. Following the release of
+this version, a number of issues were discovered which affected
+Solaris and for which it was deemed important to release a patch.
+However, the Gzip source code is no longer being maintained by the
+community. As a result, the diff file gzip-1.3.3.patch was created
+which contains the differences between our released version and the
+current official release. This is applied using gpatch during the
+build process.
+
+In order to distinguish the Sun patched version from the official
+community version, the version number as reported by the utility at
+runtime has been changed to: 1.3.3-patch.1
+
+If in the future a new official version of Gzip is released, it should
+be determined whether that later version still contains the problems
+fixed by this patch. If it does not, this patch can be removed from
+the gate and the build process when the later version is integrated
+into the gate. If they are still present, this patch will have to be
+modified to be applicable to that later version before it is
+integrated into the gate.
+
+The patch file contains the following changes:
+
+1) configure : The version number used during build time has been
+   modifed as described above.
+
+2) gzip.c: [ 6283819 gzip TOCTOU file-permissions vulnerability ]
+
+   The code for this fix came from the patch used by the Debian
+   community to address the same issue in their distribution, and was
+   extracted from the patch downloaded from:
+
+http://security.debian.org/pool/updates/main/g/gzip/gzip_1.3.2-3woody5.diff.gz
+
+3) gzip.c: [ 6294656 gzip vulnerability <=1.3.5: a malicious archive
+   may write unintended files when uncompressed with -N ]
+
+   The code for this fix came from the patch used by the Debian
+   community to address the same issue in their distribution, and was
+   extracted from the patch downloaded from:
+
+http://security.debian.org/pool/updates/main/g/gzip/gzip_1.3.2-3woody5.diff.gz

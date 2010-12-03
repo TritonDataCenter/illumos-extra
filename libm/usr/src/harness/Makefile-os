@@ -1,0 +1,123 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+# ident	"@(#)Makefile-os	1.1	06/01/30 SMI"
+#
+
+MACH:sh		= uname -p
+
+MACH64_1	= $(MACH:sparc=sparcv9)
+MACH64		= $(MACH64_1:i386=amd64)
+
+CPU_1		= $(MACH:sparc=sparc-S2)
+CPU		= $(CPU_1:i386=intel-S2)
+
+CPU64_1		= $(MACH64:sparcv9=sparcv9-S2)
+CPU64		= $(CPU64_1:amd64=amd64-S2)
+
+USRSRC:sh	= cd ..; /bin/pwd	# where source is
+BUILDNAME:sh	= if [ -f buildname ]; then cat buildname; else echo "DEV"; fi
+
+STATDIR		= $(USRSRC)/../../statdir/$(MACH)/$(BUILDNAME)
+
+# location of where you want to install the binares/files
+DESTDIR		= $(USRSRC)/../../destdir/$(MACH)/$(BUILDNAME)
+
+# We want to have 8 dmake jobs per processor
+DMAKE_MAX_JOBS:sh = eval expr "`/usr/sbin/psrinfo | grep on-line | wc -l` \* 8"
+
+STUDIOBIN	= /opt/SUNWspro/bin
+CC		= $(STUDIOBIN)/cc
+LINT		= $(STUDIOBIN)/lint
+MAKE		= $(STUDIOBIN)/dmake -m serial
+DMAKE		= $(STUDIOBIN)/dmake -m parallel -j $(DMAKE_MAX_JOBS)
+
+WORKDIRS	= 							\
+		$(STATDIR)/steps					\
+		$(STATDIR)/fail						\
+		$(STATDIR)/start					\
+		#end
+
+.INIT:
+	@echo `date`
+	@echo `uname -a`
+	@echo "Current directory: `pwd`"
+	@echo "--------------------------------------"
+	@env
+	@echo "--------------------------------------"
+	@echo ""
+
+.NO_PARALLEL:
+
+all: FRC								\
+	$(STATDIR)/steps/stepinstall					\
+	$(STATDIR)/steps/steplibm					\
+	$(STATDIR)/steps/step64libm					\
+	#end
+
+$(WORKDIRS):
+	mkdir -p $@
+
+$(STATDIR)/steps/stepinstall: $(WORKDIRS)
+	@echo "touch $@ `date`"
+	touch $@; echo `uptime` >> $@
+
+$(STATDIR)/steps/steplibm:
+	touch $(STATDIR)/start/$(@F)
+	cd $(USRSRC)/libm/wos; $(MAKE) clobber
+	if (cd $(USRSRC)/libm/wos; $(DMAKE) $(MAKEFLAGS) install	\
+		CC=$(CC) LINT=$(LINT)					\
+		BUILDNAME=$(BUILDNAME) DESTDIR=$(DESTDIR)); then	\
+		echo "touch $@ `date`";					\
+		touch $@; echo `uptime` >> $@;				\
+	else								\
+		touch $(STATDIR)/fail/$(@F);				\
+		exit 1;							\
+	fi
+	echo "touch $@ `date`"
+	touch $@; echo `uptime` >> $@
+
+$(STATDIR)/steps/step64libm:
+	touch $(STATDIR)/start/$(@F)
+	cd $(USRSRC)/libm/wos64; $(MAKE) clobber
+	if (cd $(USRSRC)/libm/wos64; $(DMAKE) $(MAKEFLAGS) install	\
+		CC=$(CC) LINT=$(LINT)					\
+		BUILDNAME=$(BUILDNAME) DESTDIR=$(DESTDIR)); then	\
+		echo "touch $@ `date`";					\
+		touch $@; echo `uptime` >> $@;				\
+	else								\
+		touch $(STATDIR)/fail/$(@F);				\
+		exit 1;							\
+	fi
+	echo "touch $@ `date`"
+	touch $@; echo `uptime` >> $@
+
+clean:	
+	-$(RM) -r $(STATDIR)/steps $(STATDIR)/start $(STATDIR)/fail
+	-find $(USRSRC) -name '.make.state*' -exec $(RM) '{}' \;
+
+clobber: clean
+
+FRC:

@@ -1,0 +1,117 @@
+#!/usr/bin/ksh93
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+# Copyright (c) Joyent Inc.
+#
+
+set -o errexit
+
+VERS=${1}
+
+PREFIX=${DESTDIR}/usr
+LIBDIR=${PREFIX}/lib
+ROOTLIBDIR=${DESTDIR}/lib
+INCDIR=${PREFIX}/include/libxml2/libxml
+BINDIR=${PREFIX}/bin
+SHAREDIR=${PREFIX}/share
+ACLOCALDIR=${SHAREDIR}/aclocal
+
+mkdir -p $PREFIX
+mkdir -p $LIBDIR
+mkdir -p $ROOTLIBDIR
+mkdir -p $INCDIR
+mkdir -p $BINDIR
+mkdir -p $SHAREDIR
+mkdir -p $ACLOCALDIR
+
+source ../install.subr
+
+cd ${VERS}
+
+_install D .libs/libxml2.so ${ROOTLIBDIR}/libxml2.so.2 555
+_install L ../../lib/libxml2.so.2 ${LIBDIR}/libxml2.so.2
+_install L libxml2.so.2 ${ROOTLIBDIR}/libxml2.so
+_install L libxml2.so.2 ${LIBDIR}/libxml2.so
+
+_install E .libs/xmlcatalog ${BINDIR}/xmlcatalog 555
+_install S xml2-config ${BINDIR}/xml2-config 555
+_install E .libs/xmllint ${BINDIR}/xmllint 555
+
+_install N libxml.m4 ${ACLOCALDIR}/libxml.m4 444
+
+cd include/libxml
+
+for i in \
+	DOCBparser.h	\
+	HTMLparser.h	\
+	HTMLtree.h	\
+	SAX.h		\
+	SAX2.h		\
+	c14n.h		\
+	catalog.h	\
+	chvalid.h	\
+	debugXML.h	\
+	dict.h		\
+	encoding.h	\
+	entities.h	\
+	globals.h	\
+	hash.h		\
+	list.h		\
+	nanoftp.h	\
+	nanohttp.h	\
+	parser.h	\
+	parserInternals.h \
+	pattern.h	\
+	relaxng.h       \
+	schemasInternals.h \
+	schematron.h	\
+	threads.h	\
+	tree.h		\
+	uri.h		\
+	valid.h		\
+	xinclude.h	\
+	xlink.h		\
+	xmlIO.h		\
+	xmlautomata.h	\
+	xmlerror.h	\
+	xmlexports.h	\
+	xmlmemory.h	\
+	xmlmodule.h	\
+	xmlreader.h	\
+	xmlregexp.h	\
+	xmlsave.h	\
+	xmlschemas.h	\
+	xmlschemastypes.h \
+	xmlstring.h \
+	xmlunicode.h	\
+	xmlversion.h	\
+	xmlwriter.h	\
+	xpath.h		\
+	xpathInternals.h \
+	xpointer.h
+do
+	_install N ${i} ${INCDIR}/${i} 444
+done

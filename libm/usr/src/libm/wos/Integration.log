@@ -1,0 +1,140 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+# ident "@(#)Integration.log	1.80	06/01/31 SMI"
+#
+# This log documents *only* bug fixes for Solaris WOS.
+# Use libm/Integration.log for bug fixes for the current compiler train.
+# 
+# Integration.log format:
+# 
+#     Lines starting with # are comment lines
+# 
+#     Bug-fix lines have this format:
+#     BugID STATUS Synopsis
+#
+# Bugs in any Solaris build must have a valid BugId, otherwise BugID may be
+# in the form of YYMMDDX where YYMMDD is the day the fix is integrated and
+# X is an upper-case letter.
+# 
+# The only STATUS we have so far is FIXED.
+# 
+# Example:
+# 
+#     4312345 FIXED test case 47 dumps core
+
+4905282	FIXED remquo can return quotient bits with the wrong sign
+030817A	FIXED hypot(5,12) raises inexact improperly
+030819A	FIXED prototype isnan only when !defined(_STDC_C99)
+4910901	FIXED tgammal(-Inf) returned -Inf and failed to raise FE_INALID
+4910956	FIXED SUSv2 math routines should always set errno when required
+030826A	FIXED remquo and remquof should not call _SVID_* anymore
+4916300	FIXED nextafterl(LDBL_MIN,0.0L) failed to raise FE_UNDERFLOW
+030903A	FIXED LD/{cos,sin}hl.c cleanup
+030905A	FIXED LD/{sin,cos,tan,__rem_pio2}l.c to use 64-bit table values & argred
+030909A	FIXED compile libm with -xarch=v8plus
+030910A	FIXED {LD,Q}/erfl.c minor accuracy and speed improvement
+4933436	FIXED C99 math library header changes caused build failure
+4934744	FIXED sparcv9/llib-lm does not belong
+4936167	FIXED cacosh{,f,l} C99 Annex G violations
+4936171	FIXED clogl C99 Annex G violations
+4944556	FIXED cacos delivers wrong result
+4947982	FIXED clog and clogl can lose accuracy
+4948551	FIXED cacosl/casinl/cacoshl/casinhl sometimes returns chopped pi/2
+4947145	FIXED historic math routines should be moved out of libc.
+4951175	FIXED log1p(QNaN) can raise invalid on x86 when built correctly
+4951240	FIXED cpow family of routines can be more accurate
+031121A	FIXED isnand should be in llib-lm as per LSARC/2003/658
+4964166	FIXED libmvec should be part of Solaris
+4964810	FIXED SUNWlibm pkg description is misleading
+4961179	FIXED libmvec should not depend on libm
+4966464	FIXED cpowl can be more accurate
+4967960	FIXED libmvec vsin(-0) sometimes returns +0 in v8plus mode
+4973671	FIXED typedef of float_t and double_t must honor __FLT_EVAL_METHOD__
+4975159	FIXED clog in <complex.h> should be redirected via redefine_extname
+4980302	FIXED cpowl can produce bogus results
+4986728	FIXED cpowf can deliver 0 or Inf real/imag part with the wrong sign
+4987768	FIXED x86: cpowl delivered inaccurate results unexpectedly
+5052359	FIXED *x86* frexp(any subnormal) gets the same wrong exponent -16446
+5052857	FIXED *x86* powl(-0.L,-1.0L) returned +Inf in error
+5063618	FIXED "using std::abs;" missing from <math.h>
+5064741	FIXED *x86* acosl(large) and asinl(large) raise spurious exceptions
+5065197	FIXED *x86* pow(NAN,NAN) raises invalid exception in C99 mode in error
+040317A	FIXED *x86* libm.il: removed __swap{EX,TE,RD}; __swapRP->locallibm.il
+040503A	FIXED *x86* made __fenv_{get,set}fsr MXCSR-aware
+040604A	FIXED *x86* libm.il: __swapRD->__swap87RD->locallibm.il for LD functions
+040604B	FIXED log10_2hi in log10l.c wrong all along
+040608A	FIXED made libmvec C source either-endian
+040615A	FIXED removed reference to _lib_version from sqrtf
+5067038	FIXED *x86* FE_DFL_ENV does not match actual start-up FP environment
+5069838	FIXED *x86* libm.so references SUNWprivate libc symbols __swap{EX,RD,TE}
+5074578	FIXED sys/ieeefp.h fenv.h iso/math_c99.h need to be made amd64-aware
+5075799	FIXED *x86* expl(subnormal) raises spurious underflow
+5075800	FIXED *x86* coshl(subnormal) raises spurious underflow
+040727A	FIXED *x86* made LD/{__{sin,cos,sincos,tan},cbrt}l.c 64-bit safe
+4836936	FIXED assembly-coded routines should avoid raws
+5093901	FIXED *x86* libmvec should be part of Solaris 10
+5106211	FIXED iso/math_c99.h violates C++ compiler rule about pragma placement
+5106831 FIXED prototype mismatch in fenv.h when FEX_SIGNAL handler used
+6179526	FIXED <math.h> struct exception incompatible with <exception> class exception
+6183512	FIXED math headers need to also key on __C99FEATURES__ for C99 features
+6183572	FIXED *x86* SSE+SSE2 support needed in fex_* routines
+6193239	FIXED *x86* vsincos can return bogus values
+041121A	FIXED added AMD copyright to SUNWlibmsr
+041122A	FIXED removed SSE2LINT; 32-bit x86 compile -xO2 -> -O
+050113A	FIXED retired log.S; updated fabs.S+atan2f.c+_TBL_log.c+log{,2,10}.c
+050211A	FIXED remainder(x,y) shouldn't set errno when x or y is NaN
+050211A	FIXED remainderf(x,y) should never set errno
+050226A FIXED *x86* remainder must empty fp stack before calling _SVID_libm_err
+050301A FIXED *x86* don't use fucomi in remainder
+6234690	FIXED libm.so.2 expf(-100.0F) on US3 very slow even with -fns=yes
+6231830	FIXED log functions raise spurious inexact exceptions
+050521A FIXED make setting of errno match documentation
+050525A FIXED *x86* clean up pow code; avoid some spurious inexact exceptions
+050531A	FIXED remove lorder/tsort; some _TBL_* objects are sparc-only
+6231929	FIXED libm contains local symbols mdb dislikes
+050621A FIXED nextafter.c: mask off sign bit for under/overflow detection
+6285517	FIXED gcc 3.4.x/4.x c99 math intrinsics support needed
+050622A	FIXED __vhypot.c: fixed typo causing NaN to be returned in error
+050622B	FIXED __vrhypot.c: strip the sign of NaN returned
+6290646	FIXED svvs/bsst - matherr failed due to wrong function name of 'lgamma'
+050628A	FIXED *amd64* anintl(-int+0.5L) rounds incorrectly
+050630A	FIXED __vrhypot.S: strip the sign of NaN returned
+050708A	FIXED rint.c: __swapRP is needed only when the x87 fpstack is in use
+050824A FIXED undo 6233245 for non-sparc platforms
+6333665	FIXED CDDL block needed in math headers
+6333690 FIXED Put faster trig functions into libm
+6334568 FIXED porting error in sincos
+6336688	FIXED log(x) commits rounding error exceeding 1 ulp
+051205A FIXED improve performance of some single precision functions
+051212B FIXED add assembly coded __vsqrtf to amd64 libmvec
+051226A FIXED fix x86 RP mode problems
+051231A FIXED remove __ppc, HP_UX, _LIBM_CONSTANTS
+060104A FIXED expf: fix performance regression for some small arguments
+060115A FIXED remove unnecessary internal inline templates
+060115B FIXED hide internal labels in x86 assembly code
+060122A FIXED performance improvements in atan2, exp, rint
+6375880	FIXED add CDDL to libm and libmvec source
+060124A FIXED accuracy improvement in exp, performance improvement in fmod
+060126A FIXED clean up __libx_errno.c and remove it from libsunmath
+060126B FIXED performance improvements in remainder, scalbn, isnan, ilogb

@@ -1,0 +1,76 @@
+#!/bin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+# Copyright (c) 2001, 2010, Oracle and/or its affiliates. All rights reserved.
+#
+# Copyright (c) Joyent Inc
+
+VERS=$1
+
+PREFIX=${DESTDIR}/usr
+BINDIR=${PREFIX}/bin
+LIBDIR=${PREFIX}/lib
+INCDIR=${PREFIX}/include
+
+mkdir -p $BINDIR
+mkdir -p $LIBDIR
+mkdir -p $INCDIR
+
+. ../install.subr
+	
+
+rm -f bzgrep.tmp
+sed \
+	-e s,'^#!/bin/sh','#!/bin/ksh', \
+	< ${VERS}/bzgrep \
+	> bzgrep.tmp
+_install S bzgrep.tmp ${BINDIR}/bzgrep 555
+
+cd ${VERS}
+
+for i in bzip2 bzip2recover
+do
+	_install E ${i} ${BINDIR}/${i} 555
+done
+
+_install H ${BINDIR}/bzip2 ${BINDIR}/bunzip2
+_install H ${BINDIR}/bzip2 ${BINDIR}/bzcat
+
+for i in bzmore bzdiff
+do
+	_install S ${i} ${BINDIR}/${i} 555
+done
+
+_install H ${BINDIR}/bzgrep ${BINDIR}/bzegrep
+_install H ${BINDIR}/bzgrep ${BINDIR}/bzfgrep
+_install H ${BINDIR}/bzmore ${BINDIR}/bzless
+_install H ${BINDIR}/bzdiff ${BINDIR}/bzcmp
+
+_install D libbz2.so.1 ${LIBDIR}/libbz2.so.1 755
+_install L libbz2.so.1 ${LIBDIR}/libbz2.so
+
+for i in bzlib.h
+do
+	_install N ${i} ${INCDIR}/${i} 644
+done
+
+exit 0

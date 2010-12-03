@@ -1,0 +1,119 @@
+#!/bin/sh -e
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+# Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+# Copyright (c) 2010 Joyent Inc.
+#
+
+# XXX We would ideally inherit PERL from Makefile.master.
+#     For now, we just set it here.
+
+PERL=/usr/perl5/bin/perl
+PYTHON=${PYTHON:-/usr/bin/python2.4}
+
+_install()
+{
+  _type=$1
+  _src=$2
+  _targ=$3
+  _perm=$4
+  
+  case "$1" in
+    L)
+      # Install symbolic link file
+      rm -f $_targ
+      ln -s $_src $_targ
+      ;;
+    H)
+      # Install hard link
+      rm -f $_targ
+      ln $_src $_targ
+      ;;
+
+    E)
+      # Install executable ELF file
+      rm -f $_targ
+      cp $_src $_targ
+      chmod u+w $_targ
+      /usr/ccs/bin/strip $_targ
+      chmod $_perm $_targ
+      ;;
+
+    D)
+      # Install dynamic executable ELF library
+      rm -f $_targ
+      cp $_src $_targ
+      chmod u+w $_targ
+      chmod $_perm $_targ
+      ;;
+
+    N|S)
+      # Install normal or executable script file
+      rm -f $_targ
+      cp $_src $_targ
+      chmod $_perm $_targ
+      ;;
+
+    M)
+      # Install man page file
+      if [ -z "${MANSCRIPT}" ]
+      then
+          echo "MANSCRIPT not set"
+          exit 1
+      fi
+      rm -f $_targ
+      sed -f ${MANSCRIPT} $_src > $_targ
+      chmod $_perm $_targ
+      ;;
+
+    P)
+      # Install perl and python script file
+      SED_ARGS="-e 1s|^#\!.*perl|#\!${PERL}|"
+      if [ -n "${PYTHON}" ] ; then
+            SED_ARGS="${SED_ARGS} -e 1s|^#\!.*python[0-9\.]*|#\!${PYTHON}|"
+      fi
+      rm -f $_targ
+      sed ${SED_ARGS} <$_src >$_targ
+      chmod $_perm $_targ
+      ;;
+  esac
+
+  return
+}
+
+_fixup_perl()
+{
+  _line="1"
+  case $1 in
+    -a) _line=""
+	shift ;;
+  esac
+
+  _file=$1
+
+  cp ${_file} ${_file}.orig
+  rm -f ${_file}
+  sed -e "${_line}s|^#\!.*perl|#\!${PERL}|" <${_file}.orig >${_file}
+  rm -f ${_file}.orig
+}

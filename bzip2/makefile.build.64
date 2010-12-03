@@ -1,0 +1,80 @@
+#
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright 2007 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+# Copyright (c) 2010 Joyent Inc.
+#
+
+CFLAGS64 = -m64 -KPIC -D_FILE_OFFSET_BITS=64
+
+BLOBJ= blocksort.o
+
+OBJS= \
+      huffman.o    \
+      crctable.o   \
+      randtable.o  \
+      compress.o   \
+      decompress.o \
+      bzlib.o
+
+BZOBJS= \
+	bzip2.o \
+	bzip2recover.o
+
+all: libbz2.so .WAIT bzip2 bzip2recover
+
+bzip2: libbz2.so bzip2.o
+	/opt/SUNWspro/bin/cc $(CFLAGS64) -o bzip2 bzip2.o -L. -lbz2
+
+bzip2recover: bzip2recover.o
+	/opt/SUNWspro/bin/cc $(CFLAGS64) -o bzip2recover bzip2recover.o
+
+libbz2.so: $(BLOBJ) $(OBJS)
+	rm -f libbz2.so libbz2.so.1
+	/opt/SUNWspro/bin/cc $(CFLAGS64) $(XREGSFLAG64) -G -h libbz2.so.1 -o libbz2.so.1 \
+		-z defs -z text -zcombreloc $(BLOBJ) $(OBJS) -M ../mapfile -L. \
+		-L$(DESTDIR)/usr/lib -lc
+	ln -s libbz2.so.1 libbz2.so
+
+test: bzip2
+	@cat words1
+	env LD_LIBRARY_PATH=`pwd` ./bzip2 -1  < sample1.ref > sample1.rb2
+	env LD_LIBRARY_PATH=`pwd` ./bzip2 -2  < sample2.ref > sample2.rb2
+	env LD_LIBRARY_PATH=`pwd` ./bzip2 -3  < sample3.ref > sample3.rb2
+	env LD_LIBRARY_PATH=`pwd` ./bzip2 -d  < sample1.bz2 > sample1.tst
+	env LD_LIBRARY_PATH=`pwd` ./bzip2 -d  < sample2.bz2 > sample2.tst
+	env LD_LIBRARY_PATH=`pwd` ./bzip2 -ds < sample3.bz2 > sample3.tst
+	cmp sample1.bz2 sample1.rb2 
+	cmp sample2.bz2 sample2.rb2
+	cmp sample3.bz2 sample3.rb2
+	cmp sample1.tst sample1.ref
+	cmp sample2.tst sample2.ref
+	cmp sample3.tst sample3.ref
+	@cat words3
+
+blocksort.o: blocksort.c
+	@cat words0
+	/opt/SUNWspro/bin/cc $(CFLAGS64) $(XREGSFLAG64) -c blocksort.c
+
+$(OBJS) $(BZOBJS):
+	/opt/SUNWspro/bin/cc $(CFLAGS64) $(XREGSFLAG64) -c $<
