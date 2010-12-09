@@ -26,7 +26,7 @@
 PATH=/sbin:/usr/sbin:/usr/bin:/opt/SUNWspro/bin
 BASE=$(PWD)
 DESTDIR=$(BASE)/proto
-SUBDIRS= bash bzip2 curl gzip libexpat libm libxml libz ncurses node.js nss-nspr openssl vim
+SUBDIRS= bash bzip2 curl gzip libexpat libm libxml libz ncurses node.js nss-nspr openssl rsync vim
 
 -include Makefile.inc
 

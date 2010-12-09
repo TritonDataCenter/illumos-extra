@@ -1,0 +1,63 @@
+#!/bin/sh -e
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+# Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+# Copyright (c) 2010 Joyent Inc.
+#
+# install objects in the proto area, since it would
+# really like to install locally, but that doesn't scale.
+#
+
+#pragma ident	"@(#)install-sfw	1.3	09/09/18 SMI"
+
+PREFIX=${DESTDIR}/usr
+BINDIR=${PREFIX}/bin
+SHAREDIR=${PREFIX}/share
+INFODIR=${PREFIX}/share/info
+LIBDIR=${PREFIX}/lib
+LOCALEDIR=${LIBDIR}/locale
+MAN1DIR=${SHAREDIR}/man/man1
+MAN5DIR=${SHAREDIR}/man/man5
+
+source ../install.subr
+cd $VERDIR
+
+mkdir -m 755 -p ${BINDIR}
+mkdir -m 755 -p ${LIBDIR}
+mkdir -m 755 -p ${MAN1DIR}
+mkdir -m 755 -p ${MAN5DIR}
+
+# Binaries
+_install E rsync ${BINDIR}/rsync 555
+
+# Man Pages
+#  The MAN pages are updated to indicate Interface Stability in an ATTIRBUTES
+#  section, and also indicate where the source code is available
+
+MANSCRIPT=../sunman-stability
+
+_install M rsync.1 ${MAN1DIR}/rsync.1 444
+_install M rsyncd.conf.5 ${MAN5DIR}/rsyncd.conf.5 444
+
+exit 0
