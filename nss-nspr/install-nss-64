@@ -26,17 +26,19 @@ set -o errexit
 
 VERS=${1}
 
+ROOT=$(pwd)
 PREFIX=${DESTDIR}/usr/lib/mps
 PREFIX64=${DESTDIR}/usr/lib/mps/amd64
+BIN_PREFIX64=${DESTDIR}/usr/bin/amd64
 
 mkdir -p ${PREFIX}
 mkdir -p ${PREFIX64}
+mkdir -p ${BIN_PREFIX64}
 ln -s ../amd64 ${PREFIX}/64
 
 source ../install.subr
 
-cd ${VERS}/mozilla/dist/SunOS5.11_i86pc_gcc_64_OPT.OBJ
-
+cd ${ROOT}/${VERS}/mozilla/dist/SunOS5.11_i86pc_gcc_64_OPT.OBJ
 
 _install N lib/libfreebl3.chk ${PREFIX64}/libfreebl3.chk 555
 _install N lib/libfreebl3.so ${PREFIX64}/libfreebl3.so 555
@@ -54,4 +56,6 @@ _install N lib/libssl3.so ${PREFIX64}/libssl3.so 555
 _install N lib/libnspr4.so ${PREFIX64}/libnspr4.so 555
 _install N lib/libplc4.so ${PREFIX64}/libplc4.so 555
 _install N lib/libplds4.so ${PREFIX64}/libplds4.so 555
+
+_install N bin/certutil ${BIN_PREFIX64}/certutil 555
 
