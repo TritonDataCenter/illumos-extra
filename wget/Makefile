@@ -24,15 +24,14 @@
 VER=wget-1.12
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-CCSMAKE=/usr/ccs/bin/make
-CC=cc
+CC=gcc
 GTAR=/usr/bin/gtar
 SH=ksh93
 
 -include ../Makefile.inc
 
 all: $(VER)/config.status
-	(cd $(VER); env - $(CCSMAKE) all)
+	(cd $(VER); env - $(MAKE) all)
 
 install: all
 	mkdir -p $(DESTDIR)/usr/bin
@@ -46,8 +45,9 @@ $(VER)/config.status: $(VER)/configure
 	    "CFLAGS=$(CFLAGS)" \
 	    "LD_OPTIONS=-L$(ROOT)/mapfile_noexstk" \
         PERL=/usr/perl5/bin/perl \
+        POD2MAN=/usr/perl5/bin/pod2man \
 	    PATH=$(PATH) \
-	    MAKE=$(CCSMAKE) \
+	    MAKE=$(MAKE) \
 	./configure --prefix=/usr --sysconfdir=/etc --with-ssl --infodir=/usr/share/info)
 
 $(VER)/configure: $(VER).tar.bz2
