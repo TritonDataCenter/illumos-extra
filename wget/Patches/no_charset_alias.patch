@@ -1,0 +1,11 @@
+--- wget-1.12/lib/Makefile.in.orig	Tue Sep 22 09:40:11 2009
++++ wget-1.12/lib/Makefile.in	Thu Oct  1 07:40:52 2009
+@@ -1137,6 +1137,8 @@
+ 	      need_charset_alias=true ;; \
+ 	    darwin* | cygwin* | mingw* | pw32* | cegcc*) \
+ 	      need_charset_alias=false ;; \
++	    solaris*) \
++	      need_charset_alias=false ;; \
+ 	    *) \
+ 	      need_charset_alias=true ;; \
+ 	  esac ; \
