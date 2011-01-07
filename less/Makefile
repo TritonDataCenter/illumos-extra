@@ -20,23 +20,27 @@
 #
 # Copyright (c) 2010 Joyent Inc.
 #
-# To build everything just run 'gmake' in this directory.
-#
 
-PATH=/sbin:/usr/sbin:/usr/bin:/opt/SUNWspro/bin
+
+VER=less-436
 BASE=$(PWD)
-DESTDIR=$(BASE)/proto
-SUBDIRS= bash bzip2 curl gtar gzip less libexpat libm libxml libz ncurses node.js nss-nspr openssl rsync vim wget
+DESTDIR=$(BASE)/../proto
 
--include Makefile.inc
-
-all:
-	-for dir in $(SUBDIRS); do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) all); done
+all: $(VER)/config.status
+	( cd $(VER); \
+	    gmake CC=$(GCC))
 
 install:
-	-for dir in $(SUBDIRS); do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) install); done
+	mkdir -p $(DESTDIR)
+	( cd $(VER); \
+	    gmake CC=/usr/bin/gcc DESTDIR=$(DESTDIR) install)
 
-clean: $(SUBDIRS)
-	-for dir in $(SUBDIRS); do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) clean); done
-	-rm -rf proto
+clean:
+	rm -rf $(VER)
 
+$(VER)/config.status: $(VER)/configure
+	(cd $(VER); ./configure --prefix=/usr)
+
+$(VER)/configure: $(VER).tar.gz
+	gtar -zxf $(VER).tar.gz
+	touch $(VER)/configure
