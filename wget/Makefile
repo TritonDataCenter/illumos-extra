@@ -28,7 +28,7 @@ CC=gcc
 GTAR=/usr/bin/gtar
 SH=ksh93
 
--include ../Makefile.inc
+#-include ../Makefile.inc
 
 all: $(VER)/config.status
 	(cd $(VER); env - $(MAKE) all)

@@ -1,0 +1,1 @@
+NTP Management:::Manage the NTP service:auths=solaris.smf.manage.ntp,solaris.smf.value.ntp
