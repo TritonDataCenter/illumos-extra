@@ -50,8 +50,7 @@ CONFIGURE_OPTIONS +=	--disable-getifaddrs
 TARGET_ENV =   CC="gcc"
 TARGET_ENV +=   CFLAGS="-O2"
 TARGET_ENV +=   LD_OPTIONS="-L${DESTDIR}/usr/lib -L/usr/lib -R/usr/lib"
-
-install:=	TARGET_ENV += DESTDIR=$(DESTDIR)
+TARGET_ENV += DESTDIR=$(DESTDIR)
 
 all: $(VER)/config.status
 	(cd $(VER); env - make all $(TARGET_ENV))
