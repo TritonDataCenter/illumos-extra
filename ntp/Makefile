@@ -53,11 +53,11 @@ TARGET_ENV +=   LD_OPTIONS="-L${DESTDIR}/usr/lib -L/usr/lib -R/usr/lib"
 TARGET_ENV += DESTDIR=$(DESTDIR)
 
 all: $(VER)/config.status
-	(cd $(VER); env - make all $(TARGET_ENV))
+	(cd $(VER); env - $(TARGET_ENV) gmake all)
 
 install:
-	(cd $(VER); env - make install $(TARGET_ENV))
-	(ksh93 install-ntp $(TARGET_ENV))
+	(cd $(VER); env - $(TARGET_ENV) gmake install)
+	(env - $(TARGET_ENV) install-ntp)
 
 $(VER)/config.status: $(VER)/.patched
 	(cd $(VER) ; env - bash ./configure $(CONFIGURE_OPTIONS) $(TARGET_ENV))

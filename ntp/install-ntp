@@ -24,10 +24,14 @@
 . ../install.subr
 
 mkdir -p ${DESTDIR}/etc/inet
+mkdir -p ${DESTDIR}/etc/security/auth_attr.d
+mkdir -p ${DESTDIR}/etc/security/prof_attr.d
 mkdir -p ${DESTDIR}/lib/svc/manifest/network
 mkdir -p ${DESTDIR}/lib/svc/method
 
-_install N Solaris/ntp.server ${DESTDIR}/etc/inet/ 0644
-_install N Solaris/ntp.client ${DESTDIR}/etc/inet/ 0644
-_install N Solaris/ntp.xml ${DESTDIR}/lib/svc/manifest/network/ 0444
-_install N Solaris/ntp ${DESTDIR}/lib/svc/method 0555
+_install N Solaris/ntp.server ${DESTDIR}/etc/inet/ntp.server 0644
+_install N Solaris/ntp.client ${DESTDIR}/etc/inet/ntp.client 0644
+_install N Solaris/ntp.xml ${DESTDIR}/lib/svc/manifest/network/ntp.xml 0444
+_install N Solaris/ntp ${DESTDIR}/lib/svc/method/ntp 0555
+_install N Solaris/auth_attr ${DESTDIR}/etc/security/auth_attr.d/ntp 0555
+_install N Solaris/prof_attr ${DESTDIR}/etc/security/prof_attr.d/ntp 0555
