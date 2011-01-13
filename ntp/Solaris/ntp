@@ -106,13 +106,13 @@ deb=`svcprop -c -p config/debuglevel $SMF_FMRI`
 # Start the daemon. If debugging is requested, put it in the background, 
 # since it won't do it on it's own.
 if [ "$deb" -gt 0 ]; then
-	/usr/lib/inet/ntpd "$@" --set-debug-level=$deb >/var/ntp/ntp.debug &
+	/usr/sbin/ntpd "$@" --set-debug-level=$deb >/var/ntp/ntp.debug &
 else
-	/usr/lib/inet/ntpd "$@"
+	/usr/sbin/ntpd "$@"
 fi
 
 # Now, wait for the first sync, if requested.
 val=`svcprop -c -p config/wait_for_sync $SMF_FMRI`
-[ "$val" = "true" ] && /usr/lib/inet/ntp-wait
+[ "$val" = "true" ] && /usr/sbin/ntp-wait
 
 exit $SMF_EXIT_OK
