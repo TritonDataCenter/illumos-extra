@@ -1,0 +1,329 @@
+#! /usr/bin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+
+#
+#ident	"@(#)install-sfw	1.21	09/06/04 SMI"
+#
+
+#
+# XXX - clean this up at some point
+
+. ../install.subr
+
+# The gcc makefiles install the stuff for us.  We just need to clean
+# up the permissions, etc.
+
+SOL_REV=`uname -r | sed "s,^5\.,2\.,"`
+
+if [ "$MACH" = "sparc" ]; then
+	MACHNAME=sparc-sun-solaris${SOL_REV}
+else
+	MACHNAME=i386-pc-solaris${SOL_REV}
+fi
+
+GCCVER=3.4.3	# for easy updating
+
+# First, nuke the "fixincludes" headers that gcc installs.
+# We need to create these on the install machine at
+# package install time.
+# Except any files part of gcc, like the objc
+# include files. This could be automated but the list is
+# probably fairly static and smaller than the code to cleanup
+# what fixincludes might do.
+#
+# note gcc has its own stddef.h but when fixincludes is
+# run by pkgadd the system one replaces it (something
+# about wchar_t) so we don't ship that one for now.
+
+ls -d ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/include/* \
+    | grep -v objc \
+    | grep -v stdarg.h \
+    | grep -v unwind.h \
+    | grep -v emmintrin.h \
+    | grep -v pmmintrin.h \
+    | grep -v mmintrin.h \
+    | grep -v iso646.h \
+    | grep -v xmmintrin.h \
+    | grep -v stdbool.h \
+    | grep -v float.h \
+    | xargs rm -rf
+
+# Nothing pretty here - just a brute-force changing of
+# all the perms.  First the non-architecture-specific
+# pieces, then the architecture=specific stuff.
+
+
+# directories
+chmod 755 ${ROOT}/usr/sfw/include/c++
+chmod 755 ${ROOT}/usr/sfw/include/c++/${GCCVER}
+chmod 755 ${ROOT}/usr/sfw/include/c++/${GCCVER}/backward
+chmod 755 ${ROOT}/usr/sfw/include/c++/${GCCVER}/bits
+chmod 755 ${ROOT}/usr/sfw/include/c++/${GCCVER}/debug
+chmod 755 ${ROOT}/usr/sfw/include/c++/${GCCVER}/ext
+chmod 755 ${ROOT}/usr/sfw/lib/gcc
+chmod 755 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/include/objc
+chmod 755 ${ROOT}/usr/sfw/libexec/gcc
+
+# files
+
+for i in \
+    gcc.info \
+    cpp.info \
+    gccint.info \
+    gccinstall.info \
+    g77.info \
+    cppinternals.info
+do
+    /usr/sfw/bin/install-info --dir-file=${ROOT}/usr/sfw/share/info/dir \
+	${ROOT}/usr/sfw/share/info/${i}
+done
+
+chmod 444 ${ROOT}/usr/sfw/share/info/gcc.info
+chmod 444 ${ROOT}/usr/sfw/share/info/cpp.info
+chmod 444 ${ROOT}/usr/sfw/share/info/gccint.info
+chmod 444 ${ROOT}/usr/sfw/share/info/gccinstall.info
+chmod 444 ${ROOT}/usr/sfw/share/info/cppinternals.info
+chmod 444 ${ROOT}/usr/sfw/share/info/g77.info
+
+chmod 555 ${ROOT}/usr/sfw/bin/gccbug
+
+for i in \
+    c++ \
+    cpp \
+    g++ \
+    gcc \
+    g77 \
+    gcov
+do
+    chmod 755 ${ROOT}/usr/sfw/bin/${i}
+    ${SRC}/tools/post_process ${ROOT}/usr/sfw/bin/${i}
+    chmod 555 ${ROOT}/usr/sfw/bin/${i}
+done
+
+find ${ROOT}/usr/sfw/include/c++/${GCCVER} -type d -exec chmod 755 {} \;
+find ${ROOT}/usr/sfw/include/c++/${GCCVER} -type f -exec chmod 444 {} \;
+find ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/include -type f -exec chmod 444 {} \;
+
+for i in libgcc_s.so.1 libstdc++.so.6.0.3 libg2c.so.0.0.0 libobjc.so.1.0.0
+do
+    chmod 755 ${ROOT}/usr/sfw/lib/${i}
+    ${SRC}/tools/post_process_so ${ROOT}/usr/sfw/lib/${i}
+    chmod 555 ${ROOT}/usr/sfw/lib/${i}
+done
+
+chmod 555 ${ROOT}/usr/sfw/lib/libiberty.a
+chmod 444 ${ROOT}/usr/sfw/lib/libstdc++.a
+chmod 555 ${ROOT}/usr/sfw/lib/libg2c.a
+chmod 555 ${ROOT}/usr/sfw/lib/libobjc.a
+chmod 555 ${ROOT}/usr/sfw/lib/libobjc.la
+chmod 555 ${ROOT}/usr/sfw/lib/libfrtbegin.a
+chmod 555 ${ROOT}/usr/sfw/lib/libg2c.la
+
+rm -f /tmp/sed$$
+echo "/^dependency_libs/c\\
+dependency_libs=' -L/usr/sfw/lib -lgcc_s -lm'" >/tmp/sed$$
+
+sed -f /tmp/sed$$ ${ROOT}/usr/sfw/lib/libstdc++.la > ${ROOT}/usr/sfw/lib/libstdc++.la.1
+mv ${ROOT}/usr/sfw/lib/libstdc++.la.1 ${ROOT}/usr/sfw/lib/libstdc++.la
+chmod 555 ${ROOT}/usr/sfw/lib/libstdc++.la
+
+sed -f /tmp/sed$$ ${ROOT}/usr/sfw/lib/libsupc++.la > ${ROOT}/usr/sfw/lib/libsupc++.la.1
+mv ${ROOT}/usr/sfw/lib/libsupc++.la.1 ${ROOT}/usr/sfw/lib/libsupc++.la
+chmod 555 ${ROOT}/usr/sfw/lib/libsupc++.la
+
+rm -f /tmp/sed$$
+
+chmod 555 ${ROOT}/usr/sfw/lib/libsupc++.a
+
+# arch-specific
+
+chmod 755 ${ROOT}/usr/sfw/include/c++/${GCCVER}/${MACHNAME}
+chmod 755 ${ROOT}/usr/sfw/include/c++/${GCCVER}/${MACHNAME}/bits
+chmod 755 ${ROOT}/usr/sfw/include/c++/${GCCVER}/${MACHNAME}/bits/stdc++.h.gch
+chmod 755 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}
+chmod 755 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}
+chmod 755 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools
+chmod 755 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools/include
+chmod 755 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/include
+chmod 755 ${ROOT}/usr/sfw/libexec/gcc/${MACHNAME}
+chmod 755 ${ROOT}/usr/sfw/libexec/gcc/${MACHNAME}/${GCCVER}
+chmod 755 ${ROOT}/usr/sfw/libexec/gcc/${MACHNAME}/${GCCVER}/install-tools
+
+for i in \
+    ${MACHNAME}-c++ \
+    ${MACHNAME}-g++ \
+    ${MACHNAME}-gcc \
+    ${MACHNAME}-gcc-${GCCVER}
+do
+    chmod 755 ${ROOT}/usr/sfw/bin/${i}
+    ${SRC}/tools/post_process ${ROOT}/usr/sfw/bin/${i}
+    chmod 555 ${ROOT}/usr/sfw/bin/${i}
+done
+
+chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/crtbegin.o
+chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/crtend.o
+chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/gmon.o
+
+chmod 444 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools/gsyslimits.h
+chmod 444 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools/include/README
+chmod 444 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools/include/float.h
+chmod 444 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools/include/iso646.h
+chmod 444 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools/include/limits.h
+chmod 444 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools/include/stdarg.h
+chmod 444 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools/include/stdbool.h
+chmod 444 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools/include/stddef.h
+chmod 444 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools/include/unwind.h
+chmod 444 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools/include/varargs.h
+chmod 444 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools/mkheaders.conf
+chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/libgcc.a
+chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/libgcc_eh.a
+chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/libgcov.a
+chmod 444 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/specs
+
+for i in \
+    cc1 \
+    cc1obj \
+    cc1plus \
+    f771 \
+    collect2
+do
+    chmod 755 ${ROOT}/usr/sfw/libexec/gcc/${MACHNAME}/${GCCVER}/${i}
+    ${SRC}/tools/post_process ${ROOT}/usr/sfw/libexec/gcc/${MACHNAME}/${GCCVER}/${i}
+    chmod 555 ${ROOT}/usr/sfw/libexec/gcc/${MACHNAME}/${GCCVER}/${i}
+done
+
+
+for script in \
+    ${ROOT}/usr/sfw/libexec/gcc/${MACHNAME}/${GCCVER}/install-tools/fixinc.sh \
+    ${ROOT}/usr/sfw/libexec/gcc/${MACHNAME}/${GCCVER}/install-tools/mkheaders
+do
+	rm -f ${script}.orig
+	mv ${script} ${script}.orig
+	sed \
+	    -e s,'^#!/bin/sh','#!/bin/ksh', \
+	    < ${script}.orig \
+	    > ${script}
+	rm -f ${script}.orig
+	chmod 555 ${script}
+done
+
+chmod 555 ${ROOT}/usr/sfw/libexec/gcc/${MACHNAME}/${GCCVER}/install-tools/fixincl
+
+if [ "$MACH" = "sparc" ]; then
+	chmod 755 ${ROOT}/usr/sfw/lib/sparcv9
+	rm -f ${ROOT}/usr/sfw/libexec/gcc/sparc-sun-solaris${SOL_REV}/${GCCVER}/as
+	ln -s ../../../../../gnu/sparc-sun-solaris${SOL_REV}/bin/as ${ROOT}/usr/sfw/libexec/gcc/sparc-sun-solaris${SOL_REV}/${GCCVER}/as
+	rm -f ${ROOT}/usr/sfw/lib/sparcv9/libgcc_s.so
+	ln -s libgcc_s.so.1 ${ROOT}/usr/sfw/lib/sparcv9/libgcc_s.so
+	chmod 555 ${ROOT}/usr/sfw/lib/sparcv9/libgcc_s.so.1
+	chmod 555 ${ROOT}/usr/sfw/lib/sparcv9/libiberty.a
+	chmod 555 ${ROOT}/usr/sfw/lib/sparcv9/libstdc++.a
+	chmod 555 ${ROOT}/usr/sfw/lib/sparcv9/libg2c.a
+	chmod 555 ${ROOT}/usr/sfw/lib/sparcv9/libfrtbegin.a
+	chmod 555 ${ROOT}/usr/sfw/lib/sparcv9/libg2c.la
+	chmod 555 ${ROOT}/usr/sfw/lib/sparcv9/libobjc.a
+	chmod 555 ${ROOT}/usr/sfw/lib/sparcv9/libobjc.la
+
+	rm -f /tmp/sed$$
+	echo "/^dependency_libs/c\\
+dependency_libs=' -L/usr/sfw/lib/sparcv9 -lgcc_s -lm'" >/tmp/sed$$
+
+	sed -f /tmp/sed$$ ${ROOT}/usr/sfw/lib/sparcv9/libstdc++.la > ${ROOT}/usr/sfw/lib/sparcv9/libstdc++.la.1
+	mv ${ROOT}/usr/sfw/lib/sparcv9/libstdc++.la.1 ${ROOT}/usr/sfw/lib/sparcv9/libstdc++.la
+	chmod 555 ${ROOT}/usr/sfw/lib/sparcv9/libstdc++.la
+
+	sed -f /tmp/sed$$ ${ROOT}/usr/sfw/lib/sparcv9/libsupc++.la > ${ROOT}/usr/sfw/lib/sparcv9/libsupc++.la.1
+	mv ${ROOT}/usr/sfw/lib/sparcv9/libsupc++.la.1 ${ROOT}/usr/sfw/lib/sparcv9/libsupc++.la
+	chmod 555 ${ROOT}/usr/sfw/lib/sparcv9/libsupc++.la
+	rm -f /tmp/sed$$
+
+	chmod 555 ${ROOT}/usr/sfw/lib/sparcv9/libstdc++.so.6.0.3
+	chmod 555 ${ROOT}/usr/sfw/lib/sparcv9/libsupc++.a
+	chmod 555 ${ROOT}/usr/sfw/lib/sparcv9/libg2c.so.0.0.0
+	chmod 555 ${ROOT}/usr/sfw/lib/sparcv9/libobjc.so.1.0.0
+	chmod 755 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/sparcv9
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/crt1.o
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/crti.o
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/crtn.o
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/gcrt1.o
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/sparcv9/crt1.o
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/crtfastmath.o
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/sparcv9/crti.o
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/sparcv9/crtn.o
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/sparcv9/gcrt1.o
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/sparcv9/crtfastmath.o
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/sparcv9/crtbegin.o
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/sparcv9/crtend.o
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/sparcv9/gmon.o
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/sparcv9/libgcc.a
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/sparcv9/libgcc_eh.a
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/sparcv9/libgcov.a
+else
+	chmod 755 ${ROOT}/usr/sfw/lib/amd64
+	rm -f ${ROOT}/usr/sfw/libexec/gcc/i386-pc-solaris${SOL_REV}/${GCCVER}/as
+	ln -s ../../../../../gnu/i386-pc-solaris${SOL_REV}/bin/as ${ROOT}/usr/sfw/libexec/gcc/i386-pc-solaris${SOL_REV}/${GCCVER}/as
+	rm -f ${ROOT}/usr/sfw/lib/amd64/libgcc_s.so
+	ln -s libgcc_s.so.1 ${ROOT}/usr/sfw/lib/amd64/libgcc_s.so
+	chmod 555 ${ROOT}/usr/sfw/lib/amd64/libgcc_s.so.1
+	chmod 555 ${ROOT}/usr/sfw/lib/amd64/libiberty.a
+	chmod 555 ${ROOT}/usr/sfw/lib/amd64/libstdc++.a
+	chmod 555 ${ROOT}/usr/sfw/lib/amd64/libg2c.a
+	chmod 555 ${ROOT}/usr/sfw/lib/amd64/libg2c.la
+	chmod 555 ${ROOT}/usr/sfw/lib/amd64/libobjc.a
+	chmod 555 ${ROOT}/usr/sfw/lib/amd64/libobjc.la
+	chmod 555 ${ROOT}/usr/sfw/lib/amd64/libfrtbegin.a
+
+	rm -f /tmp/sed$$
+	echo "/^dependency_libs/c\\
+dependency_libs=' -L/usr/sfw/lib/amd64 -lgcc_s -lm'" >/tmp/sed$$
+	sed -f /tmp/sed$$ ${ROOT}/usr/sfw/lib/amd64/libstdc++.la > ${ROOT}/usr/sfw/lib/amd64/libstdc++.la.1
+	mv ${ROOT}/usr/sfw/lib/amd64/libstdc++.la.1 ${ROOT}/usr/sfw/lib/amd64/libstdc++.la
+	chmod 555 ${ROOT}/usr/sfw/lib/amd64/libstdc++.la
+sed -f /tmp/sed$$ ${ROOT}/usr/sfw/lib/amd64/libsupc++.la >${ROOT}/usr/sfw/lib/amd64/libsupc++.la.1
+
+	mv ${ROOT}/usr/sfw/lib/amd64/libsupc++.la.1 ${ROOT}/usr/sfw/lib/amd64/libsupc++.la
+	chmod 555 ${ROOT}/usr/sfw/lib/amd64/libsupc++.la
+	rm -f /tmp/sed$$
+
+	chmod 555 ${ROOT}/usr/sfw/lib/amd64/libstdc++.so.6.0.3
+	chmod 555 ${ROOT}/usr/sfw/lib/amd64/libg2c.so.0.0.0
+	chmod 555 ${ROOT}/usr/sfw/lib/amd64/libobjc.so.1.0.0
+	chmod 555 ${ROOT}/usr/sfw/lib/amd64/libsupc++.a
+	chmod 755 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/amd64
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/amd64/crtbegin.o
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/amd64/crtend.o
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/amd64/gmon.o
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/amd64/libgcc.a
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/amd64/libgcc_eh.a
+	chmod 555 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/amd64/libgcov.a
+	chmod 444 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools/include/emmintrin.h
+	chmod 444 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools/include/mmintrin.h
+	chmod 444 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools/include/pmmintrin.h
+	chmod 444 ${ROOT}/usr/sfw/lib/gcc/${MACHNAME}/${GCCVER}/install-tools/include/xmmintrin.h
+fi
+
+exit 0
