@@ -1,0 +1,11 @@
+--- wscript.ori	Wed Feb 16 23:31:07 2011
++++ wscript	Wed Feb 16 23:31:16 2011
+@@ -662,7 +662,7 @@
+     if bld.env["USE_DEBUG"]:
+       dtrace_g = dtrace.clone("debug")
+ 
+-    bld.install_files('${PREFIX}/usr/lib/dtrace', 'src/node.d')
++    bld.install_files('${PREFIX}/lib/dtrace', 'src/node.d')
+ 
+     if sys.platform.startswith("sunos"):
+       #

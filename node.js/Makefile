@@ -43,6 +43,9 @@ clean:
 
 $(VER)/build/default/config.h: $(VER)/configure
 	(cd $(VER); ./configure --with-dtrace --prefix=/usr)
+	(cd $(VER) \
+	    ; gpatch -p0 --no-backup-if-mismatch < ../node-040.patch )
+
 
 $(VER)/configure: $(VER).tar.gz
 	gtar -zxf $(VER).tar.gz
