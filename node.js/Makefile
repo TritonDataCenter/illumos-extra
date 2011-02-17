@@ -18,10 +18,10 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010 Joyent Inc.
+# Copyright (c) 2010,2011 Joyent Inc.
 #
 
-VER=node-v0.2.5
+VER=node-v0.4.0
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 GCC=/usr/bin/gcc
@@ -42,9 +42,7 @@ clean:
 	rm -rf $(VER)
 
 $(VER)/build/default/config.h: $(VER)/configure
-	(cd $(VER); ./configure --prefix=/usr)
-	(cd $(VER) \
-	; gpatch -p0 --no-backup-if-mismatch < ../147-build-hack.patch )
+	(cd $(VER); ./configure --with-dtrace --prefix=/usr)
 
 $(VER)/configure: $(VER).tar.gz
 	gtar -zxf $(VER).tar.gz
