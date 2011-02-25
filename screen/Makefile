@@ -20,23 +20,37 @@
 #
 # Copyright (c) 2010 Joyent Inc.
 #
-# To build everything just run 'gmake' in this directory.
-#
 
-PATH=/sbin:/usr/sbin:/usr/bin:/opt/SUNWspro/bin:/opt/local/bin
+VER=screen-4.0.3
 BASE=$(PWD)
-DESTDIR=$(BASE)/proto
-SUBDIRS= bash bzip2 curl gcc gtar gzip less libexpat libm libxml libz ncurses node.js nss-nspr ntp openssl rsync screen vim wget
+DESTDIR=$(BASE)/../proto
+CC=gcc
+GTAR=/usr/bin/gtar
+SH=ksh93
 
--include Makefile.inc
+#-include ../Makefile.inc
 
-all:
-	-for dir in $(SUBDIRS); do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) all); done
+all: $(VER)/config.status
+	(cd $(VER); env - $(MAKE) all)
 
-install:
-	-for dir in $(SUBDIRS); do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) install); done
+install: all
+	mkdir -p $(DESTDIR)/usr/bin
+	ginstall -m 0555 $(BASE)/$(VER)/screen $(DESTDIR)/usr/bin/screen
 
-clean: $(SUBDIRS)
-	-for dir in $(SUBDIRS); do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) clean); done
-	-rm -rf proto
+$(VER)/config.status: $(VER)/configure
+	(cd $(VER); env \
+	    CC=$(CC) \
+	    "CFLAGS=$(CFLAGS)" \
+	    PATH=$(PATH) \
+	    MAKE=$(MAKE) \
+	./configure --prefix=/usr)
 
+$(VER)/configure: $(VER).tar.gz
+	$(GTAR) zxpf $(VER).tar.gz
+	gpatch -p0 < Patches/misc.c.patch
+	touch $(VER)/configure
+
+clean:
+	-rm -rf $(VER)
+
+FRC:
