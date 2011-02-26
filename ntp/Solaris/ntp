@@ -66,6 +66,10 @@ val=`svcprop -c -p config/always_allow_large_step $SMF_FMRI`
 if [ "$val" = "true" ] || \
     [ ! -f /var/run/ntp.pid ]; then
         set -- "$@" -g
+
+        # Large step is ok, so on startup do a full update first
+        # before we actually start.
+        ntpd -gq
 fi
 
 # Auth was off by default in xntpd now the default is on. Better have a way
