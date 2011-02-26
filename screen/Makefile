@@ -36,6 +36,7 @@ all: $(VER)/config.status
 install: all
 	mkdir -p $(DESTDIR)/usr/bin
 	ginstall -m 0555 $(BASE)/$(VER)/screen $(DESTDIR)/usr/bin/screen
+	ginstall -m 0444 $(BASE)/$(VER)/doc/screen.1 $(DESTDIR)/usr/share/man/man1/screen.1
 
 $(VER)/config.status: $(VER)/configure
 	(cd $(VER); env \
