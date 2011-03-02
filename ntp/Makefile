@@ -60,7 +60,7 @@ install:
 	(env - $(TARGET_ENV) install-ntp)
 
 $(VER)/config.status: $(VER)/.patched
-	(cd $(VER) ; env - bash ./configure $(CONFIGURE_OPTIONS) $(TARGET_ENV))
+	(cd $(VER) ; env - PATH_PERL=/usr/perl5/bin/perl bash ./configure $(CONFIGURE_OPTIONS) $(TARGET_ENV))
 
 $(VER)/.patched: $(VER)
 	(cd $(VER) ; env - ; for x in ../Patches/*; do gpatch -p0 < $$x; done ;  touch .patched)
