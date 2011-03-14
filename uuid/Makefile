@@ -18,25 +18,31 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010 Joyent Inc.
-#
-# To build everything just run 'gmake' in this directory.
+# Copyright (c) 2011 Joyent Inc.
 #
 
-PATH=/sbin:/usr/sbin:/usr/bin:/opt/SUNWspro/bin:/opt/local/bin
+VER=uuid-1.6.2
 BASE=$(PWD)
-DESTDIR=$(BASE)/proto
-SUBDIRS= bash bzip2 curl gcc gtar gzip less libexpat libm libxml libz ncurses node.js nss-nspr ntp openssl perl rsync screen uuid vim wget
+DESTDIR=$(BASE)/../proto
+GCC=/usr/bin/gcc
+PATH=/sbin:/usr/sbin:/usr/bin
 
--include Makefile.inc
+-include ../Makefile.inc
 
-all:
-	-for dir in $(SUBDIRS); do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) all); done
+all: $(VER)/config.h
+	( cd $(VER); gmake)
 
 install:
-	-for dir in $(SUBDIRS); do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) install); done
+	mkdir -p $(DESTDIR)
+	( cd $(VER); \
+	    gmake DESTDIR=$(DESTDIR) install)
 
-clean: $(SUBDIRS)
-	-for dir in $(SUBDIRS); do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) clean); done
-	-rm -rf proto
+clean:
+	rm -rf $(VER)
 
+$(VER)/config.h: $(VER)/configure
+	(cd $(VER); ./configure --prefix=/usr)
+
+$(VER)/configure: $(VER).tar.gz
+	gtar -zxf $(VER).tar.gz
+	touch $(VER)/configure
