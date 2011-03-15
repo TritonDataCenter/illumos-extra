@@ -41,7 +41,7 @@ clean:
 	rm -rf $(VER)
 
 $(VER)/config.h: $(VER)/configure
-	(cd $(VER); ./configure --prefix=/usr)
+	(cd $(VER); ./configure --disable-shared --prefix=/usr)
 
 $(VER)/configure: $(VER).tar.gz
 	gtar -zxf $(VER).tar.gz
