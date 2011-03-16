@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2001, 2010, Oracle and/or its affiliates. All rights reserved.
 #
-# Copyright (c) Joyent Inc
+# Copyright (c) 2011, Joyent Inc. All rights reserved.
 
 VERS=$1
 
@@ -30,10 +30,12 @@ PREFIX=${DESTDIR}/usr
 BINDIR=${PREFIX}/bin
 LIBDIR=${PREFIX}/lib
 INCDIR=${PREFIX}/include
+MANDIR=${PREFIX}/share/man/man1
 
 mkdir -p $BINDIR
 mkdir -p $LIBDIR
 mkdir -p $INCDIR
+mkdir -p $MANDIR
 
 . ../install.subr
 	
@@ -71,6 +73,11 @@ _install L libbz2.so.1 ${LIBDIR}/libbz2.so
 for i in bzlib.h
 do
 	_install N ${i} ${INCDIR}/${i} 644
+done
+
+for i in bzdiff.1 bzgrep.1 bzip2.1 bzmore.1
+do
+	_install N ${i} ${MANDIR}/${i} 555
 done
 
 exit 0

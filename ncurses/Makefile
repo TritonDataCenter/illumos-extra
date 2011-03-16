@@ -18,13 +18,14 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010 Joyent Inc.
+# Copyright (c) 2010 Joyent Inc., All rights reserved.
 #
 
 VER=ncurses-5.7
 VER64=$(VER)-64
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
+USRDIR=$(DESTDIR)/usr
 
 all: $(VER)/config.status $(VER64)/config.status
 	( cd $(VER); env - PATH=$(PATH) \
@@ -38,6 +39,16 @@ install:
 	    gmake DESTDIR=$(DESTDIR) install)
 	@ ( cd $(VER64); \
 	    gmake DESTDIR=$(DESTDIR) install)
+	mv $(USRDIR)/gnu/bin/infocmp $(USRDIR)/bin/ginfocmp
+	mv $(USRDIR)/gnu/bin/tic $(USRDIR)/bin/gtic
+	mv $(USRDIR)/gnu/bin/toe $(USRDIR)/bin/gtoe
+	mv $(USRDIR)/gnu/bin/tput $(USRDIR)/bin/gtput
+	mv $(USRDIR)/gnu/bin/tset $(USRDIR)/bin/gtset
+	rm -rf $(USRDIR)/include/ncurses
+	mv $(USRDIR)/gnu/include/ncurses $(USRDIR)/include
+	mkdir -p $(USRDIR)/gnu/share/doc/ncurses
+	cp $(VER)/README $(USRDIR)/gnu/share/doc/ncurses
+
 clean:
 	rm -rf $(VER) $(VER64)
 

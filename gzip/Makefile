@@ -18,12 +18,14 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010 Joyent Inc.
+# Copyright (c) 2010 Joyent Inc.,  All rights reserved.
 #
 
 VER=gzip-1.3.5
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
+BINDIR=$(DESTDIR)/usr/bin
+MANDIR=$(DESTDIR)/usr/share/man/man1
 
 all: $(VER)/config.status
 	( cd $(VER); env - PATH=$(PATH) \
@@ -33,6 +35,21 @@ install:
 	mkdir -p $(DESTDIR)
 	( cd $(VER); \
 	    gmake DESTDIR=$(DESTDIR) install)
+	mv $(BINDIR)/zcmp $(BINDIR)/gzcmp
+	mv $(BINDIR)/zdiff $(BINDIR)/gzdiff
+	mv $(BINDIR)/zegrep $(BINDIR)/gzegrep
+	mv $(BINDIR)/zfgrep $(BINDIR)/gzfgrep
+	mv $(BINDIR)/zforce $(BINDIR)/gzforce
+	mv $(BINDIR)/zgrep $(BINDIR)/gzgrep
+	mv $(BINDIR)/zless $(BINDIR)/gzless
+	mv $(BINDIR)/zmore $(BINDIR)/gzmore
+	mv $(BINDIR)/znew $(BINDIR)/gznew
+	mv $(MANDIR)/zdiff.1 $(MANDIR)/gzdiff.1
+	mv $(MANDIR)/zforce.1 $(MANDIR)/gzforce.1
+	mv $(MANDIR)/zgrep.1 $(MANDIR)/gzgrep.1
+	mv $(MANDIR)/zless.1 $(MANDIR)/gzless.1
+	mv $(MANDIR)/zmore.1 $(MANDIR)/gzmore.1
+	mv $(MANDIR)/znew.1 $(MANDIR)/gznew.1
 
 clean:
 	rm -rf $(VER)
