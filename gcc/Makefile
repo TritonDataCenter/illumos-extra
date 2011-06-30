@@ -62,7 +62,7 @@ install: all
 		CFLAGS_FOR_TARGET="-g -O2" install)
 	ROOT=$(DESTDIR) ksh93 ./install-sfw
 
-$(VER)-i386-build/config.status: $(VER)-i386-build $(VER)/configure
+$(VER)-i386-build/config.status: clean $(VER)-i386-build $(VER)/configure
 	(cd $(VER)-i386-build; env - \
 	    CC=gcc \
 	    CFLAGS="-g -O2" \
