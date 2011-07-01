@@ -32,7 +32,7 @@ all: $(VER)/config.status
 	( cd $(VER); \
 	    gmake CC=$(GCC))
 
-install:
+install: all
 	mkdir -p $(DESTDIR)
 	( cd $(VER); \
 	    gmake CC=/usr/bin/gcc DESTDIR=$(DESTDIR) install)

@@ -31,7 +31,7 @@ LD_OPTIONS="-M $(BASE)/mapfile_noexstk"
 all: $(VER)/config.status
 	(cd $(VER); env - CC=$(CC) LD_OPTIONS=$(LD_OPTIONS) PATH="/usr/perl5/bin:$(PATH)" gmake)
 
-install:
+install: all
 	mkdir -p $(DESTDIR)/usr/bin
 	ginstall -m 0555 $(BASE)/$(VER)/src/tar $(DESTDIR)/usr/bin/gtar
 

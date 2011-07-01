@@ -32,7 +32,7 @@ PATH=/sbin:/usr/sbin:/usr/bin
 all: $(VER)/config.h
 	( cd $(VER); gmake)
 
-install:
+install: all
 	mkdir -p $(DESTDIR)
 	( cd $(VER); \
 	    gmake DESTDIR=$(DESTDIR) install)

@@ -28,7 +28,7 @@ all:
 	(cd usr/src/harness; env - \
 	    make -f Makefile-os)
 
-install:
+install: all
 	BASE=$(DESTDIR) ksh93 ./install-extra
 
 clean:

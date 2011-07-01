@@ -31,7 +31,7 @@ all: $(VER)/config.status
 	( cd $(VER); env - PATH=$(PATH) \
 	    gmake )
 
-install:
+install: all
 	mkdir -p $(DESTDIR)
 	( cd $(VER); \
 	    gmake DESTDIR=$(DESTDIR) install)
