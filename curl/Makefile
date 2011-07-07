@@ -25,6 +25,7 @@
 VER=curl-7.21.2
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
+GCC=/usr/bin/gcc
 
 -include ../Makefile.inc
 

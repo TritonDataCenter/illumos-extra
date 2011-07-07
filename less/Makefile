@@ -25,6 +25,7 @@
 VER=less-436
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
+GCC=/usr/bin/gcc
 
 all: $(VER)/config.status
 	( cd $(VER); \
