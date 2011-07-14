@@ -57,7 +57,7 @@ all: $(VER)/config.status
 
 install: all
 	(cd $(VER); env - $(TARGET_ENV) gmake install)
-	(env - $(TARGET_ENV) install-ntp)
+	(env - $(TARGET_ENV) ./install-ntp)
 
 $(VER)/config.status: clean $(VER)/.patched
 	(cd $(VER) ; env - PATH_PERL=/usr/perl5/bin/perl bash ./configure $(CONFIGURE_OPTIONS) $(TARGET_ENV))

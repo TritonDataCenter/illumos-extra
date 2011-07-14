@@ -47,6 +47,7 @@ install: all
 	rm -rf $(USRDIR)/include/ncurses
 	mv $(USRDIR)/gnu/include/ncurses $(USRDIR)/include
 	mkdir -p $(USRDIR)/gnu/share/doc/ncurses
+	rm -f $(USRDIR)/gnu/share/doc/ncurses/README
 	cp $(VER)/README $(USRDIR)/gnu/share/doc/ncurses
 
 clean:

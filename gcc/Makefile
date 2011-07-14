@@ -30,7 +30,7 @@
 
 VER=gcc-3.4.3
 
-SFW_PATH="/usr/sfw/bin:/usr/bin:/usr/ccs/bin"
+SFW_PATH="/usr/sfw/bin:/usr/bin:/usr/ccs/bin:/opt/local/bin"
 
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto

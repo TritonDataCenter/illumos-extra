@@ -44,8 +44,8 @@ $(VER)/config.status: $(VER)/configure
 	    CC=$(CC) \
 	    "CFLAGS=$(CFLAGS)" \
 	    "LD_OPTIONS=-L$(ROOT)/mapfile_noexstk" \
-        PERL=/usr/perl5/bin/perl \
-        POD2MAN=/usr/perl5/bin/pod2man \
+        PERL=/opt/local/bin/perl \
+        POD2MAN=/opt/local/bin/pod2man \
 	    PATH=$(PATH) \
 	    MAKE=$(MAKE) \
 	./configure --prefix=/usr --sysconfdir=/etc --with-ssl --infodir=/usr/share/info)

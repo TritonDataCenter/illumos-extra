@@ -31,7 +31,7 @@ SH=ksh93
 #-include ../Makefile.inc
 
 all: $(VER)/config.status
-	(cd $(VER); env - $(MAKE) all)
+	(cd $(VER); env - PATH=$(PATH) $(MAKE) all)
 
 install: all
 	mkdir -p $(DESTDIR)/usr/bin

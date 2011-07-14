@@ -31,13 +31,13 @@ SUBDIRS= bash bzip2 curl gcc gnupg gtar gzip less libexpat libidn libm libxml \
 
 -include Makefile.inc
 
-all:
-	-for dir in $(SUBDIRS); do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) all); done
+$(SUBDIRS): FRC
+	cd $@; $(MAKE) DESTDIR=$(DESTDIR) install
 
-install:
-	-for dir in $(SUBDIRS); do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) install); done
+install: $(SUBDIRS)
 
-clean: $(SUBDIRS)
+clean: 
 	-for dir in $(SUBDIRS); do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) clean); done
 	-rm -rf proto
 
+FRC:
