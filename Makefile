@@ -48,4 +48,9 @@ clean:
 	-for dir in $(SUBDIRS); do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) clean); done
 	-rm -rf proto
 
+manifest:
+	cp manifest $(DESTDIR)/$(DESTNAME)
+
 FRC:
+
+.PHONY: manifest
