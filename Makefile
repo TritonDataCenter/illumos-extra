@@ -31,8 +31,16 @@ SUBDIRS= bash bzip2 curl gcc gnupg gtar gzip less libexpat libidn libm libxml \
 
 -include Makefile.inc
 
+#
+# pkg-config may be installed. This will actually only hurt us rather than help
+# us. pkg-config is based as a part of the pkgsrc packages and will pull in
+# versions of libraries that we have in /opt/local rather than using the ones in
+# /usr that we want. PKG_CONFIG_LIBDIR controls the actual path. This
+# environment variable nulls out the search path. Other vars just control what
+# gets appended.
+#
 $(SUBDIRS): FRC
-	cd $@; $(MAKE) DESTDIR=$(DESTDIR) install
+	cd $@; PKG_CONFIG_LIBDIR="" $(MAKE) DESTDIR=$(DESTDIR) install
 
 install: $(SUBDIRS)
 
