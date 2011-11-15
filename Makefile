@@ -38,7 +38,7 @@ ifeq ($(TIMESTAMP),)
   TIMESTAMP=$(shell date -u "+%Y%m%dT%H%M%SZ")
 endif
 
-GITDESCRIBE=g$(shell git describe --all --long --dirty | $(AWK) -F'-g' '{print $$NF}')
+GITDESCRIBE=g$(shell git describe --all --long | $(AWK) -F'-g' '{print $$NF}')
 TARBALL=$(NAME)-$(BRANCH)-$(TIMESTAMP)-$(GITDESCRIBE).tgz
 
 -include Makefile.inc
