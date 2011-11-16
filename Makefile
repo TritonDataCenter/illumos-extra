@@ -27,7 +27,19 @@ PATH=/sbin:/usr/sbin:/usr/bin:/opt/SUNWspro/bin:/opt/local/bin
 BASE=$(PWD)
 DESTDIR=$(BASE)/proto
 SUBDIRS= bash bzip2 curl gcc gnupg gtar gzip less libexpat libidn libm libxml \
-	libz ncurses node.js nss-nspr ntp openssl perl rsync screen uuid vim wget
+	libz ncurses node.js nss-nspr ntp openssl perl rsync screen socat uuid vim wget
+
+NAME=illumos-extra
+
+AWK=$(shell (which gawk 2>/dev/null | grep -v "^no ") || which awk)
+BRANCH=$(shell git symbolic-ref HEAD | $(AWK) -F/ '{print $$3}')
+
+ifeq ($(TIMESTAMP),)
+  TIMESTAMP=$(shell date -u "+%Y%m%dT%H%M%SZ")
+endif
+
+GITDESCRIBE=g$(shell git describe --all --long | $(AWK) -F'-g' '{print $$NF}')
+TARBALL=$(NAME)-$(BRANCH)-$(TIMESTAMP)-$(GITDESCRIBE).tgz
 
 -include Makefile.inc
 
@@ -50,6 +62,9 @@ clean:
 
 manifest:
 	cp manifest $(DESTDIR)/$(DESTNAME)
+
+tarball:
+	tar -zcf $(TARBALL) manifest proto
 
 FRC:
 

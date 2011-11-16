@@ -3204,6 +3204,9 @@ f usr/share/man/man1/rsync.1 0444 root bin
 # screen
 f usr/bin/screen 0555 root bin
 f usr/share/man/man1/screen.1 0444 root bin
+# socat
+f usr/bin/socat 0555 root bin
+f usr/share/man/man1/socat.1 0444 root bin
 # uuid
 f usr/bin/uuid 0755 root bin
 f usr/share/man/man1/uuid.1 0644 root bin
