@@ -22,34 +22,44 @@
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
-# Copyright (c) 2010 Joyent Inc.
+# Copyright (c) 2012 Joyent Inc.
 #
 
 VER=vim72
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 
+GCC=$(DESTDIR)/usr/sfw/bin/gcc
+GXX=$(DESTDIR)/usr/sfw/bin/g++
+
 all: $(VER)/src/auto/config.status
 	(cd $(VER); env \
-	    "CC=gcc" "CXX=g++" \
-	    make -e)
+	    "CC=$(GCC)" \
+	    "CXX=$(GXX)" \
+	    STRIP=/usr/bin/strip \
+	    PATH=$(DESTDIR)/usr/sfw/bin:$(PATH) \
+	    make -e $(PARALLEL))
 
 install: all
 	(cd $(VER); env \
-	    "CC=gcc" "CXX=g++" \
+	    "CC=$(GCC)" \
+	    "CXX=$(GXX)" \
+	    STRIP=/usr/bin/strip \
+	    PATH=$(DESTDIR)/usr/sfw/bin:$(PATH) \
 	    DESTDIR=$(DESTDIR) \
 	    make -e install)
-#	(BASE=$(BASE) ksh93 ./install.sfw)
 
 $(VER)/src/auto/config.status: $(VER)/configure
 	(cd $(VER); env \
-	    "CC=gcc" "CXX=g++" \
-	    "PATH=/opt/SUNWspro/bin:/usr/gnu/bin:$(PATH)" \
+	    "CC=$(GCC)" \
+	    "CXX=$(GXX)" \
+	    STRIP=/usr/bin/strip \
+	    PATH=$(DESTDIR)/usr/sfw/bin:$(PATH) \
 	    ./configure --prefix=/usr \
-	                --disable-gui \
-			--disable-gtktest \
-			--with-features=huge \
-	                --without-x )
+	      --disable-gui \
+	      --disable-gtktest \
+	      --with-features=huge \
+	      --without-x )
 
 $(VER)/configure:
 	gtar -jxf $(VER).tar.bz2

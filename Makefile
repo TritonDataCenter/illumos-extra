@@ -23,12 +23,14 @@
 # To build everything just run 'gmake' in this directory.
 #
 
-PATH=/sbin:/usr/sbin:/usr/bin:/opt/SUNWspro/bin:/opt/local/bin
 BASE=$(PWD)
 DESTDIR=$(BASE)/proto
-SUBDIRS= bash bzip2 curl dialog g11n gcc gcc4 gnupg gtar gzip less libexpat \
+PATH=$(DESTDIR)/usr/sfw/bin:/usr/sfw/bin:/usr/gnu/bin:/opt/local/bin:/sbin:/usr/sbin:/usr/bin:/opt/SUNWspro/bin:/opt/local/bin
+SUBDIRS= bash bzip2 curl dialog g11n gnupg gtar gzip less libexpat \
 	libidn libm libxml libz ncurses node.js nss-nspr ntp openldap openssl \
 	perl rsync screen socat uuid vim wget
+
+PARALLEL=-j128
 
 NAME=illumos-extra
 
@@ -42,7 +44,7 @@ endif
 GITDESCRIBE=g$(shell git describe --all --long | $(AWK) -F'-g' '{print $$NF}')
 TARBALL=$(NAME)-$(BRANCH)-$(TIMESTAMP)-$(GITDESCRIBE).tgz
 
--include Makefile.inc
+all: $(SUBDIRS)
 
 #
 # pkg-config may be installed. This will actually only hurt us rather than help
@@ -52,13 +54,16 @@ TARBALL=$(NAME)-$(BRANCH)-$(TIMESTAMP)-$(GITDESCRIBE).tgz
 # environment variable nulls out the search path. Other vars just control what
 # gets appended.
 #
-$(SUBDIRS): FRC
-	cd $@; PKG_CONFIG_LIBDIR="" $(MAKE) DESTDIR=$(DESTDIR) install
+$(DESTDIR)/usr/sfw/bin/gcc: FRC
+	cd gcc4; PKG_CONFIG_LIBDIR="" $(MAKE) PARALLEL=$(PARALLEL) DESTDIR=$(DESTDIR) install
 
-install: $(SUBDIRS)
+$(SUBDIRS): $(DESTDIR)/usr/sfw/bin/gcc
+	cd $@; PKG_CONFIG_LIBDIR="" $(MAKE) PARALLEL=$(PARALLEL) DESTDIR=$(DESTDIR) install
+
+install: $(SUBDIRS) gcc4
 
 clean: 
-	-for dir in $(SUBDIRS); do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) clean); done
+	-for dir in $(SUBDIRS) gcc4; do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) clean); done
 	-rm -rf proto
 
 manifest:

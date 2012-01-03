@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010 Joyent Inc.,  All rights reserved.
+# Copyright (c) 2012 Joyent Inc.,  All rights reserved.
 #
 
 VER=gzip-1.3.5
@@ -26,15 +26,17 @@ BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 BINDIR=$(DESTDIR)/usr/bin
 MANDIR=$(DESTDIR)/usr/share/man/man1
+GCC=$(DESTDIR)/usr/sfw/bin/gcc
 
 all: $(VER)/config.status
 	( cd $(VER); env - PATH=$(PATH) \
-	    gmake )
+	    CC=$(GCC) \
+	    gmake $(PARALLEL) )
 
 install: all
 	mkdir -p $(DESTDIR)
 	( cd $(VER); \
-	    gmake DESTDIR=$(DESTDIR) install)
+	    gmake $(PARALLEL) DESTDIR=$(DESTDIR) install)
 	mv $(BINDIR)/zcmp $(BINDIR)/gzcmp
 	mv $(BINDIR)/zdiff $(BINDIR)/gzdiff
 	mv $(BINDIR)/zegrep $(BINDIR)/gzegrep
@@ -55,7 +57,7 @@ clean:
 	rm -rf $(VER)
 
 $(VER)/config.status: $(VER)/configure
-	    (cd $(VER); ./configure --prefix=/usr)
+	    (cd $(VER); CC=$(GCC) ./configure --prefix=/usr)
 
 $(VER)/configure: $(VER).tar.gz
 	gtar -zxf $(VER).tar.gz

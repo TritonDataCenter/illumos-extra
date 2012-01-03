@@ -23,7 +23,7 @@
 # Use is subject to license terms.
 #
 
-# Copyright (c) Joyent Inc
+# Copyright 2012 Joyent, Inc
 
 # This makefile is unusual, because it builds both 32 and 64 bit
 # versions of the library.  The builds occur in separate subdirs,
@@ -35,24 +35,25 @@ VER64=$(VER)-64
 
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
+GCC=$(DESTDIR)/usr/sfw/bin/gcc
 
 all: real-all
 
 all32: $(VER)/zconf.h
-	(cd $(VER); env "CC=cc -KPIC" \
-	    "LDSHARED=cc -G -KPIC -h libz.so.1 -z defs -z text -z combreloc -M ../mapfile -L. -lc" \
-	    PATH=/opt/SUNWspro/bin:/usr/gnu/bin:$(PATH) \
-	    make -e)
+	(cd $(VER); env "CC=$(GCC) -fPIC" \
+	    "LDSHARED=$(GCC) -shared -fPIC -Wl,-h,libz.so.1 -Wl,-z,defs -Wl,-z,text -Wl,-z,combreloc -Wl,-M,../mapfile -L. -lc" \
+			PATH=$(DESTDIR)/usr/sfw/bin/:$(PATH) \
+	    make -e $(PARALLEL))
 
 # must override LDSHARED here, or the makefile uses the wrong
 # flags and tries to run the linker in 32-bit mode...libtool
 # isn't looking so bad after all...sigh.
 
 all64: $(VER64)/zconf.h
-	(cd $(VER64); env "CC=cc" "CFLAGS=-m64 -KPIC"  \
-	    "LDSHARED=cc -m64 -G -KPIC -h libz.so.1 -z defs -z text -z combreloc -M ../mapfile -L. -lc" \
-	    PATH=/opt/SUNWspro/bin:/usr/gnu/bin:$(PATH) \
-	    make -e)
+	(cd $(VER64); env "CC=$(GCC) -m64 -fPIC" \
+	    "LDSHARED=$(GCC) -m64 -shared -fPIC -Wl,-h,libz.so.1 -Wl,-z,defs -Wl,-z,text -Wl,-z,combreloc -Wl,-M,../mapfile -L. -lc" \
+			PATH=$(DESTDIR)/usr/sfw/bin/:$(PATH) \
+	    make -e $(PARALLEL))
 
 install: all
 	BASE=$(BASE) DESTDIR=$(DESTDIR) ksh93 ./install-zlib
@@ -62,7 +63,7 @@ real-all: all32 all64
 
 $(VER)/zconf.h: $(VER)/configure
 	(cd $(VER); env \
-	    PATH=/opt/SUNWspro/bin:/usr/gnu/bin:$(PATH) \
+			PATH=$(DESTDIR)/usr/sfw/bin/:$(PATH) \
 	    ./configure --shared \
 		--prefix=/usr)
 
@@ -73,7 +74,7 @@ $(VER)/zconf.h: $(VER)/configure
 
 $(VER64)/zconf.h: $(VER64)/configure
 	(cd $(VER64); env \
-	    PATH=/opt/SUNWspro/bin:/usr/gnu/bin:$(PATH) \
+			PATH=$(DESTDIR)/usr/sfw/bin/:$(PATH) CC=$(GCC)\
 	    ./configure --shared \
 		--prefix=/usr)
 

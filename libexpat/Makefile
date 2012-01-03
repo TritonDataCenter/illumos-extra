@@ -26,13 +26,12 @@ VER64=$(VER)-64
 LARGEFILES= -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-CCSMAKE=/usr/ccs/bin/make
-CC=cc
-CCC=ccc
+CC=$(DESTDIR)/usr/sfw/bin/gcc
+CCC=$(DESTDIR)/usr/sfw/bin/g++
 CC64=$(CC)
 CCC64=$(CCC)
-CCFLAGS="-KPIC"
-CCFLAGS64="-m64 -KPIC"
+CCFLAGS="-fPIC"
+CCFLAGS64="-m64 -fPIC"
 
 all: real-all
 
@@ -41,8 +40,7 @@ all32: $(VER)/config.status
 	    CC=$(CC) CXX=$(CCC) \
 	    "CFLAGS= -g -DHAVE_EXPAT_CONFIG_H $(LARGEFILES)" \
 	    "INSTALL=/usr/ucb/install -c" \
-        PATH=/opt/SUNWspro/bin:/usr/gnu/bin:$(PATH) \
-	    MAKE=$(CCSMAKE) $(CCSMAKE))
+	    MAKE=gmake gmake $(PARALLEL))
 	@find . -name core -exec rm -f {} \;
 
 all64: $(VER64)/config.status
@@ -50,8 +48,7 @@ all64: $(VER64)/config.status
 	    "CC=$(CC64)" "CXX=$(CCC64)" \
 	    "CFLAGS=$(CCFLAGS64) -g -DHAVE_EXPAT_CONFIG_H $(LARGEFILES)" \
 	    "INSTALL=/usr/ucb/install -c" \
-        PATH=/opt/SUNWspro/bin:/usr/gnu/bin:$(PATH) \
-	    MAKE=$(CCSMAKE) $(CCSMAKE))
+	    MAKE=gmake gmake $(PARALLEL))
 	@find . -name core -exec rm -f {} \;
 
 install: all
@@ -62,16 +59,14 @@ real-all: all32 all64
 
 $(VER)/config.status: $(VER)/configure
 	(cd $(VER); env \
-        PATH=/opt/SUNWspro/bin:/usr/gnu/bin:$(PATH) \
-	    CC=$(CC) CFLAGS=$(CCFLAGS) CXX=$(CCC) \
+	    CC=$(CC) CFLAGS=$(CFLAGS) CXX=$(CCC) \
 	    "INSTALL=/usr/ucb/install -c" \
-	    "MAKE=$(CCSMAKE)" \
+	    "MAKE=gmake" \
 	    ./configure --prefix=/usr)
 
 $(VER64)/config.status: $(VER64)/configure
 	(cd $(VER64); env \
-        PATH=/opt/SUNWspro/bin:/usr/gnu/bin:$(PATH) \
-	    CC=$(CC64) CFLAGS=$(CCFLAGS64) CXX=$(CCC64) \
+	    "CC=$(CC64)" "CFLAGS=$(CFLAGS64)" "CXX=$(CCC64)" \
 	    "INSTALL=/usr/ucb/install -c" \
 	    "MAKE=$(CCSMAKE)" \
 	    ./configure --prefix=/usr)

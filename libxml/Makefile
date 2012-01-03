@@ -23,7 +23,7 @@
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 
-# Copyright (c) 2010 Joyent Inc.
+# Copyright (c) 2012 Joyent Inc.
 
 # This makefile is unusual, because it builds both 32 and 64 bit
 # versions of the library.  The builds occur in separate subdirs,
@@ -38,22 +38,28 @@ LARGEFILES=	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 
+GCC=$(DESTDIR)/usr/sfw/bin/gcc
+
 -include ../Makefile.inc
 
 all: real-all
 
 all32: $(VER)/config.status
-	(cd $(VER); env - PATH=$(PATH) "CFLAGS=$(LARGEFILES)" \
+	(cd $(VER); env - PATH=$(PATH) \
+	    "CC=$(GCC)" \
+	    "CFLAGS=$(LARGEFILES)" \
 	    make -e libxml2.la; \
 	    env - PATH=$(PATH) "CFLAGS=$(LARGEFILES)" \
-	    make -e) 
+	    "CC=$(GCC)" \
+	    make -e $(PARALLEL)) 
 
 all64: $(VER64)/config.status
-	(cd $(VER64); env - PATH=$(PATH) "CC=cc" \
+	(cd $(VER64); env - PATH=$(PATH) "CC=$(GCC)" \
 	    "CFLAGS=-m64 $(LARGEFILES)" \
 	    make -e libxml2.la; \
 	    env - PATH=$(PATH) "CFLAGS=-m64 $(LARGEFILES)" \
-	    make -e) 
+	    "CC=$(GCC)" \
+	    make -e $(PARALLEL)) 
 
 install: all
 	BASE=$(BASE) DESTDIR=$(DESTDIR) PATH=$(PATH) ksh93 ./install-libxml2 $(VER)
@@ -73,9 +79,9 @@ test64: all64
 
 $(VER)/config.status: $(VER)/configure
 	(cd $(VER); \
-	    env - "CC=cc" "CFLAGS=$(LARGEFILES)" \
+	    env - "CC=$(GCC)" "CFLAGS=$(LARGEFILES)" \
 	    "LDFLAGS=$(LDFLAGS)" \
-	    "PATH=/opt/SUNWspro/bin:/usr/gnu/bin:$(PATH)" \
+			"PATH=$(DESTDIR)/usr/sfw/bin/:/usr/gnu/bin:$(PATH)" \
 	    ./configure --prefix=/usr --with-threads \
 	    --without-python)
 	cp mapfile $(VER)/libxml2.syms
@@ -83,9 +89,9 @@ $(VER)/config.status: $(VER)/configure
 
 $(VER64)/config.status: $(VER64)/configure
 	(cd $(VER64); \
-	    env - "CC=cc" "CFLAGS=-m64 $(LARGEFILES)" \
+	    env - "CC=$(GCC)" "CFLAGS=-m64 $(LARGEFILES)" \
 	    "LDFLAGS=$(LDFLAGS)" \
-	    "PATH=/opt/SUNWspro/bin:/usr/gnu/bin:$(PATH)" \
+			"PATH=$(DESTDIR)/usr/sfw/bin/:/usr/gnu/bin:$(PATH)" \
 	    ./configure --prefix=/usr --with-threads \
 	    --without-python)
 	cp mapfile $(VER64)/libxml2.syms
