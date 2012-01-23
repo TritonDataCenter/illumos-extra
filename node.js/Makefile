@@ -21,7 +21,7 @@
 # Copyright (c) 2010,2011 Joyent Inc.
 #
 
-VER=node-v0.4.9
+VER=node-v0.6.8
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 GCC=/usr/bin/gcc
@@ -46,4 +46,5 @@ $(VER)/build/default/config.h: $(VER)/configure
 
 $(VER)/configure: $(VER).tar.gz
 	gtar -zxf $(VER).tar.gz
+	(cd $(VER) && gpatch -p1 < ../node-v0.6.8.patch)
 	touch $(VER)/configure
