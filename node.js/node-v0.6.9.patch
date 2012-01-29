@@ -1,0 +1,11 @@
+diff -urN node-v0.6.9.orig/deps/uv/src/unix/pipe.c node-v0.6.9/deps/uv/src/unix/pipe.c
+--- node-v0.6.9.orig/deps/uv/src/unix/pipe.c	2012-01-28 00:32:19.000000000 +0000
++++ node-v0.6.9/deps/uv/src/unix/pipe.c	2012-01-29 21:39:41.750609048 +0000
+@@ -251,7 +251,6 @@
+   pipe = watcher->data;
+ 
+   assert(pipe->type == UV_NAMED_PIPE);
+-  assert(pipe->pipe_fname != NULL);
+ 
+   sockfd = uv__accept(pipe->fd, (struct sockaddr *)&saddr, sizeof saddr);
+   if (sockfd == -1) {

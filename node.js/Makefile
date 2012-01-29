@@ -46,4 +46,5 @@ $(VER)/build/default/config.h: $(VER)/configure
 
 $(VER)/configure: $(VER).tar.gz
 	gtar -zxf $(VER).tar.gz
+	(cd $(VER) && gpatch -p1 < ../$(VER).patch)
 	touch $(VER)/configure
