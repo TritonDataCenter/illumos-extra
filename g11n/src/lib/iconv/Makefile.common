@@ -1,0 +1,80 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").  
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+#ident	"@(#)Makefile	1.0	06/03/07	SMI"
+#
+# Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+
+# common makefile to handle the most common parts of code: i.e.
+# copying static files from the src dir to the proto dir.
+
+include $(SRC)/Makefile.master
+
+all:=		TARGET= all
+install :=	TARGET= install
+clean :=	TARGET= clean
+clobber :=	TARGET= clobber
+
+OBJS		= $(SRCS:%.c=%.o)
+PROGS		= $(OBJS:%.o=%.so)
+
+CLEANFILES	= *.o *.so.* *.so
+
+CFLAGS		= -I../inc -I. -I../common -K PIC -G -xO3 $(CFLAG_OPT)
+CFLAGS_64	= -I../inc -I. -I../common -K PIC -G -xO3 $(CFLAG_OPT_64)
+
+ICONV_DIR	= $(FILEROOT)/usr/lib/iconv
+ICONV_DIR_64	= $(ICONV_DIR)/$(MACH64)
+
+TARGETDIRS = $(ICONV_DIR) $(ICONV_DIR_64)
+
+$(TARGETDIRS):
+	$(INSDIR) $@
+
+$(MACH64):
+	$(INSDIR) $(MACH64)
+
+%.so: %.o
+	$(CC) $(CFLAGS) -o $@ $(@:%.so=%.o)
+	$(CC) $(CFLAGS_64) -o $(MACH64)/$@ $(MACH64)/$(@:%.so=%.o)
+
+#
+# don't use follow codes, cause it couldn't deal with the case
+# that filename contains '%' symbol
+#
+#$(OBJS): $$(@:%.o=%.c)
+#	$(CC) $(CFLAGS) -c -o $@ $(@:%.o=%.c)
+#	$(CC) $(CFLAGS_64) -c -o $(MACH64)/$@ $(@:%.o=%.c)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $(@:%.o=%.c)
+	$(CC) $(CFLAGS_64) -c -o $(MACH64)/$@ $(@:%.o=%.c)
+
+lint: FRC
+
+clobber clean:
+	$(RM) $(CLEANFILES)
+	$(RM) -r $(MACH64)
+
+FRC:
+

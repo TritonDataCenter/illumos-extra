@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010 Joyent Inc.
+# Copyright (c) 2011, Joyent Inc.
 #
 # To build everything just run 'gmake' in this directory.
 #
@@ -26,8 +26,9 @@
 PATH=/sbin:/usr/sbin:/usr/bin:/opt/SUNWspro/bin:/opt/local/bin
 BASE=$(PWD)
 DESTDIR=$(BASE)/proto
-SUBDIRS= bash bzip2 curl gcc gnupg gtar gzip less libexpat libidn libm libxml \
-	libz ncurses node.js nss-nspr ntp openssl perl rsync screen uuid vim wget
+SUBDIRS= bash bzip2 curl g11n gcc gnupg gtar gzip less libexpat libidn libm \
+	libxml libz ncurses node.js nss-nspr ntp openssl perl rsync screen \
+	uuid vim wget
 
 -include Makefile.inc
 
