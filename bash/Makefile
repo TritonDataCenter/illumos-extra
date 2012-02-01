@@ -41,7 +41,7 @@ clean:
 	rm -rf $(VER)
 
 $(VER)/config.status: $(VER)/configure
-	    (cd $(VER); ./configure --prefix=/usr)
+	    (cd $(VER); ./configure --prefix=/usr --with-curses)
 
 $(VER)/configure:
 	gtar -zxf $(VER).tar.gz
