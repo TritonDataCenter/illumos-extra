@@ -22,17 +22,18 @@
 #
 
 MAKE=/usr/ccs/bin/make
+SRC=$(shell (pwd))
 LIBDIR=${DESTDIR}/usr/lib/iconv
 
 all:
-	@cd src; pwd; $(MAKE) all
+	@(cd src; pwd; SRC=$(SRC) $(MAKE) all)
 	
 install: all
-	@cd src; pwd; $(MAKE) install
+	@(cd src; pwd; SRC=$(SRC) $(MAKE) install)
 	cp proto/i386/fileroot/usr/lib/iconv/UTF-8%646.so $(LIBDIR)
 	
 clean:
-	@cd src; pwd; $(MAKE) clean
+	@(cd src; pwd; SRC=$(SRC) $(MAKE) clean)
 	
 FRC:
 
