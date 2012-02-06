@@ -30,8 +30,9 @@ all:
 	
 install: all
 	@(cd src; pwd; SRC=$(SRC) $(MAKE) install)
+	mkdir -p $(LIBDIR)
 	cp proto/i386/fileroot/usr/lib/iconv/UTF-8%646.so $(LIBDIR)
-	
+
 clean:
 	@(cd src; pwd; SRC=$(SRC) $(MAKE) clean)
 	
