@@ -26,9 +26,9 @@
 PATH=/sbin:/usr/sbin:/usr/bin:/opt/SUNWspro/bin:/opt/local/bin
 BASE=$(PWD)
 DESTDIR=$(BASE)/proto
-SUBDIRS= bash bzip2 curl g11n gcc gcc4 gnupg gtar gzip less libexpat libidn \
-	libm libxml libz ncurses node.js nss-nspr ntp openldap openssl perl \
-	rsync screen socat uuid vim wget
+SUBDIRS= bash bzip2 curl dialog g11n gcc gcc4 gnupg gtar gzip less libexpat \
+	libidn libm libxml libz ncurses node.js nss-nspr ntp openldap openssl \
+	perl rsync screen socat uuid vim wget
 
 NAME=illumos-extra
 
