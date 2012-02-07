@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010 Joyent Inc.
+# Copyright (c) 2012 Joyent, Inc. All rights reserved.
 #
 
 VER=expat-2.0.1
@@ -48,7 +48,7 @@ all32: $(VER)/config.status
 all64: $(VER64)/config.status
 	(cd $(VER64); env \
 	    "CC=$(CC64)" "CXX=$(CCC64)" \
-	    "CFLAGS=$(CFLAGS64) -g -DHAVE_EXPAT_CONFIG_H $(LARGEFILES)" \
+	    "CFLAGS=$(CCFLAGS64) -g -DHAVE_EXPAT_CONFIG_H $(LARGEFILES)" \
 	    "INSTALL=/usr/ucb/install -c" \
         PATH=/opt/SUNWspro/bin:/usr/gnu/bin:$(PATH) \
 	    MAKE=$(CCSMAKE) $(CCSMAKE))
@@ -63,7 +63,7 @@ real-all: all32 all64
 $(VER)/config.status: $(VER)/configure
 	(cd $(VER); env \
         PATH=/opt/SUNWspro/bin:/usr/gnu/bin:$(PATH) \
-	    CC=$(CC) CFLAGS=$(CFLAGS) CXX=$(CCC) \
+	    CC=$(CC) CFLAGS=$(CCFLAGS) CXX=$(CCC) \
 	    "INSTALL=/usr/ucb/install -c" \
 	    "MAKE=$(CCSMAKE)" \
 	    ./configure --prefix=/usr)
@@ -71,7 +71,7 @@ $(VER)/config.status: $(VER)/configure
 $(VER64)/config.status: $(VER64)/configure
 	(cd $(VER64); env \
         PATH=/opt/SUNWspro/bin:/usr/gnu/bin:$(PATH) \
-	    "CC=$(CC64)" "CFLAGS=$(CFLAGS64)" "CXX=$(CCC64)" \
+	    CC=$(CC64) CFLAGS=$(CCFLAGS64) CXX=$(CCC64) \
 	    "INSTALL=/usr/ucb/install -c" \
 	    "MAKE=$(CCSMAKE)" \
 	    ./configure --prefix=/usr)
