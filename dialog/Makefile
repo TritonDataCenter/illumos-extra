@@ -44,7 +44,7 @@ $(VER)/src/auto/config.status: $(VER)/configure
 	(cd $(VER); env \
 	    "CC=gcc" "CXX=g++" \
 	    ./configure --prefix=/usr \
-	    --mandir=/usr/share \
+	    --mandir=/usr/share/man \
 	    --disable-Xdialog )
 
 $(VER)/configure:
