@@ -91,7 +91,7 @@ f usr/share/man/man1/curl-config.1 0444 root bin
 f usr/bin/curl 0755 root bin
 # dialog
 f usr/bin/dialog 0755 root bin
-f usr/man/man1/dialog.1 0444 root bin
+f usr/share/man/man1/dialog.1 0444 root bin
 # g11n
 d usr/lib/iconv 0755 root bin
 f usr/lib/iconv/UTF-8%646.so 0755 root bin
