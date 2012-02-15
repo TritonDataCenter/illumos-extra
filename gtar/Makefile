@@ -18,18 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2010 Joyent Inc.
 #
 
 VER=tar-1.23
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/sfw/bin/gcc
+CC=gcc
 SH=ksh93
 LD_OPTIONS="-M $(BASE)/mapfile_noexstk"
 
 all: $(VER)/config.status
-	(cd $(VER); env - CC=$(CC) LD_OPTIONS=$(LD_OPTIONS) PATH="/usr/perl5/bin:$(PATH)" gmake $(PARALLEL))
+	(cd $(VER); env - CC=$(CC) LD_OPTIONS=$(LD_OPTIONS) PATH="/usr/perl5/bin:$(PATH)" gmake)
 
 install: all
 	mkdir -p $(DESTDIR)/usr/bin

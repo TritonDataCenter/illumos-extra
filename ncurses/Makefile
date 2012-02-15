@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc., All rights reserved.
+# Copyright (c) 2010 Joyent Inc., All rights reserved.
 #
 
 VER=ncurses-5.7
@@ -26,15 +26,12 @@ VER64=$(VER)-64
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 USRDIR=$(DESTDIR)/usr
-GCC=$(DESTDIR)/usr/sfw/bin/gcc
 
 all: $(VER)/config.status $(VER64)/config.status
-	( cd $(VER); env - PATH=$(DESTDIR)/usr/sfw/bin:/usr/bin:$(PATH) \
-	    CC=$(GCC) \
-	    gmake $(PARALLEL) )
-	( cd $(VER64); env - PATH=$(DESTDIR)/usr/sfw/bin:/usr/bin:$(PATH) \
-	    CC=$(GCC) \
-	    gmake $(PARALLEL))
+	( cd $(VER); env - PATH=$(PATH) \
+	    gmake )
+	( cd $(VER64); env - PATH=$(PATH) \
+	    gmake )
 
 install: all
 	mkdir -p $(DESTDIR)
@@ -57,21 +54,17 @@ clean:
 	rm -rf $(VER) $(VER64)
 
 $(VER)/config.status: $(VER)/configure
-	(cd $(VER); \
-	     CC=$(GCC) \
-	    ./configure --prefix=/usr/gnu -C --with-shared --without-normal)
+	(cd $(VER); ./configure --prefix=/usr/gnu -C --with-shared --without-normal)
 
 $(VER64)/config.status: $(VER64)/configure
-	(cd $(VER64); \
-		CC=$(GCC) \
-		./configure --prefix=/usr/gnu --libdir=/usr/gnu/lib/amd64 -C --with-shared --without-normal)
+	(cd $(VER64); ./configure --prefix=/usr/gnu --libdir=/usr/gnu/lib/amd64 -C --with-shared --without-normal)
 
 $(VER)/configure: $(VER64)/configure
 	gtar -zxf $(VER).tar.gz
 	(cd $(VER) \
 	; gpatch -p1 --no-backup-if-mismatch < ../ncurses-01-widec.diff \
 	; gpatch -p1 --no-backup-if-mismatch < ../ncurses-02-rpath.diff \
-	)
+    )
 	touch $(VER)/configure
 
 $(VER64)/configure: $(VER).tar.gz
@@ -80,6 +73,6 @@ $(VER64)/configure: $(VER).tar.gz
 	(cd $(VER64) \
 	; gpatch -p1 --no-backup-if-mismatch < ../ncurses-01-widec.diff \
 	; gpatch -p1 --no-backup-if-mismatch < ../ncurses-02-rpath.diff \
-	)
+    )
 	touch $(VER64)/configure
 

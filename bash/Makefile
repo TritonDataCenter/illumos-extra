@@ -18,13 +18,13 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2010 Joyent Inc.
 #
 
 VER=bash-4.1
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-MAKE="gmake $(PARALLEL)"
+MAKE=gmake
 
 -include ../Makefile.inc
 

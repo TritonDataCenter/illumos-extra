@@ -18,13 +18,14 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2010 Joyent Inc.
 #
 
 VER=rsync-3.0.6
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/sfw/bin/gcc
+CCSMAKE=/usr/ccs/bin/make
+CC=cc
 GTAR=/usr/bin/gtar
 SH=ksh93
 
@@ -35,7 +36,7 @@ all: $(VER)/config.status
 	    CC=$(CC) \
 	    LD_OPTIONS="-M $(BASE)/mapfile_noexstk -L/usr/sfw/lib -R/usr/sfw/lib" \
 	    PATH=$(PATH) \
-	    MAKE=gmake gmake $(PARALLEL))
+	    MAKE=$(CCSMAKE) $(CCSMAKE))
 	@find . -name core -exec rm -f {} \;
 
 install: all
@@ -47,7 +48,7 @@ $(VER)/config.status: $(VER)/configure
 	    "CFLAGS=$(CFLAGS)" \
 	    "LD_OPTIONS=-L/usr/sfw/lib -R/usr/sfw/lib" \
 	    PATH=$(PATH) \
-	    MAKE=gmake \
+	    MAKE=$(CCSMAKE) \
 	./configure --prefix=/usr --with-included-popt )
 
 $(VER)/configure: $(VER).tar.gz

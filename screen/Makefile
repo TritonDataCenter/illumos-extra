@@ -18,18 +18,20 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2010 Joyent Inc.
 #
 
 VER=screen-4.0.3
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/sfw/bin/gcc
+CC=gcc
 GTAR=/usr/bin/gtar
 SH=ksh93
 
+#-include ../Makefile.inc
+
 all: $(VER)/config.status
-	(cd $(VER); env - PATH=$(PATH) $(MAKE) $(PARALLEL) all)
+	(cd $(VER); env - PATH=$(PATH) $(MAKE) all)
 
 install: all
 	mkdir -p $(DESTDIR)/usr/bin

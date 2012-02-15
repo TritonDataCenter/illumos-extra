@@ -18,23 +18,24 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc., All rights reserved.
+# Copyright (c) 2011 Joyent Inc., All rights reserved.
 #
 
 VER=libidn-1.11
 LARGEFILES= -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-MAKE=gmake
-CC=$(DESTDIR)/usr/sfw/bin/gcc
-CCC=$(DESTDIR)/usr/sfw/bin/g++
+CCSMAKE=/usr/ccs/bin/make
+CC=cc
+CCC=ccc
 
 all: $(VER)/config.status
 	(cd $(VER); env \
 	    CC=$(CC) CXX=$(CCC) \
 	    "CFLAGS= -g $(LARGEFILES)" \
 	    "INSTALL=/usr/ucb/install -c" \
-	    MAKE=$(MAKE) $(MAKE) $(PARALLEL))
+        PATH=/opt/SUNWspro/bin:/usr/gnu/bin:$(PATH) \
+	    MAKE=$(CCSMAKE) $(CCSMAKE))
 	@find . -name core -exec rm -f {} \;
 
 install: all
@@ -42,9 +43,10 @@ install: all
 
 $(VER)/config.status: $(VER)/configure
 	(cd $(VER); env \
+        PATH=/opt/SUNWspro/bin:/usr/gnu/bin:$(PATH) \
 	    CC=$(CC) CFLAGS=$(CFLAGS) CXX=$(CCC) \
 	    "INSTALL=/usr/ucb/install -c" \
-	    "MAKE=$(MAKE)" \
+	    "MAKE=$(CCSMAKE)" \
 	    ./configure)
 
 $(VER)/configure: $(VER).tar.gz

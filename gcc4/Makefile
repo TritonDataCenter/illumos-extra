@@ -25,12 +25,12 @@
 #
 
 #
-# Copyright 2012 Joyent Inc.
+# Copyright 2011 Joyent Inc.
 #
 
 VER=gcc-4.4.4
 
-SFW_PATH="/usr/ccs/bin:/opt/local/bin:/usr/sfw/bin:/usr/bin:/opt/local/bin"
+SFW_PATH="/opt/local/bin:/usr/sfw/bin:/usr/bin:/usr/ccs/bin:/opt/local/bin"
 
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
@@ -46,7 +46,7 @@ all: $(VER)-i386-build/config.status
 	    MAKE=gmake gmake \
 		CFLAGS="-g -O2" \
 		STAGE1_CFLAGS="-g -O2" \
-		CFLAGS_FOR_TARGET="-g -O2" $(PARALLEL) bootstrap)
+		CFLAGS_FOR_TARGET="-g -O2" -j128 bootstrap)
 
 install: all
 	(cd $(VER)-i386-build; env - \
@@ -59,7 +59,7 @@ install: all
 	    MAKE=gmake gmake \
 		CFLAGS="-g -O2" \
 		STAGE1_CFLAGS="-g -O2" \
-		CFLAGS_FOR_TARGET="-g -O2" $(PARALLEL) install)
+		CFLAGS_FOR_TARGET="-g -O2" -j128 install)
 
 $(VER)-i386-build/config.status: $(VER)-i386-build $(VER)/configure
 	(cd $(VER)-i386-build; env - \
@@ -69,12 +69,12 @@ $(VER)-i386-build/config.status: $(VER)-i386-build $(VER)/configure
 	    PATH=$(SFW_PATH) \
 	    MAKE=gmake \
 	../$(VER)/configure \
-		--prefix=/usr/sfw \
+		--prefix=/usr/gcc4 \
+		--with-as=/usr/sfw/bin/gas \
+		--with-gnu-as \
 		--with-ld=/usr/ccs/bin/ld \
 		--without-gnu-ld \
-		--with-gnu-as \
-		--with-as=/usr/gnu/bin/as \
-		--enable-languages="c,c++" \
+		--enable-languages="c,c++,fortran" \
 		--enable-shared \
 		--with-gmp=/opt/local \
 		--with-mpfr=/opt/local \
@@ -89,7 +89,7 @@ $(VER)-i386-build:
 	mkdir -p $@
 
 clean:
-	-rm -rf $(VER) $(VER)-i386-build
+	-rm -rf $(VER)-i386-build
 
 
 FRC:

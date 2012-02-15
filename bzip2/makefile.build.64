@@ -22,10 +22,10 @@
 # Copyright 2007 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2010 Joyent Inc.
 #
 
-CFLAGS64 = -m64 -fPIC -D_FILE_OFFSET_BITS=64
+CFLAGS64 = -m64 -KPIC -D_FILE_OFFSET_BITS=64
 
 BLOBJ= blocksort.o
 
@@ -41,18 +41,18 @@ BZOBJS= \
 	bzip2.o \
 	bzip2recover.o
 
-all: libbz2.so bzip2 bzip2recover
+all: libbz2.so .WAIT bzip2 bzip2recover
 
 bzip2: libbz2.so bzip2.o
-	gcc $(CFLAGS64) -o bzip2 bzip2.o -L. -lbz2
+	/opt/SUNWspro/bin/cc $(CFLAGS64) -o bzip2 bzip2.o -L. -lbz2
 
 bzip2recover: bzip2recover.o
-	gcc $(CFLAGS64) -o bzip2recover bzip2recover.o
+	/opt/SUNWspro/bin/cc $(CFLAGS64) -o bzip2recover bzip2recover.o
 
 libbz2.so: $(BLOBJ) $(OBJS)
 	rm -f libbz2.so libbz2.so.1
-	gcc $(CFLAGS64) $(XREGSFLAG64) -shared -o libbz2.so.1 \
-		-Wl,-z,defs,-z,text,-zcombreloc,$(BLOBJ) $(OBJS) -Wl,-M,../mapfile -L. \
+	/opt/SUNWspro/bin/cc $(CFLAGS64) $(XREGSFLAG64) -G -h libbz2.so.1 -o libbz2.so.1 \
+		-z defs -z text -zcombreloc $(BLOBJ) $(OBJS) -M ../mapfile -L. \
 		-L$(DESTDIR)/usr/lib -lc
 	ln -s libbz2.so.1 libbz2.so
 
@@ -74,7 +74,7 @@ test: bzip2
 
 blocksort.o: blocksort.c
 	@cat words0
-	gcc $(CFLAGS64) $(XREGSFLAG64) -c blocksort.c
+	/opt/SUNWspro/bin/cc $(CFLAGS64) $(XREGSFLAG64) -c blocksort.c
 
-#$(OBJS) $(BZOBJS):
-#	gcc $(CFLAGS64) $(XREGSFLAG64) -c $<
+$(OBJS) $(BZOBJS):
+	/opt/SUNWspro/bin/cc $(CFLAGS64) $(XREGSFLAG64) -c $<

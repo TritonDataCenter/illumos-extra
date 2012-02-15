@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2010 Joyent Inc.
 #
 
 VER=nss-3.12.8
@@ -31,12 +31,10 @@ all: real-all
 
 all32: $(VER)/.stamp
 	@ (cd $(VER)/mozilla/security/nss; \
-	    PATH=$(DESTDIR)/usr/sfw/bin:/sbin:/usr/sbin:/usr/bin:/opt/local/bin \
 	    gmake BUILD_OPT=1 NS_USE_GCC=1 NO_MDUPDATE=1 nss_build_all )
 
 all64: $(VER64)/.stamp
 	@ (cd $(VER64)/mozilla/security/nss; \
-	    PATH=$(DESTDIR)/usr/sfw/bin:/sbin:/usr/sbin:/usr/bin:/opt/local/bin \
 	    gmake USE_64=1 BUILD_OPT=1 NS_USE_GCC=1 NO_MDUPDATE=1 nss_build_all )
 
 install: all

@@ -18,26 +18,26 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2012 Joyent, Inc.
+# Copyright (c) 2011 Joyent Inc.
 #
 
 VER=openldap-2.4.26
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/sfw/bin/gcc
-PATH=$(DESTDIR)/usr/sfw/bin:/sbin:/usr/sbin:/usr/bin
-MAKE=gmake
+GCC=/usr/bin/gcc
+PATH=/sbin:/usr/sbin:/usr/bin
+MAKE=/opt/local/bin/make
 LDFLAGS=-Wl,-R/usr/openldap/lib -Wl,-R/lib -Wl,-R/usr/lib -Wl,-R/usr/sfw/lib
 
 -include ../Makefile.inc
 
 all: $(VER)/config.h
-	( cd $(VER); gmake $(PARALLEL))
+	( cd $(VER); gmake)
 
 install: all
 	mkdir -p $(DESTDIR)
 	( cd $(VER); XLDFLAGS="$(LDFLAGS)" \
-	    gmake $(PARALLEL) DESTDIR=$(DESTDIR) install)
+	    gmake DESTDIR=$(DESTDIR) install)
 
 clean:
 	rm -rf $(VER)

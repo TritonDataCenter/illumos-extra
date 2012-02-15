@@ -21,7 +21,7 @@
 #
 # Copyright (c) 2001, 2010, Oracle and/or its affiliates. All rights reserved.
 #
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2010 Joyent Inc.
 #
 
 # This makefile is unusual, because it builds both 32 and 64 bit
@@ -30,7 +30,6 @@
 
 VER=bzip2-1.0.6
 VER64=$(VER)-64
-GCC=$(DESTDIR)/usr/sfw/bin/gcc
 
 all: real-all
 
@@ -39,11 +38,13 @@ all: real-all
 
 all32: $(VER)/Makefile
 	(cd $(VER); env \
-	    CC=$(GCC) gmake)
+	    "MAKE=/usr/ccs/bin/make" \
+	    /usr/ccs/bin/make)
 
 all64: $(VER64)/Makefile
 	(cd $(VER64); env \
-	    CC="$(GCC) -m64 -fPIC" gmake)
+	    "MAKE=/usr/ccs/bin/make" \
+	    /usr/ccs/bin/make)
 
 install: all
 	/usr/bin/ksh93 ./install-bzip2 $(VER)

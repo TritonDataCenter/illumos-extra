@@ -18,24 +18,25 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2012 Joyent, Inc.
+# Copyright (c) 2010,2011 Joyent Inc.
 #
 
 VER=node-v0.6.9
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-GCC=$(DESTDIR)/usr/sfw/bin/gcc
+GCC=/usr/bin/gcc
+PATH=/sbin:/usr/sbin:/usr/bin:/opt/SUNWspro/bin
 
 -include ../Makefile.inc
 
 all: $(VER)/build/default/config.h
 	( cd $(VER); \
-	    gmake $(PARALLEL) CC=$(GCC))
+	    gmake CC=$(GCC))
 
 install: all
 	mkdir -p $(DESTDIR)
 	( cd $(VER); \
-	    gmake $(PARALLEL) CC=$(GCC) DESTDIR=$(DESTDIR) install)
+	    gmake CC=$(GCC) DESTDIR=$(DESTDIR) install)
 
 clean:
 	rm -rf $(VER)

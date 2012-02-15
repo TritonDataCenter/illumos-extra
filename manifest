@@ -62,12 +62,12 @@ f usr/share/man/man1/bzip2.1 0444 root bin
 f usr/share/man/man1/bzip2recover.1 0444 root bin
 f usr/share/man/man1/bzless.1 0444 root bin
 f usr/share/man/man1/bzmore.1 0444 root bin
-d usr/include 0755 root bin
-f usr/include/bzlib.h 0644 root bin
 f usr/lib/amd64/libbz2.so.1 0755 root bin
 s usr/lib/amd64/libbz2.so=libbz2.so.1
 f usr/lib/libbz2.so.1 0755 root bin
 s usr/lib/libbz2.so=libbz2.so.1
+d usr/include 0755 root bin
+f usr/include/bzlib.h 0644 root bin
 # curl
 f usr/lib/libcurl.so.4.2.0 0755 root bin
 s usr/lib/libcurl.so.4=libcurl.so.4.2.0
@@ -99,20 +99,14 @@ f usr/lib/iconv/UTF-8%646.so 0755 root bin
 f usr/sfw/lib/amd64/libgcc_s.so.1 0555 root bin
 s usr/sfw/lib/amd64/libgcc_s.so=libgcc_s.so.1
 s usr/sfw/lib/amd64/libgcc_s_amd64.so=libgcc_s.so.1
-f usr/sfw/lib/amd64/libstdc++.so.6.0.13 0555 root bin
-s usr/sfw/lib/amd64/libstdc++.so.6=libstdc++.so.6.0.13
-s usr/sfw/lib/amd64/libstdc++.so=libstdc++.so.6.0.13
+f usr/sfw/lib/amd64/libstdc++.so.6.0.3 0555 root bin
+s usr/sfw/lib/amd64/libstdc++.so.6=libstdc++.so.6.0.3
+s usr/sfw/lib/amd64/libstdc++.so=libstdc++.so.6.0.3
 f usr/sfw/lib/libgcc_s.so.1 0555 root bin
 s usr/sfw/lib/libgcc_s.so=libgcc_s.so.1
-f usr/sfw/lib/libstdc++.so.6.0.13 0555 root bin
-s usr/sfw/lib/libstdc++.so.6=libstdc++.so.6.0.13
-s usr/sfw/lib/libstdc++.so=libstdc++.so.6.0.13
-f usr/sfw/lib/libssp.so.0.0.0 0555 root bin
-s usr/sfw/lib/libssp.so.0=libssp.so.0.0.0
-s usr/sfw/lib/libssp.so=libssp.so.0
-f usr/sfw/lib/amd64/libssp.so.0.0.0 0555 root bin
-s usr/sfw/lib/amd64/libssp.so.0=libssp.so.0.0.0
-s usr/sfw/lib/amd64/libssp.so=libssp.so.0
+f usr/sfw/lib/libstdc++.so.6.0.3 0555 root bin
+s usr/sfw/lib/libstdc++.so.6=libstdc++.so.6.0.3
+s usr/sfw/lib/libstdc++.so=libstdc++.so.6.0.3
 # gnupg
 f usr/bin/gpg 0555 root bin
 # gtar

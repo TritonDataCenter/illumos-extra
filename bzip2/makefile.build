@@ -25,7 +25,7 @@
 # Copyright (c) 2010 Joyent Inc.
 #
 
-CFLAGS = -fPIC -D_FILE_OFFSET_BITS=64
+CFLAGS = -KPIC -D_FILE_OFFSET_BITS=64
 
 OBJS= blocksort.o  \
       huffman.o    \
@@ -35,18 +35,18 @@ OBJS= blocksort.o  \
       decompress.o \
       bzlib.o
 
-all: libbz2.so bzip2 bzip2recover
+all: libbz2.so .WAIT bzip2 bzip2recover
 
 bzip2: libbz2.so bzip2.o
-	gcc $(CFLAGS) -o bzip2 bzip2.o -L. -lbz2
+	/opt/SUNWspro/bin/cc $(CFLAGS) -o bzip2 bzip2.o -L. -lbz2
 
 bzip2recover: bzip2recover.o
-	gcc $(CFLAGS) -o bzip2recover bzip2recover.o
+	/opt/SUNWspro/bin/cc $(CFLAGS) -o bzip2recover bzip2recover.o
 
 libbz2.so: $(OBJS)
 	rm -f libbz2.so libbz2.so.1
-	gcc $(CFLAGS) $(XREGSFLAG) -shared -o libbz2.so.1 \
-		-Wl,-z,defs,-z,text,-zcombreloc $(OBJS) -Wl,-M,../mapfile -L. \
+	/opt/SUNWspro/bin/cc $(CFLAGS) $(XREGSFLAG) -G -h libbz2.so.1 -o libbz2.so.1 \
+		-z defs -z text -zcombreloc $(OBJS) -M ../mapfile -L. \
 		-L$(DESTDIR)/usr/lib -lc
 	ln -s libbz2.so.1 libbz2.so
 
@@ -68,4 +68,4 @@ test: bzip2
 
 blocksort.o: blocksort.c
 	@cat words0
-	gcc $(CFLAGS) -c blocksort.c
+	/opt/SUNWspro/bin/cc $(CFLAGS) -c blocksort.c
