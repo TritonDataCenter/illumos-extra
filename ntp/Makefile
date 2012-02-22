@@ -21,7 +21,8 @@
 
 #
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2011 Joyent Inc
+#
+# Copyright 2012 Joyent Inc
 #
 
 
@@ -47,23 +48,26 @@ CONFIGURE_OPTIONS +=	--without-lineeditlibs
 CONFIGURE_OPTIONS +=	--with-openssl-libdir=/lib
 CONFIGURE_OPTIONS +=	--disable-getifaddrs
 
-TARGET_ENV =   CC="gcc"
-TARGET_ENV +=   CFLAGS="-O2"
-TARGET_ENV +=   LD_OPTIONS="-L${DESTDIR}/usr/lib -L/usr/lib -R/usr/lib"
+TARGET_ENV =  CC="$(DESTDIR)/usr/sfw/bin/gcc"
+TARGET_ENV += CFLAGS="-O2"
+TARGET_ENV += LD_OPTIONS="-L${DESTDIR}/usr/lib -L/usr/lib -R/usr/lib"
 TARGET_ENV += DESTDIR=$(DESTDIR)
+TARGET_ENV += MAKE=gmake
 
 all: $(VER)/config.status
-	(cd $(VER); env - $(TARGET_ENV) gmake all)
+	(cd $(VER); env - $(TARGET_ENV) gmake $(PARALLEL) all)
 
 install: all
-	(cd $(VER); env - $(TARGET_ENV) gmake install)
+	(cd $(VER); env - $(TARGET_ENV) gmake $(PARALLEL) install)
 	(env - $(TARGET_ENV) ./install-ntp)
 
 $(VER)/config.status: clean $(VER)/.patched
-	(cd $(VER) ; env - PATH_PERL=/usr/perl5/bin/perl bash ./configure $(CONFIGURE_OPTIONS) $(TARGET_ENV))
+	(cd $(VER) ; env - PATH_PERL=/usr/perl5/bin/perl \
+		bash ./configure $(CONFIGURE_OPTIONS) $(TARGET_ENV))
 
 $(VER)/.patched: $(VER)
-	(cd $(VER) ; env - ; for x in ../Patches/*; do gpatch -p0 < $$x; done ;  touch .patched)
+	(cd $(VER) ; env - ; for x in ../Patches/*; \
+		do gpatch -p0 < $$x; done ;  touch .patched)
 
 $(VER):
 	gtar -zxf $(TARBALL)

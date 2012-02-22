@@ -18,23 +18,23 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010 Joyent Inc.
+# Copyright (c) 2012 Joyent Inc.
 #
 
 
 VER=less-436
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-GCC=/usr/bin/gcc
+GCC=$(DESTDIR)/usr/sfw/bin/gcc
 
 all: $(VER)/config.status
 	( cd $(VER); \
-	    gmake CC=$(GCC))
+	    gmake $(PARALLEL) CC=$(GCC))
 
 install: all
 	mkdir -p $(DESTDIR)
 	( cd $(VER); \
-	    gmake CC=/usr/bin/gcc DESTDIR=$(DESTDIR) install)
+	    gmake $(PARALLEL) CC=$(GCC) DESTDIR=$(DESTDIR) install)
 
 clean:
 	rm -rf $(VER)

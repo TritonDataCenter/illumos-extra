@@ -18,20 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010 Joyent Inc.
+# Copyright (c) 2012 Joyent Inc.
 #
 
 VER=wget-1.12
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-CC=gcc
+CC=$(DESTDIR)/usr/sfw/bin/gcc
 GTAR=/usr/bin/gtar
 SH=ksh93
 
-#-include ../Makefile.inc
-
 all: $(VER)/config.status
-	(cd $(VER); env - $(MAKE) all)
+	(cd $(VER); env - $(MAKE) $(PARALLEL) all)
 
 install: all
 	mkdir -p $(DESTDIR)/usr/bin
@@ -44,8 +42,8 @@ $(VER)/config.status: $(VER)/configure
 	    CC=$(CC) \
 	    "CFLAGS=$(CFLAGS)" \
 	    "LD_OPTIONS=-L$(ROOT)/mapfile_noexstk" \
-        PERL=/opt/local/bin/perl \
-        POD2MAN=/opt/local/bin/pod2man \
+	    PERL=/usr/perl5/5.12/bin/perl \
+	    POD2MAN=/usr/perl5/5.12/bin/pod2man \
 	    PATH=$(PATH) \
 	    MAKE=$(MAKE) \
 	./configure --prefix=/usr --sysconfdir=/etc --with-ssl --infodir=/usr/share/info)

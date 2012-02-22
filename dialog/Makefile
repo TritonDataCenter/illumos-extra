@@ -29,20 +29,23 @@ VER=dialog-1.1-20111020
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 
+GCC=$(DESTDIR)/usr/sfw/bin/gcc
+GXX=$(DESTDIR)/usr/sfw/bin/g++
+
 all: $(VER)/src/auto/config.status
 	(cd $(VER); env \
-	    "CC=gcc" "CXX=g++" \
+	    "CC=$(GCC)" "CXX=$(GXX)" \
 	    make -e)
 
 install: all
 	(cd $(VER); env \
-	    "CC=gcc" "CXX=g++" \
+	    "CC=$(GCC)" "CXX=$(GXX)" \
 	    DESTDIR=$(DESTDIR) \
 	    make -e install)
 
 $(VER)/src/auto/config.status: $(VER)/configure
 	(cd $(VER); env \
-	    "CC=gcc" "CXX=g++" \
+	    "CC=$(GCC)" "CXX=$(GXX)" \
 	    ./configure --prefix=/usr \
 	    --mandir=/usr/share/man \
 	    --disable-Xdialog )
