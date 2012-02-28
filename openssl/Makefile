@@ -39,27 +39,27 @@ CONFIG_STATUS = config.status
 all: all32 all64
 
 all32: $(VER)/$(CONFIG_STATUS)
-	cd $(VER); env - PATH=/opt/SUNWspro/bin:$(PATH) \
+	cd $(VER); env - PATH=$(PATH) \
 	"CFLAGS=$(CFLAGS)" \
-	gmake
+	gmake 
 
 all64: $(VER64)/$(CONFIG_STATUS)
-	cd $(VER64); env - PATH=/opt/SUNWspro/bin:$(PATH) \
+	cd $(VER64); env - PATH=$(PATH) \
 	"CFLAGS=$(CFLAGS)" \
-	gmake
+	gmake 
 
 # opensslconf.h is patched to ensure suitability for both 64bit and 32bit
 $(VER)/$(CONFIG_STATUS): $(VER)/configure
-	cd $(VER); env - PATH=/opt/SUNWspro/bin:$(PATH) \
+	cd $(VER); env - PATH=$(PATH) \
 	ksh93 ./Configure $(CONFIGURE_OPTIONS) 
 	gpatch -p1 $(VER)/crypto/opensslconf.h opensslconf.patch
-	cd $(VER); gmake depend
+	cd $(VER); gmake  depend
 	touch $@
 
 $(VER64)/$(CONFIG_STATUS): $(VER)/configure
-	cd $(VER64); env - PATH=/opt/SUNWspro/bin:$(PATH) \
+	cd $(VER64); env - PATH=$(PATH) \
 	ksh93 ./Configure $(CONFIGURE_OPTIONS64)
-	cd $(VER64); gmake depend
+	cd $(VER64); gmake  depend
 	touch $@
 
 install: all install32 install64
@@ -73,10 +73,12 @@ install64: all64
 
 $(VER)/configure: $(VER).tar.gz
 	gzip -dc $(VER).tar.gz | tar xopf -
+	gpatch -p1 $(VER)/Configure configure.patch
 	mv $(VER) $(VER64)
 	touch $(VER64)/configure
 	gzip -dc $(VER).tar.gz | tar xopf -
 	touch $(VER)/configure
+	gpatch -p1 $(VER)/Configure configure.patch
 
 clean:
 	-rm -rf $(VER) $(VER64)

@@ -44,7 +44,7 @@ GENERIC_CONFIGURE_OPTIONS = \
 	--openssldir=/etc/openssl \
 	--prefix=/usr \
 	--install_prefix=$(DESTDIR) \
- 	no-ec \
+	no-ec \
 	no-ecdh \
 	no-ecdsa \
 	no-rc3 \
@@ -61,16 +61,16 @@ GENERIC_CONFIGURE_OPTIONS = \
 	no-hw_padlock \
 	no-hw_sureware \
 	no-hw_ubsec \
- 	no-hw_cswift \
+	no-hw_cswift \
 	threads \
 	shared
 
-CONFIGURE_OPTIONS64_i386 = solaris64-x86_64-cc-sunw
+CONFIGURE_OPTIONS64_i386 = solaris64-x86_64-gcc-sunw
 CONFIGURE_OPTIONS64 = $(GENERIC_CONFIGURE_OPTIONS) \
 		$(CONFIGURE_OPTIONS64_i386) \
 		--pk11-libname=$(PKCS11_LIB64)
-			
-CONFIGURE_OPTIONS_i386 = solaris-x86-cc-sunw
+
+CONFIGURE_OPTIONS_i386 = solaris-x86-gcc-sunw
 CONFIGURE_OPTIONS = $(GENERIC_CONFIGURE_OPTIONS) \
 		$(CONFIGURE_OPTIONS_i386) \
 		--pk11-libname=$(PKCS11_LIB)
