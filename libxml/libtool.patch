@@ -1,5 +1,5 @@
---- libxml2-2.7.4/libtool.orig	Sun Sep 13 17:47:18 2009
-+++ libxml2-2.7.4/libtool	Sun Sep 13 17:47:34 2009
+--- libtool~	Wed Mar  7 22:45:42 2012
++++ libtool	Wed Mar  7 22:53:01 2012
 @@ -237,7 +237,7 @@
  finish_eval=""
  
@@ -8,4 +8,17 @@
 +hardcode_into_libs=no
  
  # Compile-time system search path for libraries.
- sys_lib_search_path_spec="/lib /usr/lib /usr/local/lib"
+ sys_lib_search_path_spec="/root/src/illumos-live/proto/usr/sfw/lib/gcc/i386-pc-solaris2.11/4.4.4/amd64 /root/src/illumos-live/proto/usr/sfw/lib/gcc /root/src/illumos-live/proto/usr/sfw/lib/amd64 /lib/amd64 /usr/lib/amd64"
+@@ -5101,6 +5101,12 @@
+ 	esac
+ 	continue
+ 	;;
++
++      -nodefaultlibs)
++	allow_undefined=no
++	compiler_flags="$compiler_flags $func_quote_for_eval_result"
++	continue
++	;;
+ 
+       -no-undefined)
+ 	allow_undefined=no

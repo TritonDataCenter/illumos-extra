@@ -41,7 +41,8 @@ all: real-all
 
 all32: $(VER)/zconf.h
 	(cd $(VER); env "CC=$(GCC) -fPIC" \
-	    "LDSHARED=$(GCC) -shared -fPIC -Wl,-h,libz.so.1 -Wl,-z,defs -Wl,-z,text -Wl,-z,combreloc -Wl,-M,../mapfile -L. -lc" \
+	    "LDFLAGS= -lc -lz" \
+	    "LDSHARED=$(GCC) -fno-builtin -nodefaultlibs -shared -fPIC -Wl,-h,libz.so.1 -Wl,-z,defs -Wl,-z,text -Wl,-z,combreloc -Wl,-M,../mapfile -L. -lc" \
 			PATH=$(DESTDIR)/usr/sfw/bin/:$(PATH) \
 	    make -e $(PARALLEL))
 
@@ -51,7 +52,8 @@ all32: $(VER)/zconf.h
 
 all64: $(VER64)/zconf.h
 	(cd $(VER64); env "CC=$(GCC) -m64 -fPIC" \
-	    "LDSHARED=$(GCC) -m64 -shared -fPIC -Wl,-h,libz.so.1 -Wl,-z,defs -Wl,-z,text -Wl,-z,combreloc -Wl,-M,../mapfile -L. -lc" \
+	    "LDFLAGS=-nodefaultlibs -lc -lz" \
+	    "LDSHARED=$(GCC) -m64 -fno-builtin -nodefaultlibs -shared -fPIC -Wl,-h,libz.so.1 -Wl,-z,defs -Wl,-z,text -Wl,-z,combreloc -Wl,-M,../mapfile -L. -lc" \
 			PATH=$(DESTDIR)/usr/sfw/bin/:$(PATH) \
 	    make -e $(PARALLEL))
 

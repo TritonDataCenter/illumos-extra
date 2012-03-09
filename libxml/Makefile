@@ -32,8 +32,9 @@
 VER=libxml2-2.7.6
 VER64=$(VER)-64
 
-LDFLAGS=	-z defs -z text -z combreloc -lpthread
-LARGEFILES=	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+LDFLAGS=	-z defs -z text -z combreloc -lpthread -lc -nodefaultlibs
+LARGEFILES=	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE \
+		-fno-builtin
 
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
@@ -48,17 +49,21 @@ all32: $(VER)/config.status
 	(cd $(VER); env - PATH=$(PATH) \
 	    "CC=$(GCC)" \
 	    "CFLAGS=$(LARGEFILES)" \
+	    "LDFLAGS=$(LDFLAGS)" \
 	    make -e libxml2.la; \
 	    env - PATH=$(PATH) "CFLAGS=$(LARGEFILES)" \
 	    "CC=$(GCC)" \
+	    "LDFLAGS=$(LDFLAGS)" \
 	    make -e $(PARALLEL)) 
 
 all64: $(VER64)/config.status
 	(cd $(VER64); env - PATH=$(PATH) "CC=$(GCC)" \
 	    "CFLAGS=-m64 $(LARGEFILES)" \
+	    "LDFLAGS=$(LDFLAGS)" \
 	    make -e libxml2.la; \
 	    env - PATH=$(PATH) "CFLAGS=-m64 $(LARGEFILES)" \
 	    "CC=$(GCC)" \
+	    "LDFLAGS=$(LDFLAGS)" \
 	    make -e $(PARALLEL)) 
 
 install: all
