@@ -3518,6 +3518,29 @@ d usr/perl5/site_perl/5.12/i86pc-solaris-64int 0755 root bin
 # rsync
 f usr/bin/rsync 0555 root bin
 f usr/share/man/man1/rsync.1 0444 root bin
+# rsyslog
+f etc/rsyslog.conf 0644 root bin
+d usr/lib/rsyslog 0755 root bin
+f usr/lib/rsyslog/immark.so 0755 root bin
+f usr/lib/rsyslog/imsolaris.so 0755 root bin
+f usr/lib/rsyslog/imtcp.so 0755 root bin
+f usr/lib/rsyslog/imudp.so 0755 root bin
+f usr/lib/rsyslog/imuxsock.so 0755 root bin
+f usr/lib/rsyslog/lmnet.so 0755 root bin
+f usr/lib/rsyslog/lmnetstrms.so 0755 root bin
+f usr/lib/rsyslog/lmnsd_ptcp.so 0755 root bin
+f usr/lib/rsyslog/lmregexp.so 0755 root bin
+f usr/lib/rsyslog/lmstrmsrv.so 0755 root bin
+f usr/lib/rsyslog/lmtcpclt.so 0755 root bin
+f usr/lib/rsyslog/lmtcpsrv.so 0755 root bin
+f usr/lib/rsyslog/lmzlibw.so 0755 root bin
+f usr/lib/rsyslog/ommail.so 0755 root bin
+f usr/lib/rsyslog/omprog.so 0755 root bin
+f usr/lib/rsyslog/omruleset.so 0755 root bin
+f usr/lib/rsyslog/omtesting.so 0755 root bin
+f usr/sbin/rsyslogd 0755 root bin
+f usr/share/man/man1m/rsyslogd.1m 0444 root bin
+f usr/share/man/man4/rsyslog.conf.4 0444 root bin
 # screen
 f usr/bin/screen 0555 root bin
 f usr/share/man/man1/screen.1 0444 root bin
