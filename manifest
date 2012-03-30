@@ -3550,6 +3550,16 @@ f usr/share/man/man1/socat.1 0444 root bin
 # uuid
 f usr/bin/uuid 0755 root bin
 f usr/share/man/man1/uuid.1 0644 root bin
+# tun
+d usr/include/net 0755 root bin
+f usr/include/net/if_tun.h 0644 root bin
+d usr/kernel 0755 root sys
+d usr/kernel/drv 0755 root sys
+d usr/kernel/drv/amd64 0755 root sys
+f usr/kernel/drv/amd64/tap 0755 root sys
+f usr/kernel/drv/amd64/tun 0755 root sys
+f usr/kernel/drv/tap.conf 0755 root sys
+f usr/kernel/drv/tun.conf 0755 root sys
 # vim
 f usr/bin/vim 0755 root bin
 f usr/bin/vimtutor 0755 root bin
