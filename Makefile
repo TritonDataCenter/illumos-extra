@@ -26,7 +26,7 @@
 BASE=$(PWD)
 DESTDIR=$(BASE)/proto
 PATH=$(DESTDIR)/usr/sfw/bin:/usr/sfw/bin:/usr/gnu/bin:/opt/local/bin:/sbin:/usr/sbin:/usr/bin:/opt/SUNWspro/bin:/opt/local/bin
-SUBDIRS= bash bzip2 curl dialog g11n gnupg gtar gzip less libexpat \
+SUBDIRS= bash bzip2 coreutils curl dialog g11n gnupg gtar gzip less libexpat \
 	libidn libm libxml libz ncurses node.js nss-nspr ntp openldap openssl \
 	perl rsync rsyslog screen socat tun uuid vim wget
 

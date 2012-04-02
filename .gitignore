@@ -1,6 +1,7 @@
 /bash/bash-4.1
 /bzip2/bzip2-1.0.6
 /bzip2/bzip2-1.0.6-64
+/coreutils/coreutils-8.13
 /curl/curl-7.21.2
 /dialog/dialog-1.1-20111020/
 /g11n/proto/
@@ -47,8 +48,10 @@
 /perl/perl-5.12.3
 /proto
 /rsync/rsync-3.0.6
+/rsyslog/rsyslog-5.8.9
 /screen/screen-4.0.3
 /socat/socat-1.7.1.3/
+/tun/tun-1.1
 /uuid/uuid-1.6.2
 /vim/vim72
 /wget/wget-1.12

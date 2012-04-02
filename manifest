@@ -68,6 +68,13 @@ f usr/lib/amd64/libbz2.so.1 0755 root bin
 s usr/lib/amd64/libbz2.so=libbz2.so.1
 f usr/lib/libbz2.so.1 0755 root bin
 s usr/lib/libbz2.so=libbz2.so.1
+# coreutils
+f usr/bin/readlink 0755 root bin
+f usr/bin/seq 0755 root bin
+f usr/bin/stat 0755 root bin
+f usr/share/man/man1/readlink.1 0444 root bin
+f usr/share/man/man1/seq.1 0444 root bin
+f usr/share/man/man1/stat.1 0444 root bin
 # curl
 f usr/lib/libcurl.so.4.2.0 0755 root bin
 s usr/lib/libcurl.so.4=libcurl.so.4.2.0
