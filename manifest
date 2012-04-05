@@ -1048,6 +1048,9 @@ f usr/include/openssl/ui_compat.h 0444 root bin
 f usr/include/openssl/x509.h 0444 root bin
 f usr/include/openssl/x509_vfy.h 0444 root bin
 f usr/include/openssl/x509v3.h 0444 root bin
+# pbzip2
+f usr/bin/pbzip2 0555 root bin
+f usr/share/man/man1/pbzip2.1 0444 root bin
 # perl
 d usr/perl5 0755 root bin
 d usr/perl5/5.12 0755 root bin
