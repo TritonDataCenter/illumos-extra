@@ -25,7 +25,7 @@
 # Copyright (c) 2012 Joyent Inc.
 #
 
-VERSION=0.9.8v
+VERSION=0.9.8w
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 
@@ -71,16 +71,12 @@ install64: all64
 	MACH64=amd64 VERDIR=$(VER64) BASE=$(BASE) DESTDIR=$(DESTDIR) \
 	    VERSION=$(VERSION) ksh93 ./install-sfw-64
 
-$(VER)/configure: $(VER).tar.gz
-	gzip -dc $(VER).tar.gz | tar xopf -
+$(VER)/configure: $(VER)-src
+	cp -r $(VER)-src $(VER) 
 	( cd $(VER) ; gpatch -p1 < ../configure.patch )
 	cp engine_pkcs11/* $(VER)/crypto/engine/
-	mv $(VER) $(VER64)
-	touch $(VER64)/configure
-	gzip -dc $(VER).tar.gz | tar xopf -
 	touch $(VER)/configure
-	( cd $(VER) ; gpatch -p1 < ../configure.patch )
-	cp engine_pkcs11/* $(VER)/crypto/engine/
+	cp -r  $(VER) $(VER64)
 
 clean:
 	-rm -rf $(VER) $(VER64)

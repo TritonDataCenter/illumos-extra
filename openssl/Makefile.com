@@ -23,12 +23,12 @@
 # Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
-# Copyright (c) 2010 Joyent Inc.
+# Copyright (c) 2012 Joyent Inc.
 #
 
 
 METAINFO_FILE = ../METADATA
-VER = openssl-0.9.8v
+VER = openssl-0.9.8w
 VER64 =$(VER)-64
 
 TARBALL = $(VER).tar.gz
