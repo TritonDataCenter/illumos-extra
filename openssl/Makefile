@@ -22,10 +22,10 @@
 #
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
 #
-# Copyright (c) 2010 Joyent Inc.
+# Copyright (c) 2012 Joyent Inc.
 #
 
-VERSION=0.9.8o
+VERSION=0.9.8w
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 
@@ -41,25 +41,25 @@ all: all32 all64
 all32: $(VER)/$(CONFIG_STATUS)
 	cd $(VER); env - PATH=$(PATH) \
 	"CFLAGS=$(CFLAGS)" \
-	gmake
+	gmake 
 
 all64: $(VER64)/$(CONFIG_STATUS)
 	cd $(VER64); env - PATH=$(PATH) \
 	"CFLAGS=$(CFLAGS)" \
-	gmake
+	gmake 
 
 # opensslconf.h is patched to ensure suitability for both 64bit and 32bit
 $(VER)/$(CONFIG_STATUS): $(VER)/configure
 	cd $(VER); env - PATH=$(PATH) \
 	ksh93 ./Configure $(CONFIGURE_OPTIONS) 
 	gpatch -p1 $(VER)/crypto/opensslconf.h opensslconf.patch
-	cd $(VER); gmake depend
+	cd $(VER); gmake  depend
 	touch $@
 
 $(VER64)/$(CONFIG_STATUS): $(VER)/configure
 	cd $(VER64); env - PATH=$(PATH) \
 	ksh93 ./Configure $(CONFIGURE_OPTIONS64)
-	cd $(VER64); gmake depend
+	cd $(VER64); gmake  depend
 	touch $@
 
 install: all install32 install64
@@ -71,12 +71,12 @@ install64: all64
 	MACH64=amd64 VERDIR=$(VER64) BASE=$(BASE) DESTDIR=$(DESTDIR) \
 	    VERSION=$(VERSION) ksh93 ./install-sfw-64
 
-$(VER)/configure: $(VER).tar.gz
-	gzip -dc $(VER).tar.gz | tar xopf -
-	mv $(VER) $(VER64)
-	touch $(VER64)/configure
-	gzip -dc $(VER).tar.gz | tar xopf -
+$(VER)/configure: $(VER)-src
+	cp -r $(VER)-src $(VER) 
+	( cd $(VER) ; gpatch -p1 < ../configure.patch )
+	cp engine_pkcs11/* $(VER)/crypto/engine/
 	touch $(VER)/configure
+	cp -r  $(VER) $(VER64)
 
 clean:
 	-rm -rf $(VER) $(VER64)
