@@ -39,6 +39,8 @@ install: all
 	    rm -f $(DESTDIR)/usr/perl5/5.12/lib/i86pc-solaris-64int/.packlist;\
 	    DESTDIR=$(DESTDIR) \
 	    gmake  install)
+	rm -f $(DESTDIR)/usr/perl5/5.12/lib/i86pc-solaris-64int/Config_heavy.pl
+	cp Config_heavy.pl $(DESTDIR)/usr/perl5/5.12/lib/i86pc-solaris-64int/
 
 $(VER):
 	gtar -zxf $(TARBALL)
