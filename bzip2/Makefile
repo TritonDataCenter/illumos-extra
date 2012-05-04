@@ -29,7 +29,6 @@
 # and 2 install scripts are used.
 
 VER=bzip2-1.0.6
-VER64=$(VER)-64
 GCC=$(DESTDIR)/usr/sfw/bin/gcc
 
 all: real-all
@@ -37,37 +36,31 @@ all: real-all
 # each all target has 2 parts.  The first builds the commands, and
 # the second builds the shared library.
 
-all32: $(VER)/Makefile
-	(cd $(VER); env \
+all32: $(VER)/i386/Makefile
+	(cd $(VER)/i386; env \
 	    CC=$(GCC) gmake)
 
-all64: $(VER64)/Makefile
-	(cd $(VER64); env \
-	    CC="$(GCC) -m64 -fPIC" gmake)
+all64: $(VER)/amd64/Makefile
+	(cd $(VER)/amd64; env \
+	    CC=$(GCC) gmake)
 
 install: all
-	/usr/bin/ksh93 ./install-bzip2 $(VER)
-	/usr/bin/ksh93 ./install-bzip2-64 $(VER)
+	/usr/bin/ksh93 ./install-bzip2 $(PWD)/$(VER)
 
 real-all: all32 all64
 
-# more hackiness - if building 64 bit objects, clone the source
-# directory after extracting it.
+$(VER)/Makefile.dist: $(VER).tar.gz
+	gzip -dc $(VER).tar.gz | tar xopf -
+	(cd $(VER); gpatch -p1 < ../bzip2.patch)
+	cp $(VER)/Makefile $(VER)/Makefile.dist
 
-$(VER)/Makefile: $(VER).tar.gz
-	gzip -dc $(VER).tar.gz | tar xopf -
-	(cd $(VER); gpatch -p1 < ../bzip2.patch)
-	cp $(VER)/Makefile $(VER)/Makefile.dist
-	cp makefile.build.64 $(VER)/Makefile
-	mv $(VER) $(VER64)
-	touch $(VER64)/Makefile
-	gzip -dc $(VER).tar.gz | tar xopf -
-	(cd $(VER); gpatch -p1 < ../bzip2.patch)
-	cp $(VER)/Makefile $(VER)/Makefile.dist
-	cp makefile.build $(VER)/Makefile
-	touch $(VER)/Makefile
+$(VER)/i386/Makefile: $(VER)/Makefile.dist makefile.build
+	mkdir -p $(VER)/i386
+	cp makefile.build $(VER)/i386/Makefile
+
+$(VER)/amd64/Makefile: $(VER)/Makefile.dist makefile.build.64
+	mkdir -p $(VER)/amd64
+	cp makefile.build.64 $(VER)/amd64/Makefile
 
 clean:
 	-rm -rf $(VER)
-	-rm -rf $(VER64)
-

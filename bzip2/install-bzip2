@@ -34,6 +34,7 @@ MANDIR=${PREFIX}/share/man/man1
 
 mkdir -p $BINDIR
 mkdir -p $LIBDIR
+mkdir -p $LIBDIR/amd64
 mkdir -p $INCDIR
 mkdir -p $MANDIR
 
@@ -47,7 +48,7 @@ sed \
 	> bzgrep.tmp
 _install S bzgrep.tmp ${BINDIR}/bzgrep 555
 
-cd ${VERS}
+cd ${VERS}/i386
 
 for i in bzip2 bzip2recover
 do
@@ -56,6 +57,16 @@ done
 
 _install H ${BINDIR}/bzip2 ${BINDIR}/bunzip2
 _install H ${BINDIR}/bzip2 ${BINDIR}/bzcat
+
+_install D libbz2.so.1 ${LIBDIR}/libbz2.so.1 755
+_install L libbz2.so.1 ${LIBDIR}/libbz2.so
+
+cd ${VERS}/amd64
+
+_install D libbz2.so.1 ${LIBDIR}/amd64/libbz2.so.1 755
+_install L libbz2.so.1 ${LIBDIR}/amd64/libbz2.so
+
+cd ${VERS}
 
 for i in bzmore bzdiff
 do
@@ -66,9 +77,6 @@ _install H ${BINDIR}/bzgrep ${BINDIR}/bzegrep
 _install H ${BINDIR}/bzgrep ${BINDIR}/bzfgrep
 _install H ${BINDIR}/bzmore ${BINDIR}/bzless
 _install H ${BINDIR}/bzdiff ${BINDIR}/bzcmp
-
-_install D libbz2.so.1 ${LIBDIR}/libbz2.so.1 755
-_install L libbz2.so.1 ${LIBDIR}/libbz2.so
 
 for i in bzlib.h
 do

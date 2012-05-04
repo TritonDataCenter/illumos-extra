@@ -1,5 +1,4 @@
 #
-#
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
@@ -22,50 +21,12 @@
 # Copyright 2007 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
-# Copyright (c) 2010 Joyent Inc.
+# Copyright (c) 2012 Joyent Inc.
 #
 
-CFLAGS = -fPIC -D_FILE_OFFSET_BITS=64
+CPPFLAGS = -D_FILE_OFFSET_BITS=64
+CFLAGS = -m32
+LDFLAGS = -m32
+PROG_LDFLAGS = -m32
 
-OBJS= blocksort.o  \
-      huffman.o    \
-      crctable.o   \
-      randtable.o  \
-      compress.o   \
-      decompress.o \
-      bzlib.o
-
-all: libbz2.so bzip2 bzip2recover
-
-bzip2: libbz2.so bzip2.o
-	gcc $(CFLAGS) -o bzip2 bzip2.o -L. -lbz2
-
-bzip2recover: bzip2recover.o
-	gcc $(CFLAGS) -o bzip2recover bzip2recover.o
-
-libbz2.so: $(OBJS)
-	rm -f libbz2.so libbz2.so.1
-	gcc $(CFLAGS) $(XREGSFLAG) -shared -o libbz2.so.1 \
-		-Wl,-z,defs,-z,text,-zcombreloc $(OBJS) -Wl,-M,../mapfile -L. \
-		-L$(DESTDIR)/usr/lib -lc
-	ln -s libbz2.so.1 libbz2.so
-
-test: bzip2
-	@cat words1
-	env LD_LIBRARY_PATH=`pwd` ./bzip2 -1  < sample1.ref > sample1.rb2
-	env LD_LIBRARY_PATH=`pwd` ./bzip2 -2  < sample2.ref > sample2.rb2
-	env LD_LIBRARY_PATH=`pwd` ./bzip2 -3  < sample3.ref > sample3.rb2
-	env LD_LIBRARY_PATH=`pwd` ./bzip2 -d  < sample1.bz2 > sample1.tst
-	env LD_LIBRARY_PATH=`pwd` ./bzip2 -d  < sample2.bz2 > sample2.tst
-	env LD_LIBRARY_PATH=`pwd` ./bzip2 -ds < sample3.bz2 > sample3.tst
-	cmp sample1.bz2 sample1.rb2 
-	cmp sample2.bz2 sample2.rb2
-	cmp sample3.bz2 sample3.rb2
-	cmp sample1.tst sample1.ref
-	cmp sample2.tst sample2.ref
-	cmp sample3.tst sample3.ref
-	@cat words3
-
-blocksort.o: blocksort.c
-	@cat words0
-	gcc $(CFLAGS) -c blocksort.c
+include ../../Makefile.com
