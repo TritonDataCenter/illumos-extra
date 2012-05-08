@@ -21,7 +21,7 @@
 # Copyright 2012 Joyent, Inc.
 #
 
-VER=node-v0.6.12
+VER=node-v0.6.17
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 GCC=$(DESTDIR)/usr/sfw/bin/gcc
