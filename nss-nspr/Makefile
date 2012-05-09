@@ -31,13 +31,15 @@ all: real-all
 
 all32: $(VER)/.stamp
 	@ (cd $(VER)/mozilla/security/nss; \
-	    PATH=$(DESTDIR)/usr/sfw/bin:/sbin:/usr/sbin:/usr/bin:/opt/local/bin \
-	    gmake BUILD_OPT=1 NS_USE_GCC=1 NO_MDUPDATE=1 nss_build_all )
+	    PATH=$(DESTDIR)/usr/bin:/sbin:/usr/sbin:/usr/bin:/opt/local/bin \
+	    gmake BUILD_OPT=1 BUILD_SUN_PKG=1 NS_USE_GCC=1 NO_MDUPDATE=1 \
+	    nss_build_all )
 
 all64: $(VER64)/.stamp
 	@ (cd $(VER64)/mozilla/security/nss; \
-	    PATH=$(DESTDIR)/usr/sfw/bin:/sbin:/usr/sbin:/usr/bin:/opt/local/bin \
-	    gmake USE_64=1 BUILD_OPT=1 NS_USE_GCC=1 NO_MDUPDATE=1 nss_build_all )
+	    PATH=$(DESTDIR)/usr/bin:/sbin:/usr/sbin:/usr/bin:/opt/local/bin \
+	    gmake USE_64=1 BUILD_OPT=1 BUILD_SUN_PKG=1 NS_USE_GCC=1 \
+	    NO_MDUPDATE=1 nss_build_all )
 
 install: all
 	DESTDIR=$(DESTDIR) ksh93 ./install-nss $(VER)

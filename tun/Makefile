@@ -24,7 +24,7 @@
 VER=tun-1.1
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/sfw/bin/gcc
+CC=$(DESTDIR)/usr/bin/gcc
 CFLAGS=-m64
 GTAR=/usr/bin/gtar
 

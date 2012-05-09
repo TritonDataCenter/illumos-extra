@@ -24,7 +24,7 @@
 VER=rsync-3.0.6
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/sfw/bin/gcc
+CC=$(DESTDIR)/usr/bin/gcc
 GTAR=/usr/bin/gtar
 SH=ksh93
 
@@ -33,7 +33,7 @@ SH=ksh93
 all: $(VER)/config.status
 	(cd $(VER); env \
 	    CC=$(CC) \
-	    LD_OPTIONS="-M $(BASE)/mapfile_noexstk -L/usr/sfw/lib -R/usr/sfw/lib" \
+	    LD_OPTIONS="-M $(BASE)/mapfile_noexstk" \
 	    PATH=$(PATH) \
 	    MAKE=gmake gmake $(PARALLEL))
 	@find . -name core -exec rm -f {} \;
@@ -45,7 +45,6 @@ $(VER)/config.status: $(VER)/configure
 	(cd $(VER); env \
 	    CC=$(CC) \
 	    "CFLAGS=$(CFLAGS)" \
-	    "LD_OPTIONS=-L/usr/sfw/lib -R/usr/sfw/lib" \
 	    PATH=$(PATH) \
 	    MAKE=gmake \
 	./configure --prefix=/usr --with-included-popt )

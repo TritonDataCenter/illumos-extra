@@ -25,7 +25,7 @@
 VER=gnupg-1.4.11
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-GCC=$(DESTDIR)/usr/sfw/bin/gcc
+GCC=$(DESTDIR)/usr/bin/gcc
 
 all: $(VER)/config.status
 	( cd $(VER); \

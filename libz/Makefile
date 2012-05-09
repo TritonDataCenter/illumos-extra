@@ -35,7 +35,7 @@ VER64=$(VER)-64
 
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-GCC=$(DESTDIR)/usr/sfw/bin/gcc
+GCC=$(DESTDIR)/usr/bin/gcc
 
 all: real-all
 
@@ -43,7 +43,7 @@ all32: $(VER)/zconf.h
 	(cd $(VER); env "CC=$(GCC) -fPIC" \
 	    "LDFLAGS= -lc -lz" \
 	    "LDSHARED=$(GCC) -fno-builtin -nodefaultlibs -shared -fPIC -Wl,-h,libz.so.1 -Wl,-z,defs -Wl,-z,text -Wl,-z,combreloc -Wl,-M,../mapfile -L. -lc" \
-			PATH=$(DESTDIR)/usr/sfw/bin/:$(PATH) \
+			PATH=$(DESTDIR)/usr/bin/:$(PATH) \
 	    make -e $(PARALLEL))
 
 # must override LDSHARED here, or the makefile uses the wrong
@@ -54,7 +54,7 @@ all64: $(VER64)/zconf.h
 	(cd $(VER64); env "CC=$(GCC) -m64 -fPIC" \
 	    "LDFLAGS=-nodefaultlibs -lc -lz" \
 	    "LDSHARED=$(GCC) -m64 -fno-builtin -nodefaultlibs -shared -fPIC -Wl,-h,libz.so.1 -Wl,-z,defs -Wl,-z,text -Wl,-z,combreloc -Wl,-M,../mapfile -L. -lc" \
-			PATH=$(DESTDIR)/usr/sfw/bin/:$(PATH) \
+			PATH=$(DESTDIR)/usr/bin/:$(PATH) \
 	    make -e $(PARALLEL))
 
 install: all
@@ -65,7 +65,7 @@ real-all: all32 all64
 
 $(VER)/zconf.h: $(VER)/configure
 	(cd $(VER); env \
-			PATH=$(DESTDIR)/usr/sfw/bin/:$(PATH) \
+			PATH=$(DESTDIR)/usr/bin/:$(PATH) \
 	    ./configure --shared \
 		--prefix=/usr)
 
@@ -76,7 +76,7 @@ $(VER)/zconf.h: $(VER)/configure
 
 $(VER64)/zconf.h: $(VER64)/configure
 	(cd $(VER64); env \
-			PATH=$(DESTDIR)/usr/sfw/bin/:$(PATH) CC=$(GCC)\
+			PATH=$(DESTDIR)/usr/bin/:$(PATH) CC=$(GCC)\
 	    ./configure --shared \
 		--prefix=/usr)
 

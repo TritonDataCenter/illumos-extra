@@ -26,7 +26,7 @@ BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 BINDIR=$(DESTDIR)/usr/bin
 MANDIR=$(DESTDIR)/usr/share/man/man1
-GCC=$(DESTDIR)/usr/sfw/bin/gcc
+GCC=$(DESTDIR)/usr/bin/gcc
 
 all: $(VER)/config.status
 	( cd $(VER); env - PATH=$(PATH) \

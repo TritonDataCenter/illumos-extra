@@ -26,21 +26,22 @@ VER64=$(VER)-64
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 USRDIR=$(DESTDIR)/usr
-GCC=$(DESTDIR)/usr/sfw/bin/gcc
+GCC=$(DESTDIR)/usr/bin/gcc
+GXX=$(DESTDIR)/usr/bin/g++
 
 all: $(VER)/config.status $(VER64)/config.status
-	( cd $(VER); env - PATH=$(DESTDIR)/usr/sfw/bin:/usr/bin:$(PATH) \
-	    CC=$(GCC) \
+	( cd $(VER); env - PATH=$(DESTDIR)/usr/bin:/usr/bin:$(PATH) \
+	    CC=$(GCC) CXX=$(GXX) \
 	    gmake $(PARALLEL) )
-	( cd $(VER64); env - PATH=$(DESTDIR)/usr/sfw/bin:/usr/bin:$(PATH) \
-	    CC=$(GCC) \
+	( cd $(VER64); env - PATH=$(DESTDIR)/usr/bin:/usr/bin:$(PATH) \
+	    CC="$(GCC) -m64" CXX="$(GXX) -m64" \
 	    gmake $(PARALLEL))
 
 install: all
 	mkdir -p $(DESTDIR)
-	@ ( cd $(VER); \
+	@ ( cd $(VER64); env - PATH=$(DESTDIR)/usr/bin:/usr/bin:$(PATH) \
 	    gmake DESTDIR=$(DESTDIR) install)
-	@ ( cd $(VER64); \
+	@ ( cd $(VER); env - PATH=$(DESTDIR)/usr/bin:/usr/bin:$(PATH) \
 	    gmake DESTDIR=$(DESTDIR) install)
 	mv $(USRDIR)/gnu/bin/infocmp $(USRDIR)/bin/ginfocmp
 	mv $(USRDIR)/gnu/bin/tic $(USRDIR)/bin/gtic
@@ -57,13 +58,14 @@ clean:
 	rm -rf $(VER) $(VER64)
 
 $(VER)/config.status: $(VER)/configure
-	(cd $(VER); \
-	     CC=$(GCC) \
+	(cd $(VER); env - PATH=$(DESTDIR)/usr/bin:/usr/bin:$(PATH) \
+	     CC=$(GCC) CXX=$(GXX) LDFLAGS="-R/usr/gnu/lib" \
 	    ./configure --prefix=/usr/gnu -C --with-shared --without-normal)
 
 $(VER64)/config.status: $(VER64)/configure
-	(cd $(VER64); \
-		CC=$(GCC) \
+	(cd $(VER64); env - PATH=$(DESTDIR)/usr/bin:/usr/bin:$(PATH) \
+		CC="$(GCC) -m64" CXX="$(GXX) -m64" \
+		LDFLAGS="-R/usr/gnu/lib/amd64" \
 		./configure --prefix=/usr/gnu --libdir=/usr/gnu/lib/amd64 -C --with-shared --without-normal)
 
 $(VER)/configure: $(VER64)/configure

@@ -26,8 +26,8 @@ LARGEFILES= -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 MAKE=gmake
-CC=$(DESTDIR)/usr/sfw/bin/gcc
-CCC=$(DESTDIR)/usr/sfw/bin/g++
+CC=$(DESTDIR)/usr/bin/gcc
+CCC=$(DESTDIR)/usr/bin/g++
 
 all: $(VER)/config.status
 	(cd $(VER); env \

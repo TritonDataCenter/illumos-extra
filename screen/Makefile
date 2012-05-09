@@ -24,7 +24,7 @@
 VER=screen-4.0.3
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/sfw/bin/gcc
+CC=$(DESTDIR)/usr/bin/gcc
 GTAR=/usr/bin/gtar
 SH=ksh93
 

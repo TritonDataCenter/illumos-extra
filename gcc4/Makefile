@@ -30,7 +30,7 @@
 
 VER=gcc-4.4.4
 
-SFW_PATH="/usr/ccs/bin:/opt/local/bin:/usr/sfw/bin:/usr/bin:/opt/local/bin"
+SFW_PATH="/opt/local/bin:/usr/bin"
 
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
@@ -69,11 +69,11 @@ $(VER)-i386-build/config.status: $(VER)-i386-build $(VER)/configure
 	    PATH=$(SFW_PATH) \
 	    MAKE=gmake \
 	../$(VER)/configure \
-		--prefix=/usr/sfw \
-		--with-ld=/usr/ccs/bin/ld \
+		--prefix=/usr \
+		--with-ld=/usr/bin/ld \
 		--without-gnu-ld \
 		--with-gnu-as \
-		--with-as=/usr/gnu/bin/as \
+		--with-as=/usr/bin/gas \
 		--enable-languages="c,c++" \
 		--enable-shared \
 		--with-gmp=/opt/local \

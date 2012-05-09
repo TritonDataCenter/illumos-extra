@@ -29,8 +29,8 @@ VER=dialog-1.1-20111020
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 
-GCC=$(DESTDIR)/usr/sfw/bin/gcc
-GXX=$(DESTDIR)/usr/sfw/bin/g++
+GCC=$(DESTDIR)/usr/bin/gcc
+GXX=$(DESTDIR)/usr/bin/g++
 
 all: $(VER)/src/auto/config.status
 	(cd $(VER); env \

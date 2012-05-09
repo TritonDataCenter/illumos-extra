@@ -24,7 +24,7 @@
 VER=pbzip2-1.1.6
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/sfw/bin/gcc
+CC=$(DESTDIR)/usr/bin/gcc
 GTAR=/usr/bin/gtar
 
 all: $(VER)/configure

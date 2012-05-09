@@ -39,7 +39,7 @@ LARGEFILES=	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE \
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 
-GCC=$(DESTDIR)/usr/sfw/bin/gcc
+GCC=$(DESTDIR)/usr/bin/gcc
 
 -include ../Makefile.inc
 
@@ -86,7 +86,7 @@ $(VER)/config.status: $(VER)/configure
 	(cd $(VER); \
 	    env - "CC=$(GCC)" "CFLAGS=$(LARGEFILES)" \
 	    "LDFLAGS=$(LDFLAGS)" \
-			"PATH=$(DESTDIR)/usr/sfw/bin/:/usr/gnu/bin:$(PATH)" \
+			"PATH=$(DESTDIR)/usr/bin/:$(PATH)" \
 	    ./configure --prefix=/usr --with-threads \
 	    --without-python)
 	cp mapfile $(VER)/libxml2.syms
@@ -96,7 +96,7 @@ $(VER64)/config.status: $(VER64)/configure
 	(cd $(VER64); \
 	    env - "CC=$(GCC)" "CFLAGS=-m64 $(LARGEFILES)" \
 	    "LDFLAGS=$(LDFLAGS)" \
-			"PATH=$(DESTDIR)/usr/sfw/bin/:/usr/gnu/bin:$(PATH)" \
+			"PATH=$(DESTDIR)/usr/bin/:$(PATH)" \
 	    ./configure --prefix=/usr --with-threads \
 	    --without-python)
 	cp mapfile $(VER64)/libxml2.syms

@@ -63,11 +63,8 @@ f usr/share/man/man1/bzip2recover.1 0444 root bin
 f usr/share/man/man1/bzless.1 0444 root bin
 f usr/share/man/man1/bzmore.1 0444 root bin
 d usr/include 0755 root bin
-f usr/include/bzlib.h 0644 root bin
 f usr/lib/amd64/libbz2.so.1 0755 root bin
-s usr/lib/amd64/libbz2.so=libbz2.so.1
 f usr/lib/libbz2.so.1 0755 root bin
-s usr/lib/libbz2.so=libbz2.so.1
 # coreutils
 f usr/bin/readlink 0755 root bin
 f usr/bin/seq 0755 root bin
@@ -78,23 +75,8 @@ f usr/share/man/man1/stat.1 0444 root bin
 # curl
 f usr/lib/libcurl.so.4.2.0 0755 root bin
 s usr/lib/libcurl.so.4=libcurl.so.4.2.0
-s usr/lib/libcurl.so=libcurl.so.4.2.0
-f usr/lib/pkgconfig/libcurl.pc 0644 root other
-s usr/lib/amd64/pkgconfig/libcurl.pc=../../pkgconfig/libcurl.pc
-f usr/bin/curl-config 0755 root bin
 d usr/include/curl 0755 root bin
-f usr/include/curl/curl.h 0644 root bin
-f usr/include/curl/curlbuild.h 0644 root bin
-f usr/include/curl/curlrules.h 0644 root bin
-f usr/include/curl/curlver.h 0644 root bin
-f usr/include/curl/easy.h 0644 root bin
-f usr/include/curl/mprintf.h 0644 root bin
-f usr/include/curl/multi.h 0644 root bin
-f usr/include/curl/stdcheaders.h 0644 root bin
-f usr/include/curl/typecheck-gcc.h 0644 root bin
-f usr/include/curl/types.h 0644 root bin
 f usr/share/man/man1/curl.1 0444 root bin
-f usr/share/man/man1/curl-config.1 0444 root bin
 f usr/bin/curl 0755 root bin
 # dialog
 f usr/bin/dialog 0755 root bin
@@ -103,23 +85,22 @@ f usr/share/man/man1/dialog.1 0444 root bin
 d usr/lib/iconv 0755 root bin
 f usr/lib/iconv/UTF-8%646.so 0755 root bin
 # gcc
-f usr/sfw/lib/amd64/libgcc_s.so.1 0555 root bin
-s usr/sfw/lib/amd64/libgcc_s.so=libgcc_s.so.1
-s usr/sfw/lib/amd64/libgcc_s_amd64.so=libgcc_s.so.1
-f usr/sfw/lib/amd64/libstdc++.so.6.0.13 0555 root bin
-s usr/sfw/lib/amd64/libstdc++.so.6=libstdc++.so.6.0.13
-s usr/sfw/lib/amd64/libstdc++.so=libstdc++.so.6.0.13
-f usr/sfw/lib/libgcc_s.so.1 0555 root bin
-s usr/sfw/lib/libgcc_s.so=libgcc_s.so.1
-f usr/sfw/lib/libstdc++.so.6.0.13 0555 root bin
-s usr/sfw/lib/libstdc++.so.6=libstdc++.so.6.0.13
-s usr/sfw/lib/libstdc++.so=libstdc++.so.6.0.13
-f usr/sfw/lib/libssp.so.0.0.0 0555 root bin
-s usr/sfw/lib/libssp.so.0=libssp.so.0.0.0
-s usr/sfw/lib/libssp.so=libssp.so.0
-f usr/sfw/lib/amd64/libssp.so.0.0.0 0555 root bin
-s usr/sfw/lib/amd64/libssp.so.0=libssp.so.0.0.0
-s usr/sfw/lib/amd64/libssp.so=libssp.so.0
+f usr/lib/amd64/libgcc_s.so.1 0555 root bin
+f usr/lib/amd64/libstdc++.so.6.0.13 0555 root bin
+s usr/lib/amd64/libstdc++.so.6=libstdc++.so.6.0.13
+f usr/lib/libgcc_s.so.1 0555 root bin
+f usr/lib/libstdc++.so.6.0.13 0555 root bin
+s usr/lib/libstdc++.so.6=libstdc++.so.6.0.13
+f usr/lib/libssp.so.0.0.0 0555 root bin
+s usr/lib/libssp.so.0=libssp.so.0.0.0
+f usr/lib/amd64/libssp.so.0.0.0 0555 root bin
+s usr/lib/amd64/libssp.so.0=libssp.so.0.0.0
+s usr/sfw/lib/libgcc_s.so.1=../../lib/libgcc_s.so.1
+s usr/sfw/lib/libstdc++.so.6=../../lib/libstdc++.so.6
+s usr/sfw/lib/libssp.so.0=../../lib/libssp.so.0
+s usr/sfw/lib/amd64/libgcc_s.so.1=../../../lib/amd64/libgcc_s.so.1
+s usr/sfw/lib/amd64/libstdc++.so.6=../../../lib/amd64/libstdc++.so.6
+s usr/sfw/lib/amd64/libssp.so.0=../../../lib/amd64/libssp.so.0
 # gnupg
 f usr/bin/gpg 0555 root bin
 # gtar
@@ -162,17 +143,12 @@ f usr/share/man/man1/lesskey.1 0444 root bin
 s usr/lib/amd64/libexpat.so.0=libexpat.so.1.5.2
 f usr/lib/amd64/libexpat.so.1.5.2 0555 root bin
 s usr/lib/amd64/libexpat.so.1=libexpat.so.1.5.2
-s usr/lib/amd64/libexpat.so=libexpat.so.1.5.2
 s usr/lib/libexpat.so.0=libexpat.so.1.5.2
 f usr/lib/libexpat.so.1.5.2 0555 root bin
 s usr/lib/libexpat.so.1=libexpat.so.1.5.2
-s usr/lib/libexpat.so=libexpat.so.1.5.2
-f usr/include/expat.h 0444 root bin
-f usr/include/expat_external.h 0444 root bin
 # libidn
 f usr/lib/libidn.so.11.5.40 0755 root bin
 s usr/lib/libidn.so.11=libidn.so.11.5.40
-s usr/lib/libidn.so=libidn.so.11.5.40
 # libm
 s usr/lib/amd64/libm.so.1=../../../lib/amd64/libm.so.1
 s usr/lib/amd64/libm.so.2=../../../lib/amd64/libm.so.2
@@ -207,124 +183,35 @@ f usr/include/sys/ieeefp.h 0644 root bin
 f usr/include/floatingpoint.h 0644 root bin
 # libxml
 s usr/lib/amd64/libxml2.so.2=../../../lib/amd64/libxml2.so.2
-s usr/lib/amd64/libxml2.so=libxml2.so.2
 f lib/amd64/libxml2.so.2 0555 root bin
-s lib/amd64/libxml2.so=libxml2.so.2
 f lib/libxml2.so.2 0555 root bin
-s lib/libxml2.so=libxml2.so.2
 s usr/lib/libxml2.so.2=../../lib/libxml2.so.2
-s usr/lib/libxml2.so=libxml2.so.2
 f usr/bin/xmlcatalog 0555 root bin
-f usr/bin/xml2-config 0555 root bin
 f usr/bin/xmllint 0555 root bin
-d usr/share/aclocal 0755 root other
-f usr/share/aclocal/libxml.m4 0444 root other
-f usr/share/man/man1/xml2-config.1 0444 root bin
 f usr/share/man/man1/xmlcatalog.1 0444 root bin
 f usr/share/man/man1/xmllint.1 0444 root bin
-d usr/include/libxml2 0755 root bin
-d usr/include/libxml2/libxml 0755 root bin
-f usr/include/libxml2/libxml/DOCBparser.h 0444 root bin
-f usr/include/libxml2/libxml/HTMLparser.h 0444 root bin
-f usr/include/libxml2/libxml/HTMLtree.h 0444 root bin
-f usr/include/libxml2/libxml/SAX.h 0444 root bin
-f usr/include/libxml2/libxml/SAX2.h 0444 root bin
-f usr/include/libxml2/libxml/c14n.h 0444 root bin
-f usr/include/libxml2/libxml/catalog.h 0444 root bin
-f usr/include/libxml2/libxml/chvalid.h 0444 root bin
-f usr/include/libxml2/libxml/debugXML.h 0444 root bin
-f usr/include/libxml2/libxml/dict.h 0444 root bin
-f usr/include/libxml2/libxml/encoding.h 0444 root bin
-f usr/include/libxml2/libxml/entities.h 0444 root bin
-f usr/include/libxml2/libxml/globals.h 0444 root bin
-f usr/include/libxml2/libxml/hash.h 0444 root bin
-f usr/include/libxml2/libxml/list.h 0444 root bin
-f usr/include/libxml2/libxml/nanoftp.h 0444 root bin
-f usr/include/libxml2/libxml/nanohttp.h 0444 root bin
-f usr/include/libxml2/libxml/parser.h 0444 root bin
-f usr/include/libxml2/libxml/parserInternals.h 0444 root bin
-f usr/include/libxml2/libxml/pattern.h 0444 root bin
-f usr/include/libxml2/libxml/relaxng.h 0444 root bin
-f usr/include/libxml2/libxml/schemasInternals.h 0444 root bin
-f usr/include/libxml2/libxml/schematron.h 0444 root bin
-f usr/include/libxml2/libxml/threads.h 0444 root bin
-f usr/include/libxml2/libxml/tree.h 0444 root bin
-f usr/include/libxml2/libxml/uri.h 0444 root bin
-f usr/include/libxml2/libxml/valid.h 0444 root bin
-f usr/include/libxml2/libxml/xinclude.h 0444 root bin
-f usr/include/libxml2/libxml/xlink.h 0444 root bin
-f usr/include/libxml2/libxml/xmlIO.h 0444 root bin
-f usr/include/libxml2/libxml/xmlautomata.h 0444 root bin
-f usr/include/libxml2/libxml/xmlerror.h 0444 root bin
-f usr/include/libxml2/libxml/xmlexports.h 0444 root bin
-f usr/include/libxml2/libxml/xmlmemory.h 0444 root bin
-f usr/include/libxml2/libxml/xmlmodule.h 0444 root bin
-f usr/include/libxml2/libxml/xmlreader.h 0444 root bin
-f usr/include/libxml2/libxml/xmlregexp.h 0444 root bin
-f usr/include/libxml2/libxml/xmlsave.h 0444 root bin
-f usr/include/libxml2/libxml/xmlschemas.h 0444 root bin
-f usr/include/libxml2/libxml/xmlschemastypes.h 0444 root bin
-f usr/include/libxml2/libxml/xmlstring.h 0444 root bin
-f usr/include/libxml2/libxml/xmlunicode.h 0444 root bin
-f usr/include/libxml2/libxml/xmlversion.h 0444 root bin
-f usr/include/libxml2/libxml/xmlwriter.h 0444 root bin
-f usr/include/libxml2/libxml/xpath.h 0444 root bin
-f usr/include/libxml2/libxml/xpathInternals.h 0444 root bin
-f usr/include/libxml2/libxml/xpointer.h 0444 root bin
 # libz
 f lib/amd64/libz.so.1 0755 root bin
-s lib/amd64/libz.so=libz.so.1
 s usr/lib/amd64/libz.so.1=../../../lib/amd64/libz.so.1
-s usr/lib/amd64/libz.so=libz.so.1
 f lib/libz.so.1 0755 root bin
-s lib/libz.so=libz.so.1
 s usr/lib/libz.so.1=../../lib/libz.so.1
-s usr/lib/libz.so=libz.so.1
-f usr/include/zlib.h 0644 root bin
-f usr/include/zconf.h 0644 root bin
 # ncurses
-d usr/include/ncurses 0755 root bin
-s usr/include/ncurses.h=curses.h
-f usr/include/ncurses/curses.h 0644 root bin
-f usr/include/ncurses/cursesapp.h 0644 root bin
-f usr/include/ncurses/cursesf.h 0644 root bin
-f usr/include/ncurses/cursesm.h 0644 root bin
-f usr/include/ncurses/cursesp.h 0644 root bin
-f usr/include/ncurses/cursesw.h 0644 root bin
-f usr/include/ncurses/cursslk.h 0644 root bin
-f usr/include/ncurses/eti.h 0644 root bin
-f usr/include/ncurses/etip.h 0644 root bin
-f usr/include/ncurses/form.h 0644 root bin
-f usr/include/ncurses/menu.h 0644 root bin
-f usr/include/ncurses/nc_tparm.h 0644 root bin
-s usr/include/ncurses/ncurses.h=curses.h
-f usr/include/ncurses/panel.h 0644 root bin
-f usr/include/ncurses/term.h 0644 root bin
-f usr/include/ncurses/unctrl.h 0644 root bin
 f usr/gnu/lib/amd64/libform.so.5.7 0755 root bin
 s usr/gnu/lib/amd64/libform.so.5=libform.so.5.7
-s usr/gnu/lib/amd64/libform.so=libform.so.5
 f usr/gnu/lib/amd64/libmenu.so.5.7 0755 root bin
 s usr/gnu/lib/amd64/libmenu.so.5=libmenu.so.5.7
-s usr/gnu/lib/amd64/libmenu.so=libmenu.so.5
 f usr/gnu/lib/amd64/libncurses.so.5.7 0755 root bin
 s usr/gnu/lib/amd64/libncurses.so.5=libncurses.so.5.7
-s usr/gnu/lib/amd64/libncurses.so=libncurses.so.5
 f usr/gnu/lib/amd64/libpanel.so.5.7 0755 root bin
 s usr/gnu/lib/amd64/libpanel.so.5=libpanel.so.5.7
-s usr/gnu/lib/amd64/libpanel.so=libpanel.so.5
 f usr/gnu/lib/libform.so.5.7 0755 root bin
 s usr/gnu/lib/libform.so.5=libform.so.5.7
-s usr/gnu/lib/libform.so=libform.so.5
 f usr/gnu/lib/libmenu.so.5.7 0755 root bin
 s usr/gnu/lib/libmenu.so.5=libmenu.so.5.7
-s usr/gnu/lib/libmenu.so=libmenu.so.5
 f usr/gnu/lib/libncurses.so.5.7 0755 root bin
 s usr/gnu/lib/libncurses.so.5=libncurses.so.5.7
-s usr/gnu/lib/libncurses.so=libncurses.so.5
 f usr/gnu/lib/libpanel.so.5.7 0755 root bin
 s usr/gnu/lib/libpanel.so.5=libpanel.so.5.7
-s usr/gnu/lib/libpanel.so=libpanel.so.5
 s usr/gnu/lib/terminfo=../share/terminfo
 d usr/gnu/share/doc/ncurses 0755 root bin
 f usr/gnu/share/doc/ncurses/README 0444 root bin
@@ -345,7 +232,6 @@ s usr/gnu/bin/tset=../../bin/gtset
 s usr/gnu/bin/reset=tset
 s usr/gnu/bin/captoinfo=tic
 s usr/gnu/bin/infotocap=tic
-f usr/gnu/bin/ncurses5-config 0755 root bin
 d usr/gnu/share/tabset 0755 root bin
 f usr/gnu/share/tabset/std 0644 root bin
 f usr/gnu/share/tabset/stdcrt 0644 root bin
@@ -400,33 +286,6 @@ f usr/gnu/share/terminfo/x/xterms 0644 root bin
 f usr/gnu/share/terminfo/x/xterms-sun 0644 root bin
 # node.js
 f usr/bin/node 0555 root bin
-d usr/include/node 0755 root bin
-f usr/include/node/ares.h 0644 root bin
-f usr/include/node/ares_version.h 0644 root bin
-d usr/include/node/c-ares 0755 root bin
-f usr/include/node/c-ares/ares.h 0644 root bin
-f usr/include/node/c-ares/ares_version.h 0644 root bin
-f usr/include/node/config.h 0644 root bin
-d usr/include/node/ev 0755 root bin
-f usr/include/node/node.h 0644 root bin
-f usr/include/node/node_buffer.h 0644 root bin
-f usr/include/node/node_config.h 0644 root bin
-f usr/include/node/node_object_wrap.h 0644 root bin
-f usr/include/node/node_version.h 0644 root bin
-d usr/include/node/uv-private 0755 root bin
-f usr/include/node/uv-private/eio.h 0644 root bin
-f usr/include/node/uv-private/ev.h 0644 root bin
-f usr/include/node/uv-private/ngx-queue.h 0644 root bin
-f usr/include/node/uv-private/tree.h 0644 root bin
-f usr/include/node/uv-private/uv-unix.h 0644 root bin
-f usr/include/node/uv-private/uv-win.h 0644 root bin
-f usr/include/node/uv.h 0644 root bin
-f usr/include/node/v8-debug.h 0644 root bin
-f usr/include/node/v8-preparser.h 0644 root bin
-f usr/include/node/v8-profiler.h 0644 root bin
-f usr/include/node/v8-testing.h 0644 root bin
-f usr/include/node/v8.h 0644 root bin
-f usr/include/node/v8stdint.h 0644 root bin
 f usr/lib/dtrace/node.d 0644 root bin
 f usr/share/man/man1/node.1 0444 root bin
 # nss-nspr
@@ -497,153 +356,6 @@ s usr/lib/mps/secv1/libsoftokn3.chk=../libsoftokn3.chk
 s usr/lib/mps/secv1/libsoftokn3.so=../libsoftokn3.so
 s usr/lib/mps/secv1/libsqlite3.so=../libsqlite3.so
 s usr/lib/mps/secv1/libssl3.so=../libssl3.so
-d usr/include/mps 0755 root bin
-f usr/include/mps/base64.h 0644 root bin
-f usr/include/mps/blapit.h 0644 root bin
-f usr/include/mps/cert.h 0644 root bin
-f usr/include/mps/certdb.h 0644 root bin
-f usr/include/mps/certt.h 0644 root bin
-f usr/include/mps/ciferfam.h 0644 root bin
-f usr/include/mps/cmmf.h 0644 root bin
-f usr/include/mps/cmmft.h 0644 root bin
-f usr/include/mps/cms.h 0644 root bin
-f usr/include/mps/cmsreclist.h 0644 root bin
-f usr/include/mps/cmst.h 0644 root bin
-f usr/include/mps/crmf.h 0644 root bin
-f usr/include/mps/crmft.h 0644 root bin
-f usr/include/mps/cryptohi.h 0644 root bin
-f usr/include/mps/cryptoht.h 0644 root bin
-f usr/include/mps/ecl-exp.h 0644 root bin
-f usr/include/mps/hasht.h 0644 root bin
-f usr/include/mps/jar-ds.h 0644 root bin
-f usr/include/mps/jar.h 0644 root bin
-f usr/include/mps/jarfile.h 0644 root bin
-f usr/include/mps/key.h 0644 root bin
-f usr/include/mps/keyhi.h 0644 root bin
-f usr/include/mps/keyt.h 0644 root bin
-f usr/include/mps/keythi.h 0644 root bin
-f usr/include/mps/nspr.h 0644 root bin
-f usr/include/mps/nss.h 0644 root bin
-f usr/include/mps/nssb64.h 0644 root bin
-f usr/include/mps/nssb64t.h 0644 root bin
-f usr/include/mps/nssbase.h 0644 root bin
-f usr/include/mps/nssbaset.h 0644 root bin
-f usr/include/mps/nssckbi.h 0644 root bin
-f usr/include/mps/nssckepv.h 0644 root bin
-f usr/include/mps/nssckft.h 0644 root bin
-f usr/include/mps/nssckfw.h 0644 root bin
-f usr/include/mps/nssckfwc.h 0644 root bin
-f usr/include/mps/nssckfwt.h 0644 root bin
-f usr/include/mps/nssckg.h 0644 root bin
-f usr/include/mps/nssckmdt.h 0644 root bin
-f usr/include/mps/nssckt.h 0644 root bin
-f usr/include/mps/nssilckt.h 0644 root bin
-f usr/include/mps/nssilock.h 0644 root bin
-f usr/include/mps/nsslocks.h 0644 root bin
-f usr/include/mps/nssrwlk.h 0644 root bin
-f usr/include/mps/nssrwlkt.h 0644 root bin
-d usr/include/mps/obsolete 0755 root bin
-f usr/include/mps/obsolete/pralarm.h 0644 root bin
-f usr/include/mps/obsolete/probslet.h 0644 root bin
-f usr/include/mps/obsolete/protypes.h 0644 root bin
-f usr/include/mps/obsolete/prsem.h 0644 root bin
-f usr/include/mps/ocsp.h 0644 root bin
-f usr/include/mps/ocspt.h 0644 root bin
-f usr/include/mps/p12.h 0644 root bin
-f usr/include/mps/p12plcy.h 0644 root bin
-f usr/include/mps/p12t.h 0644 root bin
-f usr/include/mps/pk11func.h 0644 root bin
-f usr/include/mps/pk11pqg.h 0644 root bin
-f usr/include/mps/pk11priv.h 0644 root bin
-f usr/include/mps/pk11pub.h 0644 root bin
-f usr/include/mps/pk11sdr.h 0644 root bin
-f usr/include/mps/pkcs11.h 0644 root bin
-f usr/include/mps/pkcs11f.h 0644 root bin
-f usr/include/mps/pkcs11n.h 0644 root bin
-f usr/include/mps/pkcs11p.h 0644 root bin
-f usr/include/mps/pkcs11t.h 0644 root bin
-f usr/include/mps/pkcs11u.h 0644 root bin
-f usr/include/mps/pkcs12.h 0644 root bin
-f usr/include/mps/pkcs12t.h 0644 root bin
-f usr/include/mps/pkcs7t.h 0644 root bin
-f usr/include/mps/plarena.h 0644 root bin
-f usr/include/mps/plarenas.h 0644 root bin
-f usr/include/mps/plbase64.h 0644 root bin
-f usr/include/mps/plerror.h 0644 root bin
-f usr/include/mps/plgetopt.h 0644 root bin
-f usr/include/mps/plhash.h 0644 root bin
-f usr/include/mps/plstr.h 0644 root bin
-f usr/include/mps/portreg.h 0644 root bin
-f usr/include/mps/pratom.h 0644 root bin
-f usr/include/mps/prbit.h 0644 root bin
-f usr/include/mps/prclist.h 0644 root bin
-f usr/include/mps/prcmon.h 0644 root bin
-f usr/include/mps/prcountr.h 0644 root bin
-f usr/include/mps/prcpucfg.h 0644 root bin
-f usr/include/mps/prcvar.h 0644 root bin
-f usr/include/mps/prdtoa.h 0644 root bin
-f usr/include/mps/preenc.h 0644 root bin
-f usr/include/mps/prenv.h 0644 root bin
-f usr/include/mps/prerr.h 0644 root bin
-f usr/include/mps/prerror.h 0644 root bin
-f usr/include/mps/prinet.h 0644 root bin
-f usr/include/mps/prinit.h 0644 root bin
-f usr/include/mps/prinrval.h 0644 root bin
-f usr/include/mps/prio.h 0644 root bin
-f usr/include/mps/pripcsem.h 0644 root bin
-d usr/include/mps/private 0755 root bin
-f usr/include/mps/private/pprio.h 0644 root bin
-f usr/include/mps/private/pprthred.h 0644 root bin
-f usr/include/mps/private/prpriv.h 0644 root bin
-f usr/include/mps/prlink.h 0644 root bin
-f usr/include/mps/prlock.h 0644 root bin
-f usr/include/mps/prlog.h 0644 root bin
-f usr/include/mps/prlong.h 0644 root bin
-f usr/include/mps/prmem.h 0644 root bin
-f usr/include/mps/prmon.h 0644 root bin
-f usr/include/mps/prmwait.h 0644 root bin
-f usr/include/mps/prnetdb.h 0644 root bin
-f usr/include/mps/prolock.h 0644 root bin
-f usr/include/mps/prpdce.h 0644 root bin
-f usr/include/mps/prprf.h 0644 root bin
-f usr/include/mps/prproces.h 0644 root bin
-f usr/include/mps/prrng.h 0644 root bin
-f usr/include/mps/prrwlock.h 0644 root bin
-f usr/include/mps/prshm.h 0644 root bin
-f usr/include/mps/prshma.h 0644 root bin
-f usr/include/mps/prsystem.h 0644 root bin
-f usr/include/mps/prthread.h 0644 root bin
-f usr/include/mps/prtime.h 0644 root bin
-f usr/include/mps/prtpool.h 0644 root bin
-f usr/include/mps/prtrace.h 0644 root bin
-f usr/include/mps/prtypes.h 0644 root bin
-f usr/include/mps/prvrsion.h 0644 root bin
-f usr/include/mps/prwin16.h 0644 root bin
-f usr/include/mps/secasn1.h 0644 root bin
-f usr/include/mps/secasn1t.h 0644 root bin
-f usr/include/mps/seccomon.h 0644 root bin
-f usr/include/mps/secder.h 0644 root bin
-f usr/include/mps/secdert.h 0644 root bin
-f usr/include/mps/secdig.h 0644 root bin
-f usr/include/mps/secdigt.h 0644 root bin
-f usr/include/mps/secerr.h 0644 root bin
-f usr/include/mps/sechash.h 0644 root bin
-f usr/include/mps/secitem.h 0644 root bin
-f usr/include/mps/secmime.h 0644 root bin
-f usr/include/mps/secmod.h 0644 root bin
-f usr/include/mps/secmodt.h 0644 root bin
-f usr/include/mps/secoid.h 0644 root bin
-f usr/include/mps/secoidt.h 0644 root bin
-f usr/include/mps/secpkcs5.h 0644 root bin
-f usr/include/mps/secpkcs7.h 0644 root bin
-f usr/include/mps/secport.h 0644 root bin
-f usr/include/mps/shsign.h 0644 root bin
-f usr/include/mps/smime.h 0644 root bin
-f usr/include/mps/ssl.h 0644 root bin
-f usr/include/mps/sslerr.h 0644 root bin
-f usr/include/mps/sslproto.h 0644 root bin
-f usr/include/mps/sslt.h 0644 root bin
-f usr/include/mps/utilrename.h 0644 root bin
 # ntp
 f etc/inet/ntp.client 0644 root sys
 f etc/inet/ntp.server 0644 root sys
@@ -676,32 +388,13 @@ f usr/openldap/bin/ldappasswd 0555 root bin
 f usr/openldap/bin/ldapsearch 0555 root bin
 f usr/openldap/bin/ldapurl 0555 root bin
 f usr/openldap/bin/ldapwhoami 0555 root bin
-d usr/openldap/include 0755 root bin
-f usr/openldap/include/lber.h 0444 root bin
-f usr/openldap/include/lber_types.h 0444 root bin
-f usr/openldap/include/ldap.h 0444 root bin
-f usr/openldap/include/ldap_cdefs.h 0444 root bin
-f usr/openldap/include/ldap_features.h 0444 root bin
-f usr/openldap/include/ldap_schema.h 0444 root bin
-f usr/openldap/include/ldap_utf8.h 0444 root bin
-f usr/openldap/include/ldif.h 0444 root bin
-f usr/openldap/include/slapi-plugin.h 0444 root bin
 d usr/openldap/lib 0755 root bin
 s usr/openldap/lib/liblber-2.4.so.2=liblber-2.4.so.2.7.1
 f usr/openldap/lib/liblber-2.4.so.2.7.1 0555 root bin
-f usr/openldap/lib/liblber.a 0444 root bin
-f usr/openldap/lib/liblber.la 0444 root bin
-s usr/openldap/lib/liblber.so=liblber-2.4.so.2.7.1
 s usr/openldap/lib/libldap-2.4.so.2=libldap-2.4.so.2.7.1
 f usr/openldap/lib/libldap-2.4.so.2.7.1 0555 root bin
-f usr/openldap/lib/libldap.a 0444 root bin
-f usr/openldap/lib/libldap.la 0444 root bin
-s usr/openldap/lib/libldap.so=libldap-2.4.so.2.7.1
 s usr/openldap/lib/libldap_r-2.4.so.2=libldap_r-2.4.so.2.7.1
 f usr/openldap/lib/libldap_r-2.4.so.2.7.1 0555 root bin
-f usr/openldap/lib/libldap_r.a 0444 root bin
-f usr/openldap/lib/libldap_r.la 0444 root bin
-s usr/openldap/lib/libldap_r.so=libldap_r-2.4.so.2.7.1
 d usr/openldap/share 0755 root bin
 d usr/openldap/share/man 0755 root bin
 d usr/openldap/share/man/man1 0755 root bin
@@ -715,264 +408,20 @@ f usr/openldap/share/man/man1/ldappasswd.1 0444 root bin
 f usr/openldap/share/man/man1/ldapsearch.1 0444 root bin
 f usr/openldap/share/man/man1/ldapurl.1 0444 root bin
 f usr/openldap/share/man/man1/ldapwhoami.1 0444 root bin
-d usr/openldap/share/man/man3 0755 root bin
-s usr/openldap/share/man/man3/ber_alloc_t.3=lber-encode.3
-s usr/openldap/share/man/man3/ber_bvarray_add.3=lber-types.3
-s usr/openldap/share/man/man3/ber_bvarray_free.3=lber-types.3
-s usr/openldap/share/man/man3/ber_bvdup.3=lber-types.3
-s usr/openldap/share/man/man3/ber_bvecadd.3=lber-types.3
-s usr/openldap/share/man/man3/ber_bvecfree.3=lber-types.3
-s usr/openldap/share/man/man3/ber_bvfree.3=lber-types.3
-s usr/openldap/share/man/man3/ber_bvstr.3=lber-types.3
-s usr/openldap/share/man/man3/ber_bvstrdup.3=lber-types.3
-s usr/openldap/share/man/man3/ber_dupbv.3=lber-types.3
-s usr/openldap/share/man/man3/ber_first_element.3=lber-decode.3
-s usr/openldap/share/man/man3/ber_flush.3=lber-encode.3
-s usr/openldap/share/man/man3/ber_free.3=lber-types.3
-s usr/openldap/share/man/man3/ber_get_bitstring.3=lber-decode.3
-s usr/openldap/share/man/man3/ber_get_boolean.3=lber-decode.3
-s usr/openldap/share/man/man3/ber_get_enum.3=lber-decode.3
-s usr/openldap/share/man/man3/ber_get_int.3=lber-decode.3
-s usr/openldap/share/man/man3/ber_get_next.3=lber-decode.3
-s usr/openldap/share/man/man3/ber_get_null.3=lber-decode.3
-s usr/openldap/share/man/man3/ber_get_stringa.3=lber-decode.3
-s usr/openldap/share/man/man3/ber_get_stringb.3=lber-decode.3
-s usr/openldap/share/man/man3/ber_next_element.3=lber-decode.3
-s usr/openldap/share/man/man3/ber_peek_tag.3=lber-decode.3
-s usr/openldap/share/man/man3/ber_printf.3=lber-encode.3
-s usr/openldap/share/man/man3/ber_put_enum.3=lber-encode.3
-s usr/openldap/share/man/man3/ber_put_int.3=lber-encode.3
-s usr/openldap/share/man/man3/ber_put_null.3=lber-encode.3
-s usr/openldap/share/man/man3/ber_put_ostring.3=lber-encode.3
-s usr/openldap/share/man/man3/ber_put_seq.3=lber-encode.3
-s usr/openldap/share/man/man3/ber_put_set.3=lber-encode.3
-s usr/openldap/share/man/man3/ber_put_string.3=lber-encode.3
-s usr/openldap/share/man/man3/ber_scanf.3=lber-decode.3
-s usr/openldap/share/man/man3/ber_skip_tag.3=lber-decode.3
-s usr/openldap/share/man/man3/ber_start_set.3=lber-encode.3
-s usr/openldap/share/man/man3/ber_str2bv.3=lber-types.3
-f usr/openldap/share/man/man3/lber-decode.3 0444 root bin
-f usr/openldap/share/man/man3/lber-encode.3 0444 root bin
-f usr/openldap/share/man/man3/lber-memory.3 0444 root bin
-f usr/openldap/share/man/man3/lber-sockbuf.3 0444 root bin
-f usr/openldap/share/man/man3/lber-types.3 0444 root bin
-s usr/openldap/share/man/man3/ld_errno.3=ldap_error.3
-f usr/openldap/share/man/man3/ldap.3 0444 root bin
-f usr/openldap/share/man/man3/ldap_abandon.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_abandon_ext.3=ldap_abandon.3
-f usr/openldap/share/man/man3/ldap_add.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_add_ext.3=ldap_add.3
-s usr/openldap/share/man/man3/ldap_add_ext_s.3=ldap_add.3
-s usr/openldap/share/man/man3/ldap_add_s.3=ldap_add.3
-s usr/openldap/share/man/man3/ldap_attributetype2name.3=ldap_schema.3
-s usr/openldap/share/man/man3/ldap_attributetype2str.3=ldap_schema.3
-s usr/openldap/share/man/man3/ldap_attributetype_free.3=ldap_schema.3
-f usr/openldap/share/man/man3/ldap_bind.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_bind_s.3=ldap_bind.3
-f usr/openldap/share/man/man3/ldap_compare.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_compare_ext.3=ldap_compare.3
-s usr/openldap/share/man/man3/ldap_compare_ext_s.3=ldap_compare.3
-s usr/openldap/share/man/man3/ldap_compare_s.3=ldap_compare.3
-s usr/openldap/share/man/man3/ldap_control_create.3=ldap_controls.3
-s usr/openldap/share/man/man3/ldap_control_dup.3=ldap_controls.3
-s usr/openldap/share/man/man3/ldap_control_find.3=ldap_controls.3
-s usr/openldap/share/man/man3/ldap_control_free.3=ldap_controls.3
-f usr/openldap/share/man/man3/ldap_controls.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_controls_dup.3=ldap_controls.3
-s usr/openldap/share/man/man3/ldap_controls_free.3=ldap_controls.3
-s usr/openldap/share/man/man3/ldap_count_entries.3=ldap_first_entry.3
-s usr/openldap/share/man/man3/ldap_count_messages.3=ldap_first_message.3
-s usr/openldap/share/man/man3/ldap_count_references.3=ldap_first_reference.3
-s usr/openldap/share/man/man3/ldap_count_values.3=ldap_get_values.3
-s usr/openldap/share/man/man3/ldap_count_values_len.3=ldap_get_values.3
-s usr/openldap/share/man/man3/ldap_dcedn2dn.3=ldap_get_dn.3
-f usr/openldap/share/man/man3/ldap_delete.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_delete_ext.3=ldap_delete.3
-s usr/openldap/share/man/man3/ldap_delete_ext_s.3=ldap_delete.3
-s usr/openldap/share/man/man3/ldap_delete_s.3=ldap_delete.3
-s usr/openldap/share/man/man3/ldap_destroy.3=ldap_dup.3
-s usr/openldap/share/man/man3/ldap_dn2ad_canonical.3=ldap_get_dn.3
-s usr/openldap/share/man/man3/ldap_dn2dcedn.3=ldap_get_dn.3
-s usr/openldap/share/man/man3/ldap_dn2str.3=ldap_get_dn.3
-s usr/openldap/share/man/man3/ldap_dn2ufn.3=ldap_get_dn.3
-s usr/openldap/share/man/man3/ldap_dnfree.3=ldap_get_dn.3
-f usr/openldap/share/man/man3/ldap_dup.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_err2string.3=ldap_error.3
-s usr/openldap/share/man/man3/ldap_errlist.3=ldap_error.3
-f usr/openldap/share/man/man3/ldap_error.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_explode_dn.3=ldap_get_dn.3
-s usr/openldap/share/man/man3/ldap_explode_rdn.3=ldap_get_dn.3
-f usr/openldap/share/man/man3/ldap_extended_operation.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_extended_operation_s.3=ldap_extended_operation.3
-f usr/openldap/share/man/man3/ldap_first_attribute.3 0444 root bin
-f usr/openldap/share/man/man3/ldap_first_entry.3 0444 root bin
-f usr/openldap/share/man/man3/ldap_first_message.3 0444 root bin
-f usr/openldap/share/man/man3/ldap_first_reference.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_free_urldesc.3=ldap_url.3
-f usr/openldap/share/man/man3/ldap_get_dn.3 0444 root bin
-f usr/openldap/share/man/man3/ldap_get_option.3 0444 root bin
-f usr/openldap/share/man/man3/ldap_get_values.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_get_values_len.3=ldap_get_values.3
-s usr/openldap/share/man/man3/ldap_init.3=ldap_open.3
-s usr/openldap/share/man/man3/ldap_init_fd.3=ldap_open.3
-s usr/openldap/share/man/man3/ldap_initialize.3=ldap_open.3
-s usr/openldap/share/man/man3/ldap_install_tls.3=ldap_tls.3
-s usr/openldap/share/man/man3/ldap_is_ldap_url.3=ldap_url.3
-s usr/openldap/share/man/man3/ldap_matchingrule2name.3=ldap_schema.3
-s usr/openldap/share/man/man3/ldap_matchingrule2str.3=ldap_schema.3
-s usr/openldap/share/man/man3/ldap_matchingrule_free.3=ldap_schema.3
-s usr/openldap/share/man/man3/ldap_memalloc.3=ldap_memory.3
-s usr/openldap/share/man/man3/ldap_memcalloc.3=ldap_memory.3
-s usr/openldap/share/man/man3/ldap_memfree.3=ldap_memory.3
-f usr/openldap/share/man/man3/ldap_memory.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_memrealloc.3=ldap_memory.3
-s usr/openldap/share/man/man3/ldap_memvfree.3=ldap_memory.3
-f usr/openldap/share/man/man3/ldap_modify.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_modify_ext.3=ldap_modify.3
-s usr/openldap/share/man/man3/ldap_modify_ext_s.3=ldap_modify.3
-s usr/openldap/share/man/man3/ldap_modify_s.3=ldap_modify.3
-f usr/openldap/share/man/man3/ldap_modrdn.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_modrdn2.3=ldap_modrdn.3
-s usr/openldap/share/man/man3/ldap_modrdn2_s.3=ldap_modrdn.3
-s usr/openldap/share/man/man3/ldap_modrdn_s.3=ldap_modrdn.3
-s usr/openldap/share/man/man3/ldap_mods_free.3=ldap_modify.3
-s usr/openldap/share/man/man3/ldap_msgfree.3=ldap_result.3
-s usr/openldap/share/man/man3/ldap_msgid.3=ldap_result.3
-s usr/openldap/share/man/man3/ldap_msgtype.3=ldap_result.3
-s usr/openldap/share/man/man3/ldap_next_attribute.3=ldap_first_attribute.3
-s usr/openldap/share/man/man3/ldap_next_entry.3=ldap_first_entry.3
-s usr/openldap/share/man/man3/ldap_next_message.3=ldap_first_message.3
-s usr/openldap/share/man/man3/ldap_next_reference.3=ldap_first_reference.3
-s usr/openldap/share/man/man3/ldap_objectclass2name.3=ldap_schema.3
-s usr/openldap/share/man/man3/ldap_objectclass2str.3=ldap_schema.3
-s usr/openldap/share/man/man3/ldap_objectclass_free.3=ldap_schema.3
-f usr/openldap/share/man/man3/ldap_open.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_parse_extended_result.3=ldap_parse_result.3
-f usr/openldap/share/man/man3/ldap_parse_reference.3 0444 root bin
-f usr/openldap/share/man/man3/ldap_parse_result.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_parse_sasl_bind_result.3=ldap_parse_result.3
-f usr/openldap/share/man/man3/ldap_parse_sort_control.3 0444 root bin
-f usr/openldap/share/man/man3/ldap_parse_vlv_control.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_perror.3=ldap_error.3
-f usr/openldap/share/man/man3/ldap_rename.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_rename_s.3=ldap_rename.3
-f usr/openldap/share/man/man3/ldap_result.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_result2error.3=ldap_error.3
-s usr/openldap/share/man/man3/ldap_sasl_bind.3=ldap_bind.3
-s usr/openldap/share/man/man3/ldap_sasl_bind_s.3=ldap_bind.3
-f usr/openldap/share/man/man3/ldap_schema.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_scherr2str.3=ldap_schema.3
-f usr/openldap/share/man/man3/ldap_search.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_search_ext.3=ldap_search.3
-s usr/openldap/share/man/man3/ldap_search_ext_s.3=ldap_search.3
-s usr/openldap/share/man/man3/ldap_search_s.3=ldap_search.3
-s usr/openldap/share/man/man3/ldap_search_st.3=ldap_search.3
-s usr/openldap/share/man/man3/ldap_set_option.3=ldap_get_option.3
-s usr/openldap/share/man/man3/ldap_set_rebind_proc.3=ldap_bind.3
-s usr/openldap/share/man/man3/ldap_set_urllist_proc.3=ldap_open.3
-s usr/openldap/share/man/man3/ldap_simple_bind.3=ldap_bind.3
-s usr/openldap/share/man/man3/ldap_simple_bind_s.3=ldap_bind.3
-f usr/openldap/share/man/man3/ldap_sort.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_sort_entries.3=ldap_sort.3
-s usr/openldap/share/man/man3/ldap_sort_strcasecmp.3=ldap_sort.3
-s usr/openldap/share/man/man3/ldap_sort_values.3=ldap_sort.3
-s usr/openldap/share/man/man3/ldap_start_tls.3=ldap_tls.3
-s usr/openldap/share/man/man3/ldap_start_tls_s.3=ldap_tls.3
-s usr/openldap/share/man/man3/ldap_str2attributetype.3=ldap_schema.3
-s usr/openldap/share/man/man3/ldap_str2dn.3=ldap_get_dn.3
-s usr/openldap/share/man/man3/ldap_str2matchingrule.3=ldap_schema.3
-s usr/openldap/share/man/man3/ldap_str2objectclass.3=ldap_schema.3
-s usr/openldap/share/man/man3/ldap_str2syntax.3=ldap_schema.3
-s usr/openldap/share/man/man3/ldap_strdup.3=ldap_memory.3
-f usr/openldap/share/man/man3/ldap_sync.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_syntax2name.3=ldap_schema.3
-s usr/openldap/share/man/man3/ldap_syntax2str.3=ldap_schema.3
-s usr/openldap/share/man/man3/ldap_syntax_free.3=ldap_schema.3
-f usr/openldap/share/man/man3/ldap_tls.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_tls_inplace.3=ldap_tls.3
-s usr/openldap/share/man/man3/ldap_unbind.3=ldap_bind.3
-s usr/openldap/share/man/man3/ldap_unbind_ext.3=ldap_bind.3
-s usr/openldap/share/man/man3/ldap_unbind_ext_s.3=ldap_bind.3
-s usr/openldap/share/man/man3/ldap_unbind_s.3=ldap_bind.3
-f usr/openldap/share/man/man3/ldap_url.3 0444 root bin
-s usr/openldap/share/man/man3/ldap_url_parse.3=ldap_url.3
-s usr/openldap/share/man/man3/ldap_value_free.3=ldap_get_values.3
-s usr/openldap/share/man/man3/ldap_value_free_len.3=ldap_get_values.3
 d usr/openldap/share/man/man5 0755 root bin
 f usr/openldap/share/man/man5/ldap.conf.5 0444 root bin
 f usr/openldap/share/man/man5/ldif.5 0444 root bin
-f usr/openldap/share/man/man5/slapd-bdb.5 0444 root bin
-f usr/openldap/share/man/man5/slapd-config.5 0444 root bin
-f usr/openldap/share/man/man5/slapd-dnssrv.5 0444 root bin
-s usr/openldap/share/man/man5/slapd-hdb.5=slapd-bdb.5
-f usr/openldap/share/man/man5/slapd-ldap.5 0444 root bin
-f usr/openldap/share/man/man5/slapd-ldbm.5 0444 root bin
-f usr/openldap/share/man/man5/slapd-ldif.5 0444 root bin
-f usr/openldap/share/man/man5/slapd-meta.5 0444 root bin
-f usr/openldap/share/man/man5/slapd-monitor.5 0444 root bin
-f usr/openldap/share/man/man5/slapd-ndb.5 0444 root bin
-f usr/openldap/share/man/man5/slapd-null.5 0444 root bin
-f usr/openldap/share/man/man5/slapd-passwd.5 0444 root bin
-f usr/openldap/share/man/man5/slapd-perl.5 0444 root bin
-f usr/openldap/share/man/man5/slapd-relay.5 0444 root bin
-f usr/openldap/share/man/man5/slapd-shell.5 0444 root bin
-f usr/openldap/share/man/man5/slapd-sock.5 0444 root bin
-f usr/openldap/share/man/man5/slapd-sql.5 0444 root bin
-f usr/openldap/share/man/man5/slapd.access.5 0444 root bin
-f usr/openldap/share/man/man5/slapd.backends.5 0444 root bin
-f usr/openldap/share/man/man5/slapd.conf.5 0444 root bin
-f usr/openldap/share/man/man5/slapd.overlays.5 0444 root bin
-f usr/openldap/share/man/man5/slapd.plugin.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-accesslog.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-auditlog.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-chain.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-collect.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-constraint.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-dds.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-dyngroup.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-dynlist.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-memberof.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-pbind.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-pcache.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-ppolicy.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-refint.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-retcode.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-rwm.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-sssvlv.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-syncprov.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-translucent.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-unique.5 0444 root bin
-f usr/openldap/share/man/man5/slapo-valsort.5 0444 root bin
-d usr/openldap/share/man/man8 0755 root bin
-f usr/openldap/share/man/man8/slapacl.8 0444 root bin
-f usr/openldap/share/man/man8/slapadd.8 0444 root bin
-f usr/openldap/share/man/man8/slapauth.8 0444 root bin
-f usr/openldap/share/man/man8/slapcat.8 0444 root bin
-f usr/openldap/share/man/man8/slapd.8 0444 root bin
-f usr/openldap/share/man/man8/slapdn.8 0444 root bin
-f usr/openldap/share/man/man8/slapindex.8 0444 root bin
-f usr/openldap/share/man/man8/slappasswd.8 0444 root bin
-f usr/openldap/share/man/man8/slapschema.8 0444 root bin
-f usr/openldap/share/man/man8/slaptest.8 0444 root bin
 # openssl
 f usr/bin/amd64/openssl 0555 root bin
 s usr/sfw/bin/amd64/openssl=../../../bin/amd64/openssl
 f lib/amd64/libcrypto.so.0.9.8 0755 root bin
-s lib/amd64/libcrypto.so=libcrypto.so.0.9.8
 s usr/lib/amd64/libcrypto.so.0.9.8=../../../lib/amd64/libcrypto.so.0.9.8
-s usr/lib/amd64/libcrypto.so=../../../lib/amd64/libcrypto.so
 f lib/amd64/libssl.so.0.9.8 0755 root bin
-s lib/amd64/libssl.so=libssl.so.0.9.8
 s usr/lib/amd64/libssl.so.0.9.8=../../../lib/amd64/libssl.so.0.9.8
-s usr/lib/amd64/libssl.so=../../../lib/amd64/libssl.so
 f lib/libcrypto.so.0.9.8 0755 root bin
-s lib/libcrypto.so=libcrypto.so.0.9.8
 s usr/lib/libcrypto.so.0.9.8=../../lib/libcrypto.so.0.9.8
-s usr/lib/libcrypto.so=../../lib/libcrypto.so
 f lib/libssl.so.0.9.8 0755 root bin
-s lib/libssl.so=libssl.so.0.9.8
 s usr/lib/libssl.so.0.9.8=../../lib/libssl.so.0.9.8
-s usr/lib/libssl.so=../../lib/libssl.so
 f usr/bin/CA.pl 0555 root bin
 f usr/bin/openssl 0555 root bin
 s usr/sfw/bin/openssl=../../bin/openssl
@@ -980,74 +429,6 @@ d etc/openssl 0755 root sys
 d etc/openssl/certs 0755 root sys
 f etc/openssl/openssl.cnf 0644 root sys
 d etc/openssl/private 0700 root sys
-d etc/sfw 0755 root bin
-s etc/sfw/openssl=../openssl
-d usr/include/openssl 0755 root bin
-f usr/include/openssl/aes.h 0444 root bin
-f usr/include/openssl/asn1.h 0444 root bin
-f usr/include/openssl/asn1_mac.h 0444 root bin
-f usr/include/openssl/asn1t.h 0444 root bin
-f usr/include/openssl/bio.h 0444 root bin
-f usr/include/openssl/blowfish.h 0444 root bin
-f usr/include/openssl/bn.h 0444 root bin
-f usr/include/openssl/buffer.h 0444 root bin
-f usr/include/openssl/cast.h 0444 root bin
-f usr/include/openssl/comp.h 0444 root bin
-f usr/include/openssl/conf.h 0444 root bin
-f usr/include/openssl/conf_api.h 0444 root bin
-f usr/include/openssl/crypto.h 0444 root bin
-f usr/include/openssl/des.h 0444 root bin
-f usr/include/openssl/des_old.h 0444 root bin
-f usr/include/openssl/dh.h 0444 root bin
-f usr/include/openssl/dsa.h 0444 root bin
-f usr/include/openssl/dso.h 0444 root bin
-f usr/include/openssl/dtls1.h 0444 root bin
-f usr/include/openssl/e_os2.h 0444 root bin
-f usr/include/openssl/ebcdic.h 0444 root bin
-f usr/include/openssl/engine.h 0444 root bin
-f usr/include/openssl/err.h 0444 root bin
-f usr/include/openssl/evp.h 0444 root bin
-f usr/include/openssl/hmac.h 0444 root bin
-f usr/include/openssl/krb5_asn.h 0444 root bin
-f usr/include/openssl/kssl.h 0444 root bin
-f usr/include/openssl/lhash.h 0444 root bin
-f usr/include/openssl/md2.h 0444 root bin
-f usr/include/openssl/md4.h 0444 root bin
-f usr/include/openssl/md5.h 0444 root bin
-f usr/include/openssl/obj_mac.h 0444 root bin
-f usr/include/openssl/objects.h 0444 root bin
-f usr/include/openssl/ocsp.h 0444 root bin
-f usr/include/openssl/opensslconf.h 0444 root bin
-f usr/include/openssl/opensslv.h 0444 root bin
-f usr/include/openssl/ossl_typ.h 0444 root bin
-f usr/include/openssl/pem.h 0444 root bin
-f usr/include/openssl/pem2.h 0444 root bin
-f usr/include/openssl/pkcs12.h 0444 root bin
-f usr/include/openssl/pkcs7.h 0444 root bin
-f usr/include/openssl/pq_compat.h 0444 root bin
-f usr/include/openssl/pqueue.h 0444 root bin
-f usr/include/openssl/rand.h 0444 root bin
-f usr/include/openssl/rc2.h 0444 root bin
-f usr/include/openssl/rc4.h 0444 root bin
-f usr/include/openssl/ripemd.h 0444 root bin
-f usr/include/openssl/rsa.h 0444 root bin
-f usr/include/openssl/safestack.h 0444 root bin
-f usr/include/openssl/sha.h 0444 root bin
-f usr/include/openssl/ssl.h 0444 root bin
-f usr/include/openssl/ssl2.h 0444 root bin
-f usr/include/openssl/ssl23.h 0444 root bin
-f usr/include/openssl/ssl3.h 0444 root bin
-f usr/include/openssl/stack.h 0444 root bin
-f usr/include/openssl/store.h 0444 root bin
-f usr/include/openssl/symhacks.h 0444 root bin
-f usr/include/openssl/tls1.h 0444 root bin
-f usr/include/openssl/tmdiff.h 0444 root bin
-f usr/include/openssl/txt_db.h 0444 root bin
-f usr/include/openssl/ui.h 0444 root bin
-f usr/include/openssl/ui_compat.h 0444 root bin
-f usr/include/openssl/x509.h 0444 root bin
-f usr/include/openssl/x509_vfy.h 0444 root bin
-f usr/include/openssl/x509v3.h 0444 root bin
 # pbzip2
 f usr/bin/pbzip2 0555 root bin
 f usr/share/man/man1/pbzip2.1 0444 root bin
@@ -3561,8 +2942,6 @@ f usr/share/man/man1/socat.1 0444 root bin
 f usr/bin/uuid 0755 root bin
 f usr/share/man/man1/uuid.1 0644 root bin
 # tun
-d usr/include/net 0755 root bin
-f usr/include/net/if_tun.h 0644 root bin
 d usr/kernel 0755 root sys
 d usr/kernel/drv 0755 root sys
 d usr/kernel/drv/amd64 0755 root sys

@@ -48,9 +48,9 @@ CONFIGURE_OPTIONS +=	--without-lineeditlibs
 CONFIGURE_OPTIONS +=	--with-openssl-libdir=/lib
 CONFIGURE_OPTIONS +=	--disable-getifaddrs
 
-TARGET_ENV =  CC="$(DESTDIR)/usr/sfw/bin/gcc"
+TARGET_ENV =  CC="$(DESTDIR)/usr/bin/gcc"
 TARGET_ENV += CFLAGS="-O2"
-TARGET_ENV += LD_OPTIONS="-L${DESTDIR}/usr/lib -L/usr/lib -R/usr/lib"
+TARGET_ENV += LD_OPTIONS="-L${DESTDIR}/usr/lib"
 TARGET_ENV += DESTDIR=$(DESTDIR)
 TARGET_ENV += MAKE=gmake
 

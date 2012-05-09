@@ -24,10 +24,10 @@
 VER=openldap-2.4.26
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/sfw/bin/gcc
-PATH=$(DESTDIR)/usr/sfw/bin:/sbin:/usr/sbin:/usr/bin
+CC=$(DESTDIR)/usr/bin/gcc
+PATH=$(DESTDIR)/usr/bin:/sbin:/usr/sbin:/usr/bin
 MAKE=gmake
-LDFLAGS=-Wl,-R/usr/openldap/lib -Wl,-R/lib -Wl,-R/usr/lib -Wl,-R/usr/sfw/lib
+LDFLAGS=-Wl,-R/usr/openldap/lib
 
 -include ../Makefile.inc
 

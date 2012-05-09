@@ -25,7 +25,7 @@
 
 BASE=$(PWD)
 DESTDIR=$(BASE)/proto
-PATH=$(DESTDIR)/usr/sfw/bin:/usr/sfw/bin:/usr/gnu/bin:/opt/local/bin:/sbin:/usr/sbin:/usr/bin:/opt/SUNWspro/bin:/opt/local/bin
+PATH=$(DESTDIR)/usr/bin:/usr/sfw/bin:/usr/gnu/bin:/opt/local/bin:/sbin:/usr/sbin:/usr/bin:/opt/SUNWspro/bin:/opt/local/bin
 SUBDIRS= bash bzip2 coreutils curl dialog g11n gnupg gtar gzip less libexpat \
 	libidn libm libxml libz ncurses node.js nss-nspr ntp openldap openssl \
 	pbzip2 perl rsync rsyslog screen socat tun uuid vim wget
@@ -54,10 +54,10 @@ all: $(SUBDIRS)
 # environment variable nulls out the search path. Other vars just control what
 # gets appended.
 #
-$(DESTDIR)/usr/sfw/bin/gcc: FRC
+$(DESTDIR)/usr/bin/gcc: FRC
 	cd gcc4; PKG_CONFIG_LIBDIR="" $(MAKE) PARALLEL=$(PARALLEL) DESTDIR=$(DESTDIR) install
 
-$(SUBDIRS): $(DESTDIR)/usr/sfw/bin/gcc
+$(SUBDIRS): $(DESTDIR)/usr/bin/gcc
 	cd $@; PKG_CONFIG_LIBDIR="" $(MAKE) PARALLEL=$(PARALLEL) DESTDIR=$(DESTDIR) install
 
 install: $(SUBDIRS) gcc4

@@ -29,7 +29,7 @@
 # and 2 install scripts are used.
 
 VER=bzip2-1.0.6
-GCC=$(DESTDIR)/usr/sfw/bin/gcc
+GCC=$(DESTDIR)/usr/bin/gcc
 
 all: real-all
 

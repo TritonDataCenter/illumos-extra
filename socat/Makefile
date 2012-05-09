@@ -24,7 +24,7 @@
 VER=socat-1.7.1.3
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-GCC=$(DESTDIR)/usr/sfw/bin/gcc
+GCC=$(DESTDIR)/usr/bin/gcc
 
 all: $(VER)/config.status
 	(cd $(VER); env - \

@@ -24,8 +24,8 @@
 VER=uuid-1.6.2
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-GCC=$(DESTDIR)/usr/sfw/bin/gcc
-PATH=$(DESTDIR)/usr/sfw/bin/:/sbin:/usr/sbin:/usr/bin
+GCC=$(DESTDIR)/usr/bin/gcc
+PATH=$(DESTDIR)/usr/bin/:/sbin:/usr/sbin:/usr/bin
 
 all: $(VER)/config.h
 	( cd $(VER); CC=$(GCC) PATH=$(PATH) gmake $(PARALLEL))

@@ -24,7 +24,7 @@
 VER=tar-1.23
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/sfw/bin/gcc
+CC=$(DESTDIR)/usr/bin/gcc
 SH=ksh93
 LD_OPTIONS="-M $(BASE)/mapfile_noexstk"
 

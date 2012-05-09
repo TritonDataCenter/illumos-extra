@@ -26,8 +26,8 @@ VER64=$(VER)-64
 LARGEFILES= -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/sfw/bin/gcc
-CCC=$(DESTDIR)/usr/sfw/bin/g++
+CC=$(DESTDIR)/usr/bin/gcc
+CCC=$(DESTDIR)/usr/bin/g++
 CC64=$(CC)
 CCC64=$(CCC)
 CCFLAGS="-fPIC"

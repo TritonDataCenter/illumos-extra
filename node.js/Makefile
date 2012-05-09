@@ -24,7 +24,7 @@
 VER=node-v0.6.17
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
-GCC=$(DESTDIR)/usr/sfw/bin/gcc
+GCC=$(DESTDIR)/usr/bin/gcc
 
 -include ../Makefile.inc
 

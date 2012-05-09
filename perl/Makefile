@@ -25,7 +25,7 @@ TARBALL=$(VER).tar.gz
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 
-GCC=$(DESTDIR)/usr/sfw/bin/gcc
+GCC=$(DESTDIR)/usr/bin/gcc
 
 all: $(VER)/perldtrace.h
 	(cd $(VER); LC_ALL=C gmake)
@@ -48,7 +48,7 @@ $(VER):
 $(VER)/cflags: $(VER)
 	(cd $(VER) && \
 	cp -f ../config.over ./config.over && \
-	PATH=/usr/bin:/usr/sbin:/usr/sfw/bin:$(PATH) \
+	PATH=/usr/bin:/usr/sbin:/usr/bin:$(PATH) \
 	./Configure -des -Dcc=$(GCC) )
 
 $(VER)/perldtrace.h: $(VER)/cflags

@@ -29,15 +29,15 @@ VER=vim72
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 
-GCC=$(DESTDIR)/usr/sfw/bin/gcc
-GXX=$(DESTDIR)/usr/sfw/bin/g++
+GCC=$(DESTDIR)/usr/bin/gcc
+GXX=$(DESTDIR)/usr/bin/g++
 
 all: $(VER)/src/auto/config.status
 	(cd $(VER); env \
 	    "CC=$(GCC)" \
 	    "CXX=$(GXX)" \
 	    STRIP=/usr/bin/strip \
-	    PATH=$(DESTDIR)/usr/sfw/bin:$(PATH) \
+	    PATH=$(DESTDIR)/usr/bin:$(PATH) \
 	    make -e $(PARALLEL))
 
 install: all
@@ -45,7 +45,7 @@ install: all
 	    "CC=$(GCC)" \
 	    "CXX=$(GXX)" \
 	    STRIP=/usr/bin/strip \
-	    PATH=$(DESTDIR)/usr/sfw/bin:$(PATH) \
+	    PATH=$(DESTDIR)/usr/bin:$(PATH) \
 	    DESTDIR=$(DESTDIR) \
 	    make -e install)
 
@@ -54,7 +54,7 @@ $(VER)/src/auto/config.status: $(VER)/configure
 	    "CC=$(GCC)" \
 	    "CXX=$(GXX)" \
 	    STRIP=/usr/bin/strip \
-	    PATH=$(DESTDIR)/usr/sfw/bin:$(PATH) \
+	    PATH=$(DESTDIR)/usr/bin:$(PATH) \
 	    ./configure --prefix=/usr \
 	      --disable-gui \
 	      --disable-gtktest \
