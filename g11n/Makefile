@@ -32,6 +32,10 @@ install: all
 	@(cd src; pwd; SRC=$(SRC) $(MAKE) install)
 	mkdir -p $(LIBDIR)
 	cp proto/i386/fileroot/usr/lib/iconv/UTF-8%646.so $(LIBDIR)
+	cp proto/i386/fileroot/usr/lib/iconv/UTF-8%UCS-2.so $(LIBDIR)
+	cp proto/i386/fileroot/usr/lib/iconv/UTF-8%UCS-2LE.so $(LIBDIR)
+	cp proto/i386/fileroot/usr/lib/iconv/UCS-2%UTF-8.so $(LIBDIR)
+	cp proto/i386/fileroot/usr/lib/iconv/UCS-2LE%UTF-8.so $(LIBDIR)
 
 clean:
 	@(cd src; pwd; SRC=$(SRC) $(MAKE) clean)

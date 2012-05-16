@@ -1407,10 +1407,18 @@ UTF_8_TO_UTF_8		= UTF-8%UTF-8.so
 #
 # Following are groupings:
 #
-ALL_SOS		= $(UTF_8_TO_US_ASCII)
+ALL_SOS		= $(UTF_8_TO_US_ASCII) \
+		  $(UCS_2_TO_UTF_8) \
+		  $(UCS_2BE_TO_UTF_8) \
+		  $(UTF_8_TO_UCS_2) \
+		  $(UTF_8_TO_UCS_2BE)
 
-# XXX JJ
-FOO_SOS		= $(US_ASCII_TO_UCS_2) \
+#
+# XXX The rest of these libraries aren't built since they aren't needed in the
+# platform.  Should you find that any of them are necessary, add them to the
+# ALL_SOS target above.
+#
+UNBUILT_SOS	= $(US_ASCII_TO_UCS_2) \
 		  $(ISO8859_1_TO_UCS_2) \
 		  $(ISO8859_2_TO_UCS_2) \
 		  $(ISO8859_3_TO_UCS_2) \

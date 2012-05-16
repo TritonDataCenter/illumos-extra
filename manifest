@@ -84,6 +84,10 @@ f usr/share/man/man1/dialog.1 0444 root bin
 # g11n
 d usr/lib/iconv 0755 root bin
 f usr/lib/iconv/UTF-8%646.so 0755 root bin
+f usr/lib/iconv/UTF-8%UCS-2.so 0755 root bin
+f usr/lib/iconv/UTF-8%UCS-2LE.so 0755 root bin
+f usr/lib/iconv/UCS-2%UTF-8.so 0755 root bin
+f usr/lib/iconv/UCS-2LE%UTF-8.so 0755 root bin
 # gcc
 f usr/lib/amd64/libgcc_s.so.1 0555 root bin
 f usr/lib/amd64/libstdc++.so.6.0.13 0555 root bin
