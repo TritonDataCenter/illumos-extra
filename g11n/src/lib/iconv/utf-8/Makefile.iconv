@@ -1409,9 +1409,9 @@ UTF_8_TO_UTF_8		= UTF-8%UTF-8.so
 #
 ALL_SOS		= $(UTF_8_TO_US_ASCII) \
 		  $(UCS_2_TO_UTF_8) \
-		  $(UCS_2BE_TO_UTF_8) \
+		  $(UCS_2LE_TO_UTF_8) \
 		  $(UTF_8_TO_UCS_2) \
-		  $(UTF_8_TO_UCS_2BE)
+		  $(UTF_8_TO_UCS_2LE)
 
 #
 # XXX The rest of these libraries aren't built since they aren't needed in the
