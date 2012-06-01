@@ -18,22 +18,29 @@
 #
 # CDDL HEADER END
 #
-
-#
 # Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
 #
-# Copyright 2012 Joyent Inc.
+# This makefile has not been adapted to use the infrastructure because of
+# the need to build in a separate subdirectory from the source.  This could
+# be accommodated without excessive effort but is a highly unusual pattern.
 #
 
-VER=gcc-4.4.4
+VER =	gcc-4.4.4
 
+include ../Makefile.defs
+
+# XXX Is this really needed?
 SFW_PATH="/opt/local/bin:/usr/bin"
 
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
+TARBALL =		$(VER).tar.bz2
+TARBALL_COMPRESS =	-j
+CLEANFILES +=	$(VER)-i386-build
+
+include ../Makefile.targ
 
 all: $(VER)-i386-build/config.status
 	(cd $(VER)-i386-build; env - \
@@ -61,14 +68,14 @@ install: all
 		STAGE1_CFLAGS="-g -O2" \
 		CFLAGS_FOR_TARGET="-g -O2" $(PARALLEL) install)
 
-$(VER)-i386-build/config.status: $(VER)-i386-build $(VER)/configure
+$(VER)-i386-build/config.status: $(VER)-i386-build $(VER.32)/configure
 	(cd $(VER)-i386-build; env - \
 	    CC=gcc \
 	    CFLAGS="-g -O2" \
 	    DESTDIR=$(DESTDIR) \
 	    PATH=$(SFW_PATH) \
 	    MAKE=gmake \
-	../$(VER)/configure \
+	../$(VER.32)/configure \
 		--prefix=/usr \
 		--with-ld=/usr/bin/ld \
 		--without-gnu-ld \
@@ -81,15 +88,5 @@ $(VER)-i386-build/config.status: $(VER)-i386-build $(VER)/configure
 		--disable-nls \
 		--with-included-gettext)
 
-$(VER)/configure: $(VER).tar.bz2
-	/usr/bin/bzcat $(VER).tar.bz2 | gtar xpf - --no-same-owner
-	touch $(VER)/configure
-
 $(VER)-i386-build:
 	mkdir -p $@
-
-clean:
-	-rm -rf $(VER) $(VER)-i386-build
-
-
-FRC:

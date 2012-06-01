@@ -23,28 +23,77 @@
 # To build everything just run 'gmake' in this directory.
 #
 
-BASE=$(PWD)
-DESTDIR=$(BASE)/proto
-PATH=$(DESTDIR)/usr/bin:/usr/sfw/bin:/usr/gnu/bin:/opt/local/bin:/sbin:/usr/sbin:/usr/bin:/opt/SUNWspro/bin:/opt/local/bin
-SUBDIRS= bash bzip2 coreutils curl dialog g11n gnupg gtar gzip less libexpat \
-	libidn libm libxml libz ncurses node.js nss-nspr ntp openldap openssl \
-	pbzip2 perl rsync rsyslog screen socat tun uuid vim wget
+BASE =		$(PWD)
+DESTDIR =	$(BASE)/proto
+PATH =		$(DESTDIR)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
+SUBDIRS = \
+	bash \
+	bind \
+	bzip2 \
+	coreutils \
+	cpp \
+	curl \
+	dialog \
+	g11n \
+	gnupg \
+	gtar \
+	gzip \
+	ipmitool \
+	less \
+	libexpat \
+	libidn \
+	libm \
+	libxml \
+	libz \
+	ncurses \
+	node.js \
+	nss-nspr \
+	ntp \
+	openldap \
+	openssl \
+	pbzip2 \
+	perl \
+	rsync \
+	rsyslog \
+	screen \
+	socat \
+	tun \
+	uuid \
+	vim \
+	wget
 
-PARALLEL=-j128
+STRAP_SUBDIRS = \
+	cpp \
+	bzip2 \
+	libexpat \
+	libidn \
+	libm \
+	libxml \
+	libz \
+	nss-nspr \
+	openssl
 
-NAME=illumos-extra
+NAME =	illumos-extra
 
-AWK=$(shell (which gawk 2>/dev/null | grep -v "^no ") || which awk)
-BRANCH=$(shell git symbolic-ref HEAD | $(AWK) -F/ '{print $$3}')
+AWK =		$(shell (which gawk 2>/dev/null | grep -v "^no ") || which awk)
+BRANCH =	$(shell git symbolic-ref HEAD | $(AWK) -F/ '{print $$3}')
 
 ifeq ($(TIMESTAMP),)
-  TIMESTAMP=$(shell date -u "+%Y%m%dT%H%M%SZ")
+  TIMESTAMP =	$(shell date -u "+%Y%m%dT%H%M%SZ")
 endif
 
-GITDESCRIBE=g$(shell git describe --all --long | $(AWK) -F'-g' '{print $$NF}')
-TARBALL=$(NAME)-$(BRANCH)-$(TIMESTAMP)-$(GITDESCRIBE).tgz
+GITDESCRIBE = \
+	g$(shell git describe --all --long | $(AWK) -F'-g' '{print $$NF}')
+
+TARBALL =	$(NAME)-$(BRANCH)-$(TIMESTAMP)-$(GITDESCRIBE).tgz
 
 all: $(SUBDIRS)
+
+strap: $(STRAP_SUBDIRS)
+
+curl: libz openssl
+gzip: libz
+node.js: openssl
 
 #
 # pkg-config may be installed. This will actually only hurt us rather than help
@@ -55,15 +104,20 @@ all: $(SUBDIRS)
 # gets appended.
 #
 $(DESTDIR)/usr/bin/gcc: FRC
-	cd gcc4; PKG_CONFIG_LIBDIR="" $(MAKE) PARALLEL=$(PARALLEL) DESTDIR=$(DESTDIR) install
+	(cd gcc4 && \
+	    PKG_CONFIG_LIBDIR="" $(MAKE) DESTDIR=$(DESTDIR) install)
 
 $(SUBDIRS): $(DESTDIR)/usr/bin/gcc
-	cd $@; PKG_CONFIG_LIBDIR="" $(MAKE) PARALLEL=$(PARALLEL) DESTDIR=$(DESTDIR) install
+	(cd $@ && \
+	    PKG_CONFIG_LIBDIR="" $(MAKE) DESTDIR=$(DESTDIR) install)
 
 install: $(SUBDIRS) gcc4
 
+install_strap: $(STRAP_SUBDIRS) gcc4
+
 clean: 
-	-for dir in $(SUBDIRS) gcc4; do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) clean); done
+	-for dir in $(SUBDIRS) gcc4; \
+	    do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) clean); done
 	-rm -rf proto
 
 manifest:

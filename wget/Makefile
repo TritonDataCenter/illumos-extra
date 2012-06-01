@@ -18,44 +18,35 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER=wget-1.12
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/bin/gcc
-GTAR=/usr/bin/gtar
-SH=ksh93
+VER =	wget-1.12
 
-all: $(VER)/config.status
-	(cd $(VER); env - $(MAKE) $(PARALLEL) all)
+include ../Makefile.defs
+
+AUTOCONF_ENV += \
+	LD_OPTIONS="-M $(BASE)/mapfile_noexstk" \
+	PERL=/usr/perl5/5.12/bin/perl \
+	POD2MAN=/usr/perl5/5.12/bin/pod2man
+AUTOCONF_OPTS += \
+	--sysconfdir=/etc \
+	--with-ssl \
+	--infodir=/usr/share/info \
+	--disable-rpath
+
+TARBALL =		$(VER).tar.bz2
+TARBALL_COMPRESS =	-j
+
+PATCHES =	Patches/*
+
+include ../Makefile.targ
+
+all: all_autoconf
 
 install: all
 	mkdir -p $(DESTDIR)/usr/bin
-	ginstall -m 0555 $(BASE)/$(VER)/src/wget $(DESTDIR)/usr/bin/wget
+	ginstall -m 0555 $(BASE)/$(VER.32)/src/wget $(DESTDIR)/usr/bin/wget
 	mkdir -p $(DESTDIR)/usr/share/man/man1
-	ginstall -m 0444 $(BASE)/$(VER)/doc/wget.1 $(DESTDIR)/usr/share/man/man1
-
-$(VER)/config.status: $(VER)/configure
-	(cd $(VER); env \
-	    CC=$(CC) \
-	    "CFLAGS=$(CFLAGS)" \
-	    "LD_OPTIONS=-L$(ROOT)/mapfile_noexstk" \
-	    PERL=/usr/perl5/5.12/bin/perl \
-	    POD2MAN=/usr/perl5/5.12/bin/pod2man \
-	    PATH=$(PATH) \
-	    MAKE=$(MAKE) \
-	./configure --prefix=/usr --sysconfdir=/etc --with-ssl --infodir=/usr/share/info)
-
-$(VER)/configure: $(VER).tar.bz2
-	$(GTAR) jxpf $(VER).tar.bz2 --no-same-owner
-	gpatch -p0 < Patches/no_charset_alias.patch
-	gpatch -p0 < Patches/sysdep.h.patch
-	gpatch -p0 < Patches/wgetrc.patch
-	touch $(VER)/configure
-
-clean:
-	-rm -rf $(VER)
-
-FRC:
+	ginstall -m 0444 $(BASE)/$(VER.32)/doc/wget.1 \
+	    $(DESTDIR)/usr/share/man/man1

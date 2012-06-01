@@ -1,10 +1,10 @@
-Index: gnu/usr.bin/gzip/gzip.h
+Index: gzip-1.3.5/gzip.h
 ===================================================================
-RCS file: /home/ncvs/src/gnu/usr.bin/gzip/gzip.h,v
+RCS file: /home/ncvs/src/gzip-1.3.5/gzip.h,v
 retrieving revision 1.4
 diff -u -d -r1.4 gzip.h
---- gnu/usr.bin/gzip/gzip.h	2 May 2004 23:07:49 -0000	1.4
-+++ gnu/usr.bin/gzip/gzip.h	17 Sep 2006 10:58:37 -0000
+--- gzip-1.3.5/gzip.h	2 May 2004 23:07:49 -0000	1.4
++++ gzip-1.3.5/gzip.h	17 Sep 2006 10:58:37 -0000
 @@ -202,6 +202,8 @@
  extern int to_stdout;      /* output to stdout (-c) */
  extern int save_orig_name; /* set if original name must be saved */
@@ -14,13 +14,13 @@ diff -u -d -r1.4 gzip.h
  #define get_byte()  (inptr < insize ? inbuf[inptr++] : fill_inbuf(0))
  #define try_byte()  (inptr < insize ? inbuf[inptr++] : fill_inbuf(1))
  
-Index: gnu/usr.bin/gzip/inflate.c
+Index: gzip-1.3.5/inflate.c
 ===================================================================
-RCS file: /home/ncvs/src/gnu/usr.bin/gzip/inflate.c,v
+RCS file: /home/ncvs/src/gzip-1.3.5/inflate.c,v
 retrieving revision 1.9
 diff -u -d -r1.9 inflate.c
---- gnu/usr.bin/gzip/inflate.c	13 Aug 2004 05:38:44 -0000	1.9
-+++ gnu/usr.bin/gzip/inflate.c	17 Sep 2006 10:58:37 -0000
+--- gzip-1.3.5/inflate.c	13 Aug 2004 05:38:44 -0000	1.9
++++ gzip-1.3.5/inflate.c	17 Sep 2006 10:58:37 -0000
 @@ -316,7 +316,7 @@
    {
      *t = (struct huft *)NULL;
@@ -30,13 +30,13 @@ diff -u -d -r1.9 inflate.c
    }
  
  
-Index: gnu/usr.bin/gzip/unlzh.c
+Index: gzip-1.3.5/unlzh.c
 ===================================================================
-RCS file: /home/ncvs/src/gnu/usr.bin/gzip/unlzh.c,v
+RCS file: /home/ncvs/src/gzip-1.3.5/unlzh.c,v
 retrieving revision 1.5
 diff -u -d -r1.5 unlzh.c
---- gnu/usr.bin/gzip/unlzh.c	27 Aug 1999 23:35:53 -0000	1.5
-+++ gnu/usr.bin/gzip/unlzh.c	17 Sep 2006 10:58:37 -0000
+--- gzip-1.3.5/unlzh.c	27 Aug 1999 23:35:53 -0000	1.5
++++ gzip-1.3.5/unlzh.c	17 Sep 2006 10:58:37 -0000
 @@ -148,13 +148,17 @@
      unsigned i, k, len, ch, jutbits, avail, nextcode, mask;
  
@@ -165,13 +165,13 @@ diff -u -d -r1.5 unlzh.c
  	    }
  	}
      }
-Index: gnu/usr.bin/gzip/unpack.c
+Index: gzip-1.3.5/unpack.c
 ===================================================================
-RCS file: /home/ncvs/src/gnu/usr.bin/gzip/unpack.c,v
+RCS file: /home/ncvs/src/gzip-1.3.5/unpack.c,v
 retrieving revision 1.6
 diff -u -d -r1.6 unpack.c
---- gnu/usr.bin/gzip/unpack.c	27 Aug 1999 23:35:54 -0000	1.6
-+++ gnu/usr.bin/gzip/unpack.c	17 Sep 2006 10:58:37 -0000
+--- gzip-1.3.5/unpack.c	27 Aug 1999 23:35:54 -0000	1.6
++++ gzip-1.3.5/unpack.c	17 Sep 2006 10:58:37 -0000
 @@ -12,7 +12,6 @@
  #include "gzip.h"
  #include "crypt.h"

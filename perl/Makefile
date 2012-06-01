@@ -1,3 +1,4 @@
+#
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
@@ -17,45 +18,36 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2012 Joyent, Inc
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
-VER =           perl-5.12.3
-TARBALL=$(VER).tar.gz
 
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
+VER =	perl-5.12.3
 
-GCC=$(DESTDIR)/usr/bin/gcc
+include ../Makefile.defs
 
-all: $(VER)/perldtrace.h
-	(cd $(VER); LC_ALL=C gmake)
+UNPACK_SENTINEL =	Configure
+
+include ../Makefile.targ
+
+all: $(VER.32)/perldtrace.h
+	(cd $(VER.32); LC_ALL=C $(MAKE))
 
 test: all
-	(cd $(VER); gmake  test)
-
+	(cd $(VER.32); $(MAKE) test)
 
 install: all
-	(cd $(VER);\
+	(cd $(VER.32);\
 	    rm -f $(DESTDIR)/usr/perl5/5.12/lib/i86pc-solaris-64int/.packlist;\
 	    DESTDIR=$(DESTDIR) \
 	    gmake  install)
 	rm -f $(DESTDIR)/usr/perl5/5.12/lib/i86pc-solaris-64int/Config_heavy.pl
 	cp Config_heavy.pl $(DESTDIR)/usr/perl5/5.12/lib/i86pc-solaris-64int/
 
-$(VER):
-	gtar -zxf $(TARBALL)
+$(VER.32)/cflags: config.over $(VER.32)/Configure
+	(cd $(VER.32) && \
+	    cp -f ../config.over ./config.over && \
+	    ./Configure -des -Dcc=$(GCC) )
 
-$(VER)/cflags: $(VER)
-	(cd $(VER) && \
-	cp -f ../config.over ./config.over && \
-	PATH=/usr/bin:/usr/sbin:/usr/bin:$(PATH) \
-	./Configure -des -Dcc=$(GCC) )
-
-$(VER)/perldtrace.h: $(VER)/cflags
-	(cd $(VER) && \
-	/usr/sbin/dtrace -h -s perldtrace.d -o perldtrace.h)
-
-
-clean:
-	rm -rf $(VER)
-
+$(VER.32)/perldtrace.h: $(VER.32)/cflags
+	(cd $(VER.32) && \
+	    /usr/sbin/dtrace -h -s perldtrace.d -o perldtrace.h)

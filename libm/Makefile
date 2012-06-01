@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010 Joyent Inc.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
 BASE=$(PWD)

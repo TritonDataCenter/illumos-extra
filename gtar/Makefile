@@ -18,27 +18,27 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER=tar-1.23
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/bin/gcc
-SH=ksh93
-LD_OPTIONS="-M $(BASE)/mapfile_noexstk"
+VER =	tar-1.23
 
-all: $(VER)/config.status
-	(cd $(VER); env - CC=$(CC) LD_OPTIONS=$(LD_OPTIONS) PATH="/usr/perl5/bin:$(PATH)" gmake $(PARALLEL))
+include ../Makefile.defs
+
+AUTOCONF_ENV += \
+	LD_OPTIONS="-M $(BASE)/mapfile_noexstk"
+AUTOCONF_OPTS += \
+	--with-rmt=/usr/sbin/rmt \
+	--libexecdir=/usr/sbin \
+	--program-prefix=g
+
+TARBALL =		$(VER).tar.bz2
+TARBALL_COMPRESS =	-j
+
+include ../Makefile.targ
+
+all: all_autoconf
 
 install: all
 	mkdir -p $(DESTDIR)/usr/bin
-	ginstall -m 0555 $(BASE)/$(VER)/src/tar $(DESTDIR)/usr/bin/gtar
-
-$(VER)/config.status:
-	gtar -jxf $(VER).tar.bz2
-	(cd $(VER); ./configure --with-rmt=/usr/sbin/rmt --libexecdir=/usr/sbin --program-prefix=g)
-
-clean:
-	-rm -rf $(VER)
-
+	ginstall -m 0555 $(BASE)/$(VER.32)/src/tar $(DESTDIR)/usr/bin/gtar

@@ -18,31 +18,19 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2012 Joyent, Inc.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER=node-v0.6.17
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-GCC=$(DESTDIR)/usr/bin/gcc
+VER =	node-v0.6.17
 
--include ../Makefile.inc
+include ../Makefile.defs
 
-all: $(VER)/build/default/config.h
-	( cd $(VER); \
-	    gmake $(PARALLEL) CC=$(GCC))
+AUTOCONF_OPTS += \
+	--with-dtrace \
+	--openssl-libpath=$(DESTDIR)/lib \
+	--openssl-includes=$(DESTDIR)/usr/include
 
-install: all
-	mkdir -p $(DESTDIR)
-	( cd $(VER); \
-	    gmake $(PARALLEL) CC=$(GCC) DESTDIR=$(DESTDIR) install)
+AUTOCONF_OUT =	build/default/config.h
 
-clean:
-	rm -rf $(VER)
-
-$(VER)/build/default/config.h: $(VER)/configure
-	(cd $(VER); ./configure --with-dtrace --prefix=/usr)
-
-$(VER)/configure: $(VER).tar.gz
-	gtar -zxf $(VER).tar.gz
-	touch $(VER)/configure
+include ../Makefile.targ
+include ../Makefile.targ.autoconf

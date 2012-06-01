@@ -18,35 +18,26 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2012 Joyent, Inc.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER=openldap-2.4.26
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/bin/gcc
-PATH=$(DESTDIR)/usr/bin:/sbin:/usr/sbin:/usr/bin
-MAKE=gmake
-LDFLAGS=-Wl,-R/usr/openldap/lib
+VER =	openldap-2.4.26
 
--include ../Makefile.inc
+include ../Makefile.defs
 
-all: $(VER)/config.h
-	( cd $(VER); gmake $(PARALLEL))
+TARBALL =		$(VER).tgz
+AUTOCONF_PREFIX =	/usr/openldap
+AUTOCONF_OUT =		config.h
 
-install: all
-	mkdir -p $(DESTDIR)
-	( cd $(VER); XLDFLAGS="$(LDFLAGS)" \
-	    gmake $(PARALLEL) DESTDIR=$(DESTDIR) install)
+AUTOCONF_OPTS += \
+	--disable-slapd \
+	--without-cyrus-sasl \
+	--sysconfdir=/etc \
+	--localstatedir=/var/dp/openldap \
+	--with-tls=openssl
 
-clean:
-	rm -rf $(VER)
+LDFLAGS += \
+	-Wl,-R/usr/openldap/lib
 
-$(VER)/config.h: $(VER)/configure
-	(cd $(VER); MAKE=$(MAKE) ./configure --disable-slapd --without-cyrus-sasl \
-		--sysconfdir=/etc --localstatedir=/var/db/openldap \
-		--with-tls=openssl --prefix=/usr/openldap)
-
-$(VER)/configure: $(VER).tgz
-	gtar -zxf $(VER).tgz
-	touch $(VER)/configure
+include ../Makefile.targ
+include ../Makefile.targ.autoconf

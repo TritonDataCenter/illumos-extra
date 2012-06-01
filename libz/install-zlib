@@ -26,8 +26,6 @@
 # Copyright (c) 2010 Joyent Inc.
 #
 
-VERS=zlib-1.2.3
-
 PREFIX=${DESTDIR}/usr
 ROOTLIBDIR=${DESTDIR}/lib
 LIBDIR=${PREFIX}/lib

@@ -18,43 +18,36 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER=nss-3.12.8
-VER64=$(VER)-64
-NSPRVER=nspr-4.8.6
-TARBALL=$(VER)-with-$(NSPRVER).tar.gz
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-all: real-all
+VER =	nss-3.12.8
 
-all32: $(VER)/.stamp
-	@ (cd $(VER)/mozilla/security/nss; \
-	    PATH=$(DESTDIR)/usr/bin:/sbin:/usr/sbin:/usr/bin:/opt/local/bin \
+include ../Makefile.defs
+
+NSPRVER =	nspr-4.8.6
+TARBALL =	$(VER)-with-$(NSPRVER).tar.gz
+
+UNPACK_SENTINEL =	.stamp
+FROB_SENTINEL.32 =	/bin/true
+FROB_SENTINEL.64 =	/bin/true
+
+include ../Makefile.targ
+
+all: all_32 all_64
+
+all_32: $(VER.32)/$(UNPACK_SENTINEL)
+	@ (cd $(VER.32)/mozilla/security/nss; \
+	    PATH=$(PATH) \
 	    gmake BUILD_OPT=1 BUILD_SUN_PKG=1 NS_USE_GCC=1 NO_MDUPDATE=1 \
 	    nss_build_all )
 
-all64: $(VER64)/.stamp
-	@ (cd $(VER64)/mozilla/security/nss; \
-	    PATH=$(DESTDIR)/usr/bin:/sbin:/usr/sbin:/usr/bin:/opt/local/bin \
+all_64: $(VER.64)/$(UNPACK_SENTINEL)
+	@ (cd $(VER.64)/mozilla/security/nss; \
+	    PATH=$(PATH) \
 	    gmake USE_64=1 BUILD_OPT=1 BUILD_SUN_PKG=1 NS_USE_GCC=1 \
 	    NO_MDUPDATE=1 nss_build_all )
 
 install: all
-	DESTDIR=$(DESTDIR) ksh93 ./install-nss $(VER)
-	DESTDIR=$(DESTDIR) MACH64=amd64 ksh93 ./install-nss-64 $(VER64)
-
-real-all: all32 all64
-
-$(VER)/.stamp $(VER64)/.stamp: $(TARBALL)
-	gzip -dc $(TARBALL) | tar xopf -
-	mv $(VER) $(VER64)
-	gzip -dc $(TARBALL) | tar xopf -
-	touch $(VER)/.stamp
-	touch $(VER64)/.stamp
-
-clean:
-	-rm -rf $(VER)
-	-rm -rf $(VER64)
-
+	DESTDIR=$(DESTDIR) ksh93 ./install-nss $(VER.32)
+	DESTDIR=$(DESTDIR) MACH64=amd64 ksh93 ./install-nss-64 $(VER.64)

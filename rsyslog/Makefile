@@ -18,48 +18,34 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc. All rights reserved.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER=rsyslog-5.8.9
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/bin/gcc
-GTAR=/usr/bin/gtar
+VER =	rsyslog-5.8.9
 
-all: $(VER)/config.status
-	(cd $(VER); env - PATH=$(PATH) $(MAKE) $(PARALLEL) all)
+include ../Makefile.defs
+
+AUTOCONF_OPTS += \
+	--enable-imsolaris=yes \
+	--enable-mail=yes \
+	--enable-omprog=yes
+
+include ../Makefile.targ
+
+all: all_autoconf
 
 install: all
 	mkdir -p $(DESTDIR)/usr/sbin
 	mkdir -p $(DESTDIR)/usr/lib/rsyslog
 	mkdir -p $(DESTDIR)/usr/share/man/man1m
 	mkdir -p $(DESTDIR)/usr/share/man/man4
-	ginstall -m 0755 $(BASE)/$(VER)/tools/rsyslogd \
+	ginstall -m 0755 $(BASE)/$(VER.32)/tools/rsyslogd \
 	    $(DESTDIR)/usr/sbin/rsyslogd
-	cp $(BASE)/$(VER)/runtime/.libs/*.so $(DESTDIR)/usr/lib/rsyslog
-	cp $(BASE)/$(VER)/plugins/*/.libs/*.so $(DESTDIR)/usr/lib/rsyslog
-	cp $(BASE)/$(VER)/.libs/*.so $(DESTDIR)/usr/lib/rsyslog
-	cp $(BASE)/$(VER)/tools/rsyslogd.8 \
+	cp $(BASE)/$(VER.32)/runtime/.libs/*.so $(DESTDIR)/usr/lib/rsyslog
+	cp $(BASE)/$(VER.32)/plugins/*/.libs/*.so $(DESTDIR)/usr/lib/rsyslog
+	cp $(BASE)/$(VER.32)/.libs/*.so $(DESTDIR)/usr/lib/rsyslog
+	cp $(BASE)/$(VER.32)/tools/rsyslogd.8 \
 	    $(DESTDIR)/usr/share/man/man1m/rsyslogd.1m
-	cp $(BASE)/$(VER)/tools/rsyslog.conf.5 \
+	cp $(BASE)/$(VER.32)/tools/rsyslog.conf.5 \
 	    $(DESTDIR)/usr/share/man/man4/rsyslog.conf.4
 	cp $(BASE)/rsyslog.conf $(DESTDIR)/etc/rsyslog.conf
-
-$(VER)/config.status: $(VER)/configure
-	(cd $(VER); env \
-	    CC=$(CC) \
-	    "CFLAGS=$(CFLAGS)" \
-	    PATH=$(PATH) \
-	    MAKE=$(MAKE) \
-	./configure --prefix=/usr --enable-imsolaris=yes --enable-mail=yes \
-	    --enable-omprog=yes)
-
-$(VER)/configure: $(VER).tar.gz
-	$(GTAR) zxpf $(VER).tar.gz
-	touch $(VER)/configure
-
-clean:
-	-rm -rf $(VER)
-
-FRC:

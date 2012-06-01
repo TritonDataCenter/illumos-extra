@@ -39,6 +39,3 @@ install: all
 
 clean:
 	@(cd src; pwd; SRC=$(SRC) $(MAKE) clean)
-	
-FRC:
-

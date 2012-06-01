@@ -18,30 +18,15 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
+VER =	gnupg-1.4.11
 
-VER=gnupg-1.4.11
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-GCC=$(DESTDIR)/usr/bin/gcc
+include ../Makefile.defs
 
-all: $(VER)/config.status
-	( cd $(VER); \
-	    gmake $(PARALLEL) CC=$(GCC))
+TARBALL =		$(VER).tar.bz2
+TARBALL_COMPRESS =	-j
 
-install: all
-	mkdir -p $(DESTDIR)
-	( cd $(VER); \
-	    gmake $(PARALLEL) CC=$(GCC) DESTDIR=$(DESTDIR) install)
-
-clean:
-	rm -rf $(VER)
-
-$(VER)/config.status: $(VER)/configure
-	(cd $(VER); ./configure --prefix=/usr)
-
-$(VER)/configure: $(VER).tar.bz2
-	gtar -jxf $(VER).tar.bz2
-	touch $(VER)/configure
+include ../Makefile.targ
+include ../Makefile.targ.autoconf

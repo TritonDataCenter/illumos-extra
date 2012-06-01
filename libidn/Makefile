@@ -18,41 +18,22 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc., All rights reserved.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER=libidn-1.11
-LARGEFILES= -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-MAKE=gmake
-CC=$(DESTDIR)/usr/bin/gcc
-CCC=$(DESTDIR)/usr/bin/g++
+VER =	libidn-1.11
 
-all: $(VER)/config.status
-	(cd $(VER); env \
-	    CC=$(CC) CXX=$(CCC) \
-	    "CFLAGS= -g $(LARGEFILES)" \
-	    "INSTALL=/usr/ucb/install -c" \
-	    MAKE=$(MAKE) $(MAKE) $(PARALLEL))
-	@find . -name core -exec rm -f {} \;
+include ../Makefile.defs
+
+CPPFLAGS +=	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+CFLAGS +=	-g
+
+AUTOCONF_ENV += \
+	INSTALL="/usr/ucb/install -c"
+
+include ../Makefile.targ
+
+all: all_autoconf
 
 install: all
-	DESTDIR=$(DESTDIR) /bin/bash ./install-sfw
-
-$(VER)/config.status: $(VER)/configure
-	(cd $(VER); env \
-	    CC=$(CC) CFLAGS=$(CFLAGS) CXX=$(CCC) \
-	    "INSTALL=/usr/ucb/install -c" \
-	    "MAKE=$(MAKE)" \
-	    ./configure)
-
-$(VER)/configure: $(VER).tar.gz
-	gzip -dc $(VER).tar.gz | tar xopf -
-	touch $(VER)/configure
-
-clean:
-	-rm -rf $(VER)
-
-install_h:
-
+	DESTDIR=$(DESTDIR) VERS=$(VER.32) /bin/bash ./install-sfw

@@ -1,0 +1,78 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License, Version 1.0 only
+# (the "License").  You may not use this file except in compliance
+# with the License.
+#
+# You can obtain a copy of the license at COPYING
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at COPYING.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2012, Joyent, Inc.
+#
+
+all_autoconf: $(BUILD32:yes=all_autoconf_32) $(BUILD64:yes=all_autoconf_64)
+
+all_autoconf_32: $(AUTOCONF_OUT.32)
+	(cd $(VER.32); env - PATH=$(PATH) $(MAKE) $(PARALLEL) $(OVERRIDES))
+
+all_autoconf_64: $(AUTOCONF_OUT.64)
+	(cd $(VER.64); env - PATH=$(PATH) $(MAKE) $(PARALLEL) $(OVERRIDES.64))
+
+install_autoconf: $(BUILD32:yes=install_autoconf_32) \
+    $(BUILD64:yes=install_autoconf_64)
+
+install_autoconf_32: all
+	mkdir -p $(DESTDIR)
+	(cd $(VER.32); \
+	    env - PATH=$(PATH) \
+	    $(MAKE) $(install_PARALLEL) DESTDIR=$(DESTDIR) install)
+
+install_autoconf_64: all
+	mkdir -p $(DESTDIR)
+	(cd $(VER.64); \
+	    env - PATH=$(PATH) \
+	    $(MAKE) $(install_PARALLEL) DESTDIR=$(DESTDIR) install)
+
+$(AUTOCONF_OUT.32): $(VER.32)/configure
+	(cd $(VER.32); \
+	    env - PATH=$(PATH) $(AUTOCONF_ENV) \
+	    ./configure $(AUTOCONF_OPTS))
+
+$(AUTOCONF_OUT.64): $(VER.64)/configure
+	(cd $(VER.64); \
+	    env - PATH=$(PATH) $(AUTOCONF_ENV.64) \
+	    ./configure $(AUTOCONF_OPTS.64))
+
+$(VER.32)/$(UNPACK_SENTINEL): $(TARBALL)
+	-rm -rf $(VER.32)
+	mkdir -p .unpack32
+	gtar x -C .unpack32 $(TARBALL_COMPRESS) --no-same-owner -f $(TARBALL)
+	$(APPLY_PATCHES.32)
+	mv -f .unpack32/$(VER) ./$(VER.32)
+	-rmdir .unpack32
+	$(FROB_SENTINEL.32)
+	touch $(VER.32)/$(UNPACK_SENTINEL)
+
+$(VER.64)/$(UNPACK_SENTINEL): $(TARBALL)
+	-rm -rf $(VER.64)
+	mkdir -p .unpack64
+	gtar x -C .unpack64 $(TARBALL_COMPRESS) --no-same-owner -f $(TARBALL)
+	$(APPLY_PATCHES.64)
+	mv -f .unpack64/$(VER) ./$(VER.64)
+	-rmdir .unpack64
+	$(FROB_SENTINEL.64)
+	touch $(VER.64)/$(UNPACK_SENTINEL)
+
+clean:
+	-rm -rf $(VER) $(VER.32) $(VER.64) .unpack32 .unpack64 $(CLEANFILES)

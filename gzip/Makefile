@@ -18,24 +18,31 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc.,  All rights reserved.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER=gzip-1.3.5
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-BINDIR=$(DESTDIR)/usr/bin
-MANDIR=$(DESTDIR)/usr/share/man/man1
-GCC=$(DESTDIR)/usr/bin/gcc
+VER =	gzip-1.3.5
 
-all: $(VER)/config.status
-	( cd $(VER); env - PATH=$(PATH) \
-	    CC=$(GCC) \
-	    gmake $(PARALLEL) )
+include ../Makefile.defs
+
+BINDIR =	$(DESTDIR)/usr/bin
+MANDIR =	$(DESTDIR)/usr/share/man/man1
+
+PATCHES = \
+	gzip-6294656-6283819-diff \
+	gzip-security-diff \
+	gzip.c-message-diff
+
+AUTOCONF_OPTS += \
+	--mandir=/usr/share/man
+
+include ../Makefile.targ
+
+all: all_autoconf
 
 install: all
-	mkdir -p $(DESTDIR)
-	( cd $(VER); \
+	mkdir -p $(BINDIR) $(MANDIR)
+	( cd $(VER.32); \
 	    gmake $(PARALLEL) DESTDIR=$(DESTDIR) install)
 	mv $(BINDIR)/zcmp $(BINDIR)/gzcmp
 	mv $(BINDIR)/zdiff $(BINDIR)/gzdiff
@@ -52,18 +59,3 @@ install: all
 	mv $(MANDIR)/zless.1 $(MANDIR)/gzless.1
 	mv $(MANDIR)/zmore.1 $(MANDIR)/gzmore.1
 	mv $(MANDIR)/znew.1 $(MANDIR)/gznew.1
-
-clean:
-	rm -rf $(VER)
-
-$(VER)/config.status: $(VER)/configure
-	    (cd $(VER); CC=$(GCC) ./configure --prefix=/usr)
-
-$(VER)/configure: $(VER).tar.gz
-	gtar -zxf $(VER).tar.gz
-	(cd $(VER) \
-	; gpatch -p3 --no-backup-if-mismatch < ../gzip-security-diff \
-	; gpatch -p1 --no-backup-if-mismatch < ../gzip-6294656-6283819-diff \
-	; gpatch -p1 --no-backup-if-mismatch < ../gzip.c-message-diff )
-	(cd $(VER) ; autoconf -f )
-

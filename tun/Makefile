@@ -18,41 +18,25 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc. All rights reserved.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER=tun-1.1
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/bin/gcc
-CFLAGS=-m64
-GTAR=/usr/bin/gtar
+VER =	tun-1.1
 
-all: $(VER)/config.status
-	(cd $(VER); env - PATH=$(PATH) $(MAKE) $(PARALLEL) all)
+include ../Makefile.defs
+
+BUILD32 =
+BUILD64 = yes
+
+include ../Makefile.targ
+
+all: all_autoconf
 
 install: all
 	mkdir -p $(DESTDIR)/usr/include/net
 	mkdir -p $(DESTDIR)/usr/kernel/drv/amd64
-	cp $(BASE)/$(VER)/solaris/if_tun.h $(DESTDIR)/usr/include/net
-	cp $(BASE)/$(VER)/solaris/tap.conf $(DESTDIR)/usr/kernel/drv
-	cp $(BASE)/$(VER)/solaris/tun.conf $(DESTDIR)/usr/kernel/drv
-	cp $(BASE)/$(VER)/solaris/tap $(DESTDIR)/usr/kernel/drv/amd64
-	cp $(BASE)/$(VER)/solaris/tun $(DESTDIR)/usr/kernel/drv/amd64
-
-$(VER)/config.status: $(VER)/configure
-	(cd $(VER); env \
-	    CC=$(CC) \
-	    "CFLAGS=$(CFLAGS)" \
-	    PATH=$(PATH) \
-	    MAKE=$(MAKE) \
-	./configure)
-
-$(VER)/configure: $(VER).tar.gz
-	$(GTAR) zxpf $(VER).tar.gz
-	touch $(VER)/configure
-
-clean:
-	-rm -rf $(VER)
-
-FRC:
+	cp $(BASE)/$(VER.64)/solaris/if_tun.h $(DESTDIR)/usr/include/net
+	cp $(BASE)/$(VER.64)/solaris/tap.conf $(DESTDIR)/usr/kernel/drv
+	cp $(BASE)/$(VER.64)/solaris/tun.conf $(DESTDIR)/usr/kernel/drv
+	cp $(BASE)/$(VER.64)/solaris/tap $(DESTDIR)/usr/kernel/drv/amd64
+	cp $(BASE)/$(VER.64)/solaris/tun $(DESTDIR)/usr/kernel/drv/amd64

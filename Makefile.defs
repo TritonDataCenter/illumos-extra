@@ -1,0 +1,109 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License, Version 1.0 only
+# (the "License").  You may not use this file except in compliance
+# with the License.
+#
+# You can obtain a copy of the license at COPYING
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at COPYING.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2012, Joyent, Inc.
+#
+
+BASE =		$(PWD)
+DESTDIR =	$(BASE)/../proto
+VER.32 =	$(VER)-32
+VER.64 =	$(VER)-64
+
+PATH =		$(DESTDIR)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
+
+MAKE =		gmake
+PARALLEL =	-j128
+GCC =		$(DESTDIR)/usr/bin/gcc
+GXX =		$(DESTDIR)/usr/bin/g++
+GCC.64 =	$(GCC) -m64
+GXX.64 =	$(GXX) -m64
+
+SYSINCDIRS =	/usr/include
+SYSLIBDIRS =	/usr/lib /lib
+
+BUILD32 =	yes
+BUILD64 =
+
+CPPFLAGS =	$(SYSINCDIRS:%=-isystem $(DESTDIR)/%)
+LDFLAGS =	$(SYSLIBDIRS:%=-L$(DESTDIR)/%)
+LDFLAGS.64 =	$(SYSLIBDIRS:%=-L$(DESTDIR)/%/64)
+
+AUTOCONF_CC =		CC="$(GCC)"
+AUTOCONF_CXX =		CXX="$(GXX)"
+AUTOCONF_CC.64 =	CC="$(GCC.64)"
+AUTOCONF_CXX.64 =	CXX="$(GXX.64)"
+AUTOCONF_CPPFLAGS =	CPPFLAGS="$(CPPFLAGS)"
+AUTOCONF_CFLAGS =	CFLAGS="$(CFLAGS)"
+AUTOCONF_CFLAGS.64 =	CFLAGS="$(CFLAGS.64)"
+AUTOCONF_LDFLAGS =	LDFLAGS="$(LDFLAGS)"
+AUTOCONF_LDFLAGS.64 =	LDFLAGS="$(LDFLAGS.64)"
+AUTOCONF_LIBS =		LIBS="$(LIBS)"
+AUTOCONF_LIBS.64 =	LIBS="$(LIBS.64)"
+
+AUTOCONF_OUT =		config.status
+AUTOCONF_OUT.32 =	$(VER.32)/$(AUTOCONF_OUT)
+AUTOCONF_OUT.64 =	$(VER.64)/$(AUTOCONF_OUT)
+
+AUTOCONF_PREFIX =	/usr
+
+AUTOCONF_ENV = \
+	PKG_CONFIG_LIBDIR="" \
+	$(AUTOCONF_CC) \
+	$(AUTOCONF_CXX) \
+	$(AUTOCONF_CPPFLAGS) \
+	$(AUTOCONF_CFLAGS) \
+	$(AUTOCONF_LDFLAGS) \
+	$(AUTOCONF_LIBS)
+
+AUTOCONF_ENV.64 = \
+	PKG_CONFIG_LIBDIR="" \
+	$(AUTOCONF_CC.64) \
+	$(AUTOCONF_CXX.64) \
+	$(AUTOCONF_CPPFLAGS) \
+	$(AUTOCONF_CFLAGS.64) \
+	$(AUTOCONF_LDFLAGS.64) \
+	$(AUTOCONF_LIBS.64)
+
+AUTOCONF_OPTS = \
+	--prefix=$(AUTOCONF_PREFIX)
+
+AUTOCONF_OPTS.64 = \
+	$(AUTOCONF_OPTS)
+
+TARBALL =		$(VER).tar.gz
+TARBALL_COMPRESS =	-z
+
+UNPACK_SENTINEL =	configure
+FROB_SENTINEL.32 =	chmod 755 $(VER.32)/$(UNPACK_SENTINEL)
+FROB_SENTINEL.64 =	chmod 755 $(VER.64)/$(UNPACK_SENTINEL)
+
+PATCHSTRIP =	1
+
+APPLY_PATCHES.32 = \
+	for p in $(PATCHES); do [ -f "$$p" ] && \
+	    (cd .unpack32/$(VER) && gpatch -p$(PATCHSTRIP) < "../../$$p"); \
+	    done
+
+APPLY_PATCHES.64 = \
+	for p in $(PATCHES); do [ -f "$$p" ] && \
+	    (cd .unpack64/$(VER) && gpatch -p$(PATCHSTRIP) < "../../$$p"); \
+	    done
+
+.DEFAULT_GOAL =		all

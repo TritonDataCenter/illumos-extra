@@ -18,11 +18,8 @@
 #
 # CDDL HEADER END
 #
-
-#
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
-#
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
 VERSION=0.9.8w
@@ -30,7 +27,6 @@ BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 
 include Makefile.com
--include ../Makefile.inc
 
 MANDIR = $(DESTDIR)/usr/share/man
 

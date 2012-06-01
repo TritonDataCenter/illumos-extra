@@ -18,16 +18,17 @@
 #
 # CDDL HEADER END
 #
-
-#
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+#
 
-# Copyright (c) 2012 Joyent Inc.
-
-# This makefile is unusual, because it builds both 32 and 64 bit
-# versions of the library.  The builds occur in separate subdirs,
-# and 2 install scripts are used.
+#
+# This makefile has not been adapted to use the infrastructure because of
+# the need to patch libtool after the fact, and because of the way the
+# mapfile is integrated.  libxml2 is an extreme example of a nonconforming
+# build system.
+#
 
 VER=libxml2-2.7.6
 VER64=$(VER)-64
@@ -40,8 +41,6 @@ BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 
 GCC=$(DESTDIR)/usr/bin/gcc
-
--include ../Makefile.inc
 
 all: real-all
 

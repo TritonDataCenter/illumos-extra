@@ -18,41 +18,22 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc. All rights reserved.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER=coreutils-8.13
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/bin/gcc
-GTAR=/usr/bin/gtar
+VER =	coreutils-8.13
 
-all: $(VER)/config.status
-	(cd $(VER); env - PATH=$(PATH) $(MAKE) $(PARALLEL) all)
+include ../Makefile.defs
+include ../Makefile.targ
+
+all: all_autoconf
 
 install: all
 	mkdir -p $(DESTDIR)/usr/bin
 	mkdir -p $(DESTDIR)/usr/share/man/man1
-	cp $(BASE)/$(VER)/src/readlink $(DESTDIR)/usr/bin
-	cp $(BASE)/$(VER)/src/seq $(DESTDIR)/usr/bin
-	cp $(BASE)/$(VER)/src/stat $(DESTDIR)/usr/bin
-	cp -f $(BASE)/$(VER)/man/readlink.1 $(DESTDIR)/usr/share/man/man1
-	cp -f $(BASE)/$(VER)/man/seq.1 $(DESTDIR)/usr/share/man/man1
-	cp -f $(BASE)/$(VER)/man/stat.1 $(DESTDIR)/usr/share/man/man1
-
-$(VER)/config.status: $(VER)/configure
-	(cd $(VER); env \
-	    CC=$(CC) \
-	    "CFLAGS=$(CFLAGS)" \
-	    PATH=$(PATH) \
-	    MAKE=$(MAKE) \
-	./configure --prefix=/usr)
-
-$(VER)/configure: $(VER).tar.gz
-	$(GTAR) zxpf $(VER).tar.gz
-	touch $(VER)/configure
-
-clean:
-	-rm -rf $(VER)
-
-FRC:
+	cp $(BASE)/$(VER.32)/src/readlink $(DESTDIR)/usr/bin
+	cp $(BASE)/$(VER.32)/src/seq $(DESTDIR)/usr/bin
+	cp $(BASE)/$(VER.32)/src/stat $(DESTDIR)/usr/bin
+	cp -f $(BASE)/$(VER.32)/man/readlink.1 $(DESTDIR)/usr/share/man/man1
+	cp -f $(BASE)/$(VER.32)/man/seq.1 $(DESTDIR)/usr/share/man/man1
+	cp -f $(BASE)/$(VER.32)/man/stat.1 $(DESTDIR)/usr/share/man/man1

@@ -34,7 +34,7 @@ BIN_PREFIX64=${DESTDIR}/usr/bin/amd64
 mkdir -p ${PREFIX}
 mkdir -p ${PREFIX64}
 mkdir -p ${BIN_PREFIX64}
-ln -s ../amd64 ${PREFIX}/64 || true
+ln -sf amd64 ${PREFIX}/64
 
 source ../install.subr
 

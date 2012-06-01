@@ -18,61 +18,46 @@
 #
 # CDDL HEADER END
 #
-
-#
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
-# Copyright 2012 Joyent Inc
-#
 
+VER =	ntp-dev-4.2.5p200
 
-VER =		ntp-dev-4.2.5p200
-TARBALL =	$(VER).tar.gz
+include ../Makefile.defs
 
-#       configure(1) options to use
-# a default --prefix and --mandir are set in Makefile.master
-CONFIGURE_OPTIONS =	--prefix=/usr
-CONFIGURE_OPTIONS +=	--mandir=/usr/man
-CONFIGURE_OPTIONS +=	--bindir=/usr/sbin
-CONFIGURE_OPTIONS +=	--with-binsubdir=sbin
-CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/inet
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc/inet
-CONFIGURE_OPTIONS +=	--enable-all-clocks
-CONFIGURE_OPTIONS +=	--enable-debugging
-CONFIGURE_OPTIONS +=	--enable-debug-timing
-CONFIGURE_OPTIONS +=	--disable-optional-args
-CONFIGURE_OPTIONS +=	--enable-parse-clocks
-CONFIGURE_OPTIONS +=	--enable-ignore-dns-errors
-CONFIGURE_OPTIONS +=	--without-ntpsnmpd
-CONFIGURE_OPTIONS +=	--without-lineeditlibs
-CONFIGURE_OPTIONS +=	--with-openssl-libdir=/lib
-CONFIGURE_OPTIONS +=	--disable-getifaddrs
+AUTOCONF_OPTS += \
+	--prefix=/usr \
+	--mandir=/usr/man \
+	--bindir=/usr/sbin \
+	--with-binsubdir=sbin \
+	--libexecdir=/usr/lib/inet \
+	--sysconfdir=/etc/inet \
+	--enable-all-clocks \
+	--enable-debugging \
+	--enable-debug-timing \
+	--disable-optional-args \
+	--enable-parse-clocks \
+	--enable-ignore-dns-errors \
+	--without-ntpsnmpd \
+	--without-lineeditlibs \
+	--with-openssl-libdir=/lib \
+	--disable-getifaddrs
 
-TARGET_ENV =  CC="$(DESTDIR)/usr/bin/gcc"
-TARGET_ENV += CFLAGS="-O2"
-TARGET_ENV += LD_OPTIONS="-L${DESTDIR}/usr/lib"
-TARGET_ENV += DESTDIR=$(DESTDIR)
-TARGET_ENV += MAKE=gmake
+CFLAGS +=	-O2
 
-all: $(VER)/config.status
-	(cd $(VER); env - $(TARGET_ENV) gmake $(PARALLEL) all)
+AUTOCONF_ENV += \
+	LD_OPTIONS="$(LDFLAGS)" \
+	DESTDIR="$(DESTDIR)" \
+	PATH_PERL=/usr/perl5/bin/perl
+
+PATCHSTRIP =	0
+PATCHES =	Patches/*
+
+include ../Makefile.targ
+
+all: all_autoconf
 
 install: all
-	(cd $(VER); env - $(TARGET_ENV) gmake $(PARALLEL) install)
-	(env - $(TARGET_ENV) ./install-ntp)
-
-$(VER)/config.status: clean $(VER)/.patched
-	(cd $(VER) ; env - PATH_PERL=/usr/perl5/bin/perl \
-		bash ./configure $(CONFIGURE_OPTIONS) $(TARGET_ENV))
-
-$(VER)/.patched: $(VER)
-	(cd $(VER) ; env - ; for x in ../Patches/*; \
-		do gpatch -p0 < $$x; done ;  touch .patched)
-
-$(VER):
-	gtar -zxf $(TARBALL)
-
-clean:
-	-rm -rf $(VER)
-
-FRC:
+	(cd $(VER.32); env - $(AUTOCONF_ENV) gmake $(install_PARALLEL) install)
+	(env - $(AUTOCONF_ENV) ./install-ntp)

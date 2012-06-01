@@ -18,33 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc.,  All rights reserved.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER=socat-1.7.1.3
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-GCC=$(DESTDIR)/usr/bin/gcc
+VER =	socat-1.7.1.3
 
-all: $(VER)/config.status
-	(cd $(VER); env - \
-	    PATH=$(PATH) \
-	    CC=$(GCC) \
-	    gmake $(PARALLEL) )
+include ../Makefile.defs
 
-install: all
-	mkdir -p $(DESTDIR)
-	( cd $(VER); \
-	    gmake DESTDIR=$(DESTDIR) install)
+AUTOCONF_OPTS += \
+	--disable-interface \
+	--disable-readline
 
-clean:
-	rm -rf $(VER)
-
-$(VER)/config.status: $(VER)/configure
-	(cd $(VER); \
-	    CC=$(GCC) \
-	    ./configure --prefix=/usr --disable-interface --disable-readline)
-
-$(VER)/configure: $(VER).tar.gz
-	gtar -zxf $(VER).tar.gz
-
+include ../Makefile.targ
+include ../Makefile.targ.autoconf

@@ -1,5 +1,4 @@
 #
-#
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
@@ -20,34 +19,32 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2001, 2010, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, Joyent Inc.  All rights reserved.
 #
-# Copyright (c) 2012 Joyent Inc.
-#
 
-# This makefile is unusual, because it builds both 32 and 64 bit
-# versions of the library.  The builds occur in separate subdirs,
-# and 2 install scripts are used.
+VER =	bzip2-1.0.6
 
-VER=bzip2-1.0.6
-GCC=$(DESTDIR)/usr/bin/gcc
+include ../Makefile.defs
 
-all: real-all
+OVERRIDES +=	CC="$(GCC)"
+OVERRIDES.64 +=	CC="$(GCC.64)"
 
-# each all target has 2 parts.  The first builds the commands, and
-# the second builds the shared library.
+CLEANFILES +=	bzgrep.tmp
 
-all32: $(VER)/i386/Makefile
-	(cd $(VER)/i386; env \
-	    CC=$(GCC) gmake)
+include ../Makefile.targ
 
-all64: $(VER)/amd64/Makefile
-	(cd $(VER)/amd64; env \
-	    CC=$(GCC) gmake)
+all: all_32 all_64
+
+all_32: $(VER)/i386/Makefile
+	(cd $(VER)/i386; \
+	    env - PATH=$(PATH) $(MAKE) $(PARALLEL) $(OVERRIDES))
+
+all_64: $(VER)/amd64/Makefile
+	(cd $(VER)/amd64; \
+	    env - PATH=$(PATH) $(MAKE) $(PARALLEL) $(OVERRIDES.64))
 
 install: all
 	/usr/bin/ksh93 ./install-bzip2 $(PWD)/$(VER)
-
-real-all: all32 all64
 
 $(VER)/Makefile.dist: $(VER).tar.gz
 	gzip -dc $(VER).tar.gz | tar xopf -
@@ -61,6 +58,3 @@ $(VER)/i386/Makefile: $(VER)/Makefile.dist makefile.build
 $(VER)/amd64/Makefile: $(VER)/Makefile.dist makefile.build.64
 	mkdir -p $(VER)/amd64
 	cp makefile.build.64 $(VER)/amd64/Makefile
-
-clean:
-	-rm -rf $(VER)

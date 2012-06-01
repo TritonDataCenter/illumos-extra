@@ -1,5 +1,4 @@
 #
-#
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
@@ -21,38 +20,18 @@
 #
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
-# Copyright (c) 2012 Joyent Inc.
-#
 
-VER=dialog-1.1-20111020
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
+VER =	dialog-1.1-20111020
 
-GCC=$(DESTDIR)/usr/bin/gcc
-GXX=$(DESTDIR)/usr/bin/g++
+include ../Makefile.defs
 
-all: $(VER)/src/auto/config.status
-	(cd $(VER); env \
-	    "CC=$(GCC)" "CXX=$(GXX)" \
-	    make -e)
+AUTOCONF_OUT =	src/auto/config.status
+AUTOCONF_OPTS += \
+	--mandir=/usr/share/man \
+	--disable-Xdialog \
+	--disable-rpath-hack
 
-install: all
-	(cd $(VER); env \
-	    "CC=$(GCC)" "CXX=$(GXX)" \
-	    DESTDIR=$(DESTDIR) \
-	    make -e install)
-
-$(VER)/src/auto/config.status: $(VER)/configure
-	(cd $(VER); env \
-	    "CC=$(GCC)" "CXX=$(GXX)" \
-	    ./configure --prefix=/usr \
-	    --mandir=/usr/share/man \
-	    --disable-Xdialog )
-
-$(VER)/configure:
-	gtar -zxf $(VER).tar.gz
-	touch $(VER)/configure
-
-clean:
-	-rm -rf $(VER)
+include ../Makefile.targ
+include ../Makefile.targ.autoconf

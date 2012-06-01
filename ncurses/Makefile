@@ -18,30 +18,76 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc., All rights reserved.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER=ncurses-5.7
-VER64=$(VER)-64
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-USRDIR=$(DESTDIR)/usr
-GCC=$(DESTDIR)/usr/bin/gcc
-GXX=$(DESTDIR)/usr/bin/g++
+VER =	ncurses-5.7
 
-all: $(VER)/config.status $(VER64)/config.status
-	( cd $(VER); env - PATH=$(DESTDIR)/usr/bin:/usr/bin:$(PATH) \
-	    CC=$(GCC) CXX=$(GXX) \
-	    gmake $(PARALLEL) )
-	( cd $(VER64); env - PATH=$(DESTDIR)/usr/bin:/usr/bin:$(PATH) \
-	    CC="$(GCC) -m64" CXX="$(GXX) -m64" \
-	    gmake $(PARALLEL))
+include ../Makefile.defs
 
-install: all
+BUILD64 =	yes
+
+AUTOCONF_PREFIX =	/usr/gnu
+AUTOCONF_OPTS += \
+	-C \
+	--with-shared \
+	--without-normal
+
+AUTOCONF_OPTS.64 += \
+	--libdir=/usr/gnu/lib/amd64
+
+LDFLAGS +=	-R/usr/gnu/lib
+LDFLAGS.64 +=	-R/usr/gnu/lib/amd64
+
+PATCHES = \
+	ncurses-01-widec.diff \
+	ncurses-02-rpath.diff
+
+USRDIR =	$(DESTDIR)/usr
+
+include ../Makefile.targ
+
+all: hack-curses all_autoconf
+
+#
+# This horrid mess is needed because the ncurses build process isn't smart
+# enough to look in its own directories for libraries before those passed
+# in via -Lwhatever in LDFLAGS.  So we move any problematic ones out of the
+# way before we build, then move them back after.
+#
+# You got a better idea?
+#
+.PHONY: hack-curses
+hack-curses:
+	for l in form menu panel; do \
+		if [ -L $(DESTDIR)/usr/lib/lib$$l.so ]; then \
+			mv $(DESTDIR)/usr/lib/lib$$l.so \
+			    $(DESTDIR)/usr/lib/lib$$l__curses.so; \
+		fi; \
+		if [ -L $(DESTDIR)/usr/lib/64/lib$$l.so ]; then \
+			mv $(DESTDIR)/usr/lib/64/lib$$l.so \
+			    $(DESTDIR)/usr/lib/64/lib$$l__curses.so; \
+		fi; \
+	done
+
+.PHONY: hack-curses
+unhack-curses:
+	for l in form menu panel; do \
+		if [ -L $(DESTDIR)/usr/lib/lib$$l__curses.so ]; then \
+			mv $(DESTDIR)/usr/lib/lib$$l__curses.so \
+			    $(DESTDIR)/usr/lib/lib$$l.so; \
+		fi; \
+		if [ -L $(DESTDIR)/usr/lib/64/lib$$l__curses.so ]; then \
+			mv $(DESTDIR)/usr/lib/64/lib$$l__curses.so \
+			    $(DESTDIR)/usr/lib/64/lib$$l.so; \
+		fi; \
+	done
+
+install: all unhack-curses
 	mkdir -p $(DESTDIR)
-	@ ( cd $(VER64); env - PATH=$(DESTDIR)/usr/bin:/usr/bin:$(PATH) \
+	(cd $(VER.64); env - PATH=$(DESTDIR)/usr/bin:/usr/bin:$(PATH) \
 	    gmake DESTDIR=$(DESTDIR) install)
-	@ ( cd $(VER); env - PATH=$(DESTDIR)/usr/bin:/usr/bin:$(PATH) \
+	(cd $(VER.32); env - PATH=$(DESTDIR)/usr/bin:/usr/bin:$(PATH) \
 	    gmake DESTDIR=$(DESTDIR) install)
 	mv $(USRDIR)/gnu/bin/infocmp $(USRDIR)/bin/ginfocmp
 	mv $(USRDIR)/gnu/bin/tic $(USRDIR)/bin/gtic
@@ -52,36 +98,4 @@ install: all
 	mv $(USRDIR)/gnu/include/ncurses $(USRDIR)/include
 	mkdir -p $(USRDIR)/gnu/share/doc/ncurses
 	rm -f $(USRDIR)/gnu/share/doc/ncurses/README
-	cp $(VER)/README $(USRDIR)/gnu/share/doc/ncurses
-
-clean:
-	rm -rf $(VER) $(VER64)
-
-$(VER)/config.status: $(VER)/configure
-	(cd $(VER); env - PATH=$(DESTDIR)/usr/bin:/usr/bin:$(PATH) \
-	     CC=$(GCC) CXX=$(GXX) LDFLAGS="-R/usr/gnu/lib" \
-	    ./configure --prefix=/usr/gnu -C --with-shared --without-normal)
-
-$(VER64)/config.status: $(VER64)/configure
-	(cd $(VER64); env - PATH=$(DESTDIR)/usr/bin:/usr/bin:$(PATH) \
-		CC="$(GCC) -m64" CXX="$(GXX) -m64" \
-		LDFLAGS="-R/usr/gnu/lib/amd64" \
-		./configure --prefix=/usr/gnu --libdir=/usr/gnu/lib/amd64 -C --with-shared --without-normal)
-
-$(VER)/configure: $(VER64)/configure
-	gtar -zxf $(VER).tar.gz
-	(cd $(VER) \
-	; gpatch -p1 --no-backup-if-mismatch < ../ncurses-01-widec.diff \
-	; gpatch -p1 --no-backup-if-mismatch < ../ncurses-02-rpath.diff \
-	)
-	touch $(VER)/configure
-
-$(VER64)/configure: $(VER).tar.gz
-	gtar -zxf $(VER).tar.gz
-	mv $(VER) $(VER64)
-	(cd $(VER64) \
-	; gpatch -p1 --no-backup-if-mismatch < ../ncurses-01-widec.diff \
-	; gpatch -p1 --no-backup-if-mismatch < ../ncurses-02-rpath.diff \
-	)
-	touch $(VER64)/configure
-
+	cp $(VER.32)/README $(USRDIR)/gnu/share/doc/ncurses

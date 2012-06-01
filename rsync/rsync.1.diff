@@ -1,5 +1,5 @@
---- rsync.1	Thu Sep 17 01:30:37 2009
-+++ rsync.1.new	Thu Sep 17 01:32:44 2009
+--- rsync-3.0.6/rsync.1	Thu Sep 17 01:30:37 2009
++++ rsync-3.0.6/rsync.1.new	Thu Sep 17 01:32:44 2009
 @@ -1213,9 +1213,8 @@
  up less space on the destination.  Conflicts with \fB\-\-inplace\fP because it's
  not possible to overwrite data in a sparse fashion.

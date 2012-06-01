@@ -1,5 +1,4 @@
 #
-#
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
@@ -21,49 +20,24 @@
 #
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
-# Copyright (c) 2012 Joyent Inc.
-#
 
-VER=vim72
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
+VER =	vim73
 
-GCC=$(DESTDIR)/usr/bin/gcc
-GXX=$(DESTDIR)/usr/bin/g++
+include ../Makefile.defs
 
-all: $(VER)/src/auto/config.status
-	(cd $(VER); env \
-	    "CC=$(GCC)" \
-	    "CXX=$(GXX)" \
-	    STRIP=/usr/bin/strip \
-	    PATH=$(DESTDIR)/usr/bin:$(PATH) \
-	    make -e $(PARALLEL))
+AUTOCONF_OUT =	src/auto/config.status
+AUTOCONF_ENV += \
+	STRIP=/usr/bin/strip
+AUTOCONF_OPTS += \
+	--disable-gui \
+	--disable-gtktest \
+	--with-features=huge \
+	--without-x
 
-install: all
-	(cd $(VER); env \
-	    "CC=$(GCC)" \
-	    "CXX=$(GXX)" \
-	    STRIP=/usr/bin/strip \
-	    PATH=$(DESTDIR)/usr/bin:$(PATH) \
-	    DESTDIR=$(DESTDIR) \
-	    make -e install)
+TARBALL =		$(VER).tar.bz2
+TARBALL_COMPRESS =	-j
 
-$(VER)/src/auto/config.status: $(VER)/configure
-	(cd $(VER); env \
-	    "CC=$(GCC)" \
-	    "CXX=$(GXX)" \
-	    STRIP=/usr/bin/strip \
-	    PATH=$(DESTDIR)/usr/bin:$(PATH) \
-	    ./configure --prefix=/usr \
-	      --disable-gui \
-	      --disable-gtktest \
-	      --with-features=huge \
-	      --without-x )
-
-$(VER)/configure:
-	gtar -jxf $(VER).tar.bz2
-	touch $(VER)/configure
-
-clean:
-	-rm -rf $(VER)
+include ../Makefile.targ
+include ../Makefile.targ.autoconf

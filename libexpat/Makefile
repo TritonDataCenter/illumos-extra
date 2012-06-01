@@ -18,76 +18,34 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent, Inc. All rights reserved.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER=expat-2.0.1
-VER64=$(VER)-64
-LARGEFILES= -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/bin/gcc
-CCC=$(DESTDIR)/usr/bin/g++
-CC64=$(CC)
-CCC64=$(CCC)
-CCFLAGS="-fPIC"
-CCFLAGS64="-m64 -fPIC"
+VER =	expat-2.0.1
 
-all: real-all
+include ../Makefile.defs
 
-all32: $(VER)/config.status
-	(cd $(VER); env \
-	    CC=$(CC) CXX=$(CCC) \
-	    "CFLAGS= -g -DHAVE_EXPAT_CONFIG_H $(LARGEFILES)" \
-	    "INSTALL=/usr/ucb/install -c" \
-	    MAKE=gmake gmake $(PARALLEL))
-	@find . -name core -exec rm -f {} \;
+BUILD64 =	yes
 
-all64: $(VER64)/config.status
-	(cd $(VER64); env \
-	    "CC=$(CC64)" "CXX=$(CCC64)" \
-	    "CFLAGS=$(CCFLAGS64) -g -DHAVE_EXPAT_CONFIG_H $(LARGEFILES)" \
-	    "INSTALL=/usr/ucb/install -c" \
-	    MAKE=gmake gmake $(PARALLEL))
-	@find . -name core -exec rm -f {} \;
+CPPFLAGS += \
+	-D_FILE_OFFSET_BITS=64 \
+	-D_LARGEFILE_SOURCE \
+	-D_HAVE_EXPAT_CONFIG_H
+
+CFLAGS +=	-g -fPIC
+
+AUTOCONF_ENV += \
+	INSTALL="/usr/ucb/install -c"
+
+PATCHES = \
+	CVE-2009-3560.patch \
+	CVE-2009-3720.patch
+
+include ../Makefile.targ
+
+all: all_autoconf
 
 install: all
-	DESTDIR=$(DESTDIR) /bin/bash ./install-sfw
-	DESTDIR=$(DESTDIR) MACH64=amd64 /bin/bash ./install-sfw-64
-
-real-all: all32 all64
-
-$(VER)/config.status: $(VER)/configure
-	(cd $(VER); env \
-	    CC=$(CC) CFLAGS=$(CFLAGS) CXX=$(CCC) \
-	    "INSTALL=/usr/ucb/install -c" \
-	    "MAKE=gmake" \
-	    ./configure --prefix=/usr)
-
-$(VER64)/config.status: $(VER64)/configure
-	(cd $(VER64); env \
-	    "CC=$(CC64)" "CFLAGS=$(CFLAGS64)" "CXX=$(CCC64)" \
-	    "INSTALL=/usr/ucb/install -c" \
-	    "MAKE=$(CCSMAKE)" \
-	    ./configure --prefix=/usr)
-
-$(VER)/configure: $(VER).tar.gz
-	gzip -dc $(VER).tar.gz | tar xopf -
-	(cd $(VER); gpatch -p0 < ../CVE-2009-3560.patch)
-	(cd $(VER); gpatch -p0 < ../CVE-2009-3720.patch)
-	touch $(VER)/configure
-
-$(VER64)/configure: $(VER).tar.gz
-	mkdir -p tmp
-	gzip -dc $(VER).tar.gz | (cd tmp; tar xopf -)
-	rm -rf $(VER64)
-	mv tmp/$(VER) $(VER64); rmdir tmp
-	(cd $(VER64); gpatch -p0 < ../CVE-2009-3560.patch)
-	(cd $(VER64); gpatch -p0 < ../CVE-2009-3720.patch)
-	touch $(VER64)/configure
-clean:
-	-rm -rf $(VER)
-	-rm -rf $(VER64)
-
-install_h:
-
+	DESTDIR=$(DESTDIR) VERS=$(VER.32) /bin/bash ./install-sfw
+	DESTDIR=$(DESTDIR) VERS=$(VER.64) MACH64=amd64 \
+	    /bin/bash ./install-sfw-64

@@ -18,29 +18,32 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc. All rights reserved.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER=pbzip2-1.1.6
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/bin/gcc
-GTAR=/usr/bin/gtar
+VER =	pbzip2-1.1.6
 
-all: $(VER)/configure
-	(cd $(VER); env - PATH=$(PATH) $(MAKE) $(PARALLEL) all)
+include ../Makefile.defs
+
+UNPACK_SENTINEL =	pbzip2.cpp
+FROB_SENTINEL.32 =	/bin/true
+FROB_SENTINEL.64 =	/bin/true
+
+OVERRIDES = \
+	CC="$(GCC)" \
+	CPPFLAGS="$(CPPFLAGS)" \
+	LDFLAGS="$(LDFLAGS.32)"
+
+include ../Makefile.targ
+
+all: $(VER.32)/Makefile
+	(cd $(VER.32); env - PATH=$(PATH) $(MAKE) $(PARALLEL) $(OVERRIDES))
+
+$(VER.32)/Makefile: makefile.build $(VER.32)/$(UNPACK_SENTINEL)
+	cp makefile.build $(VER.32)/Makefile
 
 install: all
 	mkdir -p $(DESTDIR)/usr/bin
 	mkdir -p $(DESTDIR)/usr/share/man/man1
-	cp $(BASE)/$(VER)/pbzip2 $(DESTDIR)/usr/bin
-	cp $(BASE)/$(VER)/pbzip2.1 $(DESTDIR)/usr/share/man/man1
-
-$(VER)/configure: $(VER).tar.gz
-	$(GTAR) zxpf $(VER).tar.gz
-	touch $(VER)/configure
-
-clean:
-	-rm -rf $(VER)
-
-FRC:
+	cp $(BASE)/$(VER.32)/pbzip2 $(DESTDIR)/usr/bin
+	cp $(BASE)/$(VER.32)/pbzip2.1 $(DESTDIR)/usr/share/man/man1

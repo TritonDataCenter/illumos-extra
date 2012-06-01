@@ -18,30 +18,22 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER=uuid-1.6.2
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-GCC=$(DESTDIR)/usr/bin/gcc
-PATH=$(DESTDIR)/usr/bin/:/sbin:/usr/sbin:/usr/bin
+VER =	uuid-1.6.2
 
-all: $(VER)/config.h
-	( cd $(VER); CC=$(GCC) PATH=$(PATH) gmake $(PARALLEL))
+include ../Makefile.defs
+
+AUTOCONF_OUT =	config.h
+AUTOCONF_OPTS += \
+	--disable-shared
+
+all: all_autoconf
 
 install: all
-	mkdir -p $(DESTDIR)
-	( cd $(VER); \
-	    gmake DESTDIR=$(DESTDIR) install)
+	mkdir -p $(DESTDIR)/usr/bin $(DESTDIR)/usr/share/man/man1
+	ginstall -m 0555 $(VER.32)/uuid $(DESTDIR)/usr/bin
+	ginstall -m 0444 $(VER.32)/uuid.1 $(DESTDIR)/usr/share/man/man1
 
-clean:
-	rm -rf $(VER)
-
-$(VER)/config.h: $(VER)/configure
-	( cd $(VER); CC=$(GCC) PATH=$(PATH) \
-	 	./configure --disable-shared --prefix=/usr)
-
-$(VER)/configure: $(VER).tar.gz
-	gtar -zxf $(VER).tar.gz
-	touch $(VER)/configure
+include ../Makefile.targ

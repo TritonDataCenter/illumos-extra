@@ -18,31 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2012, Joyent Inc.  All rights reserved.
 #
 
-VER=bash-4.1
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-MAKE="gmake $(PARALLEL)"
+VER =	bash-4.1
 
--include ../Makefile.inc
-
-all: $(VER)/config.status
-	( cd $(VER); env - PATH=$(PATH) \
-	    gmake )
-
-install: all
-	mkdir -p $(DESTDIR)
-	( cd $(VER); env - PATH=$(PATH) \
-	    gmake DESTDIR=$(DESTDIR) install)
-
-clean:
-	rm -rf $(VER)
-
-$(VER)/config.status: $(VER)/configure
-	    (cd $(VER); ./configure --prefix=/usr)
-
-$(VER)/configure:
-	gtar -zxf $(VER).tar.gz
-
+include ../Makefile.defs
+include ../Makefile.targ
+include ../Makefile.targ.autoconf

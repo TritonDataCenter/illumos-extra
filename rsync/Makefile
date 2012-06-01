@@ -18,45 +18,23 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER=rsync-3.0.6
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
-CC=$(DESTDIR)/usr/bin/gcc
-GTAR=/usr/bin/gtar
-SH=ksh93
+VER =	rsync-3.0.6
 
--include ../Makefile.inc
+include ../Makefile.defs
 
-all: $(VER)/config.status
-	(cd $(VER); env \
-	    CC=$(CC) \
-	    LD_OPTIONS="-M $(BASE)/mapfile_noexstk" \
-	    PATH=$(PATH) \
-	    MAKE=gmake gmake $(PARALLEL))
-	@find . -name core -exec rm -f {} \;
+AUTOCONF_ENV += \
+	LD_OPTIONS="-M $(BASE)/mapfile_noexstk"
+AUTOCONF_OPTS += \
+	--with-included-popt
+
+PATCHES =	rsync.1.diff
+
+include ../Makefile.targ
+
+all: all_autoconf
 
 install: all
-	VERDIR=$(VER) $(SH) ./install-sfw
-
-$(VER)/config.status: $(VER)/configure
-	(cd $(VER); env \
-	    CC=$(CC) \
-	    "CFLAGS=$(CFLAGS)" \
-	    PATH=$(PATH) \
-	    MAKE=gmake \
-	./configure --prefix=/usr --with-included-popt )
-
-$(VER)/configure: $(VER).tar.gz
-	$(GTAR) zxpf $(VER).tar.gz --no-same-owner
-	patch $(VER)/rsync.1 < rsync.1.diff
-	touch $(VER)/configure
-	find $(VER) -type d -exec /usr/bin/chmod 755 "{}" \;
-	find $(VER) -type f -exec /usr/bin/chmod ugo+r "{}" \;
-
-clean:
-	-rm -rf $(VER)
-
-FRC:
+	VERDIR=$(VER.32) ksh93 ./install-sfw
