@@ -24,5 +24,11 @@
 VER =	bash-4.1
 
 include ../Makefile.defs
+
+#
+# As pkgsrc suggests, parallel builds are unsafe.  Boo!
+#
+PARALLEL =
+
 include ../Makefile.targ
 include ../Makefile.targ.autoconf
