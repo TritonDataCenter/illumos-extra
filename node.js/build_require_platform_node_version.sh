@@ -26,6 +26,10 @@ var required_version='${VER}';
 var util = require('util');
 
 exports.assert = function () {
+    // this allows overriding for development
+    if (process.env.DISABLE_NODE_VERSION_CHECK) {
+        return;
+    }
     if (process.version !== required_version) {
         throw new Error(util.format('You must be running node %s to use this '
             + 'platform library. You are currently using version %s '
