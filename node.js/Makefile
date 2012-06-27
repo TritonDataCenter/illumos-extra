@@ -41,6 +41,7 @@ install: all
 	./build_require_platform_node_version.sh \
 	$(DESTDIR)/usr/node/$(MAJOR_VER)/bin/node \
 	$(DESTDIR)/usr/node/$(MAJOR_VER)/node_modules/platform_node_version.js
+	rm -rf $(DESTDIR)/usr/node/$(MAJOR_VER)/man
 	mv $(DESTDIR)/usr/node/$(MAJOR_VER)/share/man $(DESTDIR)/usr/node/$(MAJOR_VER)/
 
 include ../Makefile.targ
