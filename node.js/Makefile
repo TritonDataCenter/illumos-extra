@@ -28,8 +28,12 @@ include ../Makefile.defs
 
 AUTOCONF_OPTS += \
 	--with-dtrace \
+	--openssl-use-sys \
 	--openssl-libpath=$(DESTDIR)/lib \
 	--openssl-includes=$(DESTDIR)/usr/include \
+	--shared-zlib \
+	--shared-zlib-libpath=$(DESTDIR)/lib \
+	--shared-zlib-includes=$(DESTDIR)/usr/include \
 	--prefix=/usr/node/$(MAJOR_VER)
 
 AUTOCONF_OUT =	build/default/config.h
