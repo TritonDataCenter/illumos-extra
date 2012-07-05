@@ -26,6 +26,8 @@ VER =	node-v0.8.0
 
 include ../Makefile.defs
 
+CFLAGS +=	-Wno-unknown-pragmas
+
 AUTOCONF_OPTS += \
 	--with-dtrace \
 	--openssl-use-sys \
@@ -35,6 +37,12 @@ AUTOCONF_OPTS += \
 	--shared-zlib-libpath=$(DESTDIR)/lib \
 	--shared-zlib-includes=$(DESTDIR)/usr/include \
 	--prefix=/usr/node/$(MAJOR_VER)
+
+AUTOCONF_CFLAGS =	CFLAGS="$(CPPFLAGS) $(CFLAGS)"
+AUTOCONF_LIBS =
+AUTOCONF_ENV +=		CXXFLAGS="$(CPPFLAGS) $(CFLAGS)"
+
+OVERRIDES +=	$(AUTOCONF_ENV)
 
 AUTOCONF_OUT =	build/default/config.h
 
@@ -46,7 +54,8 @@ install: all
 	$(DESTDIR)/usr/node/$(MAJOR_VER)/bin/node \
 	$(DESTDIR)/usr/node/$(MAJOR_VER)/node_modules/platform_node_version.js
 	rm -rf $(DESTDIR)/usr/node/$(MAJOR_VER)/man
-	mv $(DESTDIR)/usr/node/$(MAJOR_VER)/share/man $(DESTDIR)/usr/node/$(MAJOR_VER)/
+	mv $(DESTDIR)/usr/node/$(MAJOR_VER)/share/man \
+	    $(DESTDIR)/usr/node/$(MAJOR_VER)/
 
 include ../Makefile.targ
 include ../Makefile.targ.autoconf

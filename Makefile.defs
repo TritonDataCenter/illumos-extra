@@ -30,6 +30,7 @@ PATH =		$(DESTDIR)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
 
 MAKE =		gmake
 PARALLEL =	-j128
+MAKE_VERBOSE =	V=1
 GCC =		$(DESTDIR)/usr/bin/gcc
 GXX =		$(DESTDIR)/usr/bin/g++
 GCC.64 =	$(GCC) -m64
@@ -86,6 +87,8 @@ AUTOCONF_OPTS = \
 
 AUTOCONF_OPTS.64 = \
 	$(AUTOCONF_OPTS)
+
+OVERRIDES =	$(MAKE_VERBOSE)
 
 TARBALL =		$(VER).tar.gz
 TARBALL_COMPRESS =	-z
