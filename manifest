@@ -235,7 +235,6 @@ f usr/gnu/share/doc/ncurses/README 0444 root bin
 f usr/bin/ginfocmp 0755 root bin
 s usr/gnu/bin/infocmp=../../bin/ginfocmp
 s usr/gnu/bin/tic=../../bin/gtic
-s usr/bin/amd64/gcaptoinfo=gtic
 s usr/bin/gcaptoinfo=gtic
 s usr/bin/ginfotocap=gtic
 f usr/bin/gtic 0755 root bin
