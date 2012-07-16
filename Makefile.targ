@@ -36,13 +36,14 @@ install_autoconf_32: all
 	mkdir -p $(DESTDIR)
 	(cd $(VER.32); \
 	    env - PATH=$(PATH) \
-	    $(MAKE) $(install_PARALLEL) DESTDIR=$(DESTDIR) install)
+	    $(MAKE) $(install_PARALLEL) $(OVERRIDES) DESTDIR=$(DESTDIR) install)
 
 install_autoconf_64: all
 	mkdir -p $(DESTDIR)
 	(cd $(VER.64); \
 	    env - PATH=$(PATH) \
-	    $(MAKE) $(install_PARALLEL) DESTDIR=$(DESTDIR) install)
+	    $(MAKE) $(install_PARALLEL) $(OVERRIDES.64) DESTDIR=$(DESTDIR) \
+	    install)
 
 $(AUTOCONF_OUT.32): $(VER.32)/configure
 	(cd $(VER.32); \
