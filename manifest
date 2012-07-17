@@ -118,6 +118,7 @@ s usr/sfw/lib/amd64/libstdc++.so.6=../../../lib/amd64/libstdc++.so.6
 s usr/sfw/lib/amd64/libssp.so.0=../../../lib/amd64/libssp.so.0
 # gnupg
 f usr/bin/gpg 0555 root bin
+f usr/share/man/man1/gpg.1 0444 root bin
 # gtar
 f usr/bin/gtar 0555 root bin
 # gzip
@@ -149,6 +150,7 @@ f usr/share/man/man1/gzmore.1 0444 root bin
 f usr/share/man/man1/gznew.1 0444 root bin
 # ipmitool
 f usr/sbin/ipmitool 0555 root bin
+f usr/share/man/man1/ipmitool.1 0444 root bin
 # less
 f usr/bin/less 0555 root bin
 f usr/bin/lessecho 0555 root bin
@@ -401,6 +403,10 @@ f usr/sbin/ntpq 0555 root bin
 f usr/sbin/ntptime 0555 root bin
 f usr/sbin/ntp-keygen 0555 root bin
 s usr/sbin/xntpdc=ntpdc
+f usr/share/man/man1/ntp-keygen.1 0444 root bin
+f usr/share/man/man1/ntpd.1 0444 root bin
+f usr/share/man/man1/ntpdc.1 0444 root bin
+f usr/share/man/man1/ntpq.1 0444 root bin
 # openldap
 d etc/openldap 0755 root bin
 f etc/openldap/ldap.conf 0644 root bin
