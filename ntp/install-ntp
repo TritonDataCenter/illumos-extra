@@ -29,6 +29,7 @@ mkdir -p ${DESTDIR}/etc/security/prof_attr.d
 mkdir -p ${DESTDIR}/lib/svc/manifest/network
 mkdir -p ${DESTDIR}/lib/svc/method
 mkdir -p ${DESTDIR}/var/ntp
+mkdir -p ${DESTDIR}/usr/share/man/man1m
 
 _install N Solaris/ntp.server ${DESTDIR}/etc/inet/ntp.server 0644
 _install N Solaris/ntp.client ${DESTDIR}/etc/inet/ntp.client 0644
@@ -37,5 +38,9 @@ _install N Solaris/ntp.xml ${DESTDIR}/lib/svc/manifest/network/ntp.xml 0444
 _install N Solaris/ntp ${DESTDIR}/lib/svc/method/ntp 0555
 _install N Solaris/auth_attr ${DESTDIR}/etc/security/auth_attr.d/ntp 0555
 _install N Solaris/prof_attr ${DESTDIR}/etc/security/prof_attr.d/ntp 0555
+
+_install N Solaris/ntpdate.1m ${DESTDIR}/usr/share/man/man1m/ntpdate.1m
+_install N Solaris/ntptime.1m ${DESTDIR}/usr/share/man/man1m/ntptime.1m
+_install N Solaris/ntptrace.1m ${DESTDIR}/usr/share/man/man1m/ntptrace.1m
 
 touch ${DESTDIR}/var/ntp/ntp.drift

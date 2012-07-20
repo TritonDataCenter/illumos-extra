@@ -19,18 +19,24 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011 Joyent Inc., All rights reserved.
+# Copyright (c) 2012 Joyent Inc., All rights reserved.
 #
+
+set -o errexit
 
 PREFIX=${DESTDIR}/usr
 SBINDIR=${PREFIX}/sbin
+MANDIR=${DESTDIR}/usr/share/man/man1
 
 mkdir -p ${SBINDIR}
 
 cd ${VERS}
 
 cp bin/dig/dig ${SBINDIR}/dig
+cp bin/dig/dig.1 ${MANDIR}/dig.1
 cp bin/dig/host ${SBINDIR}/host
+cp bin/dig/host.1 ${MANDIR}/host.1
 cp bin/dig/nslookup ${SBINDIR}/nslookup
+cp bin/dig/nslookup.1 ${MANDIR}/nslookup.1
 
 exit 0

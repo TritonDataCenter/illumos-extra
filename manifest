@@ -42,8 +42,11 @@ s usr/bin/rbash=bash
 s usr/gnu/bin/sh=../../bin/bash
 # bind
 f usr/sbin/dig 0555 root bin
+f usr/share/man/man1/dig.1 0444 root bin
 f usr/sbin/host 0555 root bin
+f usr/share/man/man1/host.1 0444 root bin
 f usr/sbin/nslookup 0555 root bin
+f usr/share/man/man1/nslookup.1 0444 root bin
 # bzip2
 h usr/bin/bzip2=usr/bin/bunzip2
 f usr/bin/bzip2recover 0555 root bin
@@ -407,6 +410,9 @@ f usr/share/man/man1/ntp-keygen.1 0444 root bin
 f usr/share/man/man1/ntpd.1 0444 root bin
 f usr/share/man/man1/ntpdc.1 0444 root bin
 f usr/share/man/man1/ntpq.1 0444 root bin
+f usr/share/man/man1m/ntpdate.1m 0444 root bin
+f usr/share/man/man1m/ntptime.1m 0444 root bin
+f usr/share/man/man1m/ntptrace.1m 0444 root bin
 # openldap
 d etc/openldap 0755 root bin
 f etc/openldap/ldap.conf 0644 root bin
