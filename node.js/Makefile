@@ -28,6 +28,21 @@ include ../Makefile.defs
 
 CFLAGS +=	-Wno-unknown-pragmas
 
+#
+# Node's build system is super broken.  If we pass it LIBS at configure time,
+# it ignores it.  If we pass it LIBS at make time, it completely replaces all
+# libraries, including those the build system itself would normally add.
+# So our only option is to add this to LDFLAGS, which has to be passed at
+# build time... including for the install target, because the generated
+# makefiles have missing dependencies and rebuild stuff when installing.
+# This has to be the most complicated, baroque, pointlessly wrong way
+# imaginable to build something with a few dozen source files.  The next time
+# you are here reading this and trying to work around the next piece of
+# Node build stupidity, just stop.  Rip all this out, write a simple makefile,
+# and copy it in at unpack time like we do for bzip2.
+#
+LDFLAGS +=	-lumem
+
 AUTOCONF_OPTS += \
 	--with-dtrace \
 	--openssl-use-sys \
