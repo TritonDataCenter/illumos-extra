@@ -21,7 +21,7 @@
 # Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER =	tun-1.1
+VER =	tun-1.3
 
 include ../Makefile.defs
 
@@ -35,8 +35,8 @@ all: all_autoconf
 install: all
 	mkdir -p $(DESTDIR)/usr/include/net
 	mkdir -p $(DESTDIR)/usr/kernel/drv/amd64
-	cp $(BASE)/$(VER.64)/solaris/if_tun.h $(DESTDIR)/usr/include/net
-	cp $(BASE)/$(VER.64)/solaris/tap.conf $(DESTDIR)/usr/kernel/drv
-	cp $(BASE)/$(VER.64)/solaris/tun.conf $(DESTDIR)/usr/kernel/drv
-	cp $(BASE)/$(VER.64)/solaris/tap $(DESTDIR)/usr/kernel/drv/amd64
-	cp $(BASE)/$(VER.64)/solaris/tun $(DESTDIR)/usr/kernel/drv/amd64
+	cp $(BASE)/$(VER.64)/if_tun.h $(DESTDIR)/usr/include/net
+	cp $(BASE)/$(VER.64)/tap.conf $(DESTDIR)/usr/kernel/drv
+	cp $(BASE)/$(VER.64)/tun.conf $(DESTDIR)/usr/kernel/drv
+	cp $(BASE)/$(VER.64)/tap $(DESTDIR)/usr/kernel/drv/amd64
+	cp $(BASE)/$(VER.64)/tun $(DESTDIR)/usr/kernel/drv/amd64
