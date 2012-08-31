@@ -1,0 +1,12 @@
+diff -ru ipmitool-1.8.11/src/plugins/open/open.c ipmitool-1.8.11-joyent/src/plugins/open/open.c
+--- ipmitool-1.8.11/src/plugins/open/open.c	2009-02-25 15:38:53.000000000 -0500
++++ ipmitool-1.8.11-joyent/src/plugins/open/open.c	2012-04-23 12:01:58.000000000 -0400
+@@ -78,7 +78,7 @@
+ 
+ 	devnum = intf->devnum;
+ 
+-	sprintf(ipmi_dev, "/dev/ipmi%d", devnum);
++	sprintf(ipmi_dev, "/dev/ipmi");
+ 	sprintf(ipmi_devfs, "/dev/ipmi/%d", devnum);
+ 	sprintf(ipmi_devfs2, "/dev/ipmidev/%d", devnum);
+ 	lprintf(LOG_DEBUG, "Using ipmi device %d", devnum);
