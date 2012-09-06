@@ -21,8 +21,12 @@
 # Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER =	curl-7.21.2
+VER =	curl-7.27.0
 
 include ../Makefile.defs
+
+TARBALL =		$(VER).tar.bz2
+TARBALL_COMPRESS =	-j
+
 include ../Makefile.targ
 include ../Makefile.targ.autoconf
