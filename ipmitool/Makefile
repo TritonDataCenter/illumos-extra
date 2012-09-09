@@ -33,7 +33,6 @@ AUTOCONF_ENV += \
 	INSTALL="ginstall -c"
 
 PATCHES +=	ipmitool-enable-openipmi.diff
-PATCHES +=	ipmitool-smartos-devname.diff
 PATCHES +=	ipmitool-nosfw.diff
 
 include ../Makefile.targ

@@ -1498,17 +1498,6 @@ main(argc,argv)
 # if unix
 	dirs[nd++] = "/usr/include";
 # endif
-# if gcos
-	dirs[nd++] = "cc/include";
-# endif
-# if ibm
-# ifndef gimpel
-	dirs[nd++] = "BTL$CLIB";
-# endif
-# endif
-# ifdef gimpel
-	dirs[nd++] = intss() ?  "SYS3.C." : "" ;
-# endif
 	/* dirs[nd++] = "/compool"; */
 	}
 	dirs[nd++] = 0;
@@ -1532,74 +1521,11 @@ main(argc,argv)
 # if unix
 	ysysloc=stsym("unix");
 # endif
-# if gcos
-	ysysloc=stsym ("gcos");
-# endif
-# if ibm
-	ysysloc=stsym ("ibm");
-# endif
-# if pdp11
-	varloc=stsym("pdp11");
-# endif
-# if vax
-	varloc=stsym("vax");
-# endif
-# if interdata
-	varloc=stsym ("interdata");
-# endif
-# if tss
-	varloc=stsym ("tss");
-# endif
-# if os
-	varloc=stsym ("os");
-# endif
-# if mert
-	varloc=stsym ("mert");
-# endif
-# if sun
-	varloc=stsym ("sun");
-# endif
-# if __NeXT__
-	varloc=stsym ("__NeXT__");
-# endif
-# if __APPLE__
-	varloc=stsym ("__APPLE__");
-# endif
-# if __MACH__
-	varloc=stsym ("__MACH__");
-# endif
-# if sparc
+# if __sparc__
 	varloc=stsym ("sparc");
 # endif
-# if i386
-	varloc=stsym ("i386");
-# endif
 # if __i386__
-	varloc=stsym ("__i386__");
-# endif
-# if __amd64
-	varloc=stsym ("__amd64");
-# endif
-# if __amd64__
-	varloc=stsym ("__amd64__");
-# endif
-# if __x86_64
-	varloc=stsym ("__x86_64");
-# endif
-# if __x86_64__
-	varloc=stsym ("__x86_64__");
-# endif
-# if mc68000
-	varloc=stsym ("mc68000");
-# endif
-# if __ppc__
-	varloc=stsym ("__ppc__");
-# endif
-# if __ppc64__
-	varloc=stsym ("__ppc64__");
-# endif
-# if __arm__
-	varloc=stsym ("__arm__");
+	varloc=stsym ("i386");
 # endif
 	}
 	ulnloc=stsym ("__LINE__");
