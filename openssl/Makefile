@@ -70,6 +70,7 @@ install64: all64
 $(VER)/configure: $(VER)-src
 	cp -r $(VER)-src $(VER) 
 	( cd $(VER) ; gpatch -p1 < ../configure.patch )
+	( cd $(VER) ; gpatch -p1 < ../aesni.patch )
 	cp engine_pkcs11/* $(VER)/crypto/engine/
 	touch $(VER)/configure
 	cp -r  $(VER) $(VER64)

@@ -103,7 +103,13 @@ node.js: openssl
 # environment variable nulls out the search path. Other vars just control what
 # gets appended.
 #
-$(DESTDIR)/usr/bin/gcc: FRC
+
+$(DESTDIR)/usr/gnu/bin/as: FRC
+	(cd binutils && \
+	    PKG_CONFIG_LIBDIR="" $(MAKE) DESTDIR=$(DESTDIR) install)
+
+
+$(DESTDIR)/usr/bin/gcc: $(DESTDIR)/usr/gnu/bin/as
 	(cd gcc4 && \
 	    PKG_CONFIG_LIBDIR="" $(MAKE) DESTDIR=$(DESTDIR) install)
 
@@ -111,12 +117,12 @@ $(SUBDIRS): $(DESTDIR)/usr/bin/gcc
 	(cd $@ && \
 	    PKG_CONFIG_LIBDIR="" $(MAKE) DESTDIR=$(DESTDIR) install)
 
-install: $(SUBDIRS) gcc4
+install: $(SUBDIRS) gcc4 binutils
 
-install_strap: $(STRAP_SUBDIRS) gcc4
+install_strap: $(STRAP_SUBDIRS) gcc4 binutils
 
 clean: 
-	-for dir in $(SUBDIRS) gcc4; \
+	-for dir in $(SUBDIRS) gcc4 binutils; \
 	    do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) clean); done
 	-rm -rf proto
 
