@@ -31,6 +31,7 @@ CFLAGS +=	-g
 AUTOCONF_ENV += \
 	LD=/usr/bin/ld \
 	INSTALL="ginstall -c"
+AUTOCONF_OPTS += --enable-solaris-opt
 
 PATCHES +=	ipmitool-enable-openipmi.diff
 PATCHES +=	ipmitool-nosfw.diff
