@@ -80,7 +80,7 @@ $(VER)-i386-build/config.status: $(VER)-i386-build $(VER.32)/configure
 		--with-ld=/usr/bin/ld \
 		--without-gnu-ld \
 		--with-gnu-as \
-		--with-as=$(DESTDIR)/usr/gnu/bin/as \
+		--with-as=$(DESTDIR)/usr/gnu/bin/gas \
 		--enable-languages="c,c++" \
 		--enable-shared \
 		--with-gmp=/opt/local \

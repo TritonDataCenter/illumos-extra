@@ -29,13 +29,15 @@ TARBALL =		$(VER).tar.bz2
 TARBALL_COMPRESS =	-j
 AUTOCONF_OPTS = \
 	--prefix=/usr/gnu \
-	--enable-64-bit-bfd
+	--enable-64-bit-bfd \
+	--program-prefix=g
 
 AUTOCONF_ENV = \
 	CC=gcc \
 	CXX=g++ \
 	DESTDIR=$(DESTDIR) \
-	MAKE=gmake
+	MAKE=gmake \
+	CONFIG_SHELL=/bin/bash
 
 include ../Makefile.targ
 include ../Makefile.targ.autoconf
