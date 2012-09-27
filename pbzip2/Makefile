@@ -31,8 +31,9 @@ FROB_SENTINEL.64 =	/bin/true
 
 OVERRIDES = \
 	CC="$(GCC)" \
+	CXX="$(GXX)" \
 	CPPFLAGS="$(CPPFLAGS)" \
-	LDFLAGS="$(LDFLAGS.32)"
+	LDFLAGS="$(LDFLAGS)"
 
 include ../Makefile.targ
 
