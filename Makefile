@@ -104,12 +104,12 @@ node.js: openssl
 # gets appended.
 #
 
-$(DESTDIR)/usr/gnu/bin/as: FRC
+$(DESTDIR)/usr/gnu/bin/gas: FRC
 	(cd binutils && \
 	    PKG_CONFIG_LIBDIR="" $(MAKE) DESTDIR=$(DESTDIR) install)
 
 
-$(DESTDIR)/usr/bin/gcc: $(DESTDIR)/usr/gnu/bin/as
+$(DESTDIR)/usr/bin/gcc: $(DESTDIR)/usr/gnu/bin/gas
 	(cd gcc4 && \
 	    PKG_CONFIG_LIBDIR="" $(MAKE) DESTDIR=$(DESTDIR) install)
 
