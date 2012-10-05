@@ -59,5 +59,5 @@ include ../Makefile.targ
 all: all_autoconf
 
 install: all
-	(cd $(VER.32); env - $(AUTOCONF_ENV) gmake $(install_PARALLEL) install)
+	(cd $(VER.32); env - $(AUTOCONF_ENV) PATH=$(PATH) gmake $(install_PARALLEL) install)
 	(env - $(AUTOCONF_ENV) ./install-ntp)
