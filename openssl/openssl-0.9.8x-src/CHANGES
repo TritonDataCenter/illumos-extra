@@ -2,6 +2,20 @@
  OpenSSL CHANGES
  _______________
 
+ Changes between 0.9.8w and 0.9.8x [10 May 2012]
+
+  *) Sanity check record length before skipping explicit IV in DTLS
+     to fix DoS attack.
+
+     Thanks to Codenomicon for discovering this issue using Fuzz-o-Matic
+     fuzzing as a service testing platform.
+     (CVE-2012-2333)
+     [Steve Henson]
+
+  *) Initialise tkeylen properly when encrypting CMS messages.
+     Thanks to Solar Designer of Openwall for reporting this issue.
+     [Steve Henson]
+
  Changes between 0.9.8v and 0.9.8w [23 Apr 2012]
 
   *) The fix for CVE-2012-2110 did not take into account that the 

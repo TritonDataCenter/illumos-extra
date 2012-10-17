@@ -25,7 +25,7 @@
 # Copyright (c) 2012 Joyent Inc.
 #
 
-VERSION=0.9.8w
+VERSION=0.9.8x
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 

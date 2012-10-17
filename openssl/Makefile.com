@@ -28,7 +28,7 @@
 
 
 METAINFO_FILE = ../METADATA
-VER = openssl-0.9.8w
+VER = openssl-0.9.8x
 VER64 =$(VER)-64
 
 TARBALL = $(VER).tar.gz
