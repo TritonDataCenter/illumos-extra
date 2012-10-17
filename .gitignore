@@ -43,8 +43,8 @@
 /nss-nspr/nss-3.12.8-64
 /ntp/ntp-dev-4.2.5p200-32
 /openldap/openldap-2.4.26-32
-/openssl/openssl-0.9.8w
-/openssl/openssl-0.9.8w-64
+/openssl/openssl-0.9.8x
+/openssl/openssl-0.9.8x-64
 /pbzip2/pbzip2-1.1.6-32
 /perl/perl-5.12.3-32
 /proto
