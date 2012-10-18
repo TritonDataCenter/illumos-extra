@@ -27,6 +27,18 @@ include ../Makefile.defs
 
 PATCHES =	Patches/*
 
+#
+# It is important to make sure that screen has a prefix of /usr. When screen
+# builds and prefix is not set, it runs which screen to determine the prefix. On
+# the first build, this means that you will probably get /usr/bin/screen.
+# However, on subsequent builds, you will get the one from the proto area. Even
+# worse, if PATH were ever pathological, you could potentially get
+# /opt/local/bin which would be terrible.
+#
+AUTOCONF_OPTS = \
+	--prefix=/usr \
+	--with-sys-screenrc=/etc/screenrc
+
 include ../Makefile.targ
 
 all: all_autoconf
