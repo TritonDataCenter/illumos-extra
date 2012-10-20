@@ -47,6 +47,34 @@ if [ ! -f /etc/inet/ntp.conf ]; then
 	exit $SMF_EXIT_ERR_CONFIG
 fi
 
+#
+# If there are any servers or peers configured, we must be able to reach
+# at least one of them.  If we cannot, the daemon will hang before daemonising,
+# and the service will be wedged.  This static check is obviously incomplete,
+# as nothing precludes this condition from arising after we check it.  But it
+# does catch the overwhelmingly common case, in which we are executing on a
+# machine that simply has no access to any of its (presumably non-local)
+# servers.
+#
+need_host_check=
+host_ok=
+while read; do
+	set -- $REPLY
+	if [[ "$1" != "peer" ]] && [[ "$1" != "server" ]]; then
+		continue
+	fi
+	need_host_check=yes
+	if ping -- "$2" >/dev/null 2>/dev/null; then
+		host_ok=yes
+		break;
+	fi
+done < /etc/inet/ntp.conf
+
+if [[ -n "$need_host_check" ]] && [[ -z "$host_ok" ]]; then
+	echo "Error: Servers/peers specified but none is reachable."
+	exit $SMF_EXIT_ERR_CONFIG
+fi
+
 # Disable globbing to prevent privilege escalations by users authorized
 # to set property values for the NTP service.
 set -f 
