@@ -23,8 +23,8 @@
 
 BASE =		$(PWD)
 DESTDIR =	$(BASE)/../proto
-VER.32 =	$(VER)-32
-VER.64 =	$(VER)-64
+VER.32 =	$(VER)-32$(STRAP)
+VER.64 =	$(VER)-64$(STRAP)
 
 PATH =		$(DESTDIR)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
 
@@ -43,8 +43,18 @@ BUILD32 =	yes
 BUILD64 =
 
 CPPFLAGS =	$(SYSINCDIRS:%=-isystem $(DESTDIR)/%)
-LDFLAGS =	$(SYSLIBDIRS:%=-L$(DESTDIR)/%)
-LDFLAGS.64 =	$(SYSLIBDIRS:%=-L$(DESTDIR)/%/64)
+
+#
+# Because of bugs in ntp, we need to be able to refer to the target specific
+# flags as well as the generic flags later on.
+#
+ifneq ($(STRAP),strap)
+	GENLDFLAGS = -Wl,-zassert-deflib -Wl,-zfatal-warnings
+endif
+T32_LDFLAGS =	$(SYSLIBDIRS:%=-L$(DESTDIR)/%)
+T64_LDFLAGS =	$(SYSLIBDIRS:%=-L$(DESTDIR)/%/64)
+LDFLAGS =	$(T32_LDFLAGS) $(GENLDFLAGS)
+LDFLAGS.64 =	$(T64_LDFLAGS) $(GENLDFLAGS)
 
 AUTOCONF_CC =		CC="$(GCC)"
 AUTOCONF_CXX =		CXX="$(GXX)"

@@ -76,4 +76,5 @@ $(VER.64)/$(UNPACK_SENTINEL): $(TARBALL)
 	touch $(VER.64)/$(UNPACK_SENTINEL)
 
 clean:
-	-rm -rf $(VER) $(VER.32) $(VER.64) .unpack32 .unpack64 $(CLEANFILES)
+	-rm -rf $(VER) $(VER.32) $(VER.64) .unpack32 .unpack64 $(CLEANFILES) \
+	    $(VER.32)strap $(VER.64)strap

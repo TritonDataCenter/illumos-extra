@@ -23,15 +23,15 @@
 
 include ../Makefile.defs
 
-PROG =		cpp
+PROG =		cpp$(STRAP)
 PROGDIR =	/usr/lib
 
 OBJS = \
-	cpp.o \
-	y.tab.o
+	cpp.o$(STRAP) \
+	y.tab.o$(STRAP)
 
 CLEANFILES += \
-	y.tab.c
+	y.tab.c$(STRAP)
 
 CFLAGS +=	-O2
 LD =		$(GCC)
@@ -45,17 +45,28 @@ all: $(PROG)
 install: $(PROTOFILES)
 
 clean:
-	-rm -f $(OBJS) $(CLEANFILES) $(PROG)
+	-rm -f $(OBJS) $(CLEANFILES) $(PROG) *strap
 
 $(PROG): $(OBJS)
 	$(LINK.prog)
 
-%.o: %.c
+%.o$(STRAP): %.c
 	$(COMPILE.c)
 
+#
+# We need to distinguish between the cpp build in the bootstrap and the cpp
+# built normally. However, when we install it, they need to have the same name.
+# To handle this we add a small bit of shell logic. Note that the mv bit is
+# explicitly ignored and instead we do a final check to make sure we have
+# something called cpp at the very end which will either be because of install
+# or because of the later mv.
+#
 $(DESTDIR)$(PROGDIR)/%: %
 	mkdir -p $(DESTDIR)$(PROGDIR)
 	/usr/sbin/install -m 0755 -f $(DESTDIR)$(PROGDIR) $(PROG)
+	-[ "$(PROG)" == "cppstrap" ] && mv -f $(DESTDIR)$(PROGDIR)/$(PROG) \
+	    $(DESTDIR)$(PROGDIR)/cpp
+	[ -f "$(DESTDIR)$(PROGDIR)/cpp" ]
 
 y.tab.c: cpy.y
 	$(YACC) cpy.y

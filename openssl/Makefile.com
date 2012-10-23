@@ -28,7 +28,8 @@
 
 
 METAINFO_FILE = ../METADATA
-VER = openssl-0.9.8x
+BVER = openssl-0.9.8x
+VER = $(BVER)$(STRAP)
 VER64 =$(VER)-64
 
 TARBALL = $(VER).tar.gz
@@ -38,6 +39,10 @@ PKCS11_LIB64 = /usr/lib/64/libpkcs11.so.1
 
 CFLAGS = -DSOLARIS_OPENSSL -DNO_WINDOWS_BRAINDEATH
 CFLAGS64 = $(CFLAGS)
+
+ifneq ($(STRAP),strap)
+	LDFLAGS += $(GENLDFLAGS)
+endif
 
 GENERIC_CONFIGURE_OPTIONS = \
 	$(CFLAGS) \

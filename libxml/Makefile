@@ -30,10 +30,14 @@
 # build system.
 #
 
-VER=libxml2-2.7.6
+BVER=libxml2-2.7.6
+VER=$(BVER)$(STRAP)
 VER64=$(VER)-64
 
 LDFLAGS=	-z defs -z text -z combreloc -lpthread -lc -nodefaultlibs
+ifneq ($(STRAP),strap)
+	LDFLAGS +=	$(GENLDFLAGS)
+endif
 LARGEFILES=	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE \
 		-fno-builtin
 
@@ -101,15 +105,15 @@ $(VER64)/config.status: $(VER64)/configure
 	cp mapfile $(VER64)/libxml2.syms
 	patch -N $(VER64)/libtool < libtool.patch
 
-$(VER)/configure: $(VER).tar.gz
-	mkdir -p tmp; gzip -dc $(VER).tar.gz | (cd tmp; tar xopf -)
-	mv tmp/$(VER) $(VER); rmdir tmp
+$(VER)/configure: $(BVER).tar.gz
+	mkdir -p tmp; gzip -dc $(BVER).tar.gz | (cd tmp; tar xopf -)
+	mv tmp/$(BVER) $(VER); rmdir tmp
 	touch $(VER)/configure
 
-$(VER64)/configure: $(VER).tar.gz
-	mkdir -p tmp; gzip -dc $(VER).tar.gz | (cd tmp; tar xopf -)
-	mv tmp/$(VER) $(VER64); rmdir tmp
+$(VER64)/configure: $(BVER).tar.gz
+	mkdir -p tmp; gzip -dc $(BVER).tar.gz | (cd tmp; tar xopf -)
+	mv tmp/$(BVER) $(VER64); rmdir tmp
 	touch $(VER64)/configure
 
 clean:
-	-rm -rf $(VER) $(VER64)
+	-rm -rf $(VER) $(VER64) $(VER)strap $(VER64)strap

@@ -32,7 +32,7 @@ AUTOCONF_OPTS = \
 	--enable-64-bit-bfd \
 	--program-prefix=g
 
-AUTOCONF_ENV = \
+AUTOCONF_ENV += \
 	CC=gcc \
 	CXX=g++ \
 	DESTDIR=$(DESTDIR) \

@@ -93,7 +93,9 @@ strap: $(STRAP_SUBDIRS)
 
 curl: libz openssl
 gzip: libz
-node.js: openssl
+node.js: openssl libm
+ncurses: libm
+dialog: ncurses
 
 #
 # pkg-config may be installed. This will actually only hurt us rather than help
@@ -106,16 +108,22 @@ node.js: openssl
 
 $(DESTDIR)/usr/gnu/bin/gas: FRC
 	(cd binutils && \
-	    PKG_CONFIG_LIBDIR="" $(MAKE) DESTDIR=$(DESTDIR) install)
+	    PKG_CONFIG_LIBDIR="" \
+	    STRAP=$(STRAP) \
+	    $(MAKE) DESTDIR=$(DESTDIR) install)
 
 
 $(DESTDIR)/usr/bin/gcc: $(DESTDIR)/usr/gnu/bin/gas
 	(cd gcc4 && \
-	    PKG_CONFIG_LIBDIR="" $(MAKE) DESTDIR=$(DESTDIR) install)
+	    PKG_CONFIG_LIBDIR="" \
+	    STRAP=$(STRAP) \
+	    $(MAKE) DESTDIR=$(DESTDIR) install)
 
 $(SUBDIRS): $(DESTDIR)/usr/bin/gcc
 	(cd $@ && \
-	    PKG_CONFIG_LIBDIR="" $(MAKE) DESTDIR=$(DESTDIR) install)
+	    PKG_CONFIG_LIBDIR="" \
+	    STRAP=$(STRAP) \
+	    $(MAKE) DESTDIR=$(DESTDIR) install)
 
 install: $(SUBDIRS) gcc4 binutils
 

@@ -46,6 +46,20 @@ AUTOCONF_OPTS += \
 
 CFLAGS +=	-O2
 
+#
+# ntp unfortunately shares a symbol name with libc and generates a warning that
+# would normally be fatal:
+# ld: warning: symbol 'monitor' has differing types:
+#        (file ../libntp/libntp.a(audio.o) type=OBJT; file
+# 	  .../proto/usr/lib/libc.so type=FUNC);
+#        ../libntp/libntp.a(audio.o) definition taken
+#
+# Until such a time as this is fixed, we instead ignore -zfatal-warnings and
+# just add -zassert-deflib. Unfortunately we don't have a programatic way to
+# check it currently, but this will have to do for now.
+#
+LDFLAGS = $(T32_LDFLAGS) -zassert-deflib
+
 AUTOCONF_ENV += \
 	LD_OPTIONS="$(LDFLAGS)" \
 	DESTDIR="$(DESTDIR)" \

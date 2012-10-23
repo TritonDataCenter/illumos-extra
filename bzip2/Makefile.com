@@ -45,10 +45,16 @@ bzip2recover_OBJECTS = \
 LDFLAGS += -Wl,-Bdirect -Wl,-zdefs -Wl,-ztext -Wl,-zcombreloc
 LDFLAGS += -Wl,-M../../mapfile -Wl,-h,$(DYNLIB)
 LDFLAGS += -L. -L$(DESTDIR)/usr/lib -L$(DESTDIR)/lib
+ifneq ($(STRAP),strap)
+	LDFLAGS += $(GENLDFLAGS)
+endif
 LDLIBS += -lc
 
 PROGS = bzip2 bzip2recover
-PROG_LDFLAGS += -Wl,-Bdirect -L.
+PROG_LDFLAGS += -Wl,-Bdirect -L. 
+ifneq ($(STRAP),strap)
+	PROG_LDFLAGS += $(GENLDFLAGS)
+endif
 bzip2_LDLIBS += -lbz2
 
 # --- Generic ---

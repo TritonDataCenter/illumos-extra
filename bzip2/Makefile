@@ -22,14 +22,15 @@
 # Copyright (c) 2012, Joyent Inc.  All rights reserved.
 #
 
-VER =	bzip2-1.0.6
+BVER =	bzip2-1.0.6
+VER = $(BVER)$(STRAP)
 
 include ../Makefile.defs
 
 OVERRIDES +=	CC="$(GCC)"
 OVERRIDES.64 +=	CC="$(GCC.64)"
 
-CLEANFILES +=	bzgrep.tmp
+CLEANFILES +=	bzgrep.tmp $(VER)strap
 
 include ../Makefile.targ
 
@@ -46,8 +47,12 @@ all_64: $(VER)/amd64/Makefile
 install: all
 	/usr/bin/ksh93 ./install-bzip2 $(PWD)/$(VER)
 
-$(VER)/Makefile.dist: $(VER).tar.gz
-	gzip -dc $(VER).tar.gz | tar xopf -
+$(VER)/Makefile.dist: $(BVER).tar.gz
+	-rm -rf $(VER)
+	mkdir -p .unpack
+	gtar x -C .unpack -z --no-same-owner -f $(BVER).tar.gz
+	mv -f .unpack/$(BVER) $(VER)
+	-rmdir .unpack
 	(cd $(VER); gpatch -p1 < ../bzip2.patch)
 	cp $(VER)/Makefile $(VER)/Makefile.dist
 
