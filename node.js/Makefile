@@ -22,7 +22,7 @@
 #
 
 MAJOR_VER =	0.8
-VER =	node-v0.8.9
+VER =	node-v0.8.14
 
 include ../Makefile.defs
 
