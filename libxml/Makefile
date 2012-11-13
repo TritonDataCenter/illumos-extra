@@ -116,4 +116,4 @@ $(VER64)/configure: $(BVER).tar.gz
 	touch $(VER64)/configure
 
 clean:
-	-rm -rf $(VER) $(VER64) $(VER)strap $(VER64)strap
+	-rm -rf $(VER) $(VER64) $(VER)strap $(VER64)strap $(BVER)strap-64

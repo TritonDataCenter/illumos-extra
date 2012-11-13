@@ -78,4 +78,4 @@ $(VER)/configure: $(BVER)-src
 	cp -r  $(VER) $(VER64)
 
 clean:
-	-rm -rf $(VER) $(VER64) $(VER)strap $(VER64)strap
+	-rm -rf $(VER) $(VER64) $(VER)strap $(VER64)strap $(VER)strap-64
