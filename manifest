@@ -322,6 +322,7 @@ f usr/node/0.8/man/man1/node.1 0444 root bin
 f usr/node/0.8/lib/dtrace/node.d 0444 root bin
 f usr/node/0.8/node_modules/platform_node_version.js 0444 root bin
 s usr/share/man/man1/node.1=../../../node/0.8/man/man1/node.1
+h usr/lib/dtrace/node.d=usr/node/0.8/lib/dtrace/node.d
 # nss-nspr
 d usr/lib/mps 0755 root bin
 s usr/lib/mps/64=amd64
