@@ -1,0 +1,66 @@
+#!/usr/bin/ksh93
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+# Copyright (c) 2010 Joyent Inc.
+#
+
+set -o errexit
+
+LIBDIR=${DESTDIR}/lib/amd64	# MACH64 passed in by makefile
+BINDIR=${DESTDIR}/usr/bin/amd64
+USRLIBDIR=${DESTDIR}/usr/lib/amd64
+SFWBINDIR=${DESTDIR}/usr/sfw/bin/amd64
+
+mkdir -p $LIBDIR
+mkdir -p $BINDIR
+mkdir -p $USRLIBDIR
+mkdir -p $SFWBINDIR
+
+if [[ -z "$VERDIR" || -z "$LIBVER" ]]; then
+	echo "VERDIR and/or LIBVER not set; fix your bugs."
+	exit 1
+fi
+
+source ../install.subr
+
+cd ${VERDIR}
+
+# Install commands
+_install E apps/openssl ${BINDIR}/openssl 0555
+_install L ../../../bin/amd64/openssl ${SFWBINDIR}/openssl
+
+# Install libraries
+_install D libcrypto.so.${LIBVER} ${LIBDIR}/libcrypto.so.${LIBVER} 0755
+_install L libcrypto.so.${LIBVER} ${LIBDIR}/libcrypto.so
+_install D libssl.so.${LIBVER} ${LIBDIR}/libssl.so.${LIBVER} 0755
+_install L libssl.so.${LIBVER} ${LIBDIR}/libssl.so
+_install L amd64 ${DESTDIR}/lib/64
+_install L ../../../lib/amd64/libcrypto.so.${LIBVER} ${USRLIBDIR}/libcrypto.so.${LIBVER}
+_install L ../../../lib/amd64/libcrypto.so ${USRLIBDIR}/libcrypto.so
+_install L ../../../lib/amd64/libssl.so.${LIBVER} ${USRLIBDIR}/libssl.so.${LIBVER}
+_install L ../../../lib/amd64/libssl.so ${USRLIBDIR}/libssl.so
+
+exit 0

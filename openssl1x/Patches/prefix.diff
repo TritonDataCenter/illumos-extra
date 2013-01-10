@@ -1,0 +1,82 @@
+--- openssl-1.0.1c/Makefile.org	Sun Apr 22 13:25:19 2012
++++ openssl-1.0.1c-32/Makefile.org	Thu Jan 10 00:55:18 2013
+@@ -181,7 +181,7 @@
+ NAME=           $(BASENAME)-$(VERSION)
+ TARFILE=        $(NAME).tar
+ WTARFILE=       $(NAME)-win.tar
+-EXHEADER=       e_os2.h
++EXHEADER=       e_os2.h sunw_prefix.h
+ HEADER=         e_os.h
+ 
+ all: Makefile build_all openssl.pc libssl.pc libcrypto.pc
+diff -ur openssl-1.0.1c/crypto/perlasm/x86asm.pl openssl-1.0.1c-32/crypto/perlasm/x86asm.pl
+--- openssl-1.0.1c/crypto/perlasm/x86asm.pl	Mon Nov 14 20:44:20 2011
++++ openssl-1.0.1c-32/crypto/perlasm/x86asm.pl	Thu Jan 10 03:26:00 2013
+@@ -137,6 +137,7 @@
+ 
+ sub ::islabel		# see is argument is a known label
+ { my $i;
++    if ($_[0] eq "_GLOBAL_OFFSET_TABLE_") { return $_[0]; }
+     foreach $i (values %label) { return $i if ($i eq $_[0]); }
+   $label{$_[0]};	# can be undef
+ }
+diff -ur openssl-1.0.1c/crypto/perlasm/x86gas.pl openssl-1.0.1c-32/crypto/perlasm/x86gas.pl
+--- openssl-1.0.1c/crypto/perlasm/x86gas.pl	Fri Dec  9 19:16:35 2011
++++ openssl-1.0.1c-32/crypto/perlasm/x86gas.pl	Thu Jan 10 03:26:11 2013
+@@ -5,7 +5,7 @@
+ *out=\@::out;
+ 
+ $::lbdecor=$::aout?"L":".L";		# local label decoration
+-$nmdecor=($::aout or $::coff)?"_":"";	# external name decoration
++$nmdecor=($::aout or $::coff)?"_":"sunw_";	# external name decoration
+ 
+ $initseg="";
+ 
+--- openssl-1.0.1c/crypto/perlasm/x86_64-xlate.pl	2012-03-13 19:19:31.000000000 +0000
++++ openssl-1.0.1c-64/crypto/perlasm/x86_64-xlate.pl	2013-01-10 19:21:29.169546571 +0000
+@@ -68,7 +68,7 @@
+ my $gas=1;	$gas=0 if ($output =~ /\.asm$/);
+ my $elf=1;	$elf=0 if (!$gas);
+ my $win64=0;
+-my $prefix="";
++my $prefix="sunw_";
+ my $decor=".L";
+ 
+ my $masmref=8 + 50727*2**-32;	# 8.00.50727 shipped with VS2005
+@@ -467,6 +467,7 @@
+ 				    }
+ 				    $line =~ s/\@abi\-omnipotent/\@function/;
+ 				    $line =~ s/\@function.*/\@function/;
++				    $line =~ s/$sym/$globals{$sym} or $sym/e;
+ 				    last;
+ 				  };
+ 		/\.asciz/   && do { if ($line =~ /^"(.*)"$/) {
+@@ -480,6 +481,9 @@
+ 				    $line =~ s/\.L/$decor/g;
+ 				    last;
+ 				  };
++		/\.size/    && do { $line =~ s/([_a-z][_a-z0-9]*)/$globals{$1} or $1/gei;
++				    last;
++				  };
+ 	    }
+ 
+ 	    if ($gas) {
+@@ -513,6 +517,7 @@
+ 		} elsif ($dir =~ /\.hidden/) {
+ 		    if    ($flavour eq "macosx")  { $self->{value} = ".private_extern\t$prefix$line"; }
+ 		    elsif ($flavour eq "mingw64") { $self->{value} = ""; }
++		    else { $self->{value} = ".hidden\t$prefix$line"; }
+ 		} elsif ($dir =~ /\.comm/) {
+ 		    $self->{value} = "$dir\t$prefix$line";
+ 		    $self->{value} =~ s|,([0-9]+),([0-9]+)$|",$1,".log($2)/log(2)|e if ($flavour eq "macosx");
+diff -urN openssl-1.0.1c/crypto/opensslconf.h.in openssl-1.0.1c-32/crypto/opensslconf.h.in
+--- openssl-1.0.1c/crypto/opensslconf.h.in      2005-12-16 10:37:23.000000000 +0000
++++ openssl-1.0.1c-32/crypto/opensslconf.h.in   2013-01-10 23:47:08.346611475 +0000
+@@ -1,5 +1,7 @@
+ /* crypto/opensslconf.h.in */
+ 
++#include <openssl/sunw_prefix.h>
++
+ /* Generate 80386 code? */
+ #undef I386_ONLY
+ 

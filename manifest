@@ -457,13 +457,21 @@ f usr/openldap/share/man/man5/ldif.5 0444 root bin
 f usr/bin/amd64/openssl 0555 root bin
 s usr/sfw/bin/amd64/openssl=../../../bin/amd64/openssl
 f lib/amd64/libcrypto.so.0.9.8 0755 root bin
+f lib/amd64/libcrypto.so.1.0.0 0755 root bin
 s usr/lib/amd64/libcrypto.so.0.9.8=../../../lib/amd64/libcrypto.so.0.9.8
+s usr/lib/amd64/libcrypto.so.1.0.0=../../../lib/amd64/libcrypto.so.1.0.0
 f lib/amd64/libssl.so.0.9.8 0755 root bin
+f lib/amd64/libssl.so.1.0.0 0755 root bin
 s usr/lib/amd64/libssl.so.0.9.8=../../../lib/amd64/libssl.so.0.9.8
+s usr/lib/amd64/libssl.so.1.0.0=../../../lib/amd64/libssl.so.1.0.0
 f lib/libcrypto.so.0.9.8 0755 root bin
+f lib/libcrypto.so.1.0.0 0755 root bin
 s usr/lib/libcrypto.so.0.9.8=../../lib/libcrypto.so.0.9.8
+s usr/lib/libcrypto.so.1.0.0=../../lib/libcrypto.so.1.0.0
 f lib/libssl.so.0.9.8 0755 root bin
+f lib/libssl.so.1.0.0 0755 root bin
 s usr/lib/libssl.so.0.9.8=../../lib/libssl.so.0.9.8
+s usr/lib/libssl.so.1.0.0=../../lib/libssl.so.1.0.0
 f usr/bin/CA.pl 0555 root bin
 f usr/bin/openssl 0555 root bin
 s usr/sfw/bin/openssl=../../bin/openssl

@@ -1,0 +1,105 @@
+OpenSSL 1.x illumos-extra Integration Notes
+
+There are several changes made to OpenSSL that are worth highlighting for
+the benefit of anyone wishing to upgrade or further modify the installation.
+Generally, they are:
+
+- The addition of a "hw_pk11" engine, written by Sun for 0.9.x, that
+  supports various HW accelerators that have KCF drivers.  It is highly
+  unlikely at this point that anyone actually cares about this.  There are a
+  few minor changes to hook this into the library, as well as the various
+  files themselves that implement the engine and are simply copied in.
+  There are no changes required to the build system in order to make this
+  work.
+
+- New smartos-* build targets.  These are patched into Configure as
+  templates.  These templates are later filled in by trivial sed rules in
+  the build system to generate a configure (lower-case) that we then use to
+  actually set up the links.  This allows us to control variables such as CC
+  and CFLAGS in the usual way, and to treat the OpenSSL configuration system
+  as if it were autoconf even though it's nothing of the sort.
+
+- Changes to Configure, the assembly generators/translators, and the
+  addition of a header file to effect prefixing of globally visible function
+  symbol names.
+
+- Changes to opensslconf.h.in, which is transformed into opensshconf.h
+  and delivered.  This header defines data types used in the
+  implementations of algorithms along with which algorithms have been
+  built and several other pieces of metadata.  Because OpenSSL does not
+  include proper multilib support and instead assumes that the libraries
+  and headers that are generated will be used on the build system, this
+  doesn't work well in our multilib environment.  Rather than patching the
+  header after it's generated (which is basically impossible, since there
+  are so many differences between 32-bit and 64-bit), we instead modify it
+  in advance to support both.  We then remove Configure's ability to
+  modify those portions of the header during the build.  The introduction
+  of new algorithms whose preprocessor definitions or parameters differ
+  between 32-bit and 64-bit implementation will require further changes in
+  this area.
+
+- Minor changes to eliminate warnings so that we can build with -Wall
+  -Werror.  Fixes for these should be accumulated if required, and sent
+  upstream where possible.
+
+If you are upgrading, it is likely that simply replacing the tarball and
+modifying VER in the makefile will suffice.  The changes to most of the
+above are targeted at areas of the code that are unlikely to be changed,
+especially to fix security bugs.  One other thing to be aware of is that if
+the library numbering (the portion of the filename after '.so') changes, you
+will also need to change LIBVER.  There is also a possibility that changes
+to the library may break the hw_pk11 engine.  For example, from 0.9.x to
+1.x, the aes-ctr NIDs were added, making some of the code redundant.
+Porting this code should not be a great deal of work, but if it becomes so,
+it is probably best to delete it.
+
+When upgrading, you will need to be sure that no new symbols have been
+introduced.  If any have been, it will be necessary to add them to
+sunw_prefix.h.  Unfortunately, the public interface to OpenSSL is not really
+defined anywhere, so making a proper mapfile is difficult and every new
+symbol, even those that are not intended for public use, must be added
+there.  A tool is included that can generate an appropriate header from an
+OpenSSL library built from unmodified code; however, it will then be
+necessary to append the Sun pk11 engine symbols to that.
+
+Also, the prefixing of symbol names can confuse foreign software that
+makes assumptions about the names of symbols in the libraries.  The most
+common culprit here is GNU autoconf (and configure scripts that use it);
+there are several macros that are designed to check for symbols in a
+library without bothering to include any of the headers necessary to
+actually use the library.  These will need to be fixed up in any
+software that consumes OpenSSL in illumos-extra.  This does not affect
+ON, nor any other software that simply consumes OpenSSL in the
+documented manner.
+
+The libraries as delivered are not, and are not intended to be,
+compatible with consumers built against 0.9.8.  In addition to the
+inherent changes to OpenSSL itself, the symbol prefixing and our
+simplification of algorithm selection (namely, the adoption of the
+standard implementations the OpenSSL Configure script would choose based
+on our hardware architecture) have altered the binary interfaces.  The
+use of the bootstrap proto area allows arbitrary incompatible changes
+here -- the libraries we deliver are used only by software in the
+platform.
+
+MOST IMPORTANT OF ALL:
+
+This software is absolutely critical to the security of our customers'
+information.  Do not upgrade this package on a whim.  If a security fix
+necessitates an upgrade, take the time to understand what has changed
+and how it will interact with our build environment and consumers.  It
+may be preferable to apply a patch rather than do a wholesale upgrade if
+that avoids complex interactions with our changes.   While these changes
+have been designed to avoid conflict with likely changes in OpenSSL,
+there are several classes of change that would inherently necessitate
+minor additional integration work in order for them to work correctly.
+BE CERTAIN THAT YOU HAVE UNDERSTOOD THE RAMIFICATIONS OF ANY UPGRADE!
+It is not sufficient that updating the tarball and bumping VERSION
+builds successfully; despite the checks that are in place to prevent
+errors, it is still important that you read the release notes, change
+logs, and diffs to ensure proper integration.  The "unique" build
+environment we have here is unfortunately more costly than usual to
+maintain, but this software also has unusual importance both in the
+number of consumers and the critical nature of the functionality it
+provides.  If there is anywhere to spend the time getting it right, it
+is here.  Don't take shortcuts.

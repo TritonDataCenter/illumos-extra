@@ -57,9 +57,25 @@ AUTOCONF_CFLAGS =	CFLAGS="$(CPPFLAGS) $(CFLAGS)"
 AUTOCONF_LIBS =
 AUTOCONF_ENV +=		CXXFLAGS="$(CPPFLAGS) $(CFLAGS)"
 
+#
+# Jump through hoops to get the locally-run build tools to build with the
+# correct compiler and without referencing anything in the proto area.
+# This is needed because the proto area may contain libraries that are not
+# present or are of different versions on the build machine itself.  A
+# patch to the python configure program is also required to make this work.
+#
+AUTOCONF_ENV +=		LDFLAGS.host="-Wl,-i"
+AUTOCONF_ENV +=		CXX.host="/opt/local/bin/g++"
+AUTOCONF_ENV +=		CC.host="/opt/local/bin/gcc"
+AUTOCONF_ENV +=		CXX_host="/opt/local/bin/g++"
+AUTOCONF_ENV +=		CC_host="/opt/local/bin/gcc"
+AUTOCONF_ENV +=		LINK.host="/opt/local/bin/g++"
+
 OVERRIDES +=	$(AUTOCONF_ENV)
 
 AUTOCONF_OUT =	build/default/config.h
+
+PATCHES =	Patches/*
 
 all: all_autoconf
 
@@ -68,6 +84,7 @@ all: all_autoconf
 install: install_autoconf
 	mkdir -p $(DESTDIR)/usr/node/$(MAJOR_VER)/node_modules
 	./build_require_platform_node_version.sh \
+	$(DESTDIR) \
 	$(DESTDIR)/usr/node/$(MAJOR_VER)/bin/node \
 	$(DESTDIR)/usr/node/$(MAJOR_VER)/node_modules/platform_node_version.js
 	rm -rf $(DESTDIR)/usr/node/$(MAJOR_VER)/man

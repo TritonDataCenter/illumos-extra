@@ -1,0 +1,42 @@
+diff -urN openssl-1.0.1c/crypto/engine/eng_all.c openssl-1.0.1c-src/crypto/engine/eng_all.c
+--- openssl-1.0.1c/crypto/engine/eng_all.c	2011-08-10 18:53:13.000000000 +0000
++++ openssl-1.0.1c-src/crypto/engine/eng_all.c	2013-01-07 23:15:10.868557614 +0000
+@@ -80,6 +80,9 @@
+ 	ENGINE_load_rdrand();
+ #endif
+ 	ENGINE_load_dynamic();
++#ifndef	OPENSSL_NO_HW_PKCS11
++	ENGINE_load_pk11();
++#endif
+ #ifndef OPENSSL_NO_STATIC_ENGINE
+ #ifndef OPENSSL_NO_HW
+ #ifndef OPENSSL_NO_HW_4758_CCA
+diff -urN openssl-1.0.1c/crypto/engine/engine.h openssl-1.0.1c-src/crypto/engine/engine.h
+--- openssl-1.0.1c/crypto/engine/engine.h	2011-08-10 18:53:13.000000000 +0000
++++ openssl-1.0.1c-src/crypto/engine/engine.h	2013-01-07 23:15:56.210595780 +0000
+@@ -351,6 +351,7 @@
+ #endif
+ #endif
+ void ENGINE_load_cryptodev(void);
++void ENGINE_load_pk11(void);
+ void ENGINE_load_rsax(void);
+ void ENGINE_load_rdrand(void);
+ void ENGINE_load_builtin_engines(void);
+diff -urN openssl-1.0.1c/crypto/engine/Makefile openssl-1.0.1c-src/crypto/engine/Makefile
+--- openssl-1.0.1c/crypto/engine/Makefile	2011-08-14 13:47:27.000000000 +0000
++++ openssl-1.0.1c-src/crypto/engine/Makefile	2013-01-07 23:14:30.020619793 +0000
+@@ -22,13 +22,13 @@
+ 	tb_rsa.c tb_dsa.c tb_ecdsa.c tb_dh.c tb_ecdh.c tb_rand.c tb_store.c \
+ 	tb_cipher.c tb_digest.c tb_pkmeth.c tb_asnmth.c \
+ 	eng_openssl.c eng_cnf.c eng_dyn.c eng_cryptodev.c \
+-	eng_rsax.c eng_rdrand.c
++	eng_rsax.c eng_rdrand.c hw_pk11.c hw_pk11_pub.c hw_pk11_uri.c
+ LIBOBJ= eng_err.o eng_lib.o eng_list.o eng_init.o eng_ctrl.o \
+ 	eng_table.o eng_pkey.o eng_fat.o eng_all.o \
+ 	tb_rsa.o tb_dsa.o tb_ecdsa.o tb_dh.o tb_ecdh.o tb_rand.o tb_store.o \
+ 	tb_cipher.o tb_digest.o tb_pkmeth.o tb_asnmth.o \
+ 	eng_openssl.o eng_cnf.o eng_dyn.o eng_cryptodev.o \
+-	eng_rsax.o eng_rdrand.o
++	eng_rsax.o eng_rdrand.o hw_pk11.o hw_pk11_pub.o hw_pk11_uri.o
+ 
+ SRC= $(LIBSRC)

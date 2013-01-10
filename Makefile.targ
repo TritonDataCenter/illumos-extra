@@ -48,7 +48,7 @@ install_autoconf_64: all
 $(AUTOCONF_OUT.32): $(VER.32)/configure
 	(cd $(VER.32); \
 	    env - PATH=$(PATH) $(AUTOCONF_ENV) \
-	    ./configure $(AUTOCONF_OPTS))
+	    ./configure $(AUTOCONF_OPTS.32))
 
 $(AUTOCONF_OUT.64): $(VER.64)/configure
 	(cd $(VER.64); \

@@ -45,19 +45,11 @@ source ../install.subr
 
 cd ${VERDIR}
 
-# Install commands
-_install E apps/openssl ${BINDIR}/openssl 0555
-_install L ../../../bin/amd64/openssl ${SFWBINDIR}/openssl
-
-# Install libraries
+# Install libraries, for legacy use only
 _install D libcrypto.so.${LIBVER} ${LIBDIR}/libcrypto.so.${LIBVER} 0755
-_install L libcrypto.so.${LIBVER} ${LIBDIR}/libcrypto.so
 _install D libssl.so.${LIBVER} ${LIBDIR}/libssl.so.${LIBVER} 0755
-_install L libssl.so.${LIBVER} ${LIBDIR}/libssl.so
 _install L amd64 ${DESTDIR}/lib/64
 _install L ../../../lib/amd64/libcrypto.so.${LIBVER} ${USRLIBDIR}/libcrypto.so.${LIBVER}
-_install L ../../../lib/amd64/libcrypto.so ${USRLIBDIR}/libcrypto.so
 _install L ../../../lib/amd64/libssl.so.${LIBVER} ${USRLIBDIR}/libssl.so.${LIBVER}
-_install L ../../../lib/amd64/libssl.so ${USRLIBDIR}/libssl.so
 
 exit 0

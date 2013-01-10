@@ -39,5 +39,7 @@ AUTOCONF_OPTS += \
 LDFLAGS += \
 	-Wl,-R/usr/openldap/lib
 
+PATCHES =	Patches/*
+
 include ../Makefile.targ
 include ../Makefile.targ.autoconf

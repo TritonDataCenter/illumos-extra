@@ -1,0 +1,73 @@
+diff -ur node-v0.8.14/configure node-v0.8.14-32/configure
+--- node-v0.8.14/configure	2012-10-25 20:49:32.000000000 +0000
++++ node-v0.8.14-32/configure	2013-01-11 20:31:32.754470909 +0000
+@@ -359,6 +359,7 @@
+   target_arch = options.dest_cpu or host_arch
+   o['variables']['host_arch'] = host_arch
+   o['variables']['target_arch'] = target_arch
++  o['variables']['want_separate_host_toolset'] = '1'
+ 
+   if target_arch == 'arm':
+     configure_arm(o)
+@@ -400,13 +401,13 @@
+ 
+   # assume shared_zlib if one of these is set?
+   if options.shared_zlib_libpath:
+-    o['libraries'] += ['-L%s' % options.shared_zlib_libpath]
++    o['ldflags_target'] += ['-L%s' % options.shared_zlib_libpath]
+   if options.shared_zlib_libname:
+     o['libraries'] += ['-l%s' % options.shared_zlib_libname]
+   elif options.shared_zlib:
+     o['libraries'] += ['-lz']
+   if options.shared_zlib_includes:
+-    o['include_dirs'] += [options.shared_zlib_includes]
++    o['include_dirs_target'] += [options.shared_zlib_includes]
+ 
+ 
+ def configure_v8(o):
+@@ -415,13 +416,13 @@
+ 
+   # assume shared_v8 if one of these is set?
+   if options.shared_v8_libpath:
+-    o['libraries'] += ['-L%s' % options.shared_v8_libpath]
++    o['ldflags_target'] += ['-L%s' % options.shared_v8_libpath]
+   if options.shared_v8_libname:
+     o['libraries'] += ['-l%s' % options.shared_v8_libname]
+   elif options.shared_v8:
+     o['libraries'] += ['-lv8']
+   if options.shared_v8_includes:
+-    o['include_dirs'] += [options.shared_v8_includes]
++    o['include_dirs_target'] += [options.shared_v8_includes]
+ 
+ 
+ def configure_openssl(o):
+@@ -438,7 +439,7 @@
+     (libs, cflags) = pkg_config('openssl') or ('-lssl -lcrypto', '')
+ 
+     if options.shared_openssl_libpath:
+-      o['libraries'] += ['-L%s' % options.shared_openssl_libpath]
++      o['ldflags_target'] += ['-L%s' % options.shared_openssl_libpath]
+ 
+     if options.shared_openssl_libname:
+       libnames = options.shared_openssl_libname.split(',')
+@@ -447,17 +448,18 @@
+       o['libraries'] += libs.split()
+ 
+     if options.shared_openssl_includes:
+-      o['include_dirs'] += [options.shared_openssl_includes]
++      o['include_dirs_target'] += [options.shared_openssl_includes]
+     else:
+       o['cflags'] += cflags.split()
+ 
+ 
+ output = {
+   'variables': {},
+-  'include_dirs': [],
++  'include_dirs_target': [],
+   'libraries': [],
+   'defines': [],
+   'cflags': [],
++  'ldflags_target': [],
+ }
+ 
+ configure_node(output)

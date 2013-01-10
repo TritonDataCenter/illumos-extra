@@ -28,6 +28,7 @@ include ../Makefile.defs
 NSPRVER =	nspr-4.8.6
 TARBALL =	$(VER)-with-$(NSPRVER).tar.gz
 
+AUTOCONF_CPPFLAGS =
 UNPACK_SENTINEL =	.stamp
 FROB_SENTINEL.32 =	/bin/true
 FROB_SENTINEL.64 =	/bin/true
@@ -40,13 +41,15 @@ all_32: $(VER.32)/$(UNPACK_SENTINEL)
 	@ (cd $(VER.32)/mozilla/security/nss; \
 	    PATH=$(PATH) \
 	    gmake BUILD_OPT=1 BUILD_SUN_PKG=1 NS_USE_GCC=1 NO_MDUPDATE=1 \
-	    nss_build_all )
+	    CC="$(GCC)" CXX="$(GXX)" CPPFLAGS="$(CPPFLAGS)" \
+	    LDFLAGS="$(LDFLAGS)" nss_build_all )
 
 all_64: $(VER.64)/$(UNPACK_SENTINEL)
 	@ (cd $(VER.64)/mozilla/security/nss; \
 	    PATH=$(PATH) \
 	    gmake USE_64=1 BUILD_OPT=1 BUILD_SUN_PKG=1 NS_USE_GCC=1 \
-	    NO_MDUPDATE=1 nss_build_all )
+	    CC="$(GCC.64)" CXX="$(GXX.64)" CPPFLAGS="$(CPPFLAGS)" \
+	    LDFLAGS="$(LDFLAGS.64)" NO_MDUPDATE=1 nss_build_all )
 
 install: all
 	DESTDIR=$(DESTDIR) ksh93 ./install-nss $(VER.32)

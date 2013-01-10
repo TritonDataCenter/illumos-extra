@@ -28,8 +28,9 @@
 
 PREFIX=${DESTDIR}/usr
 LIBDIR=${PREFIX}/lib
+INCDIR=${PREFIX}/include
 
-mkdir -p ${LIBDIR}
+mkdir -p ${LIBDIR} ${INCDIR}
 
 . ../install.subr
 
@@ -38,5 +39,10 @@ cd ${VERS}
 _install D lib/.libs/libidn.so.11.5.40 ${LIBDIR}/libidn.so.11.5.40 555
 _install L libidn.so.11.5.40 ${LIBDIR}/libidn.so
 _install L libidn.so.11.5.40 ${LIBDIR}/libidn.so.11
+
+for header in stringprep.h idna.h punycode.h idn-free.h pr29.h \
+    tld.h idn-int.h; do
+	_install N lib/${header} ${INCDIR}/${header} 0444
+done
 
 exit 0
