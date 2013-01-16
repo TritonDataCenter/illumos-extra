@@ -32,8 +32,8 @@ set -o errexit
 VERS=${1}
 
 PREFIX=${DESTDIR}/usr
-LIBDIR=${PREFIX}/lib/${MACH64}	# MACH64 passed in by makefile
-ROOTLIBDIR=${DESTDIR}/lib/${MACH64}
+LIBDIR=${PREFIX}/lib/amd64
+ROOTLIBDIR=${DESTDIR}/lib/amd64
 
 source ../install.subr
 
@@ -44,7 +44,7 @@ mkdir -p $ROOTLIBDIR
 cd ${VERS}
 
 _install D .libs/libxml2.so ${ROOTLIBDIR}/libxml2.so.2 555
-_install L ../../../lib/${MACH64}/libxml2.so.2 ${LIBDIR}/libxml2.so.2
+_install L ../../../lib/amd64/libxml2.so.2 ${LIBDIR}/libxml2.so.2
 _install L libxml2.so.2 ${ROOTLIBDIR}/libxml2.so
 _install L libxml2.so.2 ${LIBDIR}/libxml2.so
 

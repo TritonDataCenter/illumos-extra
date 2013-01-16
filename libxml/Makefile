@@ -20,100 +20,53 @@
 #
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright (c) 2013, Joyent, Inc.  All rights reserved.
 #
 
-#
-# This makefile has not been adapted to use the infrastructure because of
-# the need to patch libtool after the fact, and because of the way the
-# mapfile is integrated.  libxml2 is an extreme example of a nonconforming
-# build system.
-#
+VER =	libxml2-2.7.6
 
-BVER=libxml2-2.7.6
-VER=$(BVER)$(STRAP)
-VER64=$(VER)-64
+include ../Makefile.defs
 
-LDFLAGS=	-z defs -z text -z combreloc -lpthread -lc -nodefaultlibs
-ifneq ($(STRAP),strap)
-	LDFLAGS +=	$(GENLDFLAGS)
-endif
-LARGEFILES=	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE \
-		-fno-builtin
+BUILD64 =	yes
 
-BASE=$(PWD)
-DESTDIR=$(BASE)/../proto
+LIBXML2_LDFLAGS = \
+	-Wl,-zdefs \
+	-Wl,-ztext \
+	-Wl,-zcombreloc
 
-GCC=$(DESTDIR)/usr/bin/gcc
+LDFLAGS +=	$(LIBXML2_LDFLAGS)
+LDFLAGS.64 +=	$(LIBXML2_LDFLAGS)
 
-all: real-all
+LIBS +=	\
+	-lpthread \
+	-lc
 
-all32: $(VER)/config.status
-	(cd $(VER); env - PATH=$(PATH) \
-	    "CC=$(GCC)" \
-	    "CFLAGS=$(LARGEFILES)" \
-	    "LDFLAGS=$(LDFLAGS)" \
-	    make -e libxml2.la; \
-	    env - PATH=$(PATH) "CFLAGS=$(LARGEFILES)" \
-	    "CC=$(GCC)" \
-	    "LDFLAGS=$(LDFLAGS)" \
-	    make -e $(PARALLEL)) 
+CPPFLAGS +=	\
+	-D_FILE_OFFSET_BITS=64 \
+	-D_LARGEFILE_SOURCE
 
-all64: $(VER64)/config.status
-	(cd $(VER64); env - PATH=$(PATH) "CC=$(GCC)" \
-	    "CFLAGS=-m64 $(LARGEFILES)" \
-	    "LDFLAGS=$(LDFLAGS)" \
-	    make -e libxml2.la; \
-	    env - PATH=$(PATH) "CFLAGS=-m64 $(LARGEFILES)" \
-	    "CC=$(GCC)" \
-	    "LDFLAGS=$(LDFLAGS)" \
-	    make -e $(PARALLEL)) 
+AUTOCONF_OPTS += \
+	--with-threads \
+	--without-python \
+	--enable-symbol-versioning=$(BASE)/mapfile
+
+PATCHES =	Patches/*
+
+include ../Makefile.targ
+
+all: all_autoconf
 
 install: all
-	BASE=$(BASE) DESTDIR=$(DESTDIR) PATH=$(PATH) ksh93 ./install-libxml2 $(VER)
-	BASE=$(BASE) DESTDIR=$(DESTDIR) PATH=$(PATH) MACH64=amd64 ksh93 ./install-libxml2-64 $(VER64)
-
-real-all: all32 all64
+	DESTDIR=$(DESTDIR) PATH=$(PATH) ksh93 ./install-libxml2 $(VER.32)
+	DESTDIR=$(DESTDIR) PATH=$(PATH) ksh93 ./install-libxml2-64 $(VER.64)
 
 test: test32 test64
 
-# Test suite don't work under normal make, have to use gmake
+test32: all
+	(cd $(VER.32); \
+	    LD_LIBRARY_PATH=$(DESTDIR)/lib:$(DESTDIR)/usr/lib gmake tests) 
 
-test32: all32
-	(cd $(VER); gmake tests) 
-
-test64: all64
-	(cd $(VER64); gmake tests)
-
-$(VER)/config.status: $(VER)/configure
-	(cd $(VER); \
-	    env - "CC=$(GCC)" "CFLAGS=$(LARGEFILES)" \
-	    "LDFLAGS=$(LDFLAGS)" \
-			"PATH=$(DESTDIR)/usr/bin/:$(PATH)" \
-	    ./configure --prefix=/usr --with-threads \
-	    --without-python)
-	cp mapfile $(VER)/libxml2.syms
-	patch -N $(VER)/libtool < libtool.patch
-
-$(VER64)/config.status: $(VER64)/configure
-	(cd $(VER64); \
-	    env - "CC=$(GCC)" "CFLAGS=-m64 $(LARGEFILES)" \
-	    "LDFLAGS=$(LDFLAGS)" \
-			"PATH=$(DESTDIR)/usr/bin/:$(PATH)" \
-	    ./configure --prefix=/usr --with-threads \
-	    --without-python)
-	cp mapfile $(VER64)/libxml2.syms
-	patch -N $(VER64)/libtool < libtool.patch
-
-$(VER)/configure: $(BVER).tar.gz
-	mkdir -p tmp; gzip -dc $(BVER).tar.gz | (cd tmp; tar xopf -)
-	mv tmp/$(BVER) $(VER); rmdir tmp
-	touch $(VER)/configure
-
-$(VER64)/configure: $(BVER).tar.gz
-	mkdir -p tmp; gzip -dc $(BVER).tar.gz | (cd tmp; tar xopf -)
-	mv tmp/$(BVER) $(VER64); rmdir tmp
-	touch $(VER64)/configure
-
-clean:
-	-rm -rf $(VER) $(VER64) $(VER)strap $(VER64)strap $(BVER)strap-64
+test64: all
+	(cd $(VER.64); \
+	    LD_LIBRARY_PATH_64=$(DESTDIR)/lib/64:$(DESTDIR)/usr/lib/64 \
+	    gmake tests)
