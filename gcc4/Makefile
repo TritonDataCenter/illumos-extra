@@ -20,7 +20,7 @@
 #
 # Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright (c) 2013, Joyent, Inc.  All rights reserved.
 #
 
 #
@@ -33,23 +33,21 @@ VER =	gcc-4.4.4
 
 include ../Makefile.defs
 
-# XXX Is this really needed?
-SFW_PATH="/opt/local/bin:/usr/bin"
-
-TARBALL =		$(VER).tar.bz2
-TARBALL_COMPRESS =	-j
 CLEANFILES +=	$(VER)-i386-build
+
+GCC =	/opt/local/bin/gcc
+GXX =	/bin/false
 
 include ../Makefile.targ
 
 all: $(VER)-i386-build/config.status
 	(cd $(VER)-i386-build; env - \
-	    CC=gcc \
+	    CC=$(GCC) \
 	    CFLAGS="-g -O2" \
 	    DESTDIR=$(DESTDIR) \
+	    PATH=$(PATH) \
 	    STAGE1_CFLAGS="-g -O2" \
 	    CFLAGS_FOR_TARGET="-g -O2" \
-	    PATH=$(SFW_PATH) \
 	    MAKE=gmake gmake \
 		CFLAGS="-g -O2" \
 		STAGE1_CFLAGS="-g -O2" \
@@ -57,12 +55,12 @@ all: $(VER)-i386-build/config.status
 
 install: all
 	(cd $(VER)-i386-build; env - \
-	    CC=gcc \
+	    CC=$(GCC) \
 	    CFLAGS="-g -O2" \
 	    STAGE1_CFLAGS="-g -O2" \
 	    CFLAGS_FOR_TARGET="-g -O2" \
 	    DESTDIR=$(DESTDIR) \
-	    PATH=$(SFW_PATH) \
+	    PATH=$(PATH) \
 	    MAKE=gmake gmake \
 		CFLAGS="-g -O2" \
 		STAGE1_CFLAGS="-g -O2" \
@@ -70,10 +68,10 @@ install: all
 
 $(VER)-i386-build/config.status: $(VER)-i386-build $(VER.32)/configure
 	(cd $(VER)-i386-build; env - \
-	    CC=gcc \
+	    CC=$(GCC) \
 	    CFLAGS="-g -O2" \
 	    DESTDIR=$(DESTDIR) \
-	    PATH=$(SFW_PATH) \
+	    PATH=$(PATH) \
 	    MAKE=gmake \
 	../$(VER.32)/configure \
 		--prefix=/usr \
