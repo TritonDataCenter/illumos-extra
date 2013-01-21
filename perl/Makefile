@@ -27,6 +27,27 @@ include ../Makefile.defs
 
 UNPACK_SENTINEL =	Configure
 
+LF_CPPFLAGS = \
+	-D_LARGEFILE_SOURCE \
+	-D_FILE_OFFSET_BITS=64
+
+BASIC_CPPFLAGS = \
+	-fno-strict-aliasing \
+	-pipe \
+	-fstack-protector
+
+CPPFLAGS += \
+	$(BASIC_CPPFLAGS) \
+	$(LF_CPPFLAGS) \
+	-DPERL_USE_SAFE_PUTENV
+
+LDFLAGS += \
+	-fstack-protector
+
+SHARED_LDFLAGS = \
+	-G \
+	$(LDFLAGS)
+
 include ../Makefile.targ
 
 all: $(VER.32)/perldtrace.h
@@ -43,9 +64,19 @@ install: all
 	rm -f $(DESTDIR)/usr/perl5/5.12/lib/i86pc-solaris-64int/Config_heavy.pl
 	cp Config_heavy.pl $(DESTDIR)/usr/perl5/5.12/lib/i86pc-solaris-64int/
 
-$(VER.32)/cflags: config.over $(VER.32)/Configure
+$(VER.32)/config.over: config.over.in $(VER.32)/$(UNPACK_SENTINEL)
+	sed -e 's#@@CC@@#$(GCC)#g' \
+	    -e 's#@@CPPFLAGS@@#$(CPPFLAGS)#g' \
+	    -e 's#@@CFLAGS@@#$(CFLAGS)#g' \
+	    -e 's#@@BASIC_CPPFLAGS@@#$(BASIC_CPPFLAGS)#g' \
+	    -e 's#@@LF_CPPFLAGS@@#$(LF_CPPFLAGS)#g' \
+	    -e 's#@@LDFLAGS@@#$(LDFLAGS)#g' \
+	    -e 's#@@LIBS@@#$(LIBS)#g' \
+	    -e 's#@@GMAKE@@#$(MAKE)#g' \
+	    -e 's#@@SHARED_LDFLAGS@@#$(SHARED_LDFLAGS)#g' < $< > $@
+
+$(VER.32)/cflags: $(VER.32)/config.over $(VER.32)/Configure
 	(cd $(VER.32) && \
-	    cp -f ../config.over ./config.over && \
 	    ./Configure -des -Dcc=$(GCC) )
 
 $(VER.32)/perldtrace.h: $(VER.32)/cflags
