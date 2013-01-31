@@ -36,6 +36,11 @@ GXX =		$(DESTDIR)/usr/bin/g++
 GCC.64 =	$(GCC) -m64
 GXX.64 =	$(GXX) -m64
 
+GCC.host =	/opt/local/bin/gcc
+GXX.host =	/opt/local/bin/g++
+GCC.host.64 =	$(GCC.host) -m64
+GXX.host.64 =	$(GXX.host) -m64
+
 SYSINCDIRS =	/usr/include
 SYSLIBDIRS =	/usr/lib /lib
 
