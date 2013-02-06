@@ -22,7 +22,7 @@
 # Copyright (c) 2012-2013, Joyent, Inc.  All rights reserved.
 #
 
-VER = openssl-1.0.1c
+VER = openssl-1.0.1d
 LIBVER =	1.0.0
 
 include ../Makefile.defs
