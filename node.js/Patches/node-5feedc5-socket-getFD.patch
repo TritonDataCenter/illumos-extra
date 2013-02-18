@@ -1,0 +1,76 @@
+From 5feedc5c1d239ad7a9f4f3a15d3adcfe5843ca76 Mon Sep 17 00:00:00 2001
+From: isaacs <i@izs.me>
+Date: Wed, 30 Jan 2013 15:03:10 -0800
+Subject: [PATCH] net: Expose socket fd for debugging
+
+---
+ lib/net.js         |    3 +++
+ src/stream_wrap.cc |   11 +++++++++++
+ src/stream_wrap.h  |    1 +
+ src/tcp_wrap.cc    |    2 ++
+ 4 files changed, 17 insertions(+)
+
+diff --git a/lib/net.js b/lib/net.js
+index c8d7f60..42cf832 100644
+--- a/lib/net.js
++++ b/lib/net.js
+@@ -159,6 +159,9 @@ util.inherits(Socket, Stream);
+ exports.Socket = Socket;
+ exports.Stream = Socket; // Legacy naming.
+ 
++Socket.prototype.getFD = function() {
++  return this._handle && this._handle.getFD();
++};
+ 
+ Socket.prototype.listen = function() {
+   var self = this;
+diff --git a/src/stream_wrap.cc b/src/stream_wrap.cc
+index e79d212..c7c0489 100644
+--- a/src/stream_wrap.cc
++++ b/src/stream_wrap.cc
+@@ -127,6 +127,17 @@ void StreamWrap::UpdateWriteQueueSize() {
+ }
+ 
+ 
++Handle<Value> StreamWrap::GetFD(const Arguments& args) {
++  HandleScope scope;
++
++  UNWRAP(StreamWrap)
++
++  int fd = (int)wrap->stream_->fd;
++
++  return scope.Close(Integer::New(fd));
++}
++
++
+ Handle<Value> StreamWrap::ReadStart(const Arguments& args) {
+   HandleScope scope;
+ 
+diff --git a/src/stream_wrap.h b/src/stream_wrap.h
+index c51083c..fee4dd6 100644
+--- a/src/stream_wrap.h
++++ b/src/stream_wrap.h
+@@ -43,6 +43,7 @@ class StreamWrap : public HandleWrap {
+   static void Initialize(v8::Handle<v8::Object> target);
+ 
+   // JavaScript functions
++  static v8::Handle<v8::Value> GetFD(const v8::Arguments& args);
+   static v8::Handle<v8::Value> ReadStart(const v8::Arguments& args);
+   static v8::Handle<v8::Value> ReadStop(const v8::Arguments& args);
+   static v8::Handle<v8::Value> Shutdown(const v8::Arguments& args);
+diff --git a/src/tcp_wrap.cc b/src/tcp_wrap.cc
+index 5e6f1c2..c065053 100644
+--- a/src/tcp_wrap.cc
++++ b/src/tcp_wrap.cc
+@@ -96,6 +96,8 @@ void TCPWrap::Initialize(Handle<Object> target) {
+ 
+   NODE_SET_PROTOTYPE_METHOD(t, "close", HandleWrap::Close);
+ 
++  NODE_SET_PROTOTYPE_METHOD(t, "getFD", StreamWrap::GetFD);
++
+   NODE_SET_PROTOTYPE_METHOD(t, "readStart", StreamWrap::ReadStart);
+   NODE_SET_PROTOTYPE_METHOD(t, "readStop", StreamWrap::ReadStop);
+   NODE_SET_PROTOTYPE_METHOD(t, "shutdown", StreamWrap::Shutdown);
+-- 
+1.7.10
+

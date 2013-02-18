@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright (c) 2013, Joyent, Inc.  All rights reserved.
 #
 
 MAJOR_VER =	0.8
-VER =	node-v0.8.14
+VER =	node-v0.8.20
 
 include ../Makefile.defs
 
