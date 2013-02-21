@@ -1,0 +1,37 @@
+diff --git node-v0.8.20-32.orig/deps/v8/src/flag-definitions.h node-v0.8.20-32/deps/v8/src/flag-definitions.h
+index 9fd23f9..8809b35 100644
+--- node-v0.8.20-32.orig/deps/v8/src/flag-definitions.h
++++ node-v0.8.20-32/deps/v8/src/flag-definitions.h
+@@ -489,6 +489,8 @@ struct JSArguments {
+            "Stack alingment in bytes in simulator (4 or 8, 8 is default)")
+ 
+ // isolate.cc
++DEFINE_bool(abort_on_uncaught_exception, false,
++            "abort program (dump core) when an uncaught exception is thrown")
+ DEFINE_bool(trace_exception, false,
+             "print stack trace when throwing exceptions")
+ DEFINE_bool(preallocate_message_memory, false,
+diff --git node-v0.8.20-32.orig/deps/v8/src/isolate.cc node-v0.8.20-32/deps/v8/src/isolate.cc
+index 61d2b2d..8ee5204 100644
+--- node-v0.8.20-32.orig/deps/v8/src/isolate.cc
++++ node-v0.8.20-32/deps/v8/src/isolate.cc
+@@ -1266,6 +1266,19 @@ void Isolate::DoThrow(Object* exception, MessageLocation* location) {
+         thread_local_top()->pending_message_start_pos_ = location->start_pos();
+         thread_local_top()->pending_message_end_pos_ = location->end_pos();
+       }
++
++      // If the abort-on-uncaught-exception flag is specified, abort on any
++      // exception not caught by JavaScript, even when an external handler is
++      // present.  This flag is intended for use by JavaScript developers, so
++      // print a user-friendly stack trace (not an internal one).
++      if (FLAG_abort_on_uncaught_exception &&
++          (report_exception || can_be_caught_externally)) {
++        fprintf(stderr, "UNCAUGHT EXCEPTION (%p): dumping core\n\n",
++          exception);
++        PrintCurrentStackTrace(stderr);
++        OS::Abort();
++      }
++
+     } else if (location != NULL && !location->script().is_null()) {
+       // We are bootstrapping and caught an error where the location is set
+       // and we have a script for the location.
