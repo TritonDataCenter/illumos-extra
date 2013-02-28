@@ -1,0 +1,29 @@
+--- bash-4.1/lib/sh/eaccess.c.orig	2013-02-28 15:19:17.903657487 +0000
++++ bash-4.1/lib/sh/eaccess.c	2013-02-28 15:22:35.693338914 +0000
+@@ -198,6 +198,8 @@
+      char *path;
+      int mode;
+ {
++  int ret;
++
+   if (path_is_devfd (path))
+     return (sh_stataccess (path, mode));
+ 
+@@ -214,9 +216,14 @@
+     return (sh_euidaccess (path, mode));
+ #  endif
+ 
+-  if (current_user.uid == current_user.euid && current_user.gid == current_user.egid)
+-    return (access (path, mode));  
+-
++  if (current_user.uid == current_user.euid && current_user.gid == current_user.egid) {
++    ret = access (path, mode);
++#if defined (__FreeBSD__) || defined (SOLARIS)
++    if (ret == 0 && current_user.euid == 0 && mode == X_OK)
++      return (sh_stataccess (path, mode));
++#endif
++    return ret;
++  }
+   return (sh_stataccess (path, mode));
+ #endif
+ }

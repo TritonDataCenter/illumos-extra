@@ -25,6 +25,8 @@ VER =	bash-4.1
 
 include ../Makefile.defs
 
+PATCHES =	Patches/*
+
 #
 # As pkgsrc suggests, parallel builds are unsafe.  Boo!
 #
