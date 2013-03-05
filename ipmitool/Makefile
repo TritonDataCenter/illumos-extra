@@ -31,10 +31,11 @@ CFLAGS +=	-g
 AUTOCONF_ENV += \
 	LD=/usr/bin/ld \
 	INSTALL="ginstall -c"
-AUTOCONF_OPTS += --enable-solaris-opt
+AUTOCONF_OPTS += \
+	--enable-solaris-opt \
+	--enable-intf-lanplus
 
-PATCHES +=	ipmitool-enable-openipmi.diff
-PATCHES +=	ipmitool-nosfw.diff
+PATCHES +=	Patches/*
 
 include ../Makefile.targ
 

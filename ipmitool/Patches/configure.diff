@@ -1,0 +1,227 @@
+diff -ur ipmitool-1.8.11/configure ipmitool-1.8.11-joyent/configure
+--- ipmitool-1.8.11/configure	2009-02-25 21:21:56.000000000 +0000
++++ ipmitool-1.8.11-joyent/configure	2013-03-05 17:12:23.595009394 +0000
+@@ -22080,17 +22080,9 @@
+ 	STRIP=gstrip
+ 	LD=gld
+ 	AR=gar
+-	# openssl libs are in /usr/sfw/lib on solaris 10
+-        LIBS="$LIBS -R/usr/sfw/lib"
+ 	# disable the linux-specific interfaces
+-	# and bmc on SPARC (there is no bmc driver for SPARC)
+-	if [ `mach -p` = sparc ]; then
+-		enable_intf_bmc=no
+-	else
+-		enable_intf_bmc=yes
+-	fi
++	enable_intf_bmc=no
+ 	enable_intf_imb=no
+-	enable_intf_open=no
+ 	enable_intf_lipmi=no
+ 	enable_ipmishell=no
+ 	enable_all_options=no
+@@ -22156,9 +22148,9 @@
+   enable_internal_md5=no
+ fi;
+ 
+-echo "$as_me:$LINENO: checking for EVP_aes_128_cbc in -lcrypto" >&5
+-echo $ECHO_N "checking for EVP_aes_128_cbc in -lcrypto... $ECHO_C" >&6
+-if test "${ac_cv_lib_crypto_EVP_aes_128_cbc+set}" = set; then
++echo "$as_me:$LINENO: checking for sunw_EVP_aes_128_cbc in -lcrypto" >&5
++echo $ECHO_N "checking for sunw_EVP_aes_128_cbc in -lcrypto... $ECHO_C" >&6
++if test "${ac_cv_lib_crypto_sunw_EVP_aes_128_cbc+set}" = set; then
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+@@ -22176,11 +22168,11 @@
+ #endif
+ /* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+-char EVP_aes_128_cbc ();
++char sunw_EVP_aes_128_cbc ();
+ int
+ main ()
+ {
+-EVP_aes_128_cbc ();
++sunw_EVP_aes_128_cbc ();
+   ;
+   return 0;
+ }
+@@ -22207,20 +22199,20 @@
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); }; }; then
+-  ac_cv_lib_crypto_EVP_aes_128_cbc=yes
++  ac_cv_lib_crypto_sunw_EVP_aes_128_cbc=yes
+ else
+   echo "$as_me: failed program was:" >&5
+ sed 's/^/| /' conftest.$ac_ext >&5
+ 
+-ac_cv_lib_crypto_EVP_aes_128_cbc=no
++ac_cv_lib_crypto_sunw_EVP_aes_128_cbc=no
+ fi
+ rm -f conftest.err conftest.$ac_objext \
+       conftest$ac_exeext conftest.$ac_ext
+ LIBS=$ac_check_lib_save_LIBS
+ fi
+-echo "$as_me:$LINENO: result: $ac_cv_lib_crypto_EVP_aes_128_cbc" >&5
+-echo "${ECHO_T}$ac_cv_lib_crypto_EVP_aes_128_cbc" >&6
+-if test $ac_cv_lib_crypto_EVP_aes_128_cbc = yes; then
++echo "$as_me:$LINENO: result: $ac_cv_lib_crypto_sunw_EVP_aes_128_cbc" >&5
++echo "${ECHO_T}$ac_cv_lib_crypto_sunw_EVP_aes_128_cbc" >&6
++if test $ac_cv_lib_crypto_sunw_EVP_aes_128_cbc = yes; then
+   if test "x$enable_internal_md5" != "xyes"; then
+ 	    have_crypto=yes; LIBS="$LIBS -lcrypto"
+ 	fi
+@@ -22229,9 +22221,9 @@
+ fi
+ 
+ 
+-echo "$as_me:$LINENO: checking for MD5_Init in -lcrypto" >&5
+-echo $ECHO_N "checking for MD5_Init in -lcrypto... $ECHO_C" >&6
+-if test "${ac_cv_lib_crypto_MD5_Init+set}" = set; then
++echo "$as_me:$LINENO: checking for sunw_MD5_Init in -lcrypto" >&5
++echo $ECHO_N "checking for sunw_MD5_Init in -lcrypto... $ECHO_C" >&6
++if test "${ac_cv_lib_crypto_sunw_MD5_Init+set}" = set; then
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+@@ -22249,11 +22241,11 @@
+ #endif
+ /* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+-char MD5_Init ();
++char sunw_MD5_Init ();
+ int
+ main ()
+ {
+-MD5_Init ();
++sunw_MD5_Init ();
+   ;
+   return 0;
+ }
+@@ -22280,20 +22272,20 @@
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); }; }; then
+-  ac_cv_lib_crypto_MD5_Init=yes
++  ac_cv_lib_crypto_sunw_MD5_Init=yes
+ else
+   echo "$as_me: failed program was:" >&5
+ sed 's/^/| /' conftest.$ac_ext >&5
+ 
+-ac_cv_lib_crypto_MD5_Init=no
++ac_cv_lib_crypto_sunw_MD5_Init=no
+ fi
+ rm -f conftest.err conftest.$ac_objext \
+       conftest$ac_exeext conftest.$ac_ext
+ LIBS=$ac_check_lib_save_LIBS
+ fi
+-echo "$as_me:$LINENO: result: $ac_cv_lib_crypto_MD5_Init" >&5
+-echo "${ECHO_T}$ac_cv_lib_crypto_MD5_Init" >&6
+-if test $ac_cv_lib_crypto_MD5_Init = yes; then
++echo "$as_me:$LINENO: result: $ac_cv_lib_crypto_sunw_MD5_Init" >&5
++echo "${ECHO_T}$ac_cv_lib_crypto_sunw_MD5_Init" >&6
++if test $ac_cv_lib_crypto_sunw_MD5_Init = yes; then
+   if test "x$enable_internal_md5" != "xyes"; then
+ 	    if test "x$have_crypto" != "xyes"; then
+ 	    	LIBS="$LIBS -lcrypto"
+@@ -22308,9 +22300,9 @@
+ fi
+ 
+ 
+-echo "$as_me:$LINENO: checking for MD2_Init in -lcrypto" >&5
+-echo $ECHO_N "checking for MD2_Init in -lcrypto... $ECHO_C" >&6
+-if test "${ac_cv_lib_crypto_MD2_Init+set}" = set; then
++echo "$as_me:$LINENO: checking for sunw_MD2_Init in -lcrypto" >&5
++echo $ECHO_N "checking for sunw_MD2_Init in -lcrypto... $ECHO_C" >&6
++if test "${ac_cv_lib_crypto_sunw_MD2_Init+set}" = set; then
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+@@ -22328,11 +22320,11 @@
+ #endif
+ /* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+-char MD2_Init ();
++char sunw_MD2_Init ();
+ int
+ main ()
+ {
+-MD2_Init ();
++sunw_MD2_Init ();
+   ;
+   return 0;
+ }
+@@ -22359,20 +22351,20 @@
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); }; }; then
+-  ac_cv_lib_crypto_MD2_Init=yes
++  ac_cv_lib_crypto_sunw_MD2_Init=yes
+ else
+   echo "$as_me: failed program was:" >&5
+ sed 's/^/| /' conftest.$ac_ext >&5
+ 
+-ac_cv_lib_crypto_MD2_Init=no
++ac_cv_lib_crypto_sunw_MD2_Init=no
+ fi
+ rm -f conftest.err conftest.$ac_objext \
+       conftest$ac_exeext conftest.$ac_ext
+ LIBS=$ac_check_lib_save_LIBS
+ fi
+-echo "$as_me:$LINENO: result: $ac_cv_lib_crypto_MD2_Init" >&5
+-echo "${ECHO_T}$ac_cv_lib_crypto_MD2_Init" >&6
+-if test $ac_cv_lib_crypto_MD2_Init = yes; then
++echo "$as_me:$LINENO: result: $ac_cv_lib_crypto_sunw_MD2_Init" >&5
++echo "${ECHO_T}$ac_cv_lib_crypto_sunw_MD2_Init" >&6
++if test $ac_cv_lib_crypto_sunw_MD2_Init = yes; then
+   if test "x$enable_internal_md5" != "xyes"; then
+ 	    if test "x$have_crypto" != "xyes" && test "x$have_md5" != "xyes"; then
+ 	        LIBS="$LIBS -lcrypto"
+diff -ur ipmitool-1.8.11/configure.in ipmitool-1.8.11-joyent/configure.in
+--- ipmitool-1.8.11/configure.in	2009-02-25 20:38:51.000000000 +0000
++++ ipmitool-1.8.11-joyent/configure.in	2013-03-05 17:11:12.267998207 +0000
+@@ -60,17 +60,9 @@
+ 	STRIP=gstrip
+ 	LD=gld
+ 	AR=gar
+-	# openssl libs are in /usr/sfw/lib on solaris 10
+-        LIBS="$LIBS -R/usr/sfw/lib"
+ 	# disable the linux-specific interfaces
+-	# and bmc on SPARC (there is no bmc driver for SPARC)
+-	if [[ `mach -p` = sparc ]]; then
+-		enable_intf_bmc=no
+-	else
+-		enable_intf_bmc=yes
+-	fi
++	enable_intf_bmc=no
+ 	enable_intf_imb=no
+-	enable_intf_open=no
+ 	enable_intf_lipmi=no
+ 	enable_ipmishell=no
+ 	enable_all_options=no
+@@ -124,12 +116,12 @@
+ 			[enable internal MD5 library [default=no]])],
+ 	[], [enable_internal_md5=no])
+ 
+-AC_CHECK_LIB([crypto], [EVP_aes_128_cbc],
++AC_CHECK_LIB([crypto], [sunw_EVP_aes_128_cbc],
+ 	[if test "x$enable_internal_md5" != "xyes"; then
+ 	    have_crypto=yes; LIBS="$LIBS -lcrypto"
+ 	fi], [have_crypto=no], [-lcrypto])
+ 
+-AC_CHECK_LIB([crypto], [MD5_Init],
++AC_CHECK_LIB([crypto], [sunw_MD5_Init],
+ 	[if test "x$enable_internal_md5" != "xyes"; then
+ 	    if test "x$have_crypto" != "xyes"; then
+ 	    	LIBS="$LIBS -lcrypto"
+@@ -138,7 +130,7 @@
+ 	    AC_DEFINE(HAVE_CRYPTO_MD5, [1], [Define to 1 if libcrypto supports MD5.])
+ 	fi], [], [-lcrypto])
+ 
+-AC_CHECK_LIB([crypto], [MD2_Init],
++AC_CHECK_LIB([crypto], [sunw_MD2_Init],
+ 	[if test "x$enable_internal_md5" != "xyes"; then
+ 	    if test "x$have_crypto" != "xyes" && test "x$have_md5" != "xyes"; then
+ 	        LIBS="$LIBS -lcrypto"
