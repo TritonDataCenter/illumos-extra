@@ -1,8 +1,8 @@
-diff --git node-v0.8.20-32.orig/deps/v8/src/flag-definitions.h node-v0.8.20-32/deps/v8/src/flag-definitions.h
-index 9fd23f9..8809b35 100644
---- node-v0.8.20-32.orig/deps/v8/src/flag-definitions.h
-+++ node-v0.8.20-32/deps/v8/src/flag-definitions.h
-@@ -489,6 +489,8 @@ struct JSArguments {
+diff --git a/deps/v8/src/flag-definitions.h b/deps/v8/src/flag-definitions.h
+index 6bb1507..dfa293d 100644
+--- a/deps/v8/src/flag-definitions.h
++++ b/deps/v8/src/flag-definitions.h
+@@ -414,6 +414,8 @@ DEFINE_int(sim_stack_alignment, 8,
             "Stack alingment in bytes in simulator (4 or 8, 8 is default)")
  
  // isolate.cc
@@ -11,11 +11,19 @@ index 9fd23f9..8809b35 100644
  DEFINE_bool(trace_exception, false,
              "print stack trace when throwing exceptions")
  DEFINE_bool(preallocate_message_memory, false,
-diff --git node-v0.8.20-32.orig/deps/v8/src/isolate.cc node-v0.8.20-32/deps/v8/src/isolate.cc
-index 61d2b2d..8ee5204 100644
---- node-v0.8.20-32.orig/deps/v8/src/isolate.cc
-+++ node-v0.8.20-32/deps/v8/src/isolate.cc
-@@ -1266,6 +1266,19 @@ void Isolate::DoThrow(Object* exception, MessageLocation* location) {
+diff --git a/deps/v8/src/isolate.cc b/deps/v8/src/isolate.cc
+index 8fcb370..189c76a 100644
+--- a/deps/v8/src/isolate.cc
++++ b/deps/v8/src/isolate.cc
+@@ -1053,6 +1053,7 @@ bool Isolate::IsErrorObject(Handle<Object> obj) {
+   return false;
+ }
+ 
++static int fatal_exception_depth = 0;
+ 
+ void Isolate::DoThrow(Object* exception, MessageLocation* location) {
+   ASSERT(!has_pending_exception());
+@@ -1123,6 +1124,35 @@ void Isolate::DoThrow(Object* exception, MessageLocation* location) {
          thread_local_top()->pending_message_start_pos_ = location->start_pos();
          thread_local_top()->pending_message_end_pos_ = location->end_pos();
        }
@@ -24,10 +32,26 @@ index 61d2b2d..8ee5204 100644
 +      // exception not caught by JavaScript, even when an external handler is
 +      // present.  This flag is intended for use by JavaScript developers, so
 +      // print a user-friendly stack trace (not an internal one).
-+      if (FLAG_abort_on_uncaught_exception &&
++      if (fatal_exception_depth == 0 &&
++          FLAG_abort_on_uncaught_exception &&
 +          (report_exception || can_be_caught_externally)) {
-+        fprintf(stderr, "UNCAUGHT EXCEPTION (%p): dumping core\n\n",
-+          exception);
++	fatal_exception_depth++;
++        fprintf(stderr, "UNCAUGHT EXCEPTION: ");
++	exception->ShortPrint(stderr);
++
++	if (IsErrorObject(exception_handle)) {
++	  Handle<String> key = factory()->LookupAsciiSymbol("message");
++	  MaybeObject *maybeMessage =
++	    JSObject::cast(*exception_handle)->GetProperty(*key);
++	  Object *messageObject;
++	  if (maybeMessage->ToObject(&messageObject)) {
++	    String *message = String::cast(messageObject);
++	    fprintf(stderr, "\nEXCEPTION MESSAGE: ");
++	    message->PrintOn(stderr);
++	  }
++	}
++
++	fprintf(stderr, "\nFROM:\n");
 +        PrintCurrentStackTrace(stderr);
 +        OS::Abort();
 +      }
