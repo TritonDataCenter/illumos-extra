@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent, Inc.  All rights reserved.
+# Copyright (c) 2013 Joyent, Inc.  All rights reserved.
 #
 
 VER =	bind-9.8.0
@@ -32,8 +32,11 @@ AUTOCONF_OPTS += \
 CFLAGS +=	-g $(CPPFLAGS)
 PARALLEL =
 
+PATCHES += \
+	nm-loc.patch
+
 AUTOCONF_ENV += \
-	INSTALL="/usr/ucb/install -c"
+	INSTALL="/usr/ucb/install -c" \
 
 OVERRIDES += \
 	INSTALL="/usr/ucb/install -c"

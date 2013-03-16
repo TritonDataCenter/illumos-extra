@@ -56,7 +56,7 @@ _install()
       rm -f $_targ
       cp $_src $_targ
       chmod u+w $_targ
-      /usr/ccs/bin/strip $_targ
+      /usr/bin/strip $_targ
       chmod $_perm $_targ
       ;;
 

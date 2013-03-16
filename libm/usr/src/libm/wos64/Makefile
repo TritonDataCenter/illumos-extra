@@ -54,15 +54,15 @@ ISA_DIRS	= $(ISA_DIRS_$(MCPU))
 # system commands
 #
 
-AR		= /usr/ccs/bin/ar
+AR		= /usr/bin/ar
 CPP_CMD		= $(CC) -E -Xs
 INSTALL		= /usr/sbin/install
 INST_CMD	= $(INSTALL) $(OWNED_BY) -m 644 -f $(@D) $<
 INST_EXEC_CMD	= $(INSTALL) $(OWNED_BY) -m 755 -f $(@D) $<
-LD		= /usr/ccs/bin/ld
+LD		= /usr/bin/ld
 M4		= /usr/ccs/bin/m4
-MCS		= /usr/ccs/bin/mcs
-STRIP		= /usr/ccs/bin/strip
+MCS		= /usr/bin/mcs
+STRIP		= /usr/bin/strip
 TR		= /usr/bin/tr
 
 #

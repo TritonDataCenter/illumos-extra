@@ -26,7 +26,7 @@ DESTDIR=$(BASE)/../proto
 
 all: 
 	(cd usr/src/harness; env - \
-	    make -f Makefile-os)
+	    make -f Makefile-os STRIP=/usr/bin/strip MCS=/usr/bin/mcs LD=/usr/bin/ld)
 
 install: all
 	BASE=$(DESTDIR) ksh93 ./install-extra
