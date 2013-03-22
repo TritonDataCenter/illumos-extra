@@ -72,7 +72,8 @@ STRAP_SUBDIRS = \
 	libxml \
 	libz \
 	nss-nspr \
-	openssl1x
+	openssl1x \
+	perl
 
 NAME =	illumos-extra
 
