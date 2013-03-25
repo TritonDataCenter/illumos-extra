@@ -1,0 +1,348 @@
+From c088aa46067c54f3dfe824a1943638f9d8d473f8 Mon Sep 17 00:00:00 2001
+From: Robert Mustacchi <rm@joyent.com>
+Date: Mon, 25 Mar 2013 18:58:29 +0000
+Subject: [PATCH] add dmake support
+
+---
+ src/make_src/Make/bin/make/common/doname.cc        |    3 +-
+ src/make_src/Make/bin/make/common/main.cc          |   42 ++++++++++----------
+ src/make_src/Make/bin/make/common/parallel.cc      |   14 ++++++-
+ src/make_src/Make/bin/make/smake/src/Variant.mk    |    8 +++-
+ .../Make/lib/mksdmsi18n/src/libmksdmsi18n_init.cc  |    8 +++-
+ src/make_src/Make/lib/mksh/src/dosys.cc            |    4 +-
+ src/make_src/Make/lib/mksh/src/mksh.cc             |    2 +-
+ src/make_src/rules/master.mk                       |    3 +-
+ 8 files changed, 54 insertions(+), 30 deletions(-)
+
+diff --git a/src/make_src/Make/bin/make/common/doname.cc b/src/make_src/Make/bin/make/common/doname.cc
+index c06ba2f..2b18983 100644
+--- a/src/make_src/Make/bin/make/common/doname.cc
++++ b/src/make_src/Make/bin/make/common/doname.cc
+@@ -39,7 +39,7 @@
+  */
+ #include <avo/avo_alloca.h>		/* alloca() */
+ #if defined(TEAMWARE_MAKE_CMN)
+-#include <avo/util.h>		/* avo_get_user(), avo_hostname() */
++/* #include <avo/util.h>	*/	/* avo_get_user(), avo_hostname() */
+ #endif
+ 
+ #if defined(DISTRIBUTED) || defined(MAKETOOL) /* tolik */
+@@ -3419,7 +3419,6 @@ reset_locals(register Name target, register Property old_locals, register Proper
+ 		return;
+ 	}
+ #endif
+-
+ 	/* Scan the list of conditional properties and restore the old value */
+ 	/* to each one Reverse the order relative to when we assigned macros */
+ 	this_conditional = get_prop(conditional->next, conditional_prop);
+diff --git a/src/make_src/Make/bin/make/common/main.cc b/src/make_src/Make/bin/make/common/main.cc
+index 1289837..889eae8 100644
+--- a/src/make_src/Make/bin/make/common/main.cc
++++ b/src/make_src/Make/bin/make/common/main.cc
+@@ -39,15 +39,17 @@
+  */
+ #if defined(TEAMWARE_MAKE_CMN)
+ #       include <avo/intl.h>
+-#       include <avo/libcli.h>          /* libcli_init() */
+-#	include <avo/cli_license.h>	/* avo_cli_get_license() */
+-#	include <avo/find_dir.h>	/* avo_find_run_dir() */
++/*
++#       include <avo/libcli.h>
++#	include <avo/cli_license.h>
++#	include <avo/find_dir.h>
+ #	include <avo/version_string.h>
+-#	include <avo/util.h>		/* avo_init() */
++#	include <avo/util.h>
++*/
+ #ifdef USE_DMS_CCR
+ #	include <avo/usage_tracking.h>
+ #else
+-#	include <avo/cleanup.h>
++/* #	include <avo/cleanup.h> */
+ #endif
+ #endif
+ 
+@@ -173,7 +175,7 @@ static	Boolean		getname_stat = false;
+ #ifdef USE_DMS_CCR
+ 	static  Avo_usage_tracking *usageTracking = NULL;
+ #else
+-	static  Avo_cleanup	*cleanup = NULL;
++/*	static  Avo_cleanup	*cleanup = NULL; */
+ #endif
+ #endif
+ 
+@@ -221,7 +223,7 @@ extern void expand_value(Name, register String , Boolean);
+ 	extern	XDR 		xdrs_out;
+ #endif
+ #ifdef TEAMWARE_MAKE_CMN
+-	extern	char		verstring[];
++	static char		*verstring = "rm hacked up make 2013/03/23";
+ #endif
+ 
+ jmp_buf jmpbuffer;
+@@ -281,7 +283,7 @@ main(int argc, char *argv[])
+ #endif
+ 	hostid = gethostid();
+ #ifdef TEAMWARE_MAKE_CMN
+-	avo_get_user(NULL, NULL); // Initialize user name
++/*	avo_get_user(NULL, NULL); */// Initialize user name
+ #endif
+ 	bsd_signals();
+ 
+@@ -311,19 +313,19 @@ main(int argc, char *argv[])
+ 	 */
+ #if defined(TEAMWARE_MAKE_CMN) || defined(MAKETOOL)
+ 	um = umask(0);
+-	avo_init(argv[0]);
++/*	avo_init(argv[0]); */
+ 	umask(um);
+ 
+ #ifdef USE_DMS_CCR
+ 	usageTracking = new Avo_usage_tracking(NOCATGETS("dmake"), argc, argv);
+ #else
+-	cleanup = new Avo_cleanup(NOCATGETS("dmake"), argc, argv);
++/*	cleanup = new Avo_cleanup(NOCATGETS("dmake"), argc, argv); */
+ #endif
+ #endif
+ 
+ #if defined(TEAMWARE_MAKE_CMN)
+ 	catd = catopen(AVO_DOMAIN_DMAKE, NL_CAT_LOCALE);
+-	libcli_init();
++/*	libcli_init(); */
+ 
+ #ifdef _CHECK_UPDATE_H
+ 	/* This is for dmake only (not for Solaris make).
+@@ -636,8 +638,10 @@ main(int argc, char *argv[])
+ 		}
+ #else
+ 		if(dmake_mode_type == distributed_mode) {
++			/*
+ 			(void) fprintf(stdout, NOCATGETS("dmake: Distributed mode not implemented.\n"));
+ 			(void) fprintf(stdout, NOCATGETS("       Defaulting to parallel mode.\n"));
++			*/
+ 			dmake_mode_type = parallel_mode;
+ 			no_parallel = false;
+ 		}
+@@ -648,7 +652,9 @@ main(int argc, char *argv[])
+ 
+ #ifdef TEAMWARE_MAKE_CMN
+ 	parallel_flag = true;
++	putenv(NOCATGETS("DMAKE_CHILD=TRUE"));
+ 	/* XXX - This is a major hack for DMake/Licensing. */
++#ifdef TEAMWARE_MAKE_CMN_LICENSING_REALLY
+ 	if (getenv(NOCATGETS("DMAKE_CHILD")) == NULL) {
+ 		if (!avo_cli_search_license(argv[0], dmake_exit_callback, TRUE, dmake_message_callback)) {
+ 			/*
+@@ -671,6 +677,7 @@ main(int argc, char *argv[])
+ 		value.it_value.tv_usec = 0;
+ 		(void) setitimer(ITIMER_REAL, &value, NULL);
+ 	}
++#endif
+ 
+ //
+ // If dmake is running with -t option, set dmake_mode_type to serial.
+@@ -1020,8 +1027,8 @@ if(getname_stat) {
+ 	//usageTracking->setExitStatus(exit_status, NULL);
+ 	//delete usageTracking;
+ #else
+-	cleanup->set_exit_status(exit_status);
+-	delete cleanup;
++/*	cleanup->set_exit_status(exit_status); 
++	delete cleanup; */
+ #endif
+ #endif
+ 
+@@ -2131,13 +2138,6 @@ set_sgs_support()
+ 		sprintf(newpath64, "%s=%s", LD_SUPPORT_ENV_VAR_64, oldpath64);
+ 	}
+ 
+-#if defined(TEAMWARE_MAKE_CMN)
+-
+-	/* function maybe_append_str_to_env_var() is defined in avo_util library
+-	 * Serial make should not use this library !!!
+-	 */
+-	maybe_append_str_to_env_var(newpath, LD_SUPPORT_MAKE_LIB);
+-#else
+ 	if (oldpath == NULL) {
+ 		sprintf("%s%s%s/%s:%s",
+ 		    newpath, MAKE_PREFIX, LD_SUPPORT_MAKE_LIB_DIR,
+@@ -2162,7 +2162,7 @@ set_sgs_support()
+ 		    LD_SUPPORT_MAKE_LIB) + 1;
+ 
+ 	}
+-#endif
++
+ 	putenv(newpath);
+ 	if (prev_path) {
+ 		free(prev_path);
+diff --git a/src/make_src/Make/bin/make/common/parallel.cc b/src/make_src/Make/bin/make/common/parallel.cc
+index 1831415..477e50d 100644
+--- a/src/make_src/Make/bin/make/common/parallel.cc
++++ b/src/make_src/Make/bin/make/common/parallel.cc
+@@ -46,7 +46,7 @@
+ #endif
+ #include <errno.h>		/* errno */
+ #include <fcntl.h>
+-#include <avo/util.h>		/* avo_get_user(), avo_hostname() */
++/* #include <avo/util.h>*/		/* avo_get_user(), avo_hostname() */
+ #include <mk/defs.h>
+ #include <mksh/dosys.h>		/* redirect_io() */
+ #include <mksh/macro.h>		/* expand_value() */
+@@ -57,6 +57,7 @@
+ #include <sys/utsname.h>
+ #include <sys/wait.h>
+ #include <unistd.h>
++#include <netdb.h>		/* net name */
+ 
+ #ifdef SGE_SUPPORT
+ #include <dmthread/Avo_PathNames.h>
+@@ -153,11 +154,14 @@ execute_parallel(Property line, Boolean waitflg, Boolean local)
+ 
+ 	if ((pmake_max_jobs == 0) &&
+ 	    (dmake_mode_type == parallel_mode)) {
++		/*
+ 		if (user_name[0] == '\0') {
+ 			avo_get_user(user_name, NULL);
+ 		}
++		*/
+ 		if (local_host[0] == '\0') {
+-			strcpy(local_host, avo_hostname());
++		/*	strcpy(local_host, avo_hostname()); */
++			(void) gethostname(local_host, MAXNAMELEN);
+ 		}
+ 		MBSTOWCS(wcs_buffer, NOCATGETS("DMAKE_MAX_JOBS"));
+ 		dmake_name = GETNAME(wcs_buffer, FIND_LENGTH);
+@@ -184,9 +188,13 @@ execute_parallel(Property line, Boolean waitflg, Boolean local)
+ 			} else {
+ 				make_machines_name = NULL;
+ 			}
++			/*
+ 			if ((pmake_max_jobs = read_make_machines(make_machines_name)) <= 0) {
+ 				pmake_max_jobs = PMAKE_DEF_MAX_JOBS;
+ 			}
++			*/
++			pmake_max_jobs = PMAKE_DEF_MAX_JOBS;
++
+ 		}
+ #ifdef DISTRIBUTED
+ 		if (send_mtool_msgs) {
+@@ -1784,6 +1792,7 @@ add_running(Name target, Name true_target, Property command, int recursion_level
+ 	rp->true_target = true_target;
+ 	rp->command = command;
+ 	Property spro_val = get_prop(sunpro_dependencies->prop, macro_prop);
++/*
+ 	if(spro_val) {
+ 		rp->sprodep_value = spro_val->body.macro.value;
+ 		spro_val->body.macro.value = NULL;
+@@ -1793,6 +1802,7 @@ add_running(Name target, Name true_target, Property command, int recursion_level
+ 			spro_val->body.env_mem.value = NULL;
+ 		}
+ 	}
++*/
+ 	rp->recursion_level = recursion_level;
+ 	rp->do_get = do_get;
+ 	rp->implicit = implicit;
+diff --git a/src/make_src/Make/bin/make/smake/src/Variant.mk b/src/make_src/Make/bin/make/smake/src/Variant.mk
+index b895e79..3c9169c 100644
+--- a/src/make_src/Make/bin/make/smake/src/Variant.mk
++++ b/src/make_src/Make/bin/make/smake/src/Variant.mk
+@@ -53,6 +53,7 @@ MORE_SRC	= \
+ 		main.cc \
+ 		misc.cc \
+ 		nse_printdep.cc \
++		parallel.cc \
+ 		read.cc \
+ 		read2.cc \
+ 		rep.cc \
+@@ -63,7 +64,8 @@ CPPFLAGS	+= -I$(PKG_TOP)/include
+ LDLIB		+= \
+ 		-lnsl \
+ 		-lsocket \
+-		-lw
++		-lw \
++		-lumem
+ 
+ HDRS_DIR	= $(PKG_TOP)/include/mk
+ HDRS_LIST	= $(HDRS_DIR)/copyright.h $(HDRS_DIR)/defs.h
+@@ -114,12 +116,16 @@ HDRSDIR		= $(DESTDIR)/$(PREFIX)/share/lib/make
+ HDRFILE		= make.rules
+ VHDRFILE	= svr4.make.rules
+ SMAKEDIR	= $(DESTDIR)/$(PREFIX)/ccs/bin
++DMAKEDIR	= $(DESTDIR)/$(PREFIX)/bin
+ 
+ install-make-bin: make
+ 	$(INSTALL) -d $(SMAKEDIR)
+ 	$(INSTALL) make $(SMAKEDIR) 
+ 	mcs -d $(SMAKEDIR)/make
+ 	mcs -a '@(#)$(VERSTRING)' $(SMAKEDIR)/make
++	$(INSTALL) -d $(DMAKEDIR)
++	rm -f $(DMAKEDIR)/dmake
++	ln $(SMAKEDIR)/make $(DMAKEDIR)/dmake
+ 
+ install-make-hdrs: $(HDR) $(VHDR)
+ 	$(INSTALL) -d $(HDRSDIR)
+diff --git a/src/make_src/Make/lib/mksdmsi18n/src/libmksdmsi18n_init.cc b/src/make_src/Make/lib/mksdmsi18n/src/libmksdmsi18n_init.cc
+index e234125..31faba6 100644
+--- a/src/make_src/Make/lib/mksdmsi18n/src/libmksdmsi18n_init.cc
++++ b/src/make_src/Make/lib/mksdmsi18n/src/libmksdmsi18n_init.cc
+@@ -43,8 +43,14 @@ libmksdmsi18n_init()
+ {
+ 	char		name[20];
+ 
++	/*
++	 * We don't have any messages anymore. That's just how it rolls. Because
++	 * this happens on every job and has the word error inside of it,
++	 * nightly ends up seeing these as fatal errors.
++	 */
+ 	if (getenv(NOCATGETS("NLSPATH")) == NULL) {
+-		fprintf(stderr, NOCATGETS("Internal error: Set NLSPATH before opening catalogue file\n"));
++/*		fprintf(stderr, NOCATGETS("Internal error: Set NLSPATH before
++ *		opening catalogue file\n")); */
+ 		return 1;
+ 	}
+ 	sprintf(name, NOCATGETS("libmksdmsi18n_%d"), I18N_VERSION);
+diff --git a/src/make_src/Make/lib/mksh/src/dosys.cc b/src/make_src/Make/lib/mksh/src/dosys.cc
+index fc4306b..1211caf 100644
+--- a/src/make_src/Make/lib/mksh/src/dosys.cc
++++ b/src/make_src/Make/lib/mksh/src/dosys.cc
+@@ -41,7 +41,9 @@
+ #include <avo/avo_alloca.h>		/* alloca() */
+ 
+ #if defined(TEAMWARE_MAKE_CMN) || defined(MAKETOOL) /* tolik */
+-#	include <avo/strings.h>	/* AVO_STRDUP() */
++/* #	include <avo/strings.h> */	/* AVO_STRDUP() */
++#include <strings.h>
++#define	AVO_STRDUP	strdup
+ #if defined(DISTRIBUTED)
+ #	include <dm/Avo_CmdOutput.h>
+ #	include <rw/xdrstrea.h>
+diff --git a/src/make_src/Make/lib/mksh/src/mksh.cc b/src/make_src/Make/lib/mksh/src/mksh.cc
+index 98c9601..8004ac2 100644
+--- a/src/make_src/Make/lib/mksh/src/mksh.cc
++++ b/src/make_src/Make/lib/mksh/src/mksh.cc
+@@ -38,7 +38,7 @@
+  * Included files
+  */
+ #if defined(TEAMWARE_MAKE_CMN) || defined(MAKETOOL) /* tolik */
+-#	include <avo/util.h>
++/* #	include <avo/util.h> */
+ #endif
+ 
+ #include <mksh/dosys.h>		/* redirect_io() */
+diff --git a/src/make_src/rules/master.mk b/src/make_src/rules/master.mk
+index f113efe..3d3cb57 100644
+--- a/src/make_src/rules/master.mk
++++ b/src/make_src/rules/master.mk
+@@ -58,7 +58,8 @@ YACC =		/usr/ccs/bin/yacc
+ 
+ CPPFLAGS +=	-DINTER \
+ 		-I$(TOP)/include \
+-		-DPREFIX=$(PREFIX)
++		-DPREFIX=$(PREFIX) \
++		-DTEAMWARE_MAKE_CMN
+ 
+ LINTFLAGS +=	-buxz
+ 
+-- 
+1.7.7.2
+

@@ -18,15 +18,19 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright (c) 2013, Joyent, Inc.  All rights reserved.
 #
 
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 
+include ../Makefile.defs
+
 all: 
 	(cd usr/src/harness; env - \
-	    make -f Makefile-os STRIP=/usr/bin/strip MCS=/usr/bin/mcs LD=/usr/bin/ld)
+	    SUN_MAKE=$(SUN_MAKE) \
+	    $(SUN_MAKE) -f Makefile-os \
+	    STRIP=/usr/bin/strip MCS=/usr/bin/mcs LD=/usr/bin/ld)
 
 install: all
 	BASE=$(DESTDIR) ksh93 ./install-extra

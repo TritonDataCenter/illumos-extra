@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc.
+# Copyright (c) 2013, Joyent, Inc.
 #
 
 BASE =		$(PWD)
@@ -41,6 +41,9 @@ GXX.host =	/opt/local/bin/g++
 GCC.host.64 =	$(GCC.host) -m64
 GXX.host.64 =	$(GXX.host) -m64
 
+LEX = 		/opt/local/bin/lex
+YACC = 		/opt/local/bin/yacc
+
 SYSINCDIRS =	/usr/include
 SYSLIBDIRS =	/usr/lib /lib
 
@@ -48,6 +51,16 @@ BUILD32 =	yes
 BUILD64 =
 
 CPPFLAGS =	$(SYSINCDIRS:%=-isystem $(DESTDIR)/%)
+
+#
+# These are all definitions that relate to Sun Make. There are basically two
+# different sets that we care about. The first is the boostrap make. This is
+# used to build the strap make. Once we have the strap make, it is used for all
+# other makes. Beacuse MAKE is used extensively to mean GNU make in these
+# makefiles, we instead use SUN_MAKE and SUM_MAKE_STRAP.
+#
+SUN_MAKE_STRAP=/opt/local/bin/dmake
+SUN_MAKE=$(DESTDIR)/../proto.strap/usr/bin/dmake
 
 #
 # Because of bugs in ntp, we need to be able to refer to the target specific

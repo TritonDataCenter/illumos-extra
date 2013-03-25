@@ -1,0 +1,25 @@
+From cbae8009101a7841c907df4e17d56ed332758a46 Mon Sep 17 00:00:00 2001
+From: Robert Mustacchi <rm@joyent.com>
+Date: Sun, 17 Mar 2013 20:38:54 +0000
+Subject: [PATCH] Use pkgsrc install(1)
+
+---
+ src/make_src/rules/solaris.mk |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/src/make_src/rules/solaris.mk b/src/make_src/rules/solaris.mk
+index d5ef1a4..c06bfb8 100644
+--- a/src/make_src/rules/solaris.mk
++++ b/src/make_src/rules/solaris.mk
+@@ -42,7 +42,7 @@ SWHOME =
+ # Programs
+ #
+ #CC =		cc
+-INSTALL =	/usr/ucb/install
++INSTALL =	/opt/local/bin/install
+ RPCGEN =	/usr/5bin/rpcgen
+ 
+ #
+-- 
+1.7.7.2
+

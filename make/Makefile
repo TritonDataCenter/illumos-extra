@@ -21,22 +21,40 @@
 # Copyright 2013, Joyent, Inc.  All rights reserved.
 #
 
+VER=usr
+
 include ../Makefile.defs
 
-SRC=$(shell (pwd))
-LIBDIR=${DESTDIR}/usr/lib/iconv
+UNPACK_SENTINEL =	src/OPENSOLARIS.LICENSE
+TARBALL =		devpro-make-src-20061219.tar.bz2
+TARBALL_COMPRESS =	-j
 
-all:
-	@(cd src; pwd; SRC=$(SRC) $(SUN_MAKE) all)
-	
+ifneq ($(STRAP),strap)
+MAKE_PREFIX =	 		/opt/local
+MAKE_DESTDIR =			$(DESTDIR)
+BUILD_MAKE =			$(SUN_MAKE)
+else
+MAKE_PREFIX =			$(DESTDIR)/usr
+MAKE_DESTDIR =			/
+BUILD_MAKE =			$(SUN_MAKE_STRAP) 
+endif
+
+
+PATCHES += install.patch \
+	prefix.patch \
+	dmake.patch
+
+#
+# Build errors often get lost so instead we check for a few files that we expect
+# in the proto area.
+#
+all: $(VER.32)/$(UNPACK_SENTINEL)
+	cd $(VER.32)/src; pwd; DESTDIR=$(MAKE_DESTDIR) \
+	    PREFIX=$(MAKE_PREFIX) \
+	    MAKE=$(BUILD_MAKE) \
+	    ./build
+	[[ -f $(MAKE_DESTDIR)/$(MAKE_PREFIX)/bin/dmake ]]
+
 install: all
-	@(cd src; pwd; SRC=$(SRC) $(SUN_MAKE) install)
-	mkdir -p $(LIBDIR)
-	cp proto/i386/fileroot/usr/lib/iconv/UTF-8%646.so $(LIBDIR)
-	cp proto/i386/fileroot/usr/lib/iconv/UTF-8%UCS-2.so $(LIBDIR)
-	cp proto/i386/fileroot/usr/lib/iconv/UTF-8%UCS-2LE.so $(LIBDIR)
-	cp proto/i386/fileroot/usr/lib/iconv/UCS-2%UTF-8.so $(LIBDIR)
-	cp proto/i386/fileroot/usr/lib/iconv/UCS-2LE%UTF-8.so $(LIBDIR)
 
-clean:
-	@(cd src; pwd; SRC=$(SRC) $(MAKE) clean)
+include ../Makefile.targ

@@ -51,8 +51,8 @@ DMAKE_MAX_JOBS:sh = eval expr "`/usr/sbin/psrinfo | grep on-line | wc -l` \* 8"
 STUDIOBIN	= /opt/SUNWspro/bin
 CC		= $(STUDIOBIN)/cc
 LINT		= $(STUDIOBIN)/lint
-MAKE		= $(STUDIOBIN)/dmake -m serial
-DMAKE		= $(STUDIOBIN)/dmake -m parallel -j $(DMAKE_MAX_JOBS)
+MAKE		= $(SUN_MAKE) -m serial
+DMAKE		= $(SUN_MAKE) -m parallel -j $(DMAKE_MAX_JOBS)
 
 WORKDIRS	= 							\
 		$(STATDIR)/steps					\
