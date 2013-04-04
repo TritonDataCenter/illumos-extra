@@ -24,7 +24,9 @@
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
-#ident	"@(#)ntp	1.1	09/05/17 SMI"
+
+#
+# Copyright (c) 2013 Joyent, Inc.  All rights reserved.
 #
 
 # Standard prolog
@@ -66,7 +68,7 @@ while read; do
 		continue
 	fi
 	need_host_check=yes
-	if ping -- "$2" >/dev/null 2>/dev/null; then
+	if ntpdate -q -u -p 1 -t 5 -- "$2" >/dev/null 2>/dev/null; then
 		host_ok=yes
 		break;
 	fi
