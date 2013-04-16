@@ -156,8 +156,8 @@ index e594d59..1289837 100644
  #else
  	if (oldpath == NULL) {
 -		sprintf(newpath, "%s%s", newpath, LD_SUPPORT_MAKE_LIB);
-+		sprintf("%s%s%s/%s:%s",
-+		    newpath, MAKE_PREFIX, LD_SUPPORT_MAKE_LIB_DIR,
++		sprintf(newpath, "%s%s%s/%s:%s",
++		    MAKE_PREFIX, LD_SUPPORT_MAKE_LIB_DIR,
 +		    LD_SUPPORT_MAKE_LIB, LD_SUPPORT_MAKE_LIB) + 1;
  	} else {
 -		sprintf(newpath, "%s:%s", newpath, LD_SUPPORT_MAKE_LIB);
@@ -169,8 +169,8 @@ index e594d59..1289837 100644
 +	}
 +
 +	if (oldpath64 == NULL) {
-+		sprintf("%s%s%s/%s:%s",
-+		    newpath64, MAKE_PREFIX, LD_SUPPORT_MAKE_LIB_DIR_64,
++		sprintf(newpath64, "%s%s%s/%s:%s",
++		    MAKE_PREFIX, LD_SUPPORT_MAKE_LIB_DIR_64,
 +		    LD_SUPPORT_MAKE_LIB, LD_SUPPORT_MAKE_LIB) + 1;
 +
 +	} else {
