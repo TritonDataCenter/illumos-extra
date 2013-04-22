@@ -25,6 +25,8 @@ BASE =		$(PWD)
 DESTDIR =	$(BASE)/../proto
 VER.32 =	$(VER)-32$(STRAP)
 VER.64 =	$(VER)-64$(STRAP)
+OBJ.32 =	$(VER.32)$(SEPARATE_BUILD:yes=.build)
+OBJ.64 =	$(VER.64)$(SEPARATE_BUILD:yes=.build)
 
 PATH =		$(DESTDIR)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
 
@@ -49,6 +51,7 @@ SYSLIBDIRS =	/usr/lib /lib
 
 BUILD32 =	yes
 BUILD64 =
+SEPARATE_BUILD =
 
 CPPFLAGS =	$(SYSINCDIRS:%=-isystem $(DESTDIR)/%)
 
@@ -87,8 +90,8 @@ AUTOCONF_LIBS =		LIBS="$(LIBS)"
 AUTOCONF_LIBS.64 =	LIBS="$(LIBS.64)"
 
 AUTOCONF_OUT =		config.status
-AUTOCONF_OUT.32 =	$(VER.32)/$(AUTOCONF_OUT)
-AUTOCONF_OUT.64 =	$(VER.64)/$(AUTOCONF_OUT)
+AUTOCONF_OUT.32 =	$(OBJ.32)/$(AUTOCONF_OUT)
+AUTOCONF_OUT.64 =	$(OBJ.64)/$(AUTOCONF_OUT)
 
 AUTOCONF_PREFIX =	/usr
 
@@ -119,6 +122,7 @@ AUTOCONF_OPTS.32 = \
 AUTOCONF_OPTS.64 = \
 	$(AUTOCONF_OPTS)
 
+ALL_TGT =
 OVERRIDES =	$(MAKE_VERBOSE)
 
 TARBALL =		$(VER).tar.gz

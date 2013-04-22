@@ -24,39 +24,41 @@
 all_autoconf: $(BUILD32:yes=all_autoconf_32) $(BUILD64:yes=all_autoconf_64)
 
 all_autoconf_32: $(AUTOCONF_OUT.32)
-	(cd $(VER.32); env - PATH=$(PATH) $(MAKE) $(PARALLEL) $(OVERRIDES))
+	(cd $(OBJ.32); \
+	    env - PATH=$(PATH) $(MAKE) $(PARALLEL) $(OVERRIDES) $(ALL_TGT))
 
 all_autoconf_64: $(AUTOCONF_OUT.64)
-	(cd $(VER.64); env - PATH=$(PATH) $(MAKE) $(PARALLEL) $(OVERRIDES.64))
+	(cd $(OBJ.64); \
+	    env - PATH=$(PATH) $(MAKE) $(PARALLEL) $(OVERRIDES.64) $(ALL_TGT))
 
 install_autoconf: $(BUILD32:yes=install_autoconf_32) \
     $(BUILD64:yes=install_autoconf_64)
 
 install_autoconf_32: all
 	mkdir -p $(DESTDIR)
-	(cd $(VER.32); \
+	(cd $(OBJ.32); \
 	    env - PATH=$(PATH) \
 	    $(MAKE) $(install_PARALLEL) $(OVERRIDES) DESTDIR=$(DESTDIR) install)
 
 install_autoconf_64: all
 	mkdir -p $(DESTDIR)
-	(cd $(VER.64); \
+	(cd $(OBJ.64); \
 	    env - PATH=$(PATH) \
 	    $(MAKE) $(install_PARALLEL) $(OVERRIDES.64) DESTDIR=$(DESTDIR) \
 	    install)
 
-$(AUTOCONF_OUT.32): $(VER.32)/configure
-	(cd $(VER.32); \
+$(AUTOCONF_OUT.32): $(VER.32)/configure | $(OBJ.32)
+	(cd $(OBJ.32); \
 	    env - PATH=$(PATH) $(AUTOCONF_ENV) \
-	    ./configure $(AUTOCONF_OPTS.32))
+	    $(SEPARATE_BUILD:yes=../$(VER.32)/)./configure $(AUTOCONF_OPTS.32))
 
-$(AUTOCONF_OUT.64): $(VER.64)/configure
+$(AUTOCONF_OUT.64): $(VER.64)/configure | $(OBJ.64)
 	(cd $(VER.64); \
 	    env - PATH=$(PATH) $(AUTOCONF_ENV.64) \
-	    ./configure $(AUTOCONF_OPTS.64))
+	    $(SEPARATE_BUILD:yes=../$(VER.64)/)./configure $(AUTOCONF_OPTS.64))
 
 $(VER.32)/$(UNPACK_SENTINEL): $(TARBALL)
-	-rm -rf $(VER.32)
+	-rm -rf $(VER.32) $(OBJ.32)
 	mkdir -p .unpack32
 	gtar x -C .unpack32 $(TARBALL_COMPRESS) --no-same-owner -f $(TARBALL)
 	$(APPLY_PATCHES.32)
@@ -66,7 +68,7 @@ $(VER.32)/$(UNPACK_SENTINEL): $(TARBALL)
 	touch $(VER.32)/$(UNPACK_SENTINEL)
 
 $(VER.64)/$(UNPACK_SENTINEL): $(TARBALL)
-	-rm -rf $(VER.64)
+	-rm -rf $(VER.64) $(OBJ.64)
 	mkdir -p .unpack64
 	gtar x -C .unpack64 $(TARBALL_COMPRESS) --no-same-owner -f $(TARBALL)
 	$(APPLY_PATCHES.64)
@@ -75,6 +77,12 @@ $(VER.64)/$(UNPACK_SENTINEL): $(TARBALL)
 	$(FROB_SENTINEL.64)
 	touch $(VER.64)/$(UNPACK_SENTINEL)
 
+$(VER.32).build: $(VER.32)/$(UNPACK_SENTINEL)
+	mkdir -p "$@"
+
+$(VER.64).build: $(VER.64)/$(UNPACK_SENTINEL)
+	mkdir -p "$@"
+
 clean:
 	-rm -rf $(VER) $(VER.32) $(VER.64) .unpack32 .unpack64 $(CLEANFILES) \
-	    $(VER.32)strap $(VER.64)strap
+	    $(VER.32)strap $(VER.64)strap $(OBJ.32) $(OBJ.64)

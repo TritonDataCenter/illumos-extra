@@ -23,68 +23,88 @@
 # Copyright (c) 2013, Joyent, Inc.  All rights reserved.
 #
 
-#
-# This makefile has not been adapted to use the infrastructure because of
-# the need to build in a separate subdirectory from the source.  This could
-# be accommodated without excessive effort but is a highly unusual pattern.
-#
-
 VER =	gcc-4.4.4
+MPFR_VER =	mpfr-3.1.2
+GMP_VER =	gmp-5.1.1
 
 include ../Makefile.defs
 
-CLEANFILES +=	$(VER)-i386-build
+SEPARATE_BUILD =	yes
 
 GCC =	/opt/local/bin/gcc
 GXX =	/bin/false
+CFLAGS =	-nostdinc -isystem /usr/include -g -O2
+
+AUTOCONF_OPTS += \
+	--with-ld=/usr/bin/ld \
+	--without-gnu-ld \
+	--with-gnu-as \
+	--with-as=$(DESTDIR)/usr/gnu/bin/gas \
+	--enable-languages="c,c++" \
+	--enable-shared \
+	--disable-nls
+
+AUTOCONF_ENV += \
+	DESTDIR=$(DESTDIR) \
+	MAKE=$(MAKE)
+
+OVERRIDES += \
+	$(AUTOCONF_CFLAGS) \
+	STAGE1_CFLAGS="$(CFLAGS)" \
+	CFLAGS_FOR_TARGET="$(CFLAGS)"
+
+#
+# Unlike everything else, gcc is built to be a cross-compiler, really.  It
+# never runs on the target system, only the build system.  So it should not
+# be using the proto area's headers or libraries.  Its own libraries will be
+# built by the new compiler, and generally aren't using system headers anyway.
+# This is not really completely true; for example, libstdc++, and this will
+# need more work to be really right.  We only deliver the libraries.
+#
+AUTOCONF_CPPFLAGS =
+AUTOCONF_LIBS =
+GENLDFLAGS =
+
+PATCHES =	Patches/*
+ALL_TGT =	bootstrap
 
 include ../Makefile.targ
+include ../Makefile.targ.autoconf
 
-all: $(VER)-i386-build/config.status
-	(cd $(VER)-i386-build; env - \
-	    CC=$(GCC) \
-	    CFLAGS="-g -O2" \
-	    DESTDIR=$(DESTDIR) \
-	    PATH=$(PATH) \
-	    STAGE1_CFLAGS="-g -O2" \
-	    CFLAGS_FOR_TARGET="-g -O2" \
-	    MAKE=gmake gmake \
-		CFLAGS="-g -O2" \
-		STAGE1_CFLAGS="-g -O2" \
-		CFLAGS_FOR_TARGET="-g -O2" $(PARALLEL) bootstrap)
+#
+# We could use the mpfr and gmp from the build system (since the compiler will
+# be run here), but there's no good way to make gcc build itself correctly if
+# we do.  There are two main problems:
+#
+# 1. Stage2 and later cc1 and company don't honour any combination of LDFLAGS,
+# LDFLAGS_FOR_TARGET, BOOT_LDFLAGS, STAGE2_LDFLAGS, etc.  So the only ways to
+# get these things built with -R/opt/local/lib are to use LD_OPTIONS which will
+# yield the wrong results for libraries or to hack configure.
+#
+# 2. Even if we could get -R/opt/local/lib into these programs without building
+# the libraries incorrectly, it would still be wrong.  The pkgsrc lib directory
+# on many systems contains libgcc_s.so.1; however, cc1 was built by the stage2
+# compiler and should find the libgcc that matches that compiler.  That happens
+# to be the one we just built, not the pkgsrc one.
+#
+# So Instead we have mpfr and gmp built as part of the gcc build itself.
+#
+$(AUTOCONF_OUT.32): | $(VER.32)/mpfr $(VER.32)/gmp
 
-install: all
-	(cd $(VER)-i386-build; env - \
-	    CC=$(GCC) \
-	    CFLAGS="-g -O2" \
-	    STAGE1_CFLAGS="-g -O2" \
-	    CFLAGS_FOR_TARGET="-g -O2" \
-	    DESTDIR=$(DESTDIR) \
-	    PATH=$(PATH) \
-	    MAKE=gmake gmake \
-		CFLAGS="-g -O2" \
-		STAGE1_CFLAGS="-g -O2" \
-		CFLAGS_FOR_TARGET="-g -O2" $(PARALLEL) install)
+$(VER.32)/mpfr: $(MPFR_VER).tar.gz | $(VER.32)
+	-rm -rf $@
+	mkdir -p .unpack32
+	gtar x -C .unpack32 -z --no-same-owner -f $(MPFR_VER).tar.gz
+	mv -f .unpack32/$(MPFR_VER) ./$@
+	-rmdir .unpack32
+	chmod 755 $@/configure
+	touch $@/configure
 
-$(VER)-i386-build/config.status: $(VER)-i386-build $(VER.32)/configure
-	(cd $(VER)-i386-build; env - \
-	    CC=$(GCC) \
-	    CFLAGS="-g -O2" \
-	    DESTDIR=$(DESTDIR) \
-	    PATH=$(PATH) \
-	    MAKE=gmake \
-	../$(VER.32)/configure \
-		--prefix=/usr \
-		--with-ld=/usr/bin/ld \
-		--without-gnu-ld \
-		--with-gnu-as \
-		--with-as=$(DESTDIR)/usr/gnu/bin/gas \
-		--enable-languages="c,c++" \
-		--enable-shared \
-		--with-gmp=/opt/local \
-		--with-mpfr=/opt/local \
-		--disable-nls \
-		--with-included-gettext)
-
-$(VER)-i386-build:
-	mkdir -p $@
+$(VER.32)/gmp: $(GMP_VER).tar.bz2 | $(VER.32)
+	-rm -rf $@
+	mkdir -p .unpack32
+	gtar x -C .unpack32 -j --no-same-owner -f $(GMP_VER).tar.bz2
+	mv -f .unpack32/$(GMP_VER) ./$@
+	-rmdir .unpack32
+	chmod 755 $@/configure
+	touch $@/configure
