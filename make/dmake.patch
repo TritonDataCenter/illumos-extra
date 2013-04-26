@@ -1,18 +1,18 @@
-From fb00928e476a57195ee6775bd16567c0afc66837 Mon Sep 17 00:00:00 2001
+From 564c276dca99fef84cd381281514d4d0000c28e3 Mon Sep 17 00:00:00 2001
 From: Robert Mustacchi <rm@joyent.com>
-Date: Mon, 25 Mar 2013 18:58:29 +0000
+Date: Fri, 26 Apr 2013 00:20:46 +0000
 Subject: [PATCH] add dmake support
 
 ---
- src/make_src/Make/bin/make/common/doname.cc        |    6 +--
- src/make_src/Make/bin/make/common/main.cc          |   42 ++++++++++----------
- src/make_src/Make/bin/make/common/parallel.cc      |   14 ++++++-
- src/make_src/Make/bin/make/smake/src/Variant.mk    |    8 +++-
- .../Make/lib/mksdmsi18n/src/libmksdmsi18n_init.cc  |    8 +++-
- src/make_src/Make/lib/mksh/src/dosys.cc            |    4 +-
+ src/make_src/Make/bin/make/common/doname.cc        |    6 +---
+ src/make_src/Make/bin/make/common/main.cc          |   33 ++++++++++++--------
+ src/make_src/Make/bin/make/common/parallel.cc      |   14 +++++++-
+ src/make_src/Make/bin/make/smake/src/Variant.mk    |    8 ++++-
+ .../Make/lib/mksdmsi18n/src/libmksdmsi18n_init.cc  |    8 ++++-
+ src/make_src/Make/lib/mksh/src/dosys.cc            |    4 ++-
  src/make_src/Make/lib/mksh/src/mksh.cc             |    2 +-
  src/make_src/rules/master.mk                       |    3 +-
- 8 files changed, 54 insertions(+), 33 deletions(-)
+ 8 files changed, 53 insertions(+), 25 deletions(-)
 
 diff --git a/src/make_src/Make/bin/make/common/doname.cc b/src/make_src/Make/bin/make/common/doname.cc
 index c06ba2f..8a38a13 100644
@@ -52,7 +52,7 @@ index c06ba2f..8a38a13 100644
  	/* Scan the list of conditional properties and restore the old value */
  	/* to each one Reverse the order relative to when we assigned macros */
 diff --git a/src/make_src/Make/bin/make/common/main.cc b/src/make_src/Make/bin/make/common/main.cc
-index 1289837..889eae8 100644
+index 5ca4c93..789f149 100644
 --- a/src/make_src/Make/bin/make/common/main.cc
 +++ b/src/make_src/Make/bin/make/common/main.cc
 @@ -39,15 +39,17 @@
@@ -168,29 +168,6 @@ index 1289837..889eae8 100644
  #endif
  #endif
  
-@@ -2131,13 +2138,6 @@ set_sgs_support()
- 		sprintf(newpath64, "%s=%s", LD_SUPPORT_ENV_VAR_64, oldpath64);
- 	}
- 
--#if defined(TEAMWARE_MAKE_CMN)
--
--	/* function maybe_append_str_to_env_var() is defined in avo_util library
--	 * Serial make should not use this library !!!
--	 */
--	maybe_append_str_to_env_var(newpath, LD_SUPPORT_MAKE_LIB);
--#else
- 	if (oldpath == NULL) {
- 		sprintf("%s%s%s/%s:%s",
- 		    newpath, MAKE_PREFIX, LD_SUPPORT_MAKE_LIB_DIR,
-@@ -2162,7 +2162,7 @@ set_sgs_support()
- 		    LD_SUPPORT_MAKE_LIB) + 1;
- 
- 	}
--#endif
-+
- 	putenv(newpath);
- 	if (prev_path) {
- 		free(prev_path);
 diff --git a/src/make_src/Make/bin/make/common/parallel.cc b/src/make_src/Make/bin/make/common/parallel.cc
 index 1831415..477e50d 100644
 --- a/src/make_src/Make/bin/make/common/parallel.cc
