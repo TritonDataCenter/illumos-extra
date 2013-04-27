@@ -48,6 +48,9 @@ SHARED_LDFLAGS = \
 	-G \
 	$(LDFLAGS)
 
+PATCHES += \
+	dtrace.patch
+
 #
 # This is where things get really gross.  There is stuff in ON that is going
 # to use the bootstrap perl to build various artifacts (binary and otherwise).
