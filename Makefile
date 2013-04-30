@@ -51,6 +51,7 @@ SUBDIRS = \
 	nss-nspr \
 	ntp \
 	openldap \
+	openlldp \
 	openssl \
 	openssl1x \
 	pbzip2 \

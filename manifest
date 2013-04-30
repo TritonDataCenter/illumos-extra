@@ -453,6 +453,10 @@ f usr/openldap/share/man/man1/ldapwhoami.1 0444 root bin
 d usr/openldap/share/man/man5 0755 root bin
 f usr/openldap/share/man/man5/ldap.conf.5 0444 root bin
 f usr/openldap/share/man/man5/ldif.5 0444 root bin
+# openlldp
+f lib/svc/manifest/network/lldpd.xml 0444 root sys
+f usr/sbin/lldpd 0555 root bin
+f usr/sbin/lldpneighbors 0555 root bin
 # openssl
 f usr/bin/amd64/openssl 0555 root bin
 s usr/sfw/bin/amd64/openssl=../../../bin/amd64/openssl
