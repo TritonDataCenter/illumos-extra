@@ -32,6 +32,9 @@ all: all_autoconf
 
 install: all
 	mkdir -p $(DESTDIR)/usr/sbin
+	rm -f $(DESTDIR)/usr/sbin/lldpd
+	rm -f $(DESTDIR)/usr/sbin/lldpneighbors
+	rm -f $(DESTDIR)/lib/svc/manifest/network/lldpd.xml
 	install -s -m 555 -f $(DESTDIR)/usr/sbin $(VER.32)/src/lldpd
 	install -s -m 555 -f $(DESTDIR)/usr/sbin $(VER.32)/src/lldpneighbors
 	install -s -m 444 -f $(DESTDIR)/lib/svc/manifest/network lldpd.xml
