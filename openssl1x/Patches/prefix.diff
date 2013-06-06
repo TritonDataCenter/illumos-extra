@@ -80,3 +80,110 @@ diff -urN openssl-1.0.1c/crypto/opensslconf.h.in openssl-1.0.1c-32/crypto/openss
  /* Generate 80386 code? */
  #undef I386_ONLY
  
+--- openssl-1.0.1d-32/ssl/Makefile.orig	Wed Jun  5 20:12:33 2013
++++ openssl-1.0.1d-32/ssl/Makefile	Wed Jun  5 20:12:43 2013
+@@ -19,7 +19,7 @@
+ APPS=
+ 
+ LIB=$(TOP)/libssl.a
+-SHARED_LIB= libssl$(SHLIB_EXT)
++SHARED_LIB= libsunw_ssl$(SHLIB_EXT)
+ LIBSRC=	\
+ 	s2_meth.c   s2_srvr.c s2_clnt.c  s2_lib.c  s2_enc.c s2_pkt.c \
+ 	s3_meth.c   s3_srvr.c s3_clnt.c  s3_lib.c  s3_enc.c s3_pkt.c s3_both.c s3_cbc.c \
+--- openssl-1.0.1d-32/crypto/Makefile.orig	Wed Jun  5 20:12:14 2013
++++ openssl-1.0.1d-32/crypto/Makefile	Wed Jun  5 20:12:24 2013
+@@ -33,7 +33,7 @@
+ GENERAL=Makefile README crypto-lib.com install.com
+ 
+ LIB= $(TOP)/libcrypto.a
+-SHARED_LIB= libcrypto$(SHLIB_EXT)
++SHARED_LIB= libsunw_crypto$(SHLIB_EXT)
+ LIBSRC=	cryptlib.c mem.c mem_clr.c mem_dbg.c cversion.c ex_data.c cpt_err.c \
+ 	ebcdic.c uid.c o_time.c o_str.c o_dir.c o_fips.c o_init.c fips_ers.c
+ LIBOBJ= cryptlib.o mem.o mem_dbg.o cversion.o ex_data.o cpt_err.o ebcdic.o \
+--- openssl-1.0.1d-32/Makefile.org.orig	Wed Jun  5 21:04:03 2013
++++ openssl-1.0.1d-32/Makefile.org	Wed Jun  5 21:09:12 2013
+@@ -170,8 +170,8 @@
+ EDIRS=  times doc bugs util include certs ms shlib mt demos perl sf dep VMS
+ WDIRS=  windows
+ LIBS=   libcrypto.a libssl.a
+-SHARED_CRYPTO=libcrypto$(SHLIB_EXT)
+-SHARED_SSL=libssl$(SHLIB_EXT)
++SHARED_CRYPTO=libsunw_crypto$(SHLIB_EXT)
++SHARED_SSL=libsunw_ssl$(SHLIB_EXT)
+ SHARED_LIBS=
+ SHARED_LIBS_LINK_EXTS=
+ SHARED_LDFLAGS=
+@@ -295,7 +295,7 @@
+ 		$(FIPSLIBDIR)fips_premain.c $(FIPSLIBDIR)fipscanister.o \
+ 		libcrypto.a $(EX_LIBS)
+ 
+-libcrypto$(SHLIB_EXT): libcrypto.a fips_premain_dso$(EXE_EXT)
++libsunw_crypto$(SHLIB_EXT): libcrypto.a fips_premain_dso$(EXE_EXT)
+ 	@if [ "$(SHLIB_TARGET)" != "" ]; then \
+ 		if [ "$(FIPSCANLIB)" = "libcrypto" ]; then \
+ 			FIPSLD_LIBCRYPTO=libcrypto.a ; \
+@@ -308,9 +308,9 @@
+ 		exit 1; \
+ 	fi
+ 
+-libssl$(SHLIB_EXT): libcrypto$(SHLIB_EXT) libssl.a
++libsunw_ssl$(SHLIB_EXT): libsunw_crypto$(SHLIB_EXT) libssl.a
+ 	@if [ "$(SHLIB_TARGET)" != "" ]; then \
+-		$(MAKE) SHLIBDIRS=ssl SHLIBDEPS='-lcrypto' build-shared; \
++		$(MAKE) SHLIBDIRS=ssl SHLIBDEPS='-lsunw_crypto' build-shared; \
+ 	else \
+ 		echo "There's no support for shared libraries on this platform" >&2; \
+ 		exit 1; \
+@@ -336,7 +336,7 @@
+ 			LIBNAME=$$i LIBVERSION=$(SHLIB_MAJOR).$(SHLIB_MINOR) \
+ 			LIBCOMPATVERSIONS=";$(SHLIB_VERSION_HISTORY)" \
+ 			symlink.$(SHLIB_TARGET); \
+-		libs="$$libs -l$$i"; \
++		libs="$$libs -lsunw_$$i"; \
+ 	done
+ 
+ build-shared: do_$(SHLIB_TARGET) link-shared
+@@ -351,7 +351,7 @@
+ 			LIBCOMPATVERSIONS=";$(SHLIB_VERSION_HISTORY)" \
+ 			LIBDEPS="$$libs $(EX_LIBS)" \
+ 			link_a.$(SHLIB_TARGET); \
+-		libs="-l$$i $$libs"; \
++		libs="-lsunw_$$i $$libs"; \
+ 	done
+ 
+ libcrypto.pc: Makefile
+--- openssl-1.0.1d-32/Makefile.shared.orig	Wed Jun  5 21:04:10 2013
++++ openssl-1.0.1d-32/Makefile.shared	Wed Jun  5 21:07:16 2013
+@@ -368,7 +368,7 @@
+ 		$(CALC_VERSIONS); \
+ 		MINUSZ='-z '; \
+ 		($(CC) -v 2>&1 | grep gcc) > /dev/null && MINUSZ='-Wl,-z,'; \
+-		SHLIB=lib$(LIBNAME).so; \
++		SHLIB=libsunw_$(LIBNAME).so; \
+ 		SHLIB_SUFFIX=; \
+ 		ALLSYMSFLAGS="$${MINUSZ}allextract"; \
+ 		NOALLSYMSFLAGS="$${MINUSZ}defaultextract"; \
+@@ -382,7 +382,7 @@
+ 		$(CALC_VERSIONS); \
+ 		MINUSZ='-z '; \
+ 		($(CC) -v 2>&1 | grep gcc) > /dev/null && MINUSZ='-Wl,-z,'; \
+-		SHLIB=lib$(LIBNAME).so; \
++		SHLIB=libsunw_$(LIBNAME).so; \
+ 		SHLIB_SUFFIX=;\
+ 		ALLSYMSFLAGS="$${MINUSZ}allextract"; \
+ 		NOALLSYMSFLAGS="$${MINUSZ}defaultextract"; \
+--- openssl-1.0.1d-32/apps/Makefile.orig	Wed Jun  5 21:18:05 2013
++++ openssl-1.0.1d-32/apps/Makefile	Wed Jun  5 21:18:21 2013
+@@ -26,8 +26,8 @@
+ 
+ DLIBCRYPTO=../libcrypto.a
+ DLIBSSL=../libssl.a
+-LIBCRYPTO=-L.. -lcrypto
+-LIBSSL=-L.. -lssl
++LIBCRYPTO=-L.. -lsunw_crypto
++LIBSSL=-L.. -lsunw_ssl
+ 
+ PROGRAM= openssl
+ 

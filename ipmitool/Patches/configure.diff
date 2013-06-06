@@ -225,3 +225,123 @@ diff -ur ipmitool-1.8.11/configure.in ipmitool-1.8.11-joyent/configure.in
  	[if test "x$enable_internal_md5" != "xyes"; then
  	    if test "x$have_crypto" != "xyes" && test "x$have_md5" != "xyes"; then
  	        LIBS="$LIBS -lcrypto"
+--- ipmitool-1.8.11-32/configure.orig	Wed Jun  5 22:13:14 2013
++++ ipmitool-1.8.11-32/configure	Wed Jun  5 22:14:12 2013
+@@ -22148,13 +22148,13 @@
+   enable_internal_md5=no
+ fi;
+ 
+-echo "$as_me:$LINENO: checking for sunw_EVP_aes_128_cbc in -lcrypto" >&5
+-echo $ECHO_N "checking for sunw_EVP_aes_128_cbc in -lcrypto... $ECHO_C" >&6
++echo "$as_me:$LINENO: checking for sunw_EVP_aes_128_cbc in -lsunw_crypto" >&5
++echo $ECHO_N "checking for sunw_EVP_aes_128_cbc in -lsunw_crypto... $ECHO_C" >&6
+ if test "${ac_cv_lib_crypto_sunw_EVP_aes_128_cbc+set}" = set; then
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lcrypto -lcrypto $LIBS"
++LIBS="-lsunw_crypto -lsunw_crypto $LIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -22214,7 +22214,7 @@
+ echo "${ECHO_T}$ac_cv_lib_crypto_sunw_EVP_aes_128_cbc" >&6
+ if test $ac_cv_lib_crypto_sunw_EVP_aes_128_cbc = yes; then
+   if test "x$enable_internal_md5" != "xyes"; then
+-	    have_crypto=yes; LIBS="$LIBS -lcrypto"
++	    have_crypto=yes; LIBS="$LIBS -lsunw_crypto"
+ 	fi
+ else
+   have_crypto=no
+@@ -22221,13 +22221,13 @@
+ fi
+ 
+ 
+-echo "$as_me:$LINENO: checking for sunw_MD5_Init in -lcrypto" >&5
+-echo $ECHO_N "checking for sunw_MD5_Init in -lcrypto... $ECHO_C" >&6
++echo "$as_me:$LINENO: checking for sunw_MD5_Init in -lsunw_crypto" >&5
++echo $ECHO_N "checking for sunw_MD5_Init in -lsunw_crypto... $ECHO_C" >&6
+ if test "${ac_cv_lib_crypto_sunw_MD5_Init+set}" = set; then
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lcrypto -lcrypto $LIBS"
++LIBS="-lsunw_crypto -lsunw_crypto $LIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -22288,7 +22288,7 @@
+ if test $ac_cv_lib_crypto_sunw_MD5_Init = yes; then
+   if test "x$enable_internal_md5" != "xyes"; then
+ 	    if test "x$have_crypto" != "xyes"; then
+-	    	LIBS="$LIBS -lcrypto"
++	    	LIBS="$LIBS -lsunw_crypto"
+ 		have_md5=yes
+ 	    fi
+ 
+@@ -22300,13 +22300,13 @@
+ fi
+ 
+ 
+-echo "$as_me:$LINENO: checking for sunw_MD2_Init in -lcrypto" >&5
+-echo $ECHO_N "checking for sunw_MD2_Init in -lcrypto... $ECHO_C" >&6
++echo "$as_me:$LINENO: checking for sunw_MD2_Init in -lsunw_crypto" >&5
++echo $ECHO_N "checking for sunw_MD2_Init in -lsunw_crypto... $ECHO_C" >&6
+ if test "${ac_cv_lib_crypto_sunw_MD2_Init+set}" = set; then
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lcrypto -lcrypto $LIBS"
++LIBS="-lsunw_crypto -lsunw_crypto $LIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -22367,7 +22367,7 @@
+ if test $ac_cv_lib_crypto_sunw_MD2_Init = yes; then
+   if test "x$enable_internal_md5" != "xyes"; then
+ 	    if test "x$have_crypto" != "xyes" && test "x$have_md5" != "xyes"; then
+-	        LIBS="$LIBS -lcrypto"
++	        LIBS="$LIBS -lsunw_crypto"
+ 	        have_md2=yes
+ 	    fi
+ 
+--- ipmitool-1.8.11-32/configure.in.orig	Wed Jun  5 22:14:56 2013
++++ ipmitool-1.8.11-32/configure.in	Wed Jun  5 22:15:40 2013
+@@ -116,28 +116,28 @@
+ 			[enable internal MD5 library [default=no]])],
+ 	[], [enable_internal_md5=no])
+ 
+-AC_CHECK_LIB([crypto], [sunw_EVP_aes_128_cbc],
++AC_CHECK_LIB([sunw_crypto], [sunw_EVP_aes_128_cbc],
+ 	[if test "x$enable_internal_md5" != "xyes"; then
+-	    have_crypto=yes; LIBS="$LIBS -lcrypto"
+-	fi], [have_crypto=no], [-lcrypto])
++	    have_crypto=yes; LIBS="$LIBS -lsunw_crypto"
++	fi], [have_crypto=no], [-lsunw_crypto])
+ 
+-AC_CHECK_LIB([crypto], [sunw_MD5_Init],
++AC_CHECK_LIB([sunw_crypto], [sunw_MD5_Init],
+ 	[if test "x$enable_internal_md5" != "xyes"; then
+ 	    if test "x$have_crypto" != "xyes"; then
+-	    	LIBS="$LIBS -lcrypto"
++	    	LIBS="$LIBS -lsunw_crypto"
+ 		have_md5=yes
+ 	    fi
+ 	    AC_DEFINE(HAVE_CRYPTO_MD5, [1], [Define to 1 if libcrypto supports MD5.])
+-	fi], [], [-lcrypto])
++	fi], [], [-lsunw_crypto])
+ 
+-AC_CHECK_LIB([crypto], [sunw_MD2_Init],
++AC_CHECK_LIB([sunw_crypto], [sunw_MD2_Init],
+ 	[if test "x$enable_internal_md5" != "xyes"; then
+ 	    if test "x$have_crypto" != "xyes" && test "x$have_md5" != "xyes"; then
+-	        LIBS="$LIBS -lcrypto"
++	        LIBS="$LIBS -lsunw_crypto"
+ 	        have_md2=yes
+ 	    fi
+ 	    AC_DEFINE(HAVE_CRYPTO_MD2, [1], [Define to 1 if libcrypto supports MD2.])
+-	fi], [], [-lcrypto])
++	fi], [], [-lsunw_crypto])
+ 
+ dnl enable IPMIv1.5 LAN interface
+ AC_ARG_ENABLE([intf-lan],

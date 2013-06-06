@@ -49,14 +49,17 @@ source ../install.subr
 cd $VERDIR
 
 # Install libraries
-_install D libcrypto.so.${LIBVER} ${LIBDIR}/libcrypto.so.${LIBVER} 0755
-_install L libcrypto.so.${LIBVER} ${LIBDIR}/libcrypto.so
-_install D libssl.so.${LIBVER} ${LIBDIR}/libssl.so.${LIBVER} 0755
-_install L libssl.so.${LIBVER} ${LIBDIR}/libssl.so
-_install L ../../lib/libcrypto.so.${LIBVER} ${USRLIBDIR}/libcrypto.so.${LIBVER}
-_install L ../../lib/libcrypto.so ${USRLIBDIR}/libcrypto.so
-_install L ../../lib/libssl.so.${LIBVER} ${USRLIBDIR}/libssl.so.${LIBVER}
-_install L ../../lib/libssl.so ${USRLIBDIR}/libssl.so
+_install D libsunw_crypto.so.${LIBVER} \
+    ${LIBDIR}/libsunw_crypto.so.${LIBVER} 0755
+_install L libsunw_crypto.so.${LIBVER} ${LIBDIR}/libsunw_crypto.so
+_install D libsunw_ssl.so.${LIBVER} ${LIBDIR}/libsunw_ssl.so.${LIBVER} 0755
+_install L libsunw_ssl.so.${LIBVER} ${LIBDIR}/libsunw_ssl.so
+_install L ../../lib/libsunw_crypto.so.${LIBVER} \
+    ${USRLIBDIR}/libsunw_crypto.so.${LIBVER}
+_install L ../../lib/libsunw_crypto.so ${USRLIBDIR}/libsunw_crypto.so
+_install L ../../lib/libsunw_ssl.so.${LIBVER} \
+    ${USRLIBDIR}/libsunw_ssl.so.${LIBVER}
+_install L ../../lib/libsunw_ssl.so ${USRLIBDIR}/libsunw_ssl.so
 
 # Install commands
 _install P apps/CA.pl ${BINDIR}/CA.pl 0555

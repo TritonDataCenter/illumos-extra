@@ -6113,3 +6113,242 @@ diff -ur curl-7.27.0/m4/curl-openssl.m4 curl-7.27.0-32/m4/curl-openssl.m4
      ],[
        tst_api="0x091"
      ])
+--- curl-7.27.0-32/configure.ac.orig	Wed Jun  5 21:38:11 2013
++++ curl-7.27.0-32/configure.ac	Wed Jun  5 21:39:16 2013
+@@ -1508,15 +1508,15 @@
+       ;;
+   esac
+ 
+-  AC_CHECK_LIB(crypto, sunw_CRYPTO_lock,[
++  AC_CHECK_LIB(sunw_crypto, sunw_CRYPTO_lock,[
+      HAVECRYPTO="yes"
+-     LIBS="-lcrypto $LIBS"
++     LIBS="-lsunw_crypto $LIBS"
+      ],[
+      LDFLAGS="$CLEANLDFLAGS -L$LIB_OPENSSL"
+      CPPFLAGS="$CLEANCPPFLAGS -I$PREFIX_OPENSSL/include/openssl -I$PREFIX_OPENSSL/include"
+-     AC_CHECK_LIB(crypto, sunw_CRYPTO_add_lock,[
++     AC_CHECK_LIB(sunw_crypto, sunw_CRYPTO_add_lock,[
+        HAVECRYPTO="yes"
+-       LIBS="-lcrypto $LIBS"], [
++       LIBS="-lsunw_crypto $LIBS"], [
+        LDFLAGS="$CLEANLDFLAGS"
+        CPPFLAGS="$CLEANCPPFLAGS"
+        LIBS="$CLEANLIBS"
+@@ -1528,7 +1528,7 @@
+     dnl This is only reasonable to do if crypto actually is there: check for
+     dnl SSL libs NOTE: it is important to do this AFTER the crypto lib
+ 
+-    AC_CHECK_LIB(ssl, sunw_SSL_connect)
++    AC_CHECK_LIB(sunw_ssl, sunw_SSL_connect)
+ 
+     if test "$ac_cv_lib_ssl_sunw_SSL_connect" != yes; then
+         dnl we didn't find the SSL lib, try the RSAglue/rsaref stuff
+@@ -1535,7 +1535,7 @@
+         AC_MSG_CHECKING(for ssl with RSAglue/rsaref libs in use);
+         OLIBS=$LIBS
+         LIBS="$LIBS -lRSAglue -lrsaref"
+-        AC_CHECK_LIB(ssl, sunw_SSL_connect)
++        AC_CHECK_LIB(sunw_ssl, sunw_SSL_connect)
+         if test "$ac_cv_lib_ssl_sunw_SSL_connect" != yes; then
+             dnl still no SSL_connect
+             AC_MSG_RESULT(no)
+--- curl-7.27.0-32/configure.orig	Wed Jun  5 21:38:18 2013
++++ curl-7.27.0-32/configure	Wed Jun  5 21:40:26 2013
+@@ -20740,13 +20740,13 @@
+       ;;
+   esac
+ 
+-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sunw_CRYPTO_lock in -lcrypto" >&5
+-$as_echo_n "checking for sunw_CRYPTO_lock in -lcrypto... " >&6; }
++  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sunw_CRYPTO_lock in -lsunw_crypto" >&5
++$as_echo_n "checking for sunw_CRYPTO_lock in -lsunw_crypto... " >&6; }
+ if ${ac_cv_lib_crypto_sunw_CRYPTO_lock+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lcrypto  $LIBS"
++LIBS="-lsunw_crypto  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -20776,19 +20776,19 @@
+ if test "x$ac_cv_lib_crypto_sunw_CRYPTO_lock" = xyes; then :
+ 
+      HAVECRYPTO="yes"
+-     LIBS="-lcrypto $LIBS"
++     LIBS="-lsunw_crypto $LIBS"
+ 
+ else
+ 
+      LDFLAGS="$CLEANLDFLAGS -L$LIB_OPENSSL"
+      CPPFLAGS="$CLEANCPPFLAGS -I$PREFIX_OPENSSL/include/openssl -I$PREFIX_OPENSSL/include"
+-     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sunw_CRYPTO_add_lock in -lcrypto" >&5
+-$as_echo_n "checking for sunw_CRYPTO_add_lock in -lcrypto... " >&6; }
++     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sunw_CRYPTO_add_lock in -lsunw_crypto" >&5
++$as_echo_n "checking for sunw_CRYPTO_add_lock in -lsunw_crypto... " >&6; }
+ if ${ac_cv_lib_crypto_sunw_CRYPTO_add_lock+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lcrypto  $LIBS"
++LIBS="-lsunw_crypto  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -20818,7 +20818,7 @@
+ if test "x$ac_cv_lib_crypto_sunw_CRYPTO_add_lock" = xyes; then :
+ 
+        HAVECRYPTO="yes"
+-       LIBS="-lcrypto $LIBS"
++       LIBS="-lsunw_crypto $LIBS"
+ else
+ 
+        LDFLAGS="$CLEANLDFLAGS"
+@@ -20834,13 +20834,13 @@
+ 
+   if test X"$HAVECRYPTO" = X"yes"; then
+ 
+-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sunw_SSL_connect in -lssl" >&5
+-$as_echo_n "checking for sunw_SSL_connect in -lssl... " >&6; }
++    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sunw_SSL_connect in -lsunw_ssl" >&5
++$as_echo_n "checking for sunw_SSL_connect in -lsunw_ssl... " >&6; }
+ if ${ac_cv_lib_ssl_sunw_SSL_connect+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lssl  $LIBS"
++LIBS="-lsunw_ssl  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -20872,7 +20872,7 @@
+ #define HAVE_LIBSSL 1
+ _ACEOF
+ 
+-  LIBS="-lssl $LIBS"
++  LIBS="-lsunw_ssl $LIBS"
+ 
+ fi
+ 
+@@ -20882,13 +20882,13 @@
+ $as_echo_n "checking for ssl with RSAglue/rsaref libs in use... " >&6; };
+         OLIBS=$LIBS
+         LIBS="$LIBS -lRSAglue -lrsaref"
+-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sunw_SSL_connect in -lssl" >&5
+-$as_echo_n "checking for sunw_SSL_connect in -lssl... " >&6; }
++        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sunw_SSL_connect in -lsunw_ssl" >&5
++$as_echo_n "checking for sunw_SSL_connect in -lsunw_ssl... " >&6; }
+ if ${ac_cv_lib_ssl_sunw_SSL_connect+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lssl  $LIBS"
++LIBS="-lsunw_ssl  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -20920,7 +20920,7 @@
+ #define HAVE_LIBSSL 1
+ _ACEOF
+ 
+-  LIBS="-lssl $LIBS"
++  LIBS="-lsunw_ssl $LIBS"
+ 
+ fi
+ 
+@@ -21921,13 +21921,13 @@
+ fi
+ 
+ if test "$OPENSSL_ENABLED" = "1"; then
+-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for SRP_Calc_client_key in -lcrypto" >&5
+-$as_echo_n "checking for SRP_Calc_client_key in -lcrypto... " >&6; }
++  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for SRP_Calc_client_key in -lsunw_crypto" >&5
++$as_echo_n "checking for SRP_Calc_client_key in -lsunw_crypto... " >&6; }
+ if ${ac_cv_lib_crypto_SRP_Calc_client_key+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lcrypto  $LIBS"
++LIBS="-lsunw_crypto  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+--- curl-7.27.0-32/configure.ac.orig	Wed Jun  5 21:45:37 2013
++++ curl-7.27.0-32/configure.ac	Wed Jun  5 21:45:51 2013
+@@ -2886,7 +2886,6 @@
+ AC_TYPE_SIZE_T
+ AC_HEADER_TIME
+ CURL_CHECK_STRUCT_TIMEVAL
+-CURL_VERIFY_RUNTIMELIBS
+ 
+ AC_CHECK_SIZEOF(size_t)
+ AC_CHECK_SIZEOF(long)
+--- curl-7.27.0-32/configure.orig	Wed Jun  5 21:45:42 2013
++++ curl-7.27.0-32/configure	Wed Jun  5 21:46:24 2013
+@@ -25387,42 +25387,6 @@
+ 
+ 
+ 
+-    if test "x$cross_compiling" != xyes; then
+-
+-            { $as_echo "$as_me:${as_lineno-$LINENO}: checking run-time libs availability" >&5
+-$as_echo_n "checking run-time libs availability... " >&6; }
+-    if test "$cross_compiling" = yes; then :
+-  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+-as_fn_error $? "cannot run test program while cross compiling
+-See \`config.log' for more details" "$LINENO" 5; }
+-else
+-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+-/* end confdefs.h.  */
+-
+-main()
+-{
+-  return 0;
+-}
+-
+-_ACEOF
+-if ac_fn_c_try_run "$LINENO"; then :
+-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: fine" >&5
+-$as_echo "fine" >&6; }
+-else
+-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: failed" >&5
+-$as_echo "failed" >&6; }
+-    as_fn_error $? "one or more libs available at link-time are not available run-time. Libs used at link-time: $LIBS" "$LINENO" 5
+-
+-fi
+-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+-  conftest.$ac_objext conftest.beam conftest.$ac_ext
+-fi
+-
+-
+-      fi
+-
+-
+ # The cast to long int works around a bug in the HP C Compiler
+ # version HP92453-01 B.11.11.23709.GP, which incorrectly rejects
+ # declarations like `int a3[[(sizeof (unsigned char)) >= 0]];'.
+--- curl-7.27.0-32/configure.orig	Wed Jun  5 21:59:24 2013
++++ curl-7.27.0-32/configure	Wed Jun  5 22:00:14 2013
+@@ -25386,7 +25386,9 @@
+   esac
+ 
+ 
++cross_compiling=yes
+ 
++
+ # The cast to long int works around a bug in the HP C Compiler
+ # version HP92453-01 B.11.11.23709.GP, which incorrectly rejects
+ # declarations like `int a3[[(sizeof (unsigned char)) >= 0]];'.
+--- curl-7.27.0-32/configure.ac.orig	Wed Jun  5 21:59:19 2013
++++ curl-7.27.0-32/configure.ac	Wed Jun  5 21:59:34 2013
+@@ -2887,6 +2887,8 @@
+ AC_HEADER_TIME
+ CURL_CHECK_STRUCT_TIMEVAL
+ 
++cross_compiling=yes
++
+ AC_CHECK_SIZEOF(size_t)
+ AC_CHECK_SIZEOF(long)
+ AC_CHECK_SIZEOF(int)

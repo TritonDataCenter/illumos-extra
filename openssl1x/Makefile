@@ -52,10 +52,10 @@ PKCS11.32 =	$(PKCS11_SRCS:%=$(PKCS11_DST.32)/%)
 PKCS11.64 =	$(PKCS11_SRCS:%=$(PKCS11_DST.64)/%)
 
 CHECK_LIBS = \
-	$(VER.32)/libcrypto.so.$(LIBVER) \
-	$(VER.32)/libssl.so.$(LIBVER) \
-	$(VER.64)/libcrypto.so.$(LIBVER) \
-	$(VER.64)/libssl.so.$(LIBVER)
+	$(VER.32)/libsunw_crypto.so.$(LIBVER) \
+	$(VER.32)/libsunw_ssl.so.$(LIBVER) \
+	$(VER.64)/libsunw_crypto.so.$(LIBVER) \
+	$(VER.64)/libsunw_ssl.so.$(LIBVER)
 
 #
 # There are races between the building of assembly language sources and

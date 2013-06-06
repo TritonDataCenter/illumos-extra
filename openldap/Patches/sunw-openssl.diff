@@ -5690,3 +5690,86 @@ diff -ur openldap-2.4.26/configure.in openldap-2.4.26-32/configure.in
  				need_rsaref=yes], [have_openssl=no],
  				[-lcrypto -lRSAglue -lrsaref])
 Only in openldap-2.4.26-32: libtool
+--- openldap-2.4.26-32/configure.in.orig	Wed Jun  5 22:21:56 2013
++++ openldap-2.4.26-32/configure.in	Wed Jun  5 22:22:38 2013
+@@ -1161,16 +1161,16 @@
+ 	AC_CHECK_HEADERS(openssl/ssl.h)
+ 
+ 	if test $ac_cv_header_openssl_ssl_h = yes ; then
+-		AC_CHECK_LIB(ssl, sunw_SSL_library_init,
++		AC_CHECK_LIB(sunw_ssl, sunw_SSL_library_init,
+ 			[have_openssl=yes
+ 			need_rsaref=no], [have_openssl=no],
+-			[-lcrypto])
++			[-lsunw_crypto])
+ 
+ 		if test $have_openssl = no ; then
+-			AC_CHECK_LIB(ssl, sunw_ssl3_accept, 
++			AC_CHECK_LIB(sunw_ssl, sunw_ssl3_accept, 
+ 				[have_openssl=yes
+ 				need_rsaref=yes], [have_openssl=no],
+-				[-lcrypto -lRSAglue -lrsaref])
++				[-lsunw_crypto -lRSAglue -lrsaref])
+ 		fi
+ 
+ 		if test $have_openssl = yes ; then
+@@ -1184,9 +1184,9 @@
+ 				AC_DEFINE(HAVE_RSAREF, 1, 
+ 					[define if OpenSSL needs RSAref])
+ 
+-				TLS_LIBS="-lssl -lcrypto -lRSAglue -lrsaref"
++				TLS_LIBS="-lsunw_ssl -lsunw_crypto -lRSAglue -lrsaref"
+ 			else
+-				TLS_LIBS="-lssl -lcrypto"
++				TLS_LIBS="-lsunw_ssl -lsunw_crypto"
+ 			fi
+ 
+ 			OL_SSL_COMPAT
+--- openldap-2.4.26-32/configure.orig	Wed Jun  5 22:21:51 2013
++++ openldap-2.4.26-32/configure	Wed Jun  5 22:23:46 2013
+@@ -15443,13 +15443,13 @@
+ 
+ 
+ 	if test $ac_cv_header_openssl_ssl_h = yes ; then
+-		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for sunw_SSL_library_init in -lssl" >&5
+-$as_echo_n "checking for sunw_SSL_library_init in -lssl... " >&6; }
++		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for sunw_SSL_library_init in -lsunw_ssl" >&5
++$as_echo_n "checking for sunw_SSL_library_init in -lsunw_ssl... " >&6; }
+ if ${ac_cv_lib_ssl_sunw_SSL_library_init+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lssl -lcrypto $LIBS"
++LIBS="-lsunw_ssl -lsunw_crypto $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -15488,13 +15488,13 @@
+ 
+ 
+ 		if test $have_openssl = no ; then
+-			{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for sunw_ssl3_accept in -lssl" >&5
+-$as_echo_n "checking for sunw_ssl3_accept in -lssl... " >&6; }
++			{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for sunw_ssl3_accept in -lsunw_ssl" >&5
++$as_echo_n "checking for sunw_ssl3_accept in -lsunw_ssl... " >&6; }
+ if ${ac_cv_lib_ssl_sunw_ssl3_accept+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lssl -lcrypto -lRSAglue -lrsaref $LIBS"
++LIBS="-lsunw_ssl -lsunw_crypto -lRSAglue -lrsaref $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -15546,9 +15546,9 @@
+ $as_echo "#define HAVE_RSAREF 1" >>confdefs.h
+ 
+ 
+-				TLS_LIBS="-lssl -lcrypto -lRSAglue -lrsaref"
++				TLS_LIBS="-lsunw_ssl -lsunw_crypto -lRSAglue -lrsaref"
+ 			else
+-				TLS_LIBS="-lssl -lcrypto"
++				TLS_LIBS="-lsunw_ssl -lsunw_crypto"
+ 			fi
+ 
+ 			{ $as_echo "$as_me:${as_lineno-$LINENO}: checking OpenSSL library version (CRL checking capability)" >&5
