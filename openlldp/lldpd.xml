@@ -35,10 +35,18 @@
 	<single_instance />
 	<dependency
 		name='network'
-		grouping='require_any'
+		grouping='require_all'
 		restart_on='error'
 		type='service'>
 		<service_fmri value='svc:/network/physical' />
+	</dependency>
+
+	<dependency
+		name='dladm'
+		grouping='require_all'
+		restart_on='error'
+		type='service'>
+		<service_fmri value='svc:/network/datalink-management' />
 	</dependency>
 
 	<exec_method
@@ -61,7 +69,7 @@
 		exec=':kill'
 		timeout_seconds='60' />
 
-	<instance name="default" enabled="false" />
+	<instance name="default" enabled="true" />
 	<stability value='Unstable' />
 
 	<template>
