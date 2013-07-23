@@ -27,10 +27,10 @@ SRC=$(shell (pwd))
 LIBDIR=${DESTDIR}/usr/lib/iconv
 
 all:
-	@(cd src; pwd; SRC=$(SRC) $(SUN_MAKE) all)
+	@(cd src; pwd; unset MAKE; SRC=$(SRC) $(SUN_MAKE) all)
 	
 install: all
-	@(cd src; pwd; SRC=$(SRC) $(SUN_MAKE) install)
+	@(cd src; pwd; unset MAKE; SRC=$(SRC) $(SUN_MAKE) install)
 	mkdir -p $(LIBDIR)
 	cp proto/i386/fileroot/usr/lib/iconv/UTF-8%646.so $(LIBDIR)
 	cp proto/i386/fileroot/usr/lib/iconv/UTF-8%UCS-2.so $(LIBDIR)
@@ -39,4 +39,4 @@ install: all
 	cp proto/i386/fileroot/usr/lib/iconv/UCS-2LE%UTF-8.so $(LIBDIR)
 
 clean:
-	@(cd src; pwd; SRC=$(SRC) $(MAKE) clean)
+	@(cd src; pwd; unset MAKE; SRC=$(SRC) $(SUN_MAKE) clean)
