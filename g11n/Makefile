@@ -25,6 +25,7 @@ include ../Makefile.defs
 
 SRC=$(shell (pwd))
 LIBDIR=${DESTDIR}/usr/lib/iconv
+LIB64DIR=$(LIBDIR)/amd64
 
 all:
 	@(cd src; pwd; unset MAKE; SRC=$(SRC) $(SUN_MAKE) all)
@@ -32,11 +33,17 @@ all:
 install: all
 	@(cd src; pwd; unset MAKE; SRC=$(SRC) $(SUN_MAKE) install)
 	mkdir -p $(LIBDIR)
+	mkdir -p $(LIB64DIR)
 	cp proto/i386/fileroot/usr/lib/iconv/UTF-8%646.so $(LIBDIR)
 	cp proto/i386/fileroot/usr/lib/iconv/UTF-8%UCS-2.so $(LIBDIR)
 	cp proto/i386/fileroot/usr/lib/iconv/UTF-8%UCS-2LE.so $(LIBDIR)
 	cp proto/i386/fileroot/usr/lib/iconv/UCS-2%UTF-8.so $(LIBDIR)
 	cp proto/i386/fileroot/usr/lib/iconv/UCS-2LE%UTF-8.so $(LIBDIR)
+	cp proto/i386/fileroot/usr/lib/iconv/amd64/UTF-8%646.so $(LIB64DIR)
+	cp proto/i386/fileroot/usr/lib/iconv/amd64/UTF-8%UCS-2.so $(LIB64DIR)
+	cp proto/i386/fileroot/usr/lib/iconv/amd64/UTF-8%UCS-2LE.so $(LIB64DIR)
+	cp proto/i386/fileroot/usr/lib/iconv/amd64/UCS-2%UTF-8.so $(LIB64DIR)
+	cp proto/i386/fileroot/usr/lib/iconv/amd64/UCS-2LE%UTF-8.so $(LIB64DIR)
 
 clean:
 	@(cd src; pwd; unset MAKE; SRC=$(SRC) $(SUN_MAKE) clean)
