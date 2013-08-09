@@ -39,8 +39,8 @@ _install N Solaris/ntp ${DESTDIR}/lib/svc/method/ntp 0555
 _install N Solaris/auth_attr ${DESTDIR}/etc/security/auth_attr.d/ntp 0555
 _install N Solaris/prof_attr ${DESTDIR}/etc/security/prof_attr.d/ntp 0555
 
-_install N Solaris/ntpdate.1m ${DESTDIR}/usr/share/man/man1m/ntpdate.1m
-_install N Solaris/ntptime.1m ${DESTDIR}/usr/share/man/man1m/ntptime.1m
-_install N Solaris/ntptrace.1m ${DESTDIR}/usr/share/man/man1m/ntptrace.1m
+_install N Solaris/ntpdate.1m ${DESTDIR}/usr/share/man/man1m/ntpdate.1m 0444
+_install N Solaris/ntptime.1m ${DESTDIR}/usr/share/man/man1m/ntptime.1m 0444
+_install N Solaris/ntptrace.1m ${DESTDIR}/usr/share/man/man1m/ntptrace.1m 0444
 
 touch ${DESTDIR}/var/ntp/ntp.drift
