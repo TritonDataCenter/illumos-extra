@@ -157,9 +157,6 @@ f usr/share/man/man1/gzip.1 0444 root bin
 f usr/share/man/man1/gzless.1 0444 root bin
 f usr/share/man/man1/gzmore.1 0444 root bin
 f usr/share/man/man1/gznew.1 0444 root bin
-# iperf
-f usr/bin/iperf 0555 root bin
-f usr/share/man/man1/iperf.1 0444 root bin
 # ipmitool
 f usr/sbin/ipmitool 0555 root bin
 f usr/share/man/man1/ipmitool.1 0444 root bin

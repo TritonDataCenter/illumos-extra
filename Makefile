@@ -38,7 +38,6 @@ SUBDIRS = \
 	gnupg \
 	gtar \
 	gzip \
-	iperf \
 	ipmitool \
 	less \
 	libexpat \
