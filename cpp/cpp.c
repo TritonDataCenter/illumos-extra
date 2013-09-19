@@ -1026,8 +1026,8 @@ for (;;) {
 	} else if (np == pragmaloc) {		/* pragma */
 		while (*inp != '\n')		/* pass text */
 			p = cotoken(p);
+#ifdef EXIT_ON_ERROR
 	} else if (np == errorloc) {		/* error */
-#ifdef	EXIT_ON_ERROR
 		if (trulvl > 0) {
 			char ebuf[BUFFERSIZ];
 
@@ -1046,9 +1046,6 @@ for (;;) {
 			pperror(ebuf);
 			exit(exfail);
 		}
-#else
-		while (*inp != '\n')		/* pass text */
-			p = cotoken(p);
 #endif
 	} else if (np==lneloc) {/* line */
 		if (flslvl==0 && pflag==0) {
