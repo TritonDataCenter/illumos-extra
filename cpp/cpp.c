@@ -1067,7 +1067,7 @@ pperror(char *fmt, ...)
 	verror(fmt, args);
 	va_end(args);
 
-	++exfail;
+	exfail = 1;
 }
 
 /* VARARGS1 */
@@ -1087,7 +1087,6 @@ ppwarn(char *fmt, ...)
 {
 	va_list	args;
 	int fail = exfail;
-	exfail = -1;
 
 	va_start(args, fmt);
 	verror(fmt, args);
