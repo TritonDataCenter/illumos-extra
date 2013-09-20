@@ -1202,12 +1202,20 @@ slookup(p1,p2,enterf) register char *p1,*p2; int enterf;{
 	return(np);
 }
 
+/*
+ * When a macro substitution must happen, arrange the input stack based on the
+ * macro definition and any parameters such that the expanded macro is what is
+ * next read by the preprocessor as if it were input
+ */
 static char *
 subst(p,sp) register char *p; struct symtab *sp; {
 	static char match[]="%s: argument mismatch";
 	register char *ca,*vp; int params;
 	char *actual[MAXFRM]; /* actual[n] is text of nth actual */
 	char acttxt[BUFFERSIZ]; /* space for actuals */
+	/* State while pasting, TRAIL is trailing space, INTRA is in the body */
+	enum { TRAIL, INTRA } state = TRAIL;
+	int pasted = 0;		/* # of character pasted */
 
 	if (0==(vp=sp->value)) return(p);
 	if ((p-macforw)<=macdam) {
@@ -1220,6 +1228,7 @@ subst(p,sp) register char *p; struct symtab *sp; {
 	}
 	macforw=p; macdam=0;	/* new target for decrease in level */
 	macnam=sp->name;
+	/* flush all buffered output prior to the expansion */
 	dump();
 	if (sp==ulnloc) {
 		vp=acttxt; *vp++='\0';
@@ -1262,6 +1271,20 @@ subst(p,sp) register char *p; struct symtab *sp; {
 						 * Keep escaped newlines, they
 						 * are assumed to be inside a
 						 * string.
+						 * 
+						 * XXX: The above is actually
+						 * false in a couple of ways.
+						 *
+						 * 1) Sun cpp turns newlines
+						 * into spaces, but inserts an
+						 * equal number of newlines
+						 * prior to pasting the body.
+						 *
+						 * 2) Sun does _not_ preserved
+						 * escaped newlines, the \ is
+						 * removed, and the newline
+						 * otherwise treated
+						 * identically to in #1.
 						 */
 						if (*inp == '\n' &&
 						    inp[-1] != '\\')
@@ -1284,18 +1307,59 @@ subst(p,sp) register char *p; struct symtab *sp; {
 			*pa++=""+1;	/* null string for missing actuals */
 		--flslvl; fasscan();
 	}
+
 	for (;;) {/* push definition onto front of input stack */
+		/*
+		 * Loop until we hit the end of the macro, or a parameter
+		 * placement.  Note that we expand the macro into the input
+		 * backwards (so it replays forwards.)
+		 */
 		while (!iswarn(*--vp)) {
 			if (bob(p)) {outp=inp=p; p=unfill(p);}
+				
+			/* Unless we are mid-paste, swallow all spaces */
+			if (state == TRAIL) {
+				while (isspace(*vp) && !iswarn(*vp))
+					vp--;
+			} else {
+				/*
+				 * If we're mid-paste, compress spaces to a
+				 * single space
+				 */
+				while (isspace(*vp)) {
+					if (!isspace(vp[1])) {
+						*vp = ' ';
+						break;
+					} else {
+						vp--;
+					}
+				}
+			}
+			state = INTRA; /* Hit a non-space */
+			
+			if (iswarn(*vp))
+				break;
 			*--p= *vp;
+			pasted++;
 		}
 		if (*vp==warnc) {/* insert actual param */
+			state = INTRA;
 			ca=actual[*--vp-1];
 			while (*--ca) {
 				if (bob(p)) {outp=inp=p; p=unfill(p);}
 				*--p= *ca;
+				pasted++;
 			}
-		} else break;
+		} else {
+			/*
+			 * Trim leading spaces, but only those from our pasting
+			 */
+			while (isspace(*p) && pasted > 0) {
+				p++;
+				pasted--;
+			}
+			break;
+		}
 	}
 	outp=inp=p;
 	return(p);
