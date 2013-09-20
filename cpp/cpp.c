@@ -207,10 +207,6 @@ static	int maclvl;	/* # calls since last decrease in nesting level */
 static	char *macforw;	/* ptr which must be exceeded to decrease nesting lvl */
 static	int macdam;	/* offset to macforw due to buffer shifting */
 
-#if tgp
-int tgpscan;	/* flag for dump(); */
-#endif
-
 static	int	inctop[MAXINC];
 static	char	*fnames[MAXINC];
 static	char	*dirnams[MAXINC];	/* actual directory of #include files */
@@ -366,44 +362,9 @@ sayline(what)
 
 static void
 dump() {
-/*
- * write part of buffer which lies between  outp  and  inp .
- * this should be a direct call to 'write', but the system slows to a crawl
- * if it has to do an unaligned copy.  thus we buffer.  this silly loop
- * is 15% of the total time, thus even the 'putc' macro is too slow.
- */
 	register char *p1;
-#if tgp
-	register char *p2;
-#endif
-	register FILE *f;
 	if ((p1=outp)==inp || flslvl!=0) return;
-#if tgp
-#define MAXOUT 80
-	if (!tgpscan) {
-		/* scan again to insure <= MAXOUT chars between linefeeds */
-		register char c,*pblank; char savc,stopc,brk;
-		tgpscan=1; brk=stopc=pblank=0; p2=inp; savc= *p2; *p2='\0';
-		while (c= *p1++) {
-			if (c=='\\') c= *p1++;
-			if (stopc==c) stopc=0;
-			else if (c=='"' || c=='\'') stopc=c;
-			if (p1-outp>MAXOUT && pblank!=0) {
-				*pblank++='\n';
-				inp=pblank;
-				dump();
-				brk=1;
-				pblank=0;
-			}
-			if (c==' ' && stopc==0) pblank=p1-1;
-		}
-		if (brk) sayline(NOINCLUDE);
-		*p2=savc; inp=p2; p1=outp; tgpscan=0;
-	}
-#endif
-	f=fout;
-	while (p1<inp)
-		putc(*p1++,f);
+	fwrite(p1, inp - p1, 1, fout);
 	outp=p1;
 }
 
@@ -1011,14 +972,9 @@ for (;;) {
 			++flslvl; p=skipbl(p); slookup(inp,p,DROP); --flslvl;
 		}
 	} else if (np==ifloc) {/* if */
-#if tgp
-		pperror(" IF not implemented, true assumed", 0);
-		if (flslvl==0) ++trulvl; else ++flslvl;
-#else
 		newp=p;
 		if (flslvl==0 && yyparse()) ++trulvl; else ++flslvl;
 		p=newp;
-#endif
 	} else if (np == idtloc) {		/* ident */
 		if (pflag == 0)
 			while (*inp != '\n')	/* pass text */
