@@ -1582,9 +1582,8 @@ main(argc,argv)
 		macbit[i]=0;
 
 	if (! nopredef) {
-# if unix
 	ysysloc=stsym("unix");
-# endif
+	ysysloc=stsym("sun");
 # if __sparc__
 	varloc=stsym ("sparc");
 # endif
