@@ -53,6 +53,8 @@ $(PROG): $(OBJS)
 %.o$(STRAP): %.c
 	$(COMPILE.c)
 
+y.tab.o$(STRAP): yylex.c
+
 #
 # We need to distinguish between the cpp build in the bootstrap and the cpp
 # built normally. However, when we install it, they need to have the same name.
