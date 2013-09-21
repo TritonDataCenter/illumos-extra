@@ -398,7 +398,7 @@ refill(p) register char *p; {
 			}
 			/* end of #include file */
 			if (ifno==0) {/* end of input */
-				if (plvl!=0) {
+				if (plvl > 0) {
 					int n=plvl,tlin=lineno[ifno];
 					char *tfil=fnames[ifno];
 					lineno[ifno]=maclin;
@@ -1164,7 +1164,6 @@ slookup(p1,p2,enterf) register char *p1,*p2; int enterf;{
  */
 static char *
 subst(p,sp) register char *p; struct symtab *sp; {
-	static char match[]="%s: argument mismatch";
 	register char *ca,*vp; int params;
 	char *actual[MAXFRM]; /* actual[n] is text of nth actual */
 	char acttxt[BUFFERSIZ]; /* space for actuals */
@@ -1251,13 +1250,14 @@ subst(p,sp) register char *p; struct symtab *sp; {
 						    sp->name);
 				}
 				if (pa>= &actual[MAXFRM])
-					ppwarn(match,sp->name);
+					ppwarn("%s: argument mismatch" ,
+					    sp->name);
 				else
 					*pa++=ca;
 			}
 		}
 		if (params!=0)
-			ppwarn(match,sp->name);
+			ppwarn("%s: argument mismatch", sp->name);
 		while (--params>=0)
 			*pa++=""+1;	/* null string for missing actuals */
 		--flslvl; fasscan();
