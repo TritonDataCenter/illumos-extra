@@ -76,6 +76,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <stdarg.h>
+#include <ctype.h>
 
 #include "cpp.h"
 
@@ -636,6 +637,11 @@ prevlf:
 } /* end of infinite loop */
 }
 
+/*
+ * XXX: This unconditionally consumes one token (presuming it's blank? that we
+ * already consumed it?).  That's pretty terrible, but it's also very fragile,
+ * and I don't want to change it.
+ */
 char *
 skipbl(p) register char *p; {/* get next non-blank token */
 	do {
@@ -1193,13 +1199,26 @@ subst(p,sp) register char *p; struct symtab *sp; {
 	}
 	if (0!=(params= *--vp&0xFF)) {/* definition calls for params */
 		register char **pa;
+		char *savp, *savinp, *savoutp;
 		ca=acttxt; pa=actual;
 		if (params==0xFF)
 			params=1;	/* #define foo() ... */
 		sloscan();
 		++flslvl; /* no expansion during search for actuals */
 		plvl= -1;
-		do p=skipbl(p); while (*inp=='\n');	/* skip \n too */
+		/*
+		 * Skip any blanks (including \n), until we hit the macro
+		 * arguments.
+		 *
+		 * save our state so we can roll back if none are called.
+		 */
+		savp = p;
+		savinp = inp;
+		savoutp = outp;
+		do {
+			p=skipbl(p);
+		} while (*inp=='\n');	/* skip \n too */
+
 		if (*inp=='(') {
 			maclin=lineno[ifno]; macfil=fnames[ifno];
 			for (plvl=1; plvl!=0; ) {
@@ -1255,6 +1274,14 @@ subst(p,sp) register char *p; struct symtab *sp; {
 				else
 					*pa++=ca;
 			}
+		} else {
+			/*
+			 * Didn't find any parameters, rollback our state so
+			 * we don't chew more output than necessary
+			 */
+			p = savp;
+			inp = savinp;
+			outp = savoutp;
 		}
 		if (params!=0)
 			ppwarn("%s: argument mismatch", sp->name);
