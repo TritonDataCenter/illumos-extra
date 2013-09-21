@@ -249,7 +249,7 @@ static	char		*unfill(char *);
 static	char		*doincl(char *);
 static	int		equfrm(char *, char *, char *);
 static	char		*dodef(char *);
-static	char		*control(char *);
+void			control(char *);
 static	struct symtab	*stsym(char *);
 static	struct symtab	*ppsym(char *);
 void		pperror(char *fmt, ...);
@@ -908,7 +908,7 @@ dodef(p) char *p; {/* process '#define' */
 #define fasscan() ptrtab=fastab+COFF
 #define sloscan() ptrtab=slotab+COFF
 
-static char *
+void
 control(p) register char *p; {/* find and handle preprocessor control lines */
 	register struct symtab *np;
 for (;;) {

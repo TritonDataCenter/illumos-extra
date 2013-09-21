@@ -33,7 +33,11 @@ OBJS = \
 CLEANFILES += \
 	y.tab.c$(STRAP)
 
-CFLAGS +=	-O2
+CERRWARN=	-Wall -Wextra
+CERRWARN +=	-Wno-unknown-pragmas
+CERRWARN +=	-Wno-sign-compare
+CERRWARN +=	-Wno-unused-label
+CFLAGS +=	-O2 $(CERRWARN)
 LD =		$(GCC)
 
 COMPILE.c =	$(GCC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
