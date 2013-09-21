@@ -265,7 +265,7 @@ int		yywrap(void);
 int		main(int argc, char **argav);
 
 
-#define symsiz 4000
+#define symsiz 16000
 static	struct symtab stab[symsiz];
 
 static	struct symtab *defloc;
