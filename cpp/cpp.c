@@ -821,6 +821,9 @@ dodef(p) char *p; {/* process '#define' */
 		return(p);
 	}
 	np=slookup(pin,p,1);
+	if (getenv("CPP_DEBUG_DEFINITIONS") != NULL)
+		fprintf(stderr, "*** defining %s at %s:%d\n",
+		    np->name, fnames[ifno], lineno[ifno]);
 	if ((oldval=np->value) != NULL)
 		savch=oldsavch;	/* was previously defined */
 	b=1; cf=pin;
