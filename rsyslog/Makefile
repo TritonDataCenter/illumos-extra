@@ -27,6 +27,7 @@ include ../Makefile.defs
 
 AUTOCONF_OPTS += \
 	--enable-imsolaris=yes \
+	--enable-imfile=yes \
 	--enable-mail=yes \
 	--enable-omprog=yes
 

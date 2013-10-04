@@ -2972,6 +2972,7 @@ f usr/share/man/man1/rsync.1 0444 root bin
 # rsyslog
 f etc/rsyslog.conf 0644 root bin
 d usr/lib/rsyslog 0755 root bin
+f usr/lib/rsyslog/imfile.so 0755 root bin
 f usr/lib/rsyslog/immark.so 0755 root bin
 f usr/lib/rsyslog/imsolaris.so 0755 root bin
 f usr/lib/rsyslog/imtcp.so 0755 root bin
