@@ -52,6 +52,17 @@ PATCHES += \
 	dtrace.patch
 
 #
+# Perl doesn't know how to build native tools for use during the build.
+# It instead assumes that it's safe to run target programs.  This is broken
+# in several ways.  We partially work around it here by forcing it to pick
+# up the new platform libraries as well.  This will break if there has been
+# a user/kernel change relative to the build system.  The correct solution
+# is for perl to build native copies of anything needed at build time -- as
+# for any cross-compilation environment.
+#
+OS_1828_WAR = LDLIBPTH="LD_LIBRARY_PATH=$(DESTDIR)/usr/lib:$(DESTDIR)/lib"
+
+#
 # This is where things get really gross.  There is stuff in ON that is going
 # to use the bootstrap perl to build various artifacts (binary and otherwise).
 # When it does so, that perl needs to know to look in the *proto* area, not
@@ -118,15 +129,15 @@ XFORM.sh = \
 include ../Makefile.targ
 
 all: $(VER.32)/perldtrace.h
-	(cd $(VER.32); LC_ALL=C $(MAKE) LDLIBPTH="LD_LIBRARY_PATH=$(DESTDIR)/usr/lib:$(DESTDIR)/lib")
+	(cd $(VER.32); LC_ALL=C $(MAKE) $(OS_1828_WAR))
 
 test: all
-	(cd $(VER.32); $(MAKE) test)
+	(cd $(VER.32); $(MAKE) $(OS_1828_WAR) test)
 
 install: all $(CONFIG_PL)
 	(cd $(VER.32);\
 	    rm -f $(DESTDIR)/usr/perl5/5.12/lib/i86pc-solaris-64int/.packlist;\
-	    gmake DESTDIR=$(INSTALL_DESTDIR) install)
+	    gmake DESTDIR=$(INSTALL_DESTDIR) $(OS_1828_WAR) install)
 	rm -f $(DESTDIR)/usr/perl5/5.12/lib/i86pc-solaris-64int/Config_heavy.pl
 	cp $(CONFIG_PL) $(ROOTCONFIG_PL)
 
