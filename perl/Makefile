@@ -118,7 +118,7 @@ XFORM.sh = \
 include ../Makefile.targ
 
 all: $(VER.32)/perldtrace.h
-	(cd $(VER.32); LC_ALL=C $(MAKE))
+	(cd $(VER.32); LC_ALL=C $(MAKE) LDLIBPTH="LD_LIBRARY_PATH=$(DESTDIR)/usr/lib:$(DESTDIR)/lib")
 
 test: all
 	(cd $(VER.32); $(MAKE) test)
