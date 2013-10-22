@@ -83,6 +83,11 @@ CFLAGS.64 += \
 
 LIBS +=	-lsocket -lnsl
 
+ifeq ($(STRAP),strap)
+	LDFLAGS +=	$(SYSLIBDIRS:%=-R$(DESTDIR)/%)
+	LDFLAGS.64 +=	$(SYSLIBDIRS:%=-R$(DESTDIR)/%/64)
+endif
+
 PATCHES =	Patches/*
 
 AUTOCONF_ENV =

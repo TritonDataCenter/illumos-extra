@@ -74,6 +74,7 @@ STRAP_SUBDIRS = \
 	libxml \
 	libz \
 	make \
+	node.js \
 	nss-nspr \
 	openssl1x \
 	perl
@@ -128,7 +129,7 @@ $(DESTDIR)/usr/bin/gcc: $(DESTDIR)/usr/gnu/bin/gas
 	(cd gcc4 && \
 	    PKG_CONFIG_LIBDIR="" \
 	    STRAP=$(STRAP) \
-	    $(MAKE) DESTDIR=$(DESTDIR) install)
+	    $(MAKE) DESTDIR=$(DESTDIR) install strapfix)
 
 $(SUBDIRS): $(DESTDIR)/usr/bin/gcc
 	(cd $@ && \

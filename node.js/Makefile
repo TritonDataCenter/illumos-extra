@@ -22,7 +22,7 @@
 #
 
 MAJOR_VER =	0.8
-VER =	node-v0.8.20
+VER =		node-v0.8.20
 
 include ../Makefile.defs
 
@@ -45,6 +45,10 @@ CFLAGS +=	-Wno-unknown-pragmas
 # and copy it in at unpack time like we do for bzip2.
 #
 LDFLAGS +=	-lumem
+
+ifeq ($(STRAP),strap)
+	LDFLAGS += $(SYSLIBDIRS:%=-R$(DESTDIR)/%)
+endif
 
 AUTOCONF_OPTS += \
 	--with-dtrace \

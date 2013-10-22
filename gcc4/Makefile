@@ -54,6 +54,24 @@ OVERRIDES += \
 	CFLAGS_FOR_TARGET="$(CFLAGS)"
 
 #
+# The runtime libraries that we build into proto.strap should be made to search
+# for their dependencies there as well, so that programs built to run on the
+# build machine (from proto.strap) find the correct copies of these libraries.
+#
+ifeq ($(STRAP),strap)
+	STRAPFIX_LINKS= \
+		$(DESTDIR)/lib/64 \
+		$(DESTDIR)/usr/lib/64
+	STRAPFIX_FILES_32 = \
+		$(DESTDIR)/usr/lib/libgcc_s.so.1 \
+		$(DESTDIR)/usr/lib/libstdc++.so.6
+	STRAPFIX_FILES_64 = \
+		$(DESTDIR)/usr/lib/64/libgcc_s.so.1 \
+		$(DESTDIR)/usr/lib/64/libstdc++.so.6
+	STRAPFIX_FILES = $(STRAPFIX_FILES_32) $(STRAPFIX_FILES_64)
+endif
+
+#
 # Unlike everything else, gcc is built to be a cross-compiler, really.  It
 # never runs on the target system, only the build system.  So it should not
 # be using the proto area's headers or libraries.  Its own libraries will be
@@ -108,3 +126,20 @@ $(VER.32)/gmp: $(GMP_VER).tar.bz2 | $(VER.32)
 	-rmdir .unpack32
 	chmod 755 $@/configure
 	touch $@/configure
+
+.PHONY: strapfix
+strapfix: $(STRAPFIX_LINKS) $(STRAPFIX_FILES) | install
+	for f in $(STRAPFIX_FILES_32); do \
+		/usr/bin/elfedit -e \
+		    'dyn:runpath $(DESTDIR)/lib:$(DESTDIR)/usr/lib' \
+		    $$f; \
+	done
+	for f in $(STRAPFIX_FILES_64); do \
+		/usr/bin/elfedit -e \
+		    'dyn:runpath $(DESTDIR)/lib/64:$(DESTDIR)/usr/lib/64' \
+		    $$f; \
+	done
+
+$(STRAPFIX_LINKS):
+	mkdir -p `dirname $@`
+	ln -s amd64 $@
