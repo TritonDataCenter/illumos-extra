@@ -482,7 +482,6 @@ f lib/libssl.so.0.9.8 0755 root bin
 f lib/libsunw_ssl.so.1.0.0 0755 root bin
 s usr/lib/libssl.so.0.9.8=../../lib/libssl.so.0.9.8
 s usr/lib/libsunw_ssl.so.1.0.0=../../lib/libsunw_ssl.so.1.0.0
-f usr/bin/CA.pl 0555 root bin
 f usr/bin/openssl 0555 root bin
 s usr/sfw/bin/openssl=../../bin/openssl
 d etc/openssl 0755 root sys
