@@ -31,6 +31,8 @@ CFLAGS +=	-g
 AUTOCONF_ENV += \
 	INSTALL="/usr/ucb/install -c"
 
+PATCHES =	Patches/*
+
 include ../Makefile.targ
 
 all: all_autoconf
