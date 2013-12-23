@@ -1,7 +1,6 @@
-diff -ur node-v0.8.14/configure node-v0.8.14-32/configure
---- node-v0.8.14/configure	2012-10-25 20:49:32.000000000 +0000
-+++ node-v0.8.14-32/configure	2013-01-11 20:31:32.754470909 +0000
-@@ -359,6 +359,7 @@
+--- a/configure.orig	Wed Dec 18 23:49:45 2013
++++ b/configure	Mon Dec 23 21:03:16 2013
+@@ -470,6 +470,7 @@
    target_arch = options.dest_cpu or host_arch
    o['variables']['host_arch'] = host_arch
    o['variables']['target_arch'] = target_arch
@@ -9,7 +8,7 @@ diff -ur node-v0.8.14/configure node-v0.8.14-32/configure
  
    if target_arch == 'arm':
      configure_arm(o)
-@@ -400,13 +401,13 @@
+@@ -533,13 +534,13 @@
  
    # assume shared_zlib if one of these is set?
    if options.shared_zlib_libpath:
@@ -24,8 +23,8 @@ diff -ur node-v0.8.14/configure node-v0.8.14-32/configure
 +    o['include_dirs_target'] += [options.shared_zlib_includes]
  
  
- def configure_v8(o):
-@@ -415,13 +416,13 @@
+ def configure_http_parser(o):
+@@ -590,13 +591,13 @@
  
    # assume shared_v8 if one of these is set?
    if options.shared_v8_libpath:
@@ -41,7 +40,7 @@ diff -ur node-v0.8.14/configure node-v0.8.14-32/configure
  
  
  def configure_openssl(o):
-@@ -438,7 +439,7 @@
+@@ -613,7 +614,7 @@
      (libs, cflags) = pkg_config('openssl') or ('-lssl -lcrypto', '')
  
      if options.shared_openssl_libpath:
@@ -50,7 +49,7 @@ diff -ur node-v0.8.14/configure node-v0.8.14-32/configure
  
      if options.shared_openssl_libname:
        libnames = options.shared_openssl_libname.split(',')
-@@ -447,17 +448,18 @@
+@@ -622,7 +623,7 @@
        o['libraries'] += libs.split()
  
      if options.shared_openssl_includes:
@@ -59,15 +58,16 @@ diff -ur node-v0.8.14/configure node-v0.8.14-32/configure
      else:
        o['cflags'] += cflags.split()
  
+@@ -650,10 +651,11 @@
  
  output = {
-   'variables': {},
+   'variables': { 'python': sys.executable },
 -  'include_dirs': [],
 +  'include_dirs_target': [],
    'libraries': [],
    'defines': [],
    'cflags': [],
-+  'ldflags_target': [],
++  'ldflags_target': []
  }
  
  configure_node(output)

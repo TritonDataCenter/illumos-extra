@@ -313,22 +313,22 @@ f usr/gnu/share/terminfo/x/xterms 0644 root bin
 f usr/gnu/share/terminfo/x/xterms-sun 0644 root bin
 # node.js
 d usr/node 0755 root bin
-d usr/node/0.8 0755 root bin
-d usr/node/0.8/bin 0755 root bin
-d usr/node/0.8/lib 0755 root bin
-d usr/node/0.8/lib/dtrace 0755 root bin
-d usr/node/0.8/man 0755 root bin
-d usr/node/0.8/man/man1 0755 root bin
-d usr/node/0.8/node_modules 0755 root bin
+d usr/node/0.10 0755 root bin
+d usr/node/0.10/bin 0755 root bin
+d usr/node/0.10/lib 0755 root bin
+d usr/node/0.10/lib/dtrace 0755 root bin
+d usr/node/0.10/man 0755 root bin
+d usr/node/0.10/man/man1 0755 root bin
+d usr/node/0.10/node_modules 0755 root bin
 d usr/node/bin 0755 root bin
-s usr/node/bin/node=../0.8/bin/node
-s usr/node/node_modules=./0.8/node_modules
-f usr/node/0.8/bin/node 0555 root bin
-f usr/node/0.8/man/man1/node.1 0444 root bin
-f usr/node/0.8/lib/dtrace/node.d 0444 root bin
-f usr/node/0.8/node_modules/platform_node_version.js 0444 root bin
-s usr/share/man/man1/node.1=../../../node/0.8/man/man1/node.1
-h usr/lib/dtrace/node.d=usr/node/0.8/lib/dtrace/node.d
+s usr/node/bin/node=../0.10/bin/node
+s usr/node/node_modules=./0.10/node_modules
+f usr/node/0.10/bin/node 0555 root bin
+f usr/node/0.10/man/man1/node.1 0444 root bin
+f usr/node/0.10/lib/dtrace/node.d 0444 root bin
+f usr/node/0.10/node_modules/platform_node_version.js 0444 root bin
+s usr/share/man/man1/node.1=../../../node/0.10/man/man1/node.1
+h usr/lib/dtrace/node.d=usr/node/0.10/lib/dtrace/node.d
 # nss-nspr
 d usr/lib/mps 0755 root bin
 s usr/lib/mps/64=amd64

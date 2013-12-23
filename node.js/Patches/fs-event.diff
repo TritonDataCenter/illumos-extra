@@ -1,0 +1,16 @@
+diff --git a/deps/uv/src/unix/sunos.c b/deps/uv/src/unix/sunos.c
+index 9030bfa..5249de0 100644
+--- a/deps/uv/src/unix/sunos.c
++++ b/deps/uv/src/unix/sunos.c
+@@ -364,11 +364,11 @@ static void uv__fs_event_read(uv_loop_t* loop,
+     handle->fd = PORT_FIRED;
+     handle->cb(handle, NULL, events, 0);
+
+-    if (handle->fd != PORT_DELETED)
++    if (handle->fd != PORT_DELETED && !(events & UV_RENAME))
+       if (uv__fs_event_rearm(handle) != 0)
+	 handle->cb(handle, NULL, 0, -1);
+   }
+-  while (handle->fd != PORT_DELETED);
++  while (handle->fd != PORT_DELETED && !(events & UV_RENAME));
+ }

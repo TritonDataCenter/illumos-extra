@@ -37,7 +37,7 @@ index e79d212..c7c0489 100644
 +
 +  UNWRAP(StreamWrap)
 +
-+  int fd = (int)wrap->stream_->fd;
++  int fd = (int)wrap->stream_->io_watcher.fd;
 +
 +  return scope.Close(Integer::New(fd));
 +}

@@ -21,8 +21,8 @@
 # Copyright (c) 2013, Joyent, Inc.  All rights reserved.
 #
 
-MAJOR_VER =	0.8
-VER =		node-v0.8.26
+MAJOR_VER =	0.10
+VER =		node-v0.10.26
 
 include ../Makefile.defs
 
