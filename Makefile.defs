@@ -45,6 +45,7 @@ GXX.host.64 =	$(GXX.host) -m64
 
 LEX = 		/opt/local/bin/lex
 YACC = 		/opt/local/bin/yacc
+GPATCH =	/opt/local/bin/gpatch
 
 SYSINCDIRS =	/usr/include
 SYSLIBDIRS =	/usr/lib /lib
@@ -135,13 +136,15 @@ FROB_SENTINEL.64 =	chmod 755 $(VER.64)/$(UNPACK_SENTINEL)
 PATCHSTRIP =	1
 
 APPLY_PATCHES.32 = \
-	for p in $(PATCHES); do [ -f "$$p" ] && \
-	    (cd .unpack32/$(VER) && gpatch -p$(PATCHSTRIP) < "../../$$p"); \
+	for p in $(PATCHES); do \
+	    echo "Applying $$p"; \
+	    $(GPATCH) -d .unpack32/$(VER) -p$(PATCHSTRIP) < "$$p" || exit 1; \
 	    done
 
 APPLY_PATCHES.64 = \
-	for p in $(PATCHES); do [ -f "$$p" ] && \
-	    (cd .unpack64/$(VER) && gpatch -p$(PATCHSTRIP) < "../../$$p"); \
+	for p in $(PATCHES); do \
+	    echo "Applying $$p"; \
+	    $(GPATCH) -d .unpack64/$(VER) -p$(PATCHSTRIP) < "$$p" || exit 1; \
 	    done
 
 .DEFAULT_GOAL =		all
