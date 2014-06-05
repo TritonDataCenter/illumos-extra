@@ -1,0 +1,24 @@
+From 2130f6f5ae01540f4f2017bbd02335bdefda1493 Mon Sep 17 00:00:00 2001
+From: Robert Mustacchi <rm@joyent.com>
+Date: Thu, 5 Jun 2014 21:27:12 +0000
+Subject: [PATCH] Include missing limits.h
+
+---
+ ssl/s3_pkt.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/ssl/s3_pkt.c b/ssl/s3_pkt.c
+index c087fee..32a7a29 100644
+--- a/ssl/s3_pkt.c
++++ b/ssl/s3_pkt.c
+@@ -111,6 +111,7 @@
+ 
+ #include <stdio.h>
+ #include <errno.h>
++#include <limits.h>
+ #define USE_SOCKETS
+ #include "ssl_locl.h"
+ #include <openssl/evp.h>
+-- 
+1.8.4
+
