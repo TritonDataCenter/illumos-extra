@@ -400,12 +400,12 @@ s usr/lib/mps/secv1/libsoftokn3.so=../libsoftokn3.so
 s usr/lib/mps/secv1/libsqlite3.so=../libsqlite3.so
 s usr/lib/mps/secv1/libssl3.so=../libssl3.so
 # ntp
-f etc/inet/ntp.client 0644 root sys
-f etc/inet/ntp.server 0644 root sys
 f lib/svc/manifest/network/ntp.xml 0444 root sys
 f etc/security/auth_attr.d/ntp 0444 root sys
 f etc/security/prof_attr.d/ntp 0444 root sys
 f lib/svc/method/ntp 0555 root sys
+d usr/perl5/5.12/lib/NTP 0755 root bin
+f usr/perl5/5.12/lib/NTP/Util.pm 0444 root bin
 f usr/sbin/ntp-wait 0555 root bin
 f usr/sbin/ntptrace 0555 root bin
 f usr/sbin/ntpd 0555 root bin

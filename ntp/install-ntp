@@ -31,8 +31,6 @@ mkdir -p ${DESTDIR}/lib/svc/method
 mkdir -p ${DESTDIR}/var/ntp
 mkdir -p ${DESTDIR}/usr/share/man/man1m
 
-_install N Solaris/ntp.server ${DESTDIR}/etc/inet/ntp.server 0644
-_install N Solaris/ntp.client ${DESTDIR}/etc/inet/ntp.client 0644
 _install N Solaris/ntp.conf ${DESTDIR}/etc/inet/ntp.conf 0644
 _install N Solaris/ntp.xml ${DESTDIR}/lib/svc/manifest/network/ntp.xml 0444
 _install N Solaris/ntp ${DESTDIR}/lib/svc/method/ntp 0555
@@ -42,5 +40,25 @@ _install N Solaris/prof_attr ${DESTDIR}/etc/security/prof_attr.d/ntp 0555
 _install N Solaris/ntpdate.1m ${DESTDIR}/usr/share/man/man1m/ntpdate.1m 0444
 _install N Solaris/ntptime.1m ${DESTDIR}/usr/share/man/man1m/ntptime.1m 0444
 _install N Solaris/ntptrace.1m ${DESTDIR}/usr/share/man/man1m/ntptrace.1m 0444
+
+#
+# ntp-dev-4.2.7p446 appears to have made correct manual page generation
+# a virtual impossibility, so for now we will ship pre-rendered copies
+# from ntp-dev-4.2.5p200 so as not to regress the documentation.
+#
+OLD_MANUAL_PAGES='
+	ntp-keygen
+	ntpd
+	ntpdc
+	ntpq
+	ntp-wait
+'
+for manpage in ${OLD_MANUAL_PAGES}; do
+	rm -f ${DESTDIR}/usr/man/man1/${manpage}.1m
+	if [[ -f Old/${manpage}.1 ]]; then
+		_install N Old/${manpage}.1 \
+                    ${DESTDIR}/usr/share/man/man1/${manpage}.1 0444
+	fi
+done
 
 touch ${DESTDIR}/var/ntp/ntp.drift

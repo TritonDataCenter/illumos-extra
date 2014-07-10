@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Joyent, Inc.
+# Copyright (c) 2014, Joyent, Inc.
 #
 
 BASE =		$(PWD)
@@ -55,6 +55,13 @@ BUILD64 =
 SEPARATE_BUILD =
 
 CPPFLAGS =	$(SYSINCDIRS:%=-isystem $(DESTDIR)/%)
+
+#
+# We ship platform-private perl modules (e.g. from ntp) in this directory,
+# and using this perl interpeter:
+#
+PATH_PERL =	/usr/perl5/bin/perl
+PERLLIBDIR =	/usr/perl5/5.12/lib
 
 #
 # These are all definitions that relate to Sun Make. There are basically two

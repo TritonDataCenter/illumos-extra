@@ -1,0 +1,20 @@
+--- sntp/m4/ntp_openssl.m4.orig	Tue Jul  1 19:32:31 2014
++++ sntp/m4/ntp_openssl.m4	Tue Jul  1 19:34:46 2014
+@@ -66,6 +66,17 @@
+ esac
+ case "$with_crypto:${PKG_CONFIG:+notempty}:${with_openssl_libdir-notgiven}:${with_openssl_incdir-notgiven}" in
+  no:*) ;;
++ sunw:*)
++    AC_MSG_CHECKING([hardcoded SmartOS platform OpenSSL])
++    CPPFLAGS_NTP=""
++    CFLAGS_NTP=""
++    LDADD_NTP="-lsunw_ssl -lsunw_crypto"
++    LDFLAGS_NTP=""
++    VER_SUFFIX=o
++    ntp_openssl=yes
++    ntp_openssl_from_pkg_config=yes
++    AC_MSG_RESULT([yes])
++    ;;
+  *:notempty:notgiven:notgiven)
+     for pkg in `echo $with_crypto | sed -e 's/,/ /'`; do
+ 	AC_MSG_CHECKING([pkg-config for $pkg])

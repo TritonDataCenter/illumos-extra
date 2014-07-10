@@ -19,10 +19,10 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright (c) 2014, Joyent, Inc.
 #
 
-VER =	ntp-dev-4.2.5p200
+VER =	ntp-dev-4.2.7p446
 
 include ../Makefile.defs
 
@@ -31,8 +31,10 @@ AUTOCONF_OPTS += \
 	--mandir=/usr/man \
 	--bindir=/usr/sbin \
 	--with-binsubdir=sbin \
-	--libexecdir=/usr/lib/inet \
+	--libexecdir=/usr/sbin \
 	--sysconfdir=/etc/inet \
+	--with-perl=$(PATH_PERL) \
+	--with-perllibdir=$(PERLLIBDIR) \
 	--enable-all-clocks \
 	--enable-debugging \
 	--enable-debug-timing \
@@ -41,29 +43,14 @@ AUTOCONF_OPTS += \
 	--enable-ignore-dns-errors \
 	--without-ntpsnmpd \
 	--without-lineeditlibs \
-	--with-openssl-libdir=/lib \
+	--with-crypto=sunw \
 	--disable-getifaddrs
 
 CFLAGS +=	-O2
 
-#
-# ntp unfortunately shares a symbol name with libc and generates a warning that
-# would normally be fatal:
-# ld: warning: symbol 'monitor' has differing types:
-#        (file ../libntp/libntp.a(audio.o) type=OBJT; file
-# 	  .../proto/usr/lib/libc.so type=FUNC);
-#        ../libntp/libntp.a(audio.o) definition taken
-#
-# Until such a time as this is fixed, we instead ignore -zfatal-warnings and
-# just add -zassert-deflib. Unfortunately we don't have a programatic way to
-# check it currently, but this will have to do for now.
-#
-LDFLAGS = $(T32_LDFLAGS) -zassert-deflib
-
 AUTOCONF_ENV += \
 	LD_OPTIONS="$(LDFLAGS)" \
-	DESTDIR="$(DESTDIR)" \
-	PATH_PERL=/usr/perl5/bin/perl
+	DESTDIR="$(DESTDIR)"
 
 PATCHSTRIP =	0
 PATCHES =	Patches/*
