@@ -1,0 +1,10 @@
+--- Makefile.in.orig	Tue Jul  1 19:25:16 2014
++++ Makefile.in	Tue Jul  1 19:24:04 2014
+@@ -414,7 +414,6 @@
+ 	clockstuff	\
+ 	kernel		\
+ 	util		\
+-	sntp		\
+ 	tests		\
+ 	$(NULL)
+ 

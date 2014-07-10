@@ -1,0 +1,47 @@
+--- configure.ac	2014-07-02 20:25:10.231597249 +0000
++++ configure.ac	2014-07-02 20:52:06.327098504 +0000
+@@ -131,12 +131,10 @@
+ AC_ISC_POSIX
+ 
+ 
+-AC_PATH_PROG([PATH_PERL], [perl])
+ dnl  Saving cached hardcoded paths rather than searching $PATH during a
+ dnl  cached configure run is an optimization not worth the the cost of
+ dnl  preventing newly-installed tools from being found.  Short-circuit
+ dnl  the caching after the tests so preset overrides still work.
+-AS_UNSET([ac_cv_path_PATH_PERL])
+ AC_PATH_PROG([PATH_TEST], [test])
+ AS_UNSET([ac_cv_path_PATH_TEST])
+ test -z "$CONFIG_SHELL" && CONFIG_SHELL=/bin/sh
+@@ -4302,7 +4300,30 @@
+ AC_CONFIG_FILES([tests/ntpd/Makefile])
+ AC_CONFIG_FILES([util/Makefile])
+ 
+-perllibdir="${datadir}/ntp/lib"
++AC_ARG_WITH(
++    [perl],
++    [AS_HELP_STRING(
++        [--with-perl],
++        [+ perl binary]
++    )],
++    [path_perl=$with_perl],
++    [AC_MSG_FAILURE(
++        [must specify --with-perl]
++    )]
++)
++AC_DEFINE_DIR([PATH_PERL], [path_perl], [perl binary path])
++
++AC_ARG_WITH(
++    [perllibdir],
++    [AS_HELP_STRING(
++        [--with-perllibdir],
++        [+ perl library directory]
++    )],
++    [perllibdir=$with_perllibdir],
++    [AC_MSG_FAILURE(
++        [must specify --with-perllibdir]
++    )]
++)
+ AC_DEFINE_DIR([PERLLIBDIR], [perllibdir], [data dir])
+ 
+ calc_tickadj_opts="$srcdir/scripts/calc_tickadj/calc_tickadj-opts"

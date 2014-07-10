@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc.
+# Copyright (c) 2014, Joyent, Inc.
 #
 # To build everything just run 'gmake' in this directory.
 #
@@ -108,6 +108,7 @@ openldap: openssl1x
 libm: make
 g11n: make
 perl: libm
+ntp: perl openssl1x
 
 #
 # pkg-config may be installed. This will actually only hurt us rather than help
@@ -141,7 +142,7 @@ install: $(SUBDIRS) gcc4 binutils
 
 install_strap: $(STRAP_SUBDIRS) gcc4 binutils
 
-clean: 
+clean:
 	-for dir in $(SUBDIRS) gcc4 binutils; \
 	    do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) clean); done
 	-rm -rf proto
