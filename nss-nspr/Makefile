@@ -33,6 +33,8 @@ UNPACK_SENTINEL =	.stamp
 FROB_SENTINEL.32 =	/bin/true
 FROB_SENTINEL.64 =	/bin/true
 
+PATCHES =	Patches/*
+
 include ../Makefile.targ
 
 all: all_32 all_64

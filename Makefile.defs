@@ -28,7 +28,13 @@ VER.64 =	$(VER)-64$(STRAP)
 OBJ.32 =	$(VER.32)$(SEPARATE_BUILD:yes=.build)
 OBJ.64 =	$(VER.64)$(SEPARATE_BUILD:yes=.build)
 
-PATH =		$(DESTDIR)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
+ifeq ($(STRAP),strap)
+STRAPPROTO =	$(DESTDIR)
+else
+STRAPPROTO =	$(DESTDIR:proto=proto.strap)
+endif
+
+PATH =		$(STRAPPROTO)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
 
 MAKE =		gmake
 PARALLEL =	-j128
@@ -71,7 +77,7 @@ PERLLIBDIR =	/usr/perl5/5.12/lib
 # makefiles, we instead use SUN_MAKE and SUM_MAKE_STRAP.
 #
 SUN_MAKE_STRAP=/opt/local/bin/dmake
-SUN_MAKE=$(DESTDIR)/../proto.strap/usr/bin/dmake
+SUN_MAKE=$(STRAPPROTO)/usr/bin/dmake
 
 #
 # Because of bugs in ntp, we need to be able to refer to the target specific

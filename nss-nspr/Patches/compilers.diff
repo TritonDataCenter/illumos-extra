@@ -1,0 +1,12 @@
+diff -urN nss-3.12.8.orig/mozilla/security/nss/Makefile nss-3.12.8/mozilla/security/nss/Makefile
+--- nss-3.12.8.orig/mozilla/security/nss/Makefile	2009-12-08 16:47:03.000000000 +0000
++++ nss-3.12.8/mozilla/security/nss/Makefile	2014-07-15 16:43:29.856578292 +0000
+@@ -108,7 +108,7 @@
+ NSPR_CONFIGURE_OPTS += --enable-debug-rtl
+ endif
+ ifdef NS_USE_GCC
+-NSPR_COMPILERS = CC=gcc CXX=g++
++NSPR_COMPILERS = CC="$(CC)" CXX="$(CXX)"
+ endif
+ 
+ #

@@ -25,7 +25,14 @@
 
 BASE =		$(PWD)
 DESTDIR =	$(BASE)/proto
-PATH =		$(DESTDIR)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
+
+ifeq ($(STRAP),strap)
+STRAPPROTO =	$(DESTDIR)
+else
+STRAPPROTO =	$(DESTDIR:proto=proto.strap)
+endif
+
+PATH =		$(STRAPPROTO)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
 SUBDIRS = \
 	bash \
 	bind \
