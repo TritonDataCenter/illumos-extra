@@ -1,0 +1,23 @@
+diff -urN openlldp-0.4alpha/src/tx_sm.c openlldp-0.4alpha.fix/src/tx_sm.c
+--- openlldp-0.4alpha/src/tx_sm.c	2010-06-08 05:06:29.000000000 +0000
++++ openlldp-0.4alpha.fix/src/tx_sm.c	2014-08-08 18:57:10.237945455 +0000
+@@ -33,6 +33,7 @@
+ #include "tlv/tlv.h"
+ #include "tlv/tlv_common.h"
+ #include "platform/framehandler.h"
++#include "lldp_neighbor.h"
+ 
+ #define TRUE 1
+ #define FALSE 0
+@@ -386,6 +387,11 @@
+ }
+ 
+ void tx_do_tx_info_frame(struct lldp_port *lldp_port) {
++    /*
++     * Our hostname may have changed since the last transmission.  Update
++     * it if necessary prior to constructing the LLDPDU.
++     */
++    get_sys_fqdn();
+     /* As per 802.1AB 10.5.4.3 */
+     mibConstrInfoLLDPDU(lldp_port);
+     txFrame(lldp_port);
