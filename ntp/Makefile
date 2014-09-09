@@ -46,14 +46,31 @@ AUTOCONF_OPTS += \
 	--with-crypto=sunw \
 	--disable-getifaddrs
 
-CFLAGS +=	-O2
+CFLAGS += \
+	-O2 -gdwarf-2 \
+	-fno-inline-functions \
+	-fno-inline-functions-called-once \
+	-fno-inline-small-functions
 
 AUTOCONF_ENV += \
 	LD_OPTIONS="$(LDFLAGS)" \
-	DESTDIR="$(DESTDIR)"
+	DESTDIR="$(DESTDIR)" \
+	CTFMERGE="$(CTFMERGE)" \
+	CTFCONVERT="$(CTFCONVERT)"
 
 PATCHSTRIP =	0
 PATCHES =	Patches/*
+
+CTF_PROGRAMS_USR_SBIN = \
+	ntp-keygen \
+	ntpd \
+	ntpdate \
+	ntpdc \
+	ntpq \
+	ntptime \
+	tickadj
+
+CTF_PROGRAMS = $(CTF_PROGRAMS_USR_SBIN:%=/usr/sbin/%)
 
 include ../Makefile.targ
 
@@ -61,4 +78,5 @@ all: all_autoconf
 
 install: all
 	(cd $(VER.32); env - $(AUTOCONF_ENV) PATH=$(PATH) gmake $(install_PARALLEL) install)
+	(env - $(AUTOCONF_ENV) $(MAKE_CTF.32) $(CTF_PROGRAMS))
 	(env - $(AUTOCONF_ENV) ./install-ntp)

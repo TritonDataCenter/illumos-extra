@@ -27,6 +27,8 @@ VER.32 =	$(VER)-32$(STRAP)
 VER.64 =	$(VER)-64$(STRAP)
 OBJ.32 =	$(VER.32)$(SEPARATE_BUILD:yes=.build)
 OBJ.64 =	$(VER.64)$(SEPARATE_BUILD:yes=.build)
+CTF.32 =	ctfobjects-32$(STRAP)
+CTF.64 =	ctfobjects-64$(STRAP)
 
 ifeq ($(STRAP),strap)
 STRAPPROTO =	$(DESTDIR)
@@ -159,5 +161,9 @@ APPLY_PATCHES.64 = \
 	    echo "Applying $$p"; \
 	    $(GPATCH) -d .unpack64/$(VER) -p$(PATCHSTRIP) < "$$p" || exit 1; \
 	    done
+
+MAKE_CTF =		$(BASE)/../tools/make-ctf
+MAKE_CTF.32 =		$(MAKE_CTF) $(OBJ.32) $(CTF.32) $(VER)
+MAKE_CTF.64 =		$(MAKE_CTF) $(OBJ.64) $(CTF.64) $(VER)
 
 .DEFAULT_GOAL =		all

@@ -143,6 +143,8 @@ $(SUBDIRS): $(DESTDIR)/usr/bin/gcc
 	(cd $@ && \
 	    PKG_CONFIG_LIBDIR="" \
 	    STRAP=$(STRAP) \
+	    CTFMERGE=$(CTFMERGE) \
+	    CTFCONVERT=$(CTFCONVERT) \
 	    $(MAKE) DESTDIR=$(DESTDIR) install)
 
 install: $(SUBDIRS) gcc4 binutils

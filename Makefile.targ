@@ -85,4 +85,5 @@ $(VER.64).build: $(VER.64)/$(UNPACK_SENTINEL)
 
 clean:
 	-rm -rf $(VER) $(VER.32) $(VER.64) .unpack32 .unpack64 $(CLEANFILES) \
-	    $(VER.32)strap $(VER.64)strap $(OBJ.32) $(OBJ.64)
+	    $(VER.32)strap $(VER.64)strap $(OBJ.32) $(OBJ.64) \
+	    $(CTF.32) $(CTF.64)

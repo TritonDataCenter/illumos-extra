@@ -1,0 +1,72 @@
+#!/bin/ksh
+# vim: set ts=8 sts=8 sw=8 noet:
+
+set -o errexit
+set -o pipefail
+
+function usage
+{
+	printf "Usage: $0 %s %s %s %s[...]\n" "<build_dir>" \
+	    "<ctf_object_dir>" "<container_version>" "<program>" >&2
+	exit 1
+}
+
+# Process input arguments:
+BUILD_DIR="$1"
+CTF_OBJECT_DIR="$2"
+CONTAINER_VERSION="$3"
+if [[ ! -d "${BUILD_DIR}" || -z "${CTF_OBJECT_DIR}" || \
+    -z "${CONTAINER_VERSION}" ]]; then
+	usage
+fi
+shift 3
+
+# Process input program list:
+if (( $# < 1 )); then
+	usage
+fi
+PROGRAMS="$*"
+
+# Read from environment:
+if [[ -z "${DESTDIR}" ]]; then
+	printf "Must set DESTDIR in the environment\n" >&2
+	exit 1
+fi
+
+# These may contain wildcards, so expand:
+CTFMERGE="$(echo $CTFMERGE)"
+CTFCONVERT="$(echo $CTFCONVERT)"
+if [[ ! -n "${CTFMERGE}" || ! -n "${CTFCONVERT}" ]]; then
+	printf "You must set CTFMERGE and CTFCONVERT in the environment.\n" >&2
+	exit 1
+fi
+if [[ ! -x "${CTFMERGE}" ]]; then
+	printf "Could not find CTFMERGE at '%s'\n" "${CTFMERGE}" >&2
+	exit 1
+fi
+if [[ ! -x "${CTFCONVERT}" ]]; then
+	printf "Could not find CTFCONVERT at '%s'\n" "${CTFCONVERT}" >&2
+	exit 1
+fi
+
+# Convert DWARF to CTF in every object file we can find:
+rm -rf "${CTF_OBJECT_DIR}"
+mkdir -p "${CTF_OBJECT_DIR}"
+(cd "${BUILD_DIR}" && find * -name '*.o' -type f) | \
+    sort | while read objf; do
+	printf "  CTFCONVERT %s\n" "${objf}" >&2
+	ctff="$(echo "$objf" | sed -e 's,/,%,g' -e 's/\.o$/\.ctf/')"
+	${CTFCONVERT} -l "${CONTAINER_VERSION}" \
+	    -o "${CTF_OBJECT_DIR}/${ctff}" \
+	    "${BUILD_DIR}/${objf}"
+done
+
+# Merge the CTF into the set of programs we ship:
+for program in ${PROGRAMS}; do
+	program_path="${DESTDIR}${program}"
+	printf "  CTFMERGE   %s\n" "${program_path}" >&2
+	chmod u+w "${program_path}"
+	${CTFMERGE} -l "${CONTAINER_VERSION}" \
+	    -o "${program_path}" \
+	    ${CTF_OBJECT_DIR}/*.ctf
+done

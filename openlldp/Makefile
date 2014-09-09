@@ -26,7 +26,20 @@ VER =	openlldp-0.4alpha
 PATCHES =	Patches/*
 
 include ../Makefile.defs
+
+CFLAGS += \
+	-gdwarf-2 \
+	-fno-inline-functions \
+	-fno-inline-functions-called-once \
+	-fno-inline-small-functions
+
 include ../Makefile.targ
+
+CTF_PROGRAMS_USR_SBIN = \
+	lldpd \
+	lldpneighbors
+
+CTF_PROGRAMS = $(CTF_PROGRAMS_USR_SBIN:%=/usr/sbin/%)
 
 all: all_autoconf
 
@@ -38,3 +51,4 @@ install: all
 	install -s -m 555 -f $(DESTDIR)/usr/sbin $(VER.32)/src/lldpd
 	install -s -m 555 -f $(DESTDIR)/usr/sbin $(VER.32)/src/lldpneighbors
 	install -s -m 444 -f $(DESTDIR)/lib/svc/manifest/network lldpd.xml
+	$(MAKE_CTF.32) $(CTF_PROGRAMS)
