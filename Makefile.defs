@@ -39,7 +39,8 @@ endif
 PATH =		$(STRAPPROTO)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
 
 MAKE =		gmake
-PARALLEL =	-j128
+MAX_JOBS =	128
+PARALLEL =	-j$(MAX_JOBS)
 MAKE_VERBOSE =	V=1
 GCC =		$(DESTDIR)/usr/bin/gcc
 GXX =		$(DESTDIR)/usr/bin/g++
