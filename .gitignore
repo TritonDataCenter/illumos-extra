@@ -32,11 +32,6 @@
 /libexpat/expat-2.0.1-32*
 /libexpat/expat-2.0.1-64*
 /libidn/libidn-1.11-32*
-/libm/destdir
-/libm/statdir
-/libm/usr/src/libm/wos/f80387
-/libm/usr/src/libm/wos/libmvec
-/libm/usr/src/libm/wos64/amd64
 /libxml/libxml2-2.7.6-32*
 /libxml/libxml2-2.7.6-64*
 /libz/zlib-1.2.3-32*

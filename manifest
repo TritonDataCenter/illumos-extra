@@ -179,38 +179,6 @@ s usr/lib/libexpat.so.1=libexpat.so.1.5.2
 # libidn
 f usr/lib/libidn.so.11.5.40 0755 root bin
 s usr/lib/libidn.so.11=libidn.so.11.5.40
-# libm
-s usr/lib/amd64/libm.so.1=../../../lib/amd64/libm.so.1
-s usr/lib/amd64/libm.so.2=../../../lib/amd64/libm.so.2
-s usr/lib/amd64/libm.so=../../../lib/amd64/libm.so.2
-s usr/lib/libm.so.1=../../lib/libm.so.1
-s usr/lib/libm.so.2=../../lib/libm.so.2
-s usr/lib/libm.so=../../lib/libm.so.2
-f lib/amd64/libm.so.1 0755 root bin
-f lib/amd64/libm.so.2 0755 root bin
-s lib/amd64/libm.so=libm.so.2
-f lib/libm.so.1 0755 root bin
-f lib/libm.so.2 0755 root bin
-s lib/libm.so=libm.so.2
-f lib/libmvec.so.1 0755 root bin
-s lib/libmvec.so=libmvec.so.1
-s usr/lib/libmvec.so.1=../../lib/libmvec.so.1
-s usr/lib/libmvec.so=../../lib/libmvec.so.1
-f lib/amd64/libmvec.so.1 0755 root bin
-s lib/amd64/libmvec.so=libmvec.so.1
-s usr/lib/amd64/libmvec.so.1=../../../lib/amd64/libmvec.so.1
-s usr/lib/amd64/libmvec.so=../../../lib/amd64/libmvec.so.1
-d lib/libmvec 0755 root bin
-f lib/libmvec/libmvec_hwcap1.so.1 0755 root bin
-f usr/include/complex.h 0644 root bin
-d usr/include/iso 0755 root bin
-f usr/include/iso/math_c99.h 0644 root bin
-f usr/include/iso/math_iso.h 0644 root bin
-f usr/include/fenv.h 0644 root bin
-f usr/include/math.h 0644 root bin
-f usr/include/tgmath.h 0644 root bin
-f usr/include/sys/ieeefp.h 0644 root bin
-f usr/include/floatingpoint.h 0644 root bin
 # libxml
 s usr/lib/amd64/libxml2.so.2=../../../lib/amd64/libxml2.so.2
 f lib/amd64/libxml2.so.2 0555 root bin

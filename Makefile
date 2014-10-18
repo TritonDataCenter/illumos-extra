@@ -49,7 +49,6 @@ SUBDIRS = \
 	less \
 	libexpat \
 	libidn \
-	libm \
 	libxml \
 	libz \
 	make \
@@ -77,7 +76,6 @@ STRAP_SUBDIRS = \
 	bzip2 \
 	libexpat \
 	libidn \
-	libm \
 	libxml \
 	libz \
 	make \
@@ -106,15 +104,12 @@ strap: $(STRAP_SUBDIRS)
 
 curl: libz openssl1x libidn
 gzip: libz
-node.js: openssl1x libm
-ncurses: libm
+node.js: openssl1x
 dialog: ncurses
 socat: openssl1x
 wget: openssl1x libidn
 openldap: openssl1x
-libm: make
 g11n: make
-perl: libm
 ntp: perl openssl1x
 
 #

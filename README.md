@@ -56,7 +56,6 @@ not.
 The following components live in illumos-extra that should more likely
 be a part of illumos itself:
 
-  * libm - The core C programming language math library
   * g11n - Provides iconv modules for internationalization
   * make - Provides Sun parallel make, the `dmake` binary
 
