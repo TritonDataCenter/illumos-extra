@@ -18,3 +18,30 @@
   *:notempty:notgiven:notgiven)
      for pkg in `echo $with_crypto | sed -e 's/,/ /'`; do
  	AC_MSG_CHECKING([pkg-config for $pkg])
+--- sntp/m4/ntp_crypto_rand.m4	2014-12-19 11:56:54.000000000 +0000
++++ sntp/m4/ntp_crypto_rand.m4	2014-12-20 00:01:11.556751398 +0000
+@@ -34,6 +34,13 @@
+     [ntp_use_openssl_random=$enableval],
+     [ntp_use_openssl_random=yes]
+ )
++case "$with_crypto" in
++  sunw)
++    # SmartOS builds should use the platform OpenSSL for random number
++    # generation
++    ntp_use_openssl_random=force
++    ;;
++esac
+ AC_MSG_RESULT([$ntp_use_openssl_random])
+ 
+ # The following might need extra libraries
+@@ -42,8 +49,8 @@
+ dnl AC_MSG_NOTICE([LIBS is <$LIBS>])
+ AC_CHECK_FUNCS([RAND_bytes RAND_poll])
+ LIBS="$NTPO_SAVED_LIBS"
+-case "$ntp_use_openssl_random$ac_cv_func_RAND_bytes$ac_cv_func_RAND_poll" in
+- yesyesyes)
++case "$ntp_use_openssl_random:$ac_cv_func_RAND_bytes:$ac_cv_func_RAND_poll" in
++ force:*|yes:yes:yes)
+      AC_DEFINE([USE_OPENSSL_CRYPTO_RAND], [1], [Use OpenSSL's crypto random functions])
+      ;;
+  *) ntp_use_openssl_random=no ;;

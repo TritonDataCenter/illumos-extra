@@ -1,6 +1,6 @@
 # NTP
 
-This is the "dev" branch of the reference NTP implementation from
+This is the stable release branch of the reference NTP implementation from
 http://ntp.org.
 
 ## Manual Pages
@@ -50,24 +50,14 @@ We patch the M4 source file for OpenSSL detection to accept a special flag:
 
     ./configure --with-crypto=sunw
 
-Which forces our sane build flags to be used without any further detection or
-mangling.  We also patch in a `--with-perllibdir` flag, and a `--with-perl`
-flag, such that we can ship the platform-private `NTP` perl module in
+This forces our sane build flags to be used without any further detection or
+mangling.  It also forces the use of the OpenSSL CSPRNG functions, as we do not
+(yet) have the `arc4random` suite of functions on SmartOS.
+
+We also patch in a `--with-perllibdir` flag, and a `--with-perl` flag, such
+that we can ship the platform-private `NTP` perl module in
 `/usr/perl5/5.12/lib` instead of `/usr/share`, and ensure it uses the correct
 `perl` interpreter.
 
 The primary patch, `configure.patch`, includes a regenerated `configure`
 script.  The M4 source file changes are in `perl.patch` and `openssl.patch`.
-
-### `ntp_util.patch`
-
-The include Perl module, `NTP::Util`, does not work completely correctly with
-the version of the `Socket` module that ships in the platform Perl
-distribution.  Specifically, the version string is `"1.87_01"`, which emits a warning:
-
-    Argument "1.87_01" isn't numeric in numeric ge (>=) at
-        /usr/perl5/5.12/lib/NTP/Util.pm line 16.
-
-This patch makes us assume an old version of `Socket`, which is what we ship,
-and prevents the warning from being emitted.  This is tracked upstream as [ntp
-bug 2620](http://bugs.ntp.org/show_bug.cgi?id=2620)
