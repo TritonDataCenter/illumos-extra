@@ -18,15 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013 Joyent, Inc.  All rights reserved.
+# Copyright (c) 2015 Joyent, Inc.  All rights reserved.
 #
 
-VER =	bind-9.8.0
+VER =	bind-9.10.1-P1
 
 include ../Makefile.defs
 
 AUTOCONF_OPTS += \
 	--with-libxml2=no \
+	--with-libjson=no \
 	--without-openssl
 
 CFLAGS +=	-g $(CPPFLAGS)
