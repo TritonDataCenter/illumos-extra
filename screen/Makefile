@@ -37,6 +37,7 @@ PATCHES =	Patches/*
 #
 AUTOCONF_OPTS = \
 	--prefix=/usr \
+	--enable-colors256 \
 	--with-sys-screenrc=/etc/screenrc
 
 include ../Makefile.targ
