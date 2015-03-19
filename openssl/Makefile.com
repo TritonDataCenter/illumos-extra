@@ -23,12 +23,12 @@
 # Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
-# Copyright (c) 2014 Joyent Inc.
+# Copyright (c) 2015 Joyent Inc.
 #
 
 
 METAINFO_FILE = ../METADATA
-BVER = openssl-0.9.8za
+BVER = openssl-0.9.8zf
 VER = $(BVER)$(STRAP)
 VER64 =$(VER)-64
 

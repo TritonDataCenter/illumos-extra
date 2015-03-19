@@ -19,10 +19,10 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2014, Joyent, Inc.  All rights reserved.
+# Copyright (c) 2015, Joyent, Inc.  All rights reserved.
 #
 
-VERSION=0.9.8za
+VERSION=0.9.8zf
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 
@@ -72,7 +72,6 @@ install64: all64
 $(VER)/configure: $(BVER)-src
 	cp -r $(BVER)-src $(VER) 
 	( cd $(VER) ; gpatch -p1 < ../configure.patch )
-	( cd $(VER) ; gpatch -p1 < ../aesni.patch )
 	( cd $(VER) ; gpatch -p1 < ../limits.patch )
 	cp engine_pkcs11/* $(VER)/crypto/engine/
 	touch $(VER)/configure

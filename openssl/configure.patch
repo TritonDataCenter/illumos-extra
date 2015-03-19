@@ -1,7 +1,14 @@
-diff -u openssl-0.9.8v/Configure openssl-0.9.8v.new/Configure
---- openssl-0.9.8v/Configure	Sat Dec 11 00:30:42 2010
-+++ openssl-0.9.8v.new/Configure	Fri Apr 20 21:45:58 2012
-@@ -12,7 +12,7 @@
+commit 037ba1820f833ecffb4b51b9536c4a80a1ea9361
+Author: Robert Mustacchi <rm@joyent.com>
+Date:   Thu Mar 19 17:12:20 2015 +0000
+
+    configure.patch
+
+diff --git a/Configure b/Configure
+index db0f517..1280772 100755
+--- a/Configure
++++ b/Configure
+@@ -12,7 +12,7 @@ print STDERR "Warning: perl module strict not found.\n" if ($@);
  
  # see INSTALL for instructions.
  
@@ -10,7 +17,7 @@ diff -u openssl-0.9.8v/Configure openssl-0.9.8v.new/Configure
  
  # Options:
  #
-@@ -21,6 +21,9 @@
+@@ -21,6 +21,9 @@ my $usage="Usage: Configure [no-<cipher> ...] [enable-<cipher> ...] [experimenta
  # --prefix      prefix for the OpenSSL include, lib and bin directories
  #               (Default: the OPENSSLDIR directory)
  #
@@ -20,7 +27,7 @@ diff -u openssl-0.9.8v/Configure openssl-0.9.8v.new/Configure
  # --install_prefix  Additional prefix for package builders (empty by
  #               default).  This needn't be set in advance, you can
  #               just as well use "make INSTALL_PREFIX=/whatever install".
-@@ -129,6 +132,13 @@
+@@ -129,6 +132,13 @@ my $x86_elf_asm="x86cpuid-elf.o:bn86-elf.o co86-elf.o MAYBE-MO86-elf.o:dx86-elf.
  my $x86_coff_asm="x86cpuid-cof.o:bn86-cof.o co86-cof.o MAYBE-MO86-cof.o:dx86-cof.o yx86-cof.o:ax86-cof.o:bx86-cof.o:mx86-cof.o:sx86-cof.o s512sse2-cof.o:cx86-cof.o:rx86-cof.o rc4_skey.o:rm86-cof.o:r586-cof.o";
  my $x86_out_asm="x86cpuid-out.o:bn86-out.o co86-out.o MAYBE-MO86-out.o:dx86-out.o yx86-out.o:ax86-out.o:bx86-out.o:mx86-out.o:sx86-out.o s512sse2-out.o:cx86-out.o:rx86-out.o rc4_skey.o:rm86-out.o:r586-out.o";
  
@@ -34,7 +41,7 @@ diff -u openssl-0.9.8v/Configure openssl-0.9.8v.new/Configure
  my $x86_64_asm="x86_64cpuid.o:x86_64-gcc.o x86_64-mont.o::aes-x86_64.o::md5-x86_64.o:sha1-x86_64.o sha256-x86_64.o sha512-x86_64.o::rc4-x86_64.o::";
  my $ia64_asm=":bn-ia64.o::aes_core.o aes_cbc.o aes-ia64.o:::sha1-ia64.o sha256-ia64.o sha512-ia64.o::rc4-ia64.o rc4_skey.o::";
  
-@@ -215,6 +225,9 @@
+@@ -216,6 +226,9 @@ my %table=(
  "solaris-x86-cc","cc:-fast -O -Xa::-D_REENTRANT::-lsocket -lnsl -ldl:BN_LLONG RC4_CHAR RC4_CHUNK DES_PTR DES_UNROLL BF_PTR:${no_asm}:dlfcn:solaris-shared:-KPIC:-G -dy -z text:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
  "solaris64-x86_64-cc","cc:-fast -xarch=amd64 -xstrconst -Xa -DL_ENDIAN::-D_REENTRANT::-lsocket -lnsl -ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK DES_INT DES_UNROLL:${x86_64_asm}:dlfcn:solaris-shared:-KPIC:-xarch=amd64 -G -dy -z text:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
  
@@ -44,7 +51,7 @@ diff -u openssl-0.9.8v/Configure openssl-0.9.8v.new/Configure
  #### SPARC Solaris with GNU C setups
  "solaris-sparcv7-gcc","gcc:-O3 -fomit-frame-pointer -Wall -DB_ENDIAN -DBN_DIV2W::-D_REENTRANT::-lsocket -lnsl -ldl:BN_LLONG RC4_CHAR RC4_CHUNK DES_UNROLL BF_PTR:${no_asm}:dlfcn:solaris-shared:-fPIC:-shared:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
  "solaris-sparcv8-gcc","gcc:-mv8 -O3 -fomit-frame-pointer -Wall -DB_ENDIAN -DBN_DIV2W::-D_REENTRANT::-lsocket -lnsl -ldl:BN_LLONG RC4_CHAR RC4_CHUNK DES_UNROLL BF_PTR::sparcv8.o:des_enc-sparc.o fcrypt_b.o:::::::::dlfcn:solaris-shared:-fPIC:-shared:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
-@@ -590,6 +603,9 @@
+@@ -591,6 +604,9 @@ my $idx_shared_extension = $idx++;
  my $idx_ranlib = $idx++;
  my $idx_arflags = $idx++;
  
@@ -54,7 +61,7 @@ diff -u openssl-0.9.8v/Configure openssl-0.9.8v.new/Configure
  my $prefix="";
  my $libdir="";
  my $openssldir="";
-@@ -828,6 +844,10 @@
+@@ -829,6 +845,10 @@ PROCESS_ARGS:
  				{
  				$flags.=$_." ";
  				}
@@ -65,7 +72,7 @@ diff -u openssl-0.9.8v/Configure openssl-0.9.8v.new/Configure
  			elsif (/^--prefix=(.*)$/)
  				{
  				$prefix=$1;
-@@ -963,6 +983,13 @@
+@@ -964,6 +984,13 @@ if ($target eq "LIST") {
  	exit 0;
  }
  
@@ -79,7 +86,7 @@ diff -u openssl-0.9.8v/Configure openssl-0.9.8v.new/Configure
  if ($target =~ m/^CygWin32(-.*)$/) {
  	$target = "Cygwin".$1;
  }
-@@ -1129,6 +1156,8 @@
+@@ -1130,6 +1157,8 @@ my $no_user_cflags=0;
  if ($flags ne "")	{ $cflags="$flags$cflags"; }
  else			{ $no_user_cflags=1;       }
  
@@ -88,7 +95,7 @@ diff -u openssl-0.9.8v/Configure openssl-0.9.8v.new/Configure
  # Kerberos settings.  The flavor must be provided from outside, either through
  # the script "config" or manually.
  if (!$no_krb5)
-@@ -1492,6 +1521,7 @@
+@@ -1493,6 +1522,7 @@ while (<IN>)
  	s/^VERSION=.*/VERSION=$version/;
  	s/^MAJOR=.*/MAJOR=$major/;
  	s/^MINOR=.*/MINOR=$minor/;
@@ -96,12 +103,11 @@ diff -u openssl-0.9.8v/Configure openssl-0.9.8v.new/Configure
  	s/^SHLIB_VERSION_NUMBER=.*/SHLIB_VERSION_NUMBER=$shlib_version_number/;
  	s/^SHLIB_VERSION_HISTORY=.*/SHLIB_VERSION_HISTORY=$shlib_version_history/;
  	s/^SHLIB_MAJOR=.*/SHLIB_MAJOR=$shlib_major/;
-Only in openssl-0.9.8v.new: Configure~
-Common subdirectories: openssl-0.9.8v/MacOS and openssl-0.9.8v.new/MacOS
-diff -u openssl-0.9.8v/Makefile.org openssl-0.9.8v.new/Makefile.org
---- openssl-0.9.8v/Makefile.org	Wed Jan 27 16:06:36 2010
-+++ openssl-0.9.8v.new/Makefile.org	Fri Apr 20 21:45:58 2012
-@@ -26,6 +26,9 @@
+diff --git a/Makefile.org b/Makefile.org
+index 0e4fa94..7f310cc 100644
+--- a/Makefile.org
++++ b/Makefile.org
+@@ -26,6 +26,9 @@ HERE=.
  INSTALL_PREFIX=
  INSTALLTOP=/usr/local/ssl
  
@@ -111,9 +117,11 @@ diff -u openssl-0.9.8v/Makefile.org openssl-0.9.8v.new/Makefile.org
  # Do not edit this manually. Use Configure --openssldir=DIR do change this!
  OPENSSLDIR=/usr/local/ssl
  
---- openssl-0.9.8v/crypto/engine/Makefile	2009-09-27 07:04:32.000000000 -0700
-+++ openssl-0.9.8v.new/crypto/engine/Makefile	2010-09-22 18:32:19.109972600 -0700
-@@ -21,12 +21,14 @@
+diff --git a/crypto/engine/Makefile b/crypto/engine/Makefile
+index b52fa48..734a3c2 100644
+--- a/crypto/engine/Makefile
++++ b/crypto/engine/Makefile
+@@ -21,12 +21,14 @@ LIBSRC= eng_err.c eng_lib.c eng_list.c eng_init.c eng_ctrl.c \
  	eng_table.c eng_pkey.c eng_fat.c eng_all.c \
  	tb_rsa.c tb_dsa.c tb_ecdsa.c tb_dh.c tb_ecdh.c tb_rand.c tb_store.c \
  	tb_cipher.c tb_digest.c \
@@ -130,27 +138,29 @@ diff -u openssl-0.9.8v/Makefile.org openssl-0.9.8v.new/Makefile.org
  
  SRC= $(LIBSRC)
  
-diff -ruN ../a/openssl-0.9.8o/crypto/engine/eng_all.c openssl-0.9.8o/crypto/engine/eng_all.c
---- openssl-0.9.8v/crypto/engine/eng_all.c	2010-02-28 16:30:11.000000000 -0800
-+++ openssl-0.9.8v.new/crypto/engine/eng_all.c	2010-09-22 18:33:15.326949000 -0700
-@@ -72,6 +72,9 @@
- 	ENGINE_load_padlock();
+diff --git a/crypto/engine/eng_all.c b/crypto/engine/eng_all.c
+index 0683df8..9b55c40 100644
+--- a/crypto/engine/eng_all.c
++++ b/crypto/engine/eng_all.c
+@@ -75,6 +75,9 @@ void ENGINE_load_builtin_engines(void)
+     ENGINE_load_padlock();
  #endif
- 	ENGINE_load_dynamic();
+     ENGINE_load_dynamic();
 +#ifndef OPENSSL_NO_HW_PKCS11
-+	ENGINE_load_pk11();
++    ENGINE_load_pk11();
 +#endif
  #ifndef OPENSSL_NO_STATIC_ENGINE
- #ifndef OPENSSL_NO_HW
- #ifndef OPENSSL_NO_HW_4758_CCA
-diff -ruN ../a/openssl-0.9.8o/crypto/engine/engine.h openssl-0.9.8o/crypto/engine/engine.h
---- openssl-0.9.8v/crypto/engine/engine.h	2010-02-09 06:18:15.000000000 -0800
-+++ openssl-0.9.8v.new/crypto/engine/engine.h	2010-09-22 18:32:19.063758100 -0700
-@@ -337,6 +337,7 @@
- void ENGINE_load_ubsec(void);
- #endif
+ # ifndef OPENSSL_NO_HW
+ #  ifndef OPENSSL_NO_HW_4758_CCA
+diff --git a/crypto/engine/engine.h b/crypto/engine/engine.h
+index 335b78f..fe46c9a 100644
+--- a/crypto/engine/engine.h
++++ b/crypto/engine/engine.h
+@@ -401,6 +401,7 @@ void ENGINE_load_capi(void);
+ #  endif
+ # endif
  void ENGINE_load_cryptodev(void);
 +void ENGINE_load_pk11(void);
  void ENGINE_load_padlock(void);
  void ENGINE_load_builtin_engines(void);
- #ifdef OPENSSL_SYS_WIN32
+ 

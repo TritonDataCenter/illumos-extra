@@ -1,31 +1,14 @@
-diff -urN openssl-1.0.1c/crypto/engine/eng_all.c openssl-1.0.1c-src/crypto/engine/eng_all.c
---- openssl-1.0.1c/crypto/engine/eng_all.c	2011-08-10 18:53:13.000000000 +0000
-+++ openssl-1.0.1c-src/crypto/engine/eng_all.c	2013-01-07 23:15:10.868557614 +0000
-@@ -80,6 +80,9 @@
- 	ENGINE_load_rdrand();
- #endif
- 	ENGINE_load_dynamic();
-+#ifndef	OPENSSL_NO_HW_PKCS11
-+	ENGINE_load_pk11();
-+#endif
- #ifndef OPENSSL_NO_STATIC_ENGINE
- #ifndef OPENSSL_NO_HW
- #ifndef OPENSSL_NO_HW_4758_CCA
-diff -urN openssl-1.0.1c/crypto/engine/engine.h openssl-1.0.1c-src/crypto/engine/engine.h
---- openssl-1.0.1c/crypto/engine/engine.h	2011-08-10 18:53:13.000000000 +0000
-+++ openssl-1.0.1c-src/crypto/engine/engine.h	2013-01-07 23:15:56.210595780 +0000
-@@ -351,6 +351,7 @@
- #endif
- #endif
- void ENGINE_load_cryptodev(void);
-+void ENGINE_load_pk11(void);
- void ENGINE_load_rsax(void);
- void ENGINE_load_rdrand(void);
- void ENGINE_load_builtin_engines(void);
-diff -urN openssl-1.0.1c/crypto/engine/Makefile openssl-1.0.1c-src/crypto/engine/Makefile
---- openssl-1.0.1c/crypto/engine/Makefile	2011-08-14 13:47:27.000000000 +0000
-+++ openssl-1.0.1c-src/crypto/engine/Makefile	2013-01-07 23:14:30.020619793 +0000
-@@ -22,13 +22,13 @@
+commit 3e5b91efd573e79bdde0ed26eaa3d46d98415fba
+Author: Robert Mustacchi <rm@joyent.com>
+Date:   Thu Mar 19 15:56:00 2015 +0000
+
+    engine.patch
+
+diff --git a/crypto/engine/Makefile b/crypto/engine/Makefile
+index d29bdd0..92937c0 100644
+--- a/crypto/engine/Makefile
++++ b/crypto/engine/Makefile
+@@ -22,13 +22,13 @@ LIBSRC= eng_err.c eng_lib.c eng_list.c eng_init.c eng_ctrl.c \
  	tb_rsa.c tb_dsa.c tb_ecdsa.c tb_dh.c tb_ecdh.c tb_rand.c tb_store.c \
  	tb_cipher.c tb_digest.c tb_pkmeth.c tb_asnmth.c \
  	eng_openssl.c eng_cnf.c eng_dyn.c eng_cryptodev.c \
@@ -40,3 +23,30 @@ diff -urN openssl-1.0.1c/crypto/engine/Makefile openssl-1.0.1c-src/crypto/engine
 +	eng_rsax.o eng_rdrand.o hw_pk11.o hw_pk11_pub.o hw_pk11_uri.o
  
  SRC= $(LIBSRC)
+ 
+diff --git a/crypto/engine/eng_all.c b/crypto/engine/eng_all.c
+index 7edf12e..ef39be6 100644
+--- a/crypto/engine/eng_all.c
++++ b/crypto/engine/eng_all.c
+@@ -83,6 +83,9 @@ void ENGINE_load_builtin_engines(void)
+     ENGINE_load_rdrand();
+ #endif
+     ENGINE_load_dynamic();
++#ifndef	OPENSSL_NO_HW_PKCS11
++    ENGINE_load_pk11();
++#endif
+ #ifndef OPENSSL_NO_STATIC_ENGINE
+ # ifndef OPENSSL_NO_HW
+ #  ifndef OPENSSL_NO_HW_4758_CCA
+diff --git a/crypto/engine/engine.h b/crypto/engine/engine.h
+index e81096a..31d80d2 100644
+--- a/crypto/engine/engine.h
++++ b/crypto/engine/engine.h
+@@ -413,6 +413,7 @@ void ENGINE_load_gost(void);
+ #  endif
+ # endif
+ void ENGINE_load_cryptodev(void);
++void ENGINE_load_pk11(void);
+ void ENGINE_load_rsax(void);
+ void ENGINE_load_rdrand(void);
+ void ENGINE_load_builtin_engines(void);
