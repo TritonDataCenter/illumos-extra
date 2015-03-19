@@ -1,0 +1,15 @@
+xz 5.x illumos-extra Integration Notes
+
+Similar to OpenSSL, we have made modifications to the libraries provided
+by xz. In particular, to help avoid the problem of a user having
+installed a pkgsrc package, but at the same time somehow messing up
+things related to runpaths and the like, we do not want them to be able
+to use the copy that we're using in the platform. Therefore, we have
+changed the soname of liblzma.so.5, the dependent of xz(1), to
+libjoy_lzma.so.5.
+
+Unlike OpenSSL, the morass of autotools makes this a bit more
+challenging. Instead, we have opted to go ahead and do post-processing
+using elfedit. This is done as part of the install step and never
+modifies the binaries that are built, only ensures that what gets
+installed is modified.

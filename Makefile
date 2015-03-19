@@ -69,7 +69,8 @@ SUBDIRS = \
 	tun \
 	uuid \
 	vim \
-	wget
+	wget \
+	xz
 
 STRAP_SUBDIRS = \
 	cpp \

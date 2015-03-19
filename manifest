@@ -4443,3 +4443,9 @@ f usr/share/vim/vim73/vimrc_example.vim 0444 root bin
 # wget
 f usr/share/man/man1/wget.1 0444 root bin
 f usr/bin/wget 0555 root bin
+# xz
+f usr/share/man/man1/xz.1 0444 root bin
+f usr/bin/xz 0555 root bin
+s usr/bin/xzcat=xz
+f usr/lib/libjoy_lzma.so.5.2.1 0555 root bin
+s usr/lib/libjoy_lzma.so.5=libjoy_lzma.so.5.2.1
