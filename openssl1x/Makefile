@@ -94,9 +94,6 @@ AUTOCONF_ENV =
 AUTOCONF_OPTS += \
 	--openssldir=/etc/openssl \
 	--install_prefix=$(DESTDIR) \
-	no-ec \
-	no-ecdh \
-	no-ecdsa \
 	no-rc3 \
 	no-rc5 \
 	no-mdc2 \
