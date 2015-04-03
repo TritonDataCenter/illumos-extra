@@ -32,10 +32,12 @@ install: all
 	mkdir -p $(DESTDIR)/usr/bin
 	mkdir -p $(DESTDIR)/usr/lib
 	mkdir -p $(DESTDIR)/usr/share/man/man1
+	rm -f $(DESTDIR)/usr/lib/libjoy_lzma.so.$(LVER)
 	/usr/bin/elfedit -e 'dyn:value -s SONAME libjoy_lzma.so.5' \
 	    $(BASE)/$(VER.32)/src/liblzma/.libs/liblzma.so.$(LVER) \
 	    $(DESTDIR)/usr/lib/libjoy_lzma.so.$(LVER)
 	chmod 0555 $(DESTDIR)/usr/lib/libjoy_lzma.so.$(LVER)
+	rm -f $(DESTDIR)/usr/bin/xz
 	/usr/bin/elfedit -e 'dyn:value -dynndx 0' \
 	    $(BASE)/$(VER.32)/src/xz/.libs/xz | /usr/bin/grep -q liblzma.so.5
 	/usr/bin/elfedit -e 'dyn:value -s -dynndx 0 libjoy_lzma.so.5' \
