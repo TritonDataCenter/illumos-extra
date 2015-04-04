@@ -38,6 +38,7 @@ AUTOCONF_OPTS += \
 
 TARBALL =		$(VER).tar.bz2
 TARBALL_COMPRESS =	-j
+CPPFLAGS +=	-D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
 
 include ../Makefile.targ
 include ../Makefile.targ.autoconf
