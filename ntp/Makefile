@@ -19,10 +19,10 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright 2015 Joyent, Inc.
 #
 
-VER =	ntp-4.2.8
+VER =	ntp-4.2.8p2
 
 include ../Makefile.defs
 
@@ -44,6 +44,8 @@ AUTOCONF_OPTS += \
 	--without-ntpsnmpd \
 	--without-lineeditlibs \
 	--with-crypto=sunw \
+	--without-sntp \
+	--enable-local-libevent \
 	--disable-getifaddrs
 
 CFLAGS += \
