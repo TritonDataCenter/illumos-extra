@@ -1,22 +1,22 @@
-From 40c9d98a0ae0519770debcd3c28ee22e1680bca7 Mon Sep 17 00:00:00 2001
+From a9bd338b7b19057dc84c8ae885c39081f681ab7c Mon Sep 17 00:00:00 2001
 From: Robert Mustacchi <rm@joyent.com>
 Date: Fri, 10 May 2013 23:16:53 +0000
-Subject: [PATCH] curl should not set the library path for openssl
+Subject: [PATCH 3/3] curl should not set the library path for openssl
 
 As part of curl's autoconfiguration shenanigans it ends up setting
 LD_LIBRARY_PATH into our proto area! This is for future software which means it
 is using our new libc which is definitely not the same as our old libc and thus
 may misinterpret everything from the kernel.
 ---
- configure    |    5 +----
- configure.ac |    4 +---
+ configure    | 5 +----
+ configure.ac | 4 +---
  2 files changed, 2 insertions(+), 7 deletions(-)
 
 diff --git a/configure b/configure
-index 7643df3..da535cf 100755
+index 3bab245..954f9f7 100755
 --- a/configure
 +++ b/configure
-@@ -21105,10 +21105,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+@@ -22001,10 +22001,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
    if test "$OPENSSL_ENABLED" = "1"; then
      if test -n "$LIB_OPENSSL"; then
                              if test "x$cross_compiling" != "xyes"; then
@@ -29,10 +29,10 @@ index 7643df3..da535cf 100755
      fi
  
 diff --git a/configure.ac b/configure.ac
-index ec07887..e18195b 100644
+index 41f7f92..24a78a0 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1639,9 +1639,7 @@ if test "$curl_ssl_msg" = "$init_ssl_msg" && test X"$OPT_SSL" != Xno; then
+@@ -1624,9 +1624,7 @@ if test "$curl_ssl_msg" = "$init_ssl_msg" && test X"$OPT_SSL" != Xno; then
         dnl linker doesn't search through, we need to add it to LD_LIBRARY_PATH
         dnl to prevent further configure tests to fail due to this
         if test "x$cross_compiling" != "xyes"; then
@@ -44,5 +44,5 @@ index ec07887..e18195b 100644
      fi
      CURL_CHECK_OPENSSL_API
 -- 
-1.7.3.4
+1.8.4
 
