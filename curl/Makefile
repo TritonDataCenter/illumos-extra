@@ -18,10 +18,10 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2015, Joyent, Inc.
 #
 
-VER =	curl-7.27.0
+VER =	curl-7.42.0
 
 include ../Makefile.defs
 

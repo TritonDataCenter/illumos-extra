@@ -1,0 +1,953 @@
+From 0fcce3388f68cc4a6a190e02896b67f177504b5f Mon Sep 17 00:00:00 2001
+From: Robert Mustacchi <rm@joyent.com>
+Date: Wed, 22 Apr 2015 18:19:16 +0000
+Subject: [PATCH] curl needs to use sunw_crypto and sunw_ssl
+
+As part of patching curl, we have modified the appropriate autoconf
+files and then gone back and regenerated configure with autoconf. From
+here, we then have to manually perform one operation. Because of the
+change of the soname, autoconf changes the header macro that it wants to
+include from HAVE_LIBSSL to HAVE_LIBSUNW_SSL. That's not going to end
+well for us, so we need to go back and change it manually.
+---
+ configure          | 297 +++++++++++++++++++++++------------------------------
+ configure.ac       |  41 ++++----
+ m4/curl-openssl.m4 |  22 ++--
+ 3 files changed, 163 insertions(+), 197 deletions(-)
+
+diff --git a/configure b/configure
+index d7e7879..47bac93 100755
+--- a/configure
++++ b/configure
+@@ -7638,7 +7638,7 @@ else
+     We can't simply define LARGE_OFF_T to be 9223372036854775807,
+     since some C++ compilers masquerading as C compilers
+     incorrectly reject 9223372036854775807.  */
+-#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
++#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+ 		       && LARGE_OFF_T % 2147483647 == 1)
+ 		      ? 1 : -1];
+@@ -7683,7 +7683,7 @@ else
+     We can't simply define LARGE_OFF_T to be 9223372036854775807,
+     since some C++ compilers masquerading as C compilers
+     incorrectly reject 9223372036854775807.  */
+-#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
++#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+ 		       && LARGE_OFF_T % 2147483647 == 1)
+ 		      ? 1 : -1];
+@@ -7706,7 +7706,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+     We can't simply define LARGE_OFF_T to be 9223372036854775807,
+     since some C++ compilers masquerading as C compilers
+     incorrectly reject 9223372036854775807.  */
+-#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
++#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+ 		       && LARGE_OFF_T % 2147483647 == 1)
+ 		      ? 1 : -1];
+@@ -7750,7 +7750,7 @@ else
+     We can't simply define LARGE_OFF_T to be 9223372036854775807,
+     since some C++ compilers masquerading as C compilers
+     incorrectly reject 9223372036854775807.  */
+-#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
++#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+ 		       && LARGE_OFF_T % 2147483647 == 1)
+ 		      ? 1 : -1];
+@@ -7773,7 +7773,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+     We can't simply define LARGE_OFF_T to be 9223372036854775807,
+     since some C++ compilers masquerading as C compilers
+     incorrectly reject 9223372036854775807.  */
+-#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
++#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+ 		       && LARGE_OFF_T % 2147483647 == 1)
+ 		      ? 1 : -1];
+@@ -21631,13 +21631,13 @@ rm -f core conftest.err conftest.$ac_objext \
+       ;;
+   esac
+ 
+-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for CRYPTO_lock in -lcrypto" >&5
+-$as_echo_n "checking for CRYPTO_lock in -lcrypto... " >&6; }
+-if ${ac_cv_lib_crypto_CRYPTO_lock+:} false; then :
++  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sunw_CRYPTO_lock in -lsunw_crypto" >&5
++$as_echo_n "checking for sunw_CRYPTO_lock in -lsunw_crypto... " >&6; }
++if ${ac_cv_lib_sunw_crypto_sunw_CRYPTO_lock+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lcrypto  $LIBS"
++LIBS="-lsunw_crypto  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -21645,41 +21645,41 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char CRYPTO_lock ();
++char sunw_CRYPTO_lock ();
+ int main (void)
+ {
+-return CRYPTO_lock ();
++return sunw_CRYPTO_lock ();
+  ;
+  return 0;
+ }
+ _ACEOF
+ if ac_fn_c_try_link "$LINENO"; then :
+-  ac_cv_lib_crypto_CRYPTO_lock=yes
++  ac_cv_lib_sunw_crypto_sunw_CRYPTO_lock=yes
+ else
+-  ac_cv_lib_crypto_CRYPTO_lock=no
++  ac_cv_lib_sunw_crypto_sunw_CRYPTO_lock=no
+ fi
+ rm -f core conftest.err conftest.$ac_objext \
+     conftest$ac_exeext conftest.$ac_ext
+ LIBS=$ac_check_lib_save_LIBS
+ fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_crypto_CRYPTO_lock" >&5
+-$as_echo "$ac_cv_lib_crypto_CRYPTO_lock" >&6; }
+-if test "x$ac_cv_lib_crypto_CRYPTO_lock" = xyes; then :
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_sunw_crypto_sunw_CRYPTO_lock" >&5
++$as_echo "$ac_cv_lib_sunw_crypto_sunw_CRYPTO_lock" >&6; }
++if test "x$ac_cv_lib_sunw_crypto_sunw_CRYPTO_lock" = xyes; then :
+ 
+      HAVECRYPTO="yes"
+-     LIBS="-lcrypto $LIBS"
++     LIBS="-lsunw_crypto $LIBS"
+ 
+ else
+ 
+      LDFLAGS="$CLEANLDFLAGS -L$LIB_OPENSSL"
+      CPPFLAGS="$CLEANCPPFLAGS -I$PREFIX_OPENSSL/include/openssl -I$PREFIX_OPENSSL/include"
+-     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for CRYPTO_add_lock in -lcrypto" >&5
+-$as_echo_n "checking for CRYPTO_add_lock in -lcrypto... " >&6; }
+-if ${ac_cv_lib_crypto_CRYPTO_add_lock+:} false; then :
++     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sunw_CRYPTO_add_lock in -lsunw_crypto" >&5
++$as_echo_n "checking for sunw_CRYPTO_add_lock in -lsunw_crypto... " >&6; }
++if ${ac_cv_lib_sunw_crypto_sunw_CRYPTO_add_lock+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lcrypto  $LIBS"
++LIBS="-lsunw_crypto  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -21687,29 +21687,29 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char CRYPTO_add_lock ();
++char sunw_CRYPTO_add_lock ();
+ int main (void)
+ {
+-return CRYPTO_add_lock ();
++return sunw_CRYPTO_add_lock ();
+  ;
+  return 0;
+ }
+ _ACEOF
+ if ac_fn_c_try_link "$LINENO"; then :
+-  ac_cv_lib_crypto_CRYPTO_add_lock=yes
++  ac_cv_lib_sunw_crypto_sunw_CRYPTO_add_lock=yes
+ else
+-  ac_cv_lib_crypto_CRYPTO_add_lock=no
++  ac_cv_lib_sunw_crypto_sunw_CRYPTO_add_lock=no
+ fi
+ rm -f core conftest.err conftest.$ac_objext \
+     conftest$ac_exeext conftest.$ac_ext
+ LIBS=$ac_check_lib_save_LIBS
+ fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_crypto_CRYPTO_add_lock" >&5
+-$as_echo "$ac_cv_lib_crypto_CRYPTO_add_lock" >&6; }
+-if test "x$ac_cv_lib_crypto_CRYPTO_add_lock" = xyes; then :
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_sunw_crypto_sunw_CRYPTO_add_lock" >&5
++$as_echo "$ac_cv_lib_sunw_crypto_sunw_CRYPTO_add_lock" >&6; }
++if test "x$ac_cv_lib_sunw_crypto_sunw_CRYPTO_add_lock" = xyes; then :
+ 
+        HAVECRYPTO="yes"
+-       LIBS="-lcrypto $LIBS"
++       LIBS="-lsunw_crypto $LIBS"
+ else
+ 
+        LDFLAGS="$CLEANLDFLAGS"
+@@ -21725,13 +21725,13 @@ fi
+ 
+   if test X"$HAVECRYPTO" = X"yes"; then
+ 
+-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for SSL_connect in -lssl" >&5
+-$as_echo_n "checking for SSL_connect in -lssl... " >&6; }
+-if ${ac_cv_lib_ssl_SSL_connect+:} false; then :
++    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sunw_SSL_connect in -lsunw_ssl" >&5
++$as_echo_n "checking for sunw_SSL_connect in -lsunw_ssl... " >&6; }
++if ${ac_cv_lib_sunw_ssl_sunw_SSL_connect+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lssl  $LIBS"
++LIBS="-lsunw_ssl  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -21739,47 +21739,47 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char SSL_connect ();
++char sunw_SSL_connect ();
+ int main (void)
+ {
+-return SSL_connect ();
++return sunw_SSL_connect ();
+  ;
+  return 0;
+ }
+ _ACEOF
+ if ac_fn_c_try_link "$LINENO"; then :
+-  ac_cv_lib_ssl_SSL_connect=yes
++  ac_cv_lib_sunw_ssl_sunw_SSL_connect=yes
+ else
+-  ac_cv_lib_ssl_SSL_connect=no
++  ac_cv_lib_sunw_ssl_sunw_SSL_connect=no
+ fi
+ rm -f core conftest.err conftest.$ac_objext \
+     conftest$ac_exeext conftest.$ac_ext
+ LIBS=$ac_check_lib_save_LIBS
+ fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ssl_SSL_connect" >&5
+-$as_echo "$ac_cv_lib_ssl_SSL_connect" >&6; }
+-if test "x$ac_cv_lib_ssl_SSL_connect" = xyes; then :
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_sunw_ssl_sunw_SSL_connect" >&5
++$as_echo "$ac_cv_lib_sunw_ssl_sunw_SSL_connect" >&6; }
++if test "x$ac_cv_lib_sunw_ssl_sunw_SSL_connect" = xyes; then :
+   cat >>confdefs.h <<_ACEOF
+ #define HAVE_LIBSSL 1
+ _ACEOF
+ 
+-  LIBS="-lssl $LIBS"
++  LIBS="-lsunw_ssl $LIBS"
+ 
+ fi
+ 
+ 
+-    if test "$ac_cv_lib_ssl_SSL_connect" != yes; then
++    if test "$ac_cv_lib_sunw_ssl_sunw_SSL_connect" != yes; then
+                 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ssl with RSAglue/rsaref libs in use" >&5
+ $as_echo_n "checking for ssl with RSAglue/rsaref libs in use... " >&6; };
+         OLIBS=$LIBS
+         LIBS="-lRSAglue -lrsaref $LIBS"
+-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for SSL_connect in -lssl" >&5
+-$as_echo_n "checking for SSL_connect in -lssl... " >&6; }
+-if ${ac_cv_lib_ssl_SSL_connect+:} false; then :
++        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sunw_SSL_connect in -lsunw_ssl" >&5
++$as_echo_n "checking for sunw_SSL_connect in -lsunw_ssl... " >&6; }
++if ${ac_cv_lib_sunw_ssl_sunw_SSL_connect+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lssl  $LIBS"
++LIBS="-lsunw_ssl  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -21787,35 +21787,35 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char SSL_connect ();
++char sunw_SSL_connect ();
+ int main (void)
+ {
+-return SSL_connect ();
++return sunw_SSL_connect ();
+  ;
+  return 0;
+ }
+ _ACEOF
+ if ac_fn_c_try_link "$LINENO"; then :
+-  ac_cv_lib_ssl_SSL_connect=yes
++  ac_cv_lib_sunw_ssl_sunw_SSL_connect=yes
+ else
+-  ac_cv_lib_ssl_SSL_connect=no
++  ac_cv_lib_sunw_ssl_sunw_SSL_connect=no
+ fi
+ rm -f core conftest.err conftest.$ac_objext \
+     conftest$ac_exeext conftest.$ac_ext
+ LIBS=$ac_check_lib_save_LIBS
+ fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ssl_SSL_connect" >&5
+-$as_echo "$ac_cv_lib_ssl_SSL_connect" >&6; }
+-if test "x$ac_cv_lib_ssl_SSL_connect" = xyes; then :
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_sunw_ssl_sunw_SSL_connect" >&5
++$as_echo "$ac_cv_lib_sunw_ssl_sunw_SSL_connect" >&6; }
++if test "x$ac_cv_lib_sunw_ssl_sunw_SSL_connect" = xyes; then :
+   cat >>confdefs.h <<_ACEOF
+-#define HAVE_LIBSSL 1
++#define HAVE_LIBSUNW_SSL 1
+ _ACEOF
+ 
+-  LIBS="-lssl $LIBS"
++  LIBS="-lsunw_ssl $LIBS"
+ 
+ fi
+ 
+-        if test "$ac_cv_lib_ssl_SSL_connect" != yes; then
++        if test "$ac_cv_lib_sunw_ssl_sunw_SSL_connect" != yes; then
+                         { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+ $as_echo "no" >&6; }
+             LIBS=$OLIBS
+@@ -21908,7 +21908,7 @@ fi
+ 
+ done
+ 
+-                for ac_func in ENGINE_load_builtin_engines
++                for ac_func in sunw_ENGINE_load_builtin_engines
+ do :
+   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+@@ -21925,14 +21925,14 @@ fi
+ 
+ 
+ 
+-    for ac_func in RAND_status \
+-                    RAND_screen \
+-                    RAND_egd \
+-                    ENGINE_cleanup \
+-                    CRYPTO_cleanup_all_ex_data \
+-                    SSL_get_shutdown \
+-                    SSLv2_client_method \
+-                    DES_set_odd_parity
++    for ac_func in sunw_RAND_status \
++                    sunw_RAND_screen \
++                    sunw_RAND_egd \
++                    sunw_ENGINE_cleanup \
++                    sunw_CRYPTO_cleanup_all_ex_data \
++                    sunw_SSL_get_shutdown \
++                    sunw_SSLv2_client_method \
++                    sunw_DES_set_odd_parity
+ do :
+   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+@@ -21947,7 +21947,7 @@ done
+ 
+     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for BoringSSL" >&5
+ $as_echo_n "checking for BoringSSL... " >&6; }
+-    if test "x$ac_cv_func_DES_set_odd_parity" != "xyes"; then
++    if test "x$ac_cv_func_sunw_DES_set_odd_parity" != "xyes"; then
+       curl_ssl_msg="enabled (BoringSSL)"
+ 
+ cat >>confdefs.h <<_ACEOF
+@@ -22153,24 +22153,24 @@ rm -f core conftest.err conftest.$ac_objext \
+ /* end confdefs.h.  */
+ 
+ 
+-#define SSL_CTX_set_not_resumable_session_callback innocuous_SSL_CTX_set_not_resumable_session_callback
++#define sunw_SSL_CTX_set_not_resumable_session_callback innocuous_sunw_SSL_CTX_set_not_resumable_session_callback
+ #ifdef __STDC__
+ # include <limits.h>
+ #else
+ # include <assert.h>
+ #endif
+-#undef SSL_CTX_set_not_resumable_session_callback
++#undef sunw_SSL_CTX_set_not_resumable_session_callback
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char SSL_CTX_set_not_resumable_session_callback ();
+-#if defined __stub_SSL_CTX_set_not_resumable_session_callback || defined __stub___SSL_CTX_set_not_resumable_session_callback
++char sunw_SSL_CTX_set_not_resumable_session_callback ();
++#if defined __stub_sunw_SSL_CTX_set_not_resumable_session_callback || defined __stub___sunw_SSL_CTX_set_not_resumable_session_callback
+ choke me
+ #endif
+ 
+ int main (void)
+ {
+-return SSL_CTX_set_not_resumable_session_callback ();
++return sunw_SSL_CTX_set_not_resumable_session_callback ();
+  ;
+  return 0;
+ }
+@@ -22191,24 +22191,24 @@ rm -f core conftest.err conftest.$ac_objext \
+ /* end confdefs.h.  */
+ 
+ 
+-#define SSL_renegotiate_abbreviated innocuous_SSL_renegotiate_abbreviated
++#define sunw_SSL_renegotiate_abbreviated innocuous_sunw_SSL_renegotiate_abbreviated
+ #ifdef __STDC__
+ # include <limits.h>
+ #else
+ # include <assert.h>
+ #endif
+-#undef SSL_renegotiate_abbreviated
++#undef sunw_SSL_renegotiate_abbreviated
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char SSL_renegotiate_abbreviated ();
+-#if defined __stub_SSL_renegotiate_abbreviated || defined __stub___SSL_renegotiate_abbreviated
++char sunw_SSL_renegotiate_abbreviated ();
++#if defined __stub_sunw_SSL_renegotiate_abbreviated || defined __stub___sunw_SSL_renegotiate_abbreviated
+ choke me
+ #endif
+ 
+ int main (void)
+ {
+-return SSL_renegotiate_abbreviated ();
++return sunw_SSL_renegotiate_abbreviated ();
+  ;
+  return 0;
+ }
+@@ -22227,24 +22227,24 @@ rm -f core conftest.err conftest.$ac_objext \
+ /* end confdefs.h.  */
+ 
+ 
+-#define OBJ_add_sigid innocuous_OBJ_add_sigid
++#define sunw_OBJ_add_sigid innocuous_sunw_OBJ_add_sigid
+ #ifdef __STDC__
+ # include <limits.h>
+ #else
+ # include <assert.h>
+ #endif
+-#undef OBJ_add_sigid
++#undef sunw_OBJ_add_sigid
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char OBJ_add_sigid ();
+-#if defined __stub_OBJ_add_sigid || defined __stub___OBJ_add_sigid
++char sunw_OBJ_add_sigid ();
++#if defined __stub_sunw_OBJ_add_sigid || defined __stub___sunw_OBJ_add_sigid
+ choke me
+ #endif
+ 
+ int main (void)
+ {
+-return OBJ_add_sigid ();
++return sunw_OBJ_add_sigid ();
+  ;
+  return 0;
+ }
+@@ -22263,24 +22263,24 @@ rm -f core conftest.err conftest.$ac_objext \
+ /* end confdefs.h.  */
+ 
+ 
+-#define ERR_set_mark innocuous_ERR_set_mark
++#define sunw_ERR_set_mark innocuous_sunw_ERR_set_mark
+ #ifdef __STDC__
+ # include <limits.h>
+ #else
+ # include <assert.h>
+ #endif
+-#undef ERR_set_mark
++#undef sunw_ERR_set_mark
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char ERR_set_mark ();
+-#if defined __stub_ERR_set_mark || defined __stub___ERR_set_mark
++char sunw_ERR_set_mark ();
++#if defined __stub_sunw_ERR_set_mark || defined __stub___sunw_ERR_set_mark
+ choke me
+ #endif
+ 
+ int main (void)
+ {
+-return ERR_set_mark ();
++return sunw_ERR_set_mark ();
+  ;
+  return 0;
+ }
+@@ -22299,24 +22299,24 @@ rm -f core conftest.err conftest.$ac_objext \
+ /* end confdefs.h.  */
+ 
+ 
+-#define ERR_peek_last_error innocuous_ERR_peek_last_error
++#define sunw_ERR_peek_last_error innocuous_sunw_ERR_peek_last_error
+ #ifdef __STDC__
+ # include <limits.h>
+ #else
+ # include <assert.h>
+ #endif
+-#undef ERR_peek_last_error
++#undef sunw_ERR_peek_last_error
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char ERR_peek_last_error ();
+-#if defined __stub_ERR_peek_last_error || defined __stub___ERR_peek_last_error
++char sunw_ERR_peek_last_error ();
++#if defined __stub_sunw_ERR_peek_last_error || defined __stub___sunw_ERR_peek_last_error
+ choke me
+ #endif
+ 
+ int main (void)
+ {
+-return ERR_peek_last_error ();
++return sunw_ERR_peek_last_error ();
+  ;
+  return 0;
+ }
+@@ -22335,24 +22335,24 @@ rm -f core conftest.err conftest.$ac_objext \
+ /* end confdefs.h.  */
+ 
+ 
+-#define c2i_ASN1_OBJECT innocuous_c2i_ASN1_OBJECT
++#define sunw_c2i_ASN1_OBJECT innocuous_sunw_c2i_ASN1_OBJECT
+ #ifdef __STDC__
+ # include <limits.h>
+ #else
+ # include <assert.h>
+ #endif
+-#undef c2i_ASN1_OBJECT
++#undef sunw_c2i_ASN1_OBJECT
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char c2i_ASN1_OBJECT ();
+-#if defined __stub_c2i_ASN1_OBJECT || defined __stub___c2i_ASN1_OBJECT
++char sunw_c2i_ASN1_OBJECT ();
++#if defined __stub_sunw_c2i_ASN1_OBJECT || defined __stub___sunw_c2i_ASN1_OBJECT
+ choke me
+ #endif
+ 
+ int main (void)
+ {
+-return c2i_ASN1_OBJECT ();
++return sunw_c2i_ASN1_OBJECT ();
+  ;
+  return 0;
+ }
+@@ -22371,24 +22371,24 @@ rm -f core conftest.err conftest.$ac_objext \
+ /* end confdefs.h.  */
+ 
+ 
+-#define SSL_CTX_set_purpose innocuous_SSL_CTX_set_purpose
++#define sunw_SSL_CTX_set_purpose innocuous_sunw_SSL_CTX_set_purpose
+ #ifdef __STDC__
+ # include <limits.h>
+ #else
+ # include <assert.h>
+ #endif
+-#undef SSL_CTX_set_purpose
++#undef sunw_SSL_CTX_set_purpose
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char SSL_CTX_set_purpose ();
+-#if defined __stub_SSL_CTX_set_purpose || defined __stub___SSL_CTX_set_purpose
++char sunw_SSL_CTX_set_purpose ();
++#if defined __stub_sunw_SSL_CTX_set_purpose || defined __stub___sunw_SSL_CTX_set_purpose
+ choke me
+ #endif
+ 
+ int main (void)
+ {
+-return SSL_CTX_set_purpose ();
++return sunw_SSL_CTX_set_purpose ();
+  ;
+  return 0;
+ }
+@@ -22407,24 +22407,24 @@ rm -f core conftest.err conftest.$ac_objext \
+ /* end confdefs.h.  */
+ 
+ 
+-#define OBJ_obj2txt innocuous_OBJ_obj2txt
++#define sunw_OBJ_obj2txt innocuous_sunw_OBJ_obj2txt
+ #ifdef __STDC__
+ # include <limits.h>
+ #else
+ # include <assert.h>
+ #endif
+-#undef OBJ_obj2txt
++#undef sunw_OBJ_obj2txt
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char OBJ_obj2txt ();
+-#if defined __stub_OBJ_obj2txt || defined __stub___OBJ_obj2txt
++char sunw_OBJ_obj2txt ();
++#if defined __stub_sunw_OBJ_obj2txt || defined __stub___sunw_OBJ_obj2txt
+ choke me
+ #endif
+ 
+ int main (void)
+ {
+-return OBJ_obj2txt ();
++return sunw_OBJ_obj2txt ();
+  ;
+  return 0;
+ }
+@@ -22443,24 +22443,24 @@ rm -f core conftest.err conftest.$ac_objext \
+ /* end confdefs.h.  */
+ 
+ 
+-#define SSL_get_verify_depth innocuous_SSL_get_verify_depth
++#define sunw_SSL_get_verify_depth innocuous_sunw_SSL_get_verify_depth
+ #ifdef __STDC__
+ # include <limits.h>
+ #else
+ # include <assert.h>
+ #endif
+-#undef SSL_get_verify_depth
++#undef sunw_SSL_get_verify_depth
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char SSL_get_verify_depth ();
+-#if defined __stub_SSL_get_verify_depth || defined __stub___SSL_get_verify_depth
++char sunw_SSL_get_verify_depth ();
++#if defined __stub_sunw_SSL_get_verify_depth || defined __stub___sunw_SSL_get_verify_depth
+ choke me
+ #endif
+ 
+ int main (void)
+ {
+-return SSL_get_verify_depth ();
++return sunw_SSL_get_verify_depth ();
+  ;
+  return 0;
+ }
+@@ -22479,24 +22479,24 @@ rm -f core conftest.err conftest.$ac_objext \
+ /* end confdefs.h.  */
+ 
+ 
+-#define SSL_library_init innocuous_SSL_library_init
++#define sunw_SSL_library_init innocuous_sunw_SSL_library_init
+ #ifdef __STDC__
+ # include <limits.h>
+ #else
+ # include <assert.h>
+ #endif
+-#undef SSL_library_init
++#undef sunw_SSL_library_init
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char SSL_library_init ();
+-#if defined __stub_SSL_library_init || defined __stub___SSL_library_init
++char sunw_SSL_library_init ();
++#if defined __stub_sunw_SSL_library_init || defined __stub___sunw_SSL_library_init
+ choke me
+ #endif
+ 
+ int main (void)
+ {
+-return SSL_library_init ();
++return sunw_SSL_library_init ();
+  ;
+  return 0;
+ }
+@@ -22515,24 +22515,24 @@ rm -f core conftest.err conftest.$ac_objext \
+ /* end confdefs.h.  */
+ 
+ 
+-#define SSL_CTX_set_cipher_list innocuous_SSL_CTX_set_cipher_list
++#define sunw_SSL_CTX_set_cipher_list innocuous_sunw_SSL_CTX_set_cipher_list
+ #ifdef __STDC__
+ # include <limits.h>
+ #else
+ # include <assert.h>
+ #endif
+-#undef SSL_CTX_set_cipher_list
++#undef sunw_SSL_CTX_set_cipher_list
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char SSL_CTX_set_cipher_list ();
+-#if defined __stub_SSL_CTX_set_cipher_list || defined __stub___SSL_CTX_set_cipher_list
++char sunw_SSL_CTX_set_cipher_list ();
++#if defined __stub_sunw_SSL_CTX_set_cipher_list || defined __stub___sunw_SSL_CTX_set_cipher_list
+ choke me
+ #endif
+ 
+ int main (void)
+ {
+-return SSL_CTX_set_cipher_list ();
++return sunw_SSL_CTX_set_cipher_list ();
+  ;
+  return 0;
+ }
+@@ -22654,13 +22654,13 @@ _ACEOF
+ fi
+ 
+ if test "$OPENSSL_ENABLED" = "1"; then
+-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for SRP_Calc_client_key in -lcrypto" >&5
+-$as_echo_n "checking for SRP_Calc_client_key in -lcrypto... " >&6; }
+-if ${ac_cv_lib_crypto_SRP_Calc_client_key+:} false; then :
++  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for SRP_Calc_client_key in -lsunw_crypto" >&5
++$as_echo_n "checking for SRP_Calc_client_key in -lsunw_crypto... " >&6; }
++if ${ac_cv_lib_sunw_crypto_SRP_Calc_client_key+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lcrypto  $LIBS"
++LIBS="-lsunw_crypto  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -22677,17 +22677,17 @@ return SRP_Calc_client_key ();
+ }
+ _ACEOF
+ if ac_fn_c_try_link "$LINENO"; then :
+-  ac_cv_lib_crypto_SRP_Calc_client_key=yes
++  ac_cv_lib_sunw_crypto_SRP_Calc_client_key=yes
+ else
+-  ac_cv_lib_crypto_SRP_Calc_client_key=no
++  ac_cv_lib_sunw_crypto_SRP_Calc_client_key=no
+ fi
+ rm -f core conftest.err conftest.$ac_objext \
+     conftest$ac_exeext conftest.$ac_ext
+ LIBS=$ac_check_lib_save_LIBS
+ fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_crypto_SRP_Calc_client_key" >&5
+-$as_echo "$ac_cv_lib_crypto_SRP_Calc_client_key" >&6; }
+-if test "x$ac_cv_lib_crypto_SRP_Calc_client_key" = xyes; then :
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_sunw_crypto_SRP_Calc_client_key" >&5
++$as_echo "$ac_cv_lib_sunw_crypto_SRP_Calc_client_key" >&6; }
++if test "x$ac_cv_lib_sunw_crypto_SRP_Calc_client_key" = xyes; then :
+ 
+ 
+ $as_echo "#define HAVE_OPENSSL_SRP 1" >>confdefs.h
+@@ -26767,42 +26767,7 @@ _ACEOF
+   esac
+ 
+ 
+-
+-    if test "x$cross_compiling" != xyes; then
+-
+-            { $as_echo "$as_me:${as_lineno-$LINENO}: checking run-time libs availability" >&5
+-$as_echo_n "checking run-time libs availability... " >&6; }
+-    if test "$cross_compiling" = yes; then :
+-  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+-as_fn_error $? "cannot run test program while cross compiling
+-See \`config.log' for more details" "$LINENO" 5; }
+-else
+-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+-/* end confdefs.h.  */
+-
+-main()
+-{
+-  return 0;
+-}
+-
+-_ACEOF
+-if ac_fn_c_try_run "$LINENO"; then :
+-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: fine" >&5
+-$as_echo "fine" >&6; }
+-else
+-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: failed" >&5
+-$as_echo "failed" >&6; }
+-    as_fn_error $? "one or more libs available at link-time are not available run-time. Libs used at link-time: $LIBS" "$LINENO" 5
+-
+-fi
+-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+-  conftest.$ac_objext conftest.beam conftest.$ac_ext
+-fi
+-
+-
+-      fi
+-
++cross_compiling=yes
+ 
+ # The cast to long int works around a bug in the HP C Compiler
+ # version HP92453-01 B.11.11.23709.GP, which incorrectly rejects
+diff --git a/configure.ac b/configure.ac
+index e676ff3..e9cf3d6 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1494,15 +1494,15 @@ if test "$curl_ssl_msg" = "$init_ssl_msg" && test X"$OPT_SSL" != Xno; then
+       ;;
+   esac
+ 
+-  AC_CHECK_LIB(crypto, CRYPTO_lock,[
++  AC_CHECK_LIB(sunw_crypto, sunw_CRYPTO_lock,[
+      HAVECRYPTO="yes"
+-     LIBS="-lcrypto $LIBS"
++     LIBS="-lsunw_crypto $LIBS"
+      ],[
+      LDFLAGS="$CLEANLDFLAGS -L$LIB_OPENSSL"
+      CPPFLAGS="$CLEANCPPFLAGS -I$PREFIX_OPENSSL/include/openssl -I$PREFIX_OPENSSL/include"
+-     AC_CHECK_LIB(crypto, CRYPTO_add_lock,[
++     AC_CHECK_LIB(sunw_crypto, sunw_CRYPTO_add_lock,[
+        HAVECRYPTO="yes"
+-       LIBS="-lcrypto $LIBS"], [
++       LIBS="-lsunw_crypto $LIBS"], [
+        LDFLAGS="$CLEANLDFLAGS"
+        CPPFLAGS="$CLEANCPPFLAGS"
+        LIBS="$CLEANLIBS"
+@@ -1514,15 +1514,15 @@ if test "$curl_ssl_msg" = "$init_ssl_msg" && test X"$OPT_SSL" != Xno; then
+     dnl This is only reasonable to do if crypto actually is there: check for
+     dnl SSL libs NOTE: it is important to do this AFTER the crypto lib
+ 
+-    AC_CHECK_LIB(ssl, SSL_connect)
++    AC_CHECK_LIB(sunw_ssl, sunw_SSL_connect)
+ 
+-    if test "$ac_cv_lib_ssl_SSL_connect" != yes; then
++    if test "$ac_cv_lib_sunw_ssl_sunw_SSL_connect" != yes; then
+         dnl we didn't find the SSL lib, try the RSAglue/rsaref stuff
+         AC_MSG_CHECKING(for ssl with RSAglue/rsaref libs in use);
+         OLIBS=$LIBS
+         LIBS="-lRSAglue -lrsaref $LIBS"
+-        AC_CHECK_LIB(ssl, SSL_connect)
+-        if test "$ac_cv_lib_ssl_SSL_connect" != yes; then
++        AC_CHECK_LIB(sunw_ssl, sunw_SSL_connect)
++        if test "$ac_cv_lib_sunw_ssl_sunw_SSL_connect" != yes; then
+             dnl still no SSL_connect
+             AC_MSG_RESULT(no)
+             LIBS=$OLIBS
+@@ -1574,7 +1574,7 @@ if test "$curl_ssl_msg" = "$init_ssl_msg" && test X"$OPT_SSL" != Xno; then
+     AC_CHECK_FUNC(ENGINE_init,
+               [
+                 AC_CHECK_HEADERS(openssl/engine.h)
+-                AC_CHECK_FUNCS( ENGINE_load_builtin_engines )
++                AC_CHECK_FUNCS( sunw_ENGINE_load_builtin_engines )
+               ])
+ 
+     dnl These can only exist if OpenSSL exists
+@@ -1583,17 +1583,17 @@ if test "$curl_ssl_msg" = "$init_ssl_msg" && test X"$OPT_SSL" != Xno; then
+     dnl as it's a macro that needs the header files be included)
+     dnl BoringSSL doesn't have DES_set_odd_parity
+ 
+-    AC_CHECK_FUNCS( RAND_status \
+-                    RAND_screen \
+-                    RAND_egd \
+-                    ENGINE_cleanup \
+-                    CRYPTO_cleanup_all_ex_data \
+-                    SSL_get_shutdown \
+-                    SSLv2_client_method \
+-                    DES_set_odd_parity )
++    AC_CHECK_FUNCS( sunw_RAND_status \
++                    sunw_RAND_screen \
++                    sunw_RAND_egd \
++                    sunw_ENGINE_cleanup \
++                    sunw_CRYPTO_cleanup_all_ex_data \
++                    sunw_SSL_get_shutdown \
++                    sunw_SSLv2_client_method \
++                    sunw_DES_set_odd_parity )
+ 
+     AC_MSG_CHECKING([for BoringSSL])
+-    if test "x$ac_cv_func_DES_set_odd_parity" != "xyes"; then
++    if test "x$ac_cv_func_sunw_DES_set_odd_parity" != "xyes"; then
+       curl_ssl_msg="enabled (BoringSSL)"
+       AC_DEFINE_UNQUOTED(HAVE_BORINGSSL, 1,
+         [Define to 1 if using BoringSSL.])
+@@ -1674,7 +1674,7 @@ dnl ---
+ dnl We require OpenSSL with SRP support.
+ dnl ---
+ if test "$OPENSSL_ENABLED" = "1"; then
+-  AC_CHECK_LIB(crypto, SRP_Calc_client_key,
++  AC_CHECK_LIB(sunw_crypto, SRP_Calc_client_key,
+    [
+      AC_DEFINE(HAVE_OPENSSL_SRP, 1, [if you have the function SRP_Calc_client_key])
+      AC_SUBST(HAVE_OPENSSL_SRP, [1])
+@@ -2956,7 +2956,8 @@ CURL_CHECK_VARIADIC_MACROS
+ AC_TYPE_SIZE_T
+ AC_HEADER_TIME
+ CURL_CHECK_STRUCT_TIMEVAL
+-CURL_VERIFY_RUNTIMELIBS
++
++cross_compiling=yes
+ 
+ AC_CHECK_SIZEOF(size_t)
+ AC_CHECK_SIZEOF(long)
+diff --git a/m4/curl-openssl.m4 b/m4/curl-openssl.m4
+index cd9074b..dd7ef3a 100644
+--- a/m4/curl-openssl.m4
++++ b/m4/curl-openssl.m4
+@@ -131,7 +131,7 @@ AC_DEFUN([CURL_CHECK_OPENSSL_API_LIBRARY], [
+         ;;
+       *)
+         AC_LINK_IFELSE([
+-          AC_LANG_FUNC_LINK_TRY([SSL_CTX_set_not_resumable_session_callback])
++          AC_LANG_FUNC_LINK_TRY([sunw_SSL_CTX_set_not_resumable_session_callback])
+         ],[
+           tst_api="0x110"
+         ])
+@@ -140,70 +140,70 @@ AC_DEFUN([CURL_CHECK_OPENSSL_API_LIBRARY], [
+   fi
+   if test "$tst_api" = "unknown"; then
+     AC_LINK_IFELSE([
+-      AC_LANG_FUNC_LINK_TRY([SSL_renegotiate_abbreviated])
++      AC_LANG_FUNC_LINK_TRY([sunw_SSL_renegotiate_abbreviated])
+     ],[
+       tst_api="0x101"
+     ])
+   fi
+   if test "$tst_api" = "unknown"; then
+     AC_LINK_IFELSE([
+-      AC_LANG_FUNC_LINK_TRY([OBJ_add_sigid])
++      AC_LANG_FUNC_LINK_TRY([sunw_OBJ_add_sigid])
+     ],[
+       tst_api="0x100"
+     ])
+   fi
+   if test "$tst_api" = "unknown"; then
+     AC_LINK_IFELSE([
+-      AC_LANG_FUNC_LINK_TRY([ERR_set_mark])
++      AC_LANG_FUNC_LINK_TRY([sunw_ERR_set_mark])
+     ],[
+       tst_api="0x098"
+     ])
+   fi
+   if test "$tst_api" = "unknown"; then
+     AC_LINK_IFELSE([
+-      AC_LANG_FUNC_LINK_TRY([ERR_peek_last_error])
++      AC_LANG_FUNC_LINK_TRY([sunw_ERR_peek_last_error])
+     ],[
+       tst_api="0x097"
+     ])
+   fi
+   if test "$tst_api" = "unknown"; then
+     AC_LINK_IFELSE([
+-      AC_LANG_FUNC_LINK_TRY([c2i_ASN1_OBJECT])
++      AC_LANG_FUNC_LINK_TRY([sunw_c2i_ASN1_OBJECT])
+     ],[
+       tst_api="0x096"
+     ])
+   fi
+   if test "$tst_api" = "unknown"; then
+     AC_LINK_IFELSE([
+-      AC_LANG_FUNC_LINK_TRY([SSL_CTX_set_purpose])
++      AC_LANG_FUNC_LINK_TRY([sunw_SSL_CTX_set_purpose])
+     ],[
+       tst_api="0x095"
+     ])
+   fi
+   if test "$tst_api" = "unknown"; then
+     AC_LINK_IFELSE([
+-      AC_LANG_FUNC_LINK_TRY([OBJ_obj2txt])
++      AC_LANG_FUNC_LINK_TRY([sunw_OBJ_obj2txt])
+     ],[
+       tst_api="0x094"
+     ])
+   fi
+   if test "$tst_api" = "unknown"; then
+     AC_LINK_IFELSE([
+-      AC_LANG_FUNC_LINK_TRY([SSL_get_verify_depth])
++      AC_LANG_FUNC_LINK_TRY([sunw_SSL_get_verify_depth])
+     ],[
+       tst_api="0x093"
+     ])
+   fi
+   if test "$tst_api" = "unknown"; then
+     AC_LINK_IFELSE([
+-      AC_LANG_FUNC_LINK_TRY([SSL_library_init])
++      AC_LANG_FUNC_LINK_TRY([sunw_SSL_library_init])
+     ],[
+       tst_api="0x092"
+     ])
+   fi
+   if test "$tst_api" = "unknown"; then
+     AC_LINK_IFELSE([
+-      AC_LANG_FUNC_LINK_TRY([SSL_CTX_set_cipher_list])
++      AC_LANG_FUNC_LINK_TRY([sunw_SSL_CTX_set_cipher_list])
+     ],[
+       tst_api="0x091"
+     ])
+-- 
+1.8.4
+
