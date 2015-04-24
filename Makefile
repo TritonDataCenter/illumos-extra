@@ -155,9 +155,12 @@ clean:
 manifest:
 	cp manifest $(DESTDIR)/$(DESTNAME)
 
+mancheck_conf:
+	cp mancheck.conf $(DESTDIR)/$(DESTNAME)
+
 tarball:
 	tar -zcf $(TARBALL) manifest proto
 
 FRC:
 
-.PHONY: manifest
+.PHONY: manifest mancheck_conf
