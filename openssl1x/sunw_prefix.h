@@ -4568,5 +4568,7 @@
 #pragma redefine_extname	tls1_ec_curve_id2nid sunw_tls1_ec_curve_id2nid
 #pragma redefine_extname	tls1_ec_nid2curve_id sunw_tls1_ec_nid2curve_id
 
+#pragma redefine_extname	ssl_session_dup sunw_ssl_session_dup
+
 
 #endif /* _SUNW_PREFIX_H */

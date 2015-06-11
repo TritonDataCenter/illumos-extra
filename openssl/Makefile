@@ -19,10 +19,10 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2015, Joyent, Inc.  All rights reserved.
+# Copyright 2015 Joyent, Inc.
 #
 
-VERSION=0.9.8zf
+VERSION=0.9.8zg
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 
