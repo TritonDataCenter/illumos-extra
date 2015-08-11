@@ -1,0 +1,86 @@
+From d49557bd4710678a3716104a0fdf2827d6ef217c Mon Sep 17 00:00:00 2001
+From: Alex Wilson <alex.wilson@joyent.com>
+Date: Fri, 7 Aug 2015 13:32:53 -0700
+Subject: [PATCH 26/30] Add --with-key-dir configure option to place SSH host
+ keys
+
+---
+ Makefile.in  |  1 +
+ configure.ac | 14 ++++++++++++++
+ pathnames.h  | 16 ++++++++++------
+ 3 files changed, 25 insertions(+), 6 deletions(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index ce5d4e4..623b887 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -359,6 +359,7 @@ install-files:
+ 	$(srcdir)/mkinstalldirs $(SMFNETMANIDIR)
+ 	$(INSTALL) -m 555 smf/method.sh $(SMFMETHODDIR)/sshd
+ 	$(INSTALL) -m 444 smf/manifest.xml $(SMFNETMANIDIR)/ssh.xml
++	mkdir -p $(DESTDIR)$(keydir)
+ 
+ install-sysconf:
+ 	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then \
+diff --git a/configure.ac b/configure.ac
+index 27b95cb..bb2dfa2 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -4605,6 +4605,20 @@ AC_DEFINE_UNQUOTED([_PATH_SSH_PIDDIR], ["$piddir"],
+ 	[Specify location of ssh.pid])
+ AC_SUBST([piddir])
+ 
++keydir=/etc/ssh
++AC_ARG_WITH([key-dir],
++	[  --with-key-dir=PATH      Specify location of SSH host keys],
++	[
++		if test -n "$withval"  &&  test "x$withval" != "xno"  &&  \
++		    test "x${withval}" != "xyes"; then
++			keydir=$withval
++		fi
++	]
++)
++AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
++	[Specify location of SSH host keys])
++AC_SUBST([keydir])
++
+ dnl allow user to disable some login recording features
+ AC_ARG_ENABLE([lastlog],
+ 	[  --disable-lastlog       disable use of lastlog even if detected [no]],
+diff --git a/pathnames.h b/pathnames.h
+index ec89fc6..0b2281b 100644
+--- a/pathnames.h
++++ b/pathnames.h
+@@ -22,6 +22,10 @@
+ #define _PATH_SSH_PIDDIR		"/var/run"
+ #endif
+ 
++#ifndef SSHKEYDIR
++#define SSHKEYDIR			SSHDIR
++#endif
++
+ /*
+  * System-wide file containing host keys of known hosts.  This file should be
+  * world-readable.
+@@ -36,12 +40,12 @@
+  */
+ #define _PATH_SERVER_CONFIG_FILE	SSHDIR "/sshd_config"
+ #define _PATH_HOST_CONFIG_FILE		SSHDIR "/ssh_config"
+-#define _PATH_HOST_KEY_FILE		SSHDIR "/ssh_host_key"
+-#define _PATH_HOST_DSA_KEY_FILE		SSHDIR "/ssh_host_dsa_key"
+-#define _PATH_HOST_ECDSA_KEY_FILE	SSHDIR "/ssh_host_ecdsa_key"
+-#define _PATH_HOST_ED25519_KEY_FILE	SSHDIR "/ssh_host_ed25519_key"
+-#define _PATH_HOST_RSA_KEY_FILE		SSHDIR "/ssh_host_rsa_key"
+-#define _PATH_DH_MODULI			SSHDIR "/moduli"
++#define _PATH_HOST_KEY_FILE		SSHKEYDIR "/ssh_host_key"
++#define _PATH_HOST_DSA_KEY_FILE		SSHKEYDIR "/ssh_host_dsa_key"
++#define _PATH_HOST_ECDSA_KEY_FILE	SSHKEYDIR "/ssh_host_ecdsa_key"
++#define _PATH_HOST_ED25519_KEY_FILE	SSHKEYDIR "/ssh_host_ed25519_key"
++#define _PATH_HOST_RSA_KEY_FILE		SSHKEYDIR "/ssh_host_rsa_key"
++#define _PATH_DH_MODULI			SSHKEYDIR "/moduli"
+ /* Backwards compatibility */
+ #define _PATH_DH_PRIMES			SSHDIR "/primes"
+ 
+-- 
+2.3.2 (Apple Git-55)
+

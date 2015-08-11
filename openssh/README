@@ -1,0 +1,15 @@
+# Updating OpenSSH
+
+Reconstitute the patches in the Patches/ directory into a git repo,
+based on the tag in https://github.com/openssh/openssh that matches up
+with that version. (Use git am for this)
+
+Then you should be able to rebase onto a newer tag, merging as
+needed.
+
+The tarball in this directory is a clean checkout of the OpenSSH-portable
+source without its configure script or any generated files. The
+patches should only ever modify configure.ac and not configure, since
+the Makefile here will regenerate configure using autoreconf.
+
+TODO: more text here.

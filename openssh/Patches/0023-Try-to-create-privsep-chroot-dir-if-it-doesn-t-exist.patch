@@ -1,0 +1,31 @@
+From adc815c032f9173054ed5fb70d9d4ef861f8d419 Mon Sep 17 00:00:00 2001
+From: Alex Wilson <alex.wilson@joyent.com>
+Date: Wed, 5 Aug 2015 12:25:15 -0700
+Subject: [PATCH 23/30] Try to create privsep chroot dir if it doesn't exist
+ yet
+
+---
+ sshd.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/sshd.c b/sshd.c
+index 707dc16..91a3d4d 100644
+--- a/sshd.c
++++ b/sshd.c
+@@ -1926,8 +1926,11 @@ main(int ac, char **av)
+ 
+ 		if ((stat(_PATH_PRIVSEP_CHROOT_DIR, &st) == -1) ||
+ 		    (S_ISDIR(st.st_mode) == 0))
+-			fatal("Missing privilege separation directory: %s",
+-			    _PATH_PRIVSEP_CHROOT_DIR);
++			if (mkdir(_PATH_PRIVSEP_CHROOT_DIR, 0755))
++				fatal("Failed to create privilege separation "
++				    "directory %s: %s",
++				    _PATH_PRIVSEP_CHROOT_DIR,
++				    strerror(errno));
+ 
+ #ifdef HAVE_CYGWIN
+ 		if (check_ntsec(_PATH_PRIVSEP_CHROOT_DIR) &&
+-- 
+2.3.2 (Apple Git-55)
+

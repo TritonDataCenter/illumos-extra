@@ -60,6 +60,7 @@ SUBDIRS = \
 	openlldp \
 	openssl \
 	openssl1x \
+	openssh \
 	pbzip2 \
 	perl \
 	rsync \
@@ -112,6 +113,7 @@ wget: openssl1x libidn
 openldap: openssl1x
 g11n: make
 ntp: perl openssl1x
+openssh: openssl1x
 
 #
 # pkg-config may be installed. This will actually only hurt us rather than help
