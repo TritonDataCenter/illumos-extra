@@ -1,8 +1,42 @@
+This is a note to future maintainers about the patches for OpenSSH in this
+directory.
+
+# General notes
+
+The mission when creating this patchset was to preserve enough of SunSSH's
+behaviour and features to avoid serious problems for users upgrading to it from
+SunSSH 1.5.
+
+In particular, the PAM and RBAC behaviour of SunSSH had to be preserved, so that
+login into roles, reduced privileges at login, and other features specific to
+Illumos work correctly. The reason these don't work on stock upstream OpenSSH is
+due to differences between our PAM and other PAM implementations -- openssh-
+portable's PAM support is written primarily against Linux-PAM and OpenPAM.
+
+Another key requirement was that stock SunSSH config files have to work
+unmodified on the new replacement sshd, to avoid users being locked out by an
+SSH daemon that can no longer start. SmartOS is a live distro, and has no
+ability to "migrate" or "upgrade" user configuration files during a change of
+version, so the SSH daemon has to be able to start using an old config file.
+
+PAM and configuration compatibility account for about half the patches applied
+by count. The rest include some forward-ported features such as GSSAPI KeyEx
+support, auditing changes, PubKeyPlugins, and use of privileges(5).
+
+The patch files usually have some text in their commit messages (they are
+serialised git commits) explaining their purpose and scope, which can be useful
+to help understand things.
+
+As an unfortunate side note, diff'ing SunSSH itself against OpenSSH is basically
+impossible because of its hodge-podge merge history that has never been
+publically released. Doing line-by-line comparisons to verify compatibility is
+thus very challenging.
+
 # Updating OpenSSH
 
 Reconstitute the patches in the Patches/ directory into a git repo,
-based on the tag in https://github.com/openssh/openssh that matches up
-with that version. (Use git am for this)
+based on the tag in https://github.com/openssh/openssh-portable that
+matches up with that version. (Use git am for this)
 
 Then you should be able to rebase onto a newer tag, merging as
 needed.
@@ -12,4 +46,24 @@ source without its configure script or any generated files. The
 patches should only ever modify configure.ac and not configure, since
 the Makefile here will regenerate configure using autoreconf.
 
-TODO: more text here.
+# Patches for upstreaming
+
+Patches #21 and #29 relate to dropping Illumos privileges, and can probably be
+eventually upstreamed (in a form modified to have some more `#ifdef`s, maybe a
+`configure` arg).
+
+Patches #22 and maybe a cleaned up version of #28 would also make decent
+candidates for upstreaming.
+
+# Patches to be dropped eventually
+
+The #33 patch, which sets `ssh-keygen` and `ssh-add` to the old fingerprint
+behaviour should be eventually dropped once we're assured of not breaking
+SDC users. HEAD-2257 is probably relevant.
+
+#26 should be droppable once we figure out if we can move ssh keys back to
+`/etc/ssh`, like the rest of the known world.
+
+Eventually, #31 will be droppable, but this is not likely until circa 2018 or
+so, once we're fairly confident there aren't SunSSH clients left in the wild
+that we care about.
