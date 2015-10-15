@@ -46,7 +46,8 @@ AUTOCONF_OPTS += \
 	--disable-lastlog \
 	--with-privsep-user=daemon \
 	--without-openssl-header-check \
-	--with-key-dir=/var/ssh
+	--with-key-dir=/var/ssh \
+	--with-sys-moduli=/usr/share/lib/ssh/moduli
 
 AUTOCONF_ENV += \
 	DESTDIR="$(DESTDIR)" \

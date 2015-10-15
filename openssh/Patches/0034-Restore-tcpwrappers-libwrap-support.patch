@@ -78,7 +78,7 @@ index d9b6ce1..03ac8b0 100644
  # Check whether user wants to use ldns
  LDNS_MSG="no"
  AC_ARG_WITH(ldns,
-@@ -4958,6 +5014,7 @@ echo "                 KerberosV support: $KRB5_MSG"
+@@ -4960,6 +5016,7 @@ echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
  echo "                 Smartcard support: $SCARD_MSG"
  echo "                     S/KEY support: $SKEY_MSG"

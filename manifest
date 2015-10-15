@@ -27,6 +27,7 @@ d usr/gnu/share 0755 root sys
 d usr/gnu/share/doc 0755 root other
 d usr/sbin 0755 root bin
 d usr/share 0755 root sys
+d usr/share/lib 0755 root bin
 d usr/share/man 0755 root bin
 d usr/share/man/man1 0755 root bin
 d usr/sfw 0755 root bin
@@ -461,7 +462,6 @@ d etc/openssl/private 0700 root sys
 # openssh
 d usr/bin 0755 root bin
 d usr/lib/ssh 0755 root bin
-d usr/share 0755 root bin
 d usr/share/man 0755 root bin
 d usr/share/man/man1 0755 root bin
 d usr/share/man/man5 0755 root bin
@@ -496,13 +496,14 @@ d usr/lib/dtrace 0755 root bin
 f usr/lib/dtrace/sftp.d 0644 root bin
 d etc/ssh 0755 root sys
 f etc/ssh/ssh_config 0644 root sys
-f etc/ssh/moduli 0644 root sys
 f etc/ssh/sshd_config 0644 root sys
 d lib/svc/method 0755 root bin
 d lib/svc/manifest/network 0755 root bin
 f lib/svc/method/sshd 0555 root bin
 f lib/svc/manifest/network/ssh.xml 0444 root bin
 d var/ssh 0755 root sys
+d usr/share/lib/ssh 0755 root bin
+f usr/share/lib/ssh/moduli 0644 root bin
 # pbzip2
 f usr/bin/pbzip2 0555 root bin
 f usr/share/man/man1/pbzip2.1 0444 root bin
