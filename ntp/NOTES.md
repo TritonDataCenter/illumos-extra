@@ -36,7 +36,7 @@ generates a warning that would normally be fatal:
 
 This patch allows us to continue using the `-zfatal-warnings` flag for `ld`.
 
-### `configure.patch` (and `perl.patch`, `openssl.patch`)
+### `perl.patch`, `openssl.patch`
 
 The GNU Autoconf-based build system used by NTP is, to say the least,
 unfortunate.  In particular, it spectacularly hamfists the detection and use of
@@ -53,8 +53,8 @@ that we can ship the platform-private `NTP` perl module in
 `/usr/perl5/5.12/lib` instead of `/usr/share`, and ensure it uses the correct
 `perl` interpreter.
 
-The primary patch, `configure.patch`, includes a regenerated `configure`
-script.  The M4 source file changes are in `perl.patch` and `openssl.patch`.
+The M4 source file changes are in `perl.patch` and `openssl.patch`, and we
+regenerate `configure` with `autoreconf` for each build.
 
 ### `arc4random.patch`
 

@@ -22,9 +22,11 @@
 # Copyright 2015 Joyent, Inc.
 #
 
-VER =	ntp-4.2.8p2
+VER =	ntp-4.2.8p4
 
 include ../Makefile.defs
+
+UNPACK_SENTINEL =	configure.ac
 
 AUTOCONF_OPTS += \
 	--prefix=/usr \
@@ -58,7 +60,8 @@ AUTOCONF_ENV += \
 	LD_OPTIONS="$(LDFLAGS)" \
 	DESTDIR="$(DESTDIR)" \
 	CTFMERGE="$(CTFMERGE)" \
-	CTFCONVERT="$(CTFCONVERT)"
+	CTFCONVERT="$(CTFCONVERT)" \
+	ALTCTFCONVERT="$(ALTCTFCONVERT)"
 
 PATCHSTRIP =	0
 PATCHES =	Patches/*
@@ -76,9 +79,14 @@ CTF_PROGRAMS = $(CTF_PROGRAMS_USR_SBIN:%=/usr/sbin/%)
 
 include ../Makefile.targ
 
+$(VER.32)/configure: $(VER.32)/configure.ac
+	(cd $(VER.32) && env - $(AUTOCONF_ENV) PATH=$(PATH) \
+	    autoreconf -fi)
+
 all: all_autoconf
 
 install: all
-	(cd $(VER.32); env - $(AUTOCONF_ENV) PATH=$(PATH) gmake $(install_PARALLEL) install)
+	(cd $(VER.32) && env - $(AUTOCONF_ENV) PATH=$(PATH) \
+	    gmake $(install_PARALLEL) install)
 	(env - $(AUTOCONF_ENV) $(MAKE_CTF.32) $(CTF_PROGRAMS))
 	(env - $(AUTOCONF_ENV) ./install-ntp)

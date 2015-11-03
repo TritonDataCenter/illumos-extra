@@ -36,6 +36,7 @@ fi
 # These may contain wildcards, so expand:
 CTFMERGE="$(echo $CTFMERGE)"
 CTFCONVERT="$(echo $CTFCONVERT)"
+ALTCTFCONVERT="$(echo $ALTCTFCONVERT)"
 if [[ ! -n "${CTFMERGE}" || ! -n "${CTFCONVERT}" ]]; then
 	printf "You must set CTFMERGE and CTFCONVERT in the environment.\n" >&2
 	exit 1
@@ -48,25 +49,48 @@ if [[ ! -x "${CTFCONVERT}" ]]; then
 	printf "Could not find CTFCONVERT at '%s'\n" "${CTFCONVERT}" >&2
 	exit 1
 fi
+if [[ -n "${ALTCTFCONVERT}" ]]; then
+	if [[ ! -x "${ALTCTFCONVERT}" ]]; then
+		printf "Could not find ALTCTFCONVERT at '%s'\n" \
+		    "${ALTCTFCONVERT}" >&2
+		exit 1
+	fi
+	NEW_CTF_TOOLS=yes
+else
+	NEW_CTF_TOOLS=no
+fi
 
-# Convert DWARF to CTF in every object file we can find:
-rm -rf "${CTF_OBJECT_DIR}"
-mkdir -p "${CTF_OBJECT_DIR}"
-(cd "${BUILD_DIR}" && find * -name '*.o' -type f) | \
-    sort | while read objf; do
-	printf "  CTFCONVERT %s\n" "${objf}" >&2
-	ctff="$(echo "$objf" | sed -e 's,/,%,g' -e 's/\.o$/\.ctf/')"
-	${CTFCONVERT} -l "${CONTAINER_VERSION}" \
-	    -o "${CTF_OBJECT_DIR}/${ctff}" \
-	    "${BUILD_DIR}/${objf}"
-done
+if [[ $NEW_CTF_TOOLS != 'yes' ]]; then
+	# Convert DWARF to CTF in every object file we can find:
+	rm -rf "${CTF_OBJECT_DIR}"
+	mkdir -p "${CTF_OBJECT_DIR}"
+	(cd "${BUILD_DIR}" && find * -name '*.o' -type f) | \
+	    sort | while read objf; do
+		printf "  CTFCONVERT %s\n" "${objf}" >&2
+		ctff="$(echo "$objf" | sed -e 's,/,%,g' -e 's/\.o$/\.ctf/')"
+		${CTFCONVERT} -l "${CONTAINER_VERSION}" \
+		    -o "${CTF_OBJECT_DIR}/${ctff}" \
+		    "${BUILD_DIR}/${objf}"
+	done
+fi
 
 # Merge the CTF into the set of programs we ship:
 for program in ${PROGRAMS}; do
 	program_path="${DESTDIR}${program}"
-	printf "  CTFMERGE   %s\n" "${program_path}" >&2
-	chmod u+w "${program_path}"
-	${CTFMERGE} -l "${CONTAINER_VERSION}" \
-	    -o "${program_path}" \
-	    ${CTF_OBJECT_DIR}/*.ctf
+	if [[ $NEW_CTF_TOOLS == 'yes' ]]; then
+		printf "  ALTCTFCONV %s\n" "${program_path}" >&2
+		chmod u+w "${program_path}"
+		${ALTCTFCONVERT} -l "${CONTAINER_VERSION}" \
+		    -o "${program_path}" "${program_path}"
+	else
+		printf "  CTFMERGE   %s\n" "${program_path}" >&2
+		chmod u+w "${program_path}"
+		${CTFMERGE} -l "${CONTAINER_VERSION}" \
+		    -o "${program_path}" \
+		    ${CTF_OBJECT_DIR}/*.ctf
+	fi
+	if [[ -z $NO_STRIP_SOURCE_DEBUG ]]; then
+		printf "  STRIP      %s\n" "${program_path}" >&2
+		/usr/bin/strip -x "${program_path}"
+	fi
 done

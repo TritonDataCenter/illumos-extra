@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright 2015 Joyent, Inc.
 #
 # To build everything just run 'gmake' in this directory.
 #
@@ -143,6 +143,7 @@ $(SUBDIRS): $(DESTDIR)/usr/bin/gcc
 	    STRAP=$(STRAP) \
 	    CTFMERGE=$(CTFMERGE) \
 	    CTFCONVERT=$(CTFCONVERT) \
+	    ALTCTFCONVERT=$(ALTCTFCONVERT) \
 	    $(MAKE) DESTDIR=$(DESTDIR) install)
 
 install: $(SUBDIRS) gcc4 binutils
