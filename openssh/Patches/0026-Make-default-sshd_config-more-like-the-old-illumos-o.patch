@@ -1,7 +1,7 @@
-From 81fb7980aec1dc1afaf985ad568576a5935dd4e8 Mon Sep 17 00:00:00 2001
+From 00bf56bce6460604d4b7aceedbdcc1e47995914a Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 13:24:58 -0700
-Subject: [PATCH 25/30] Make default sshd_config more like the old illumos one
+Subject: [PATCH 26/36] Make default sshd_config more like the old illumos one
 
 ---
  sshd_config | 52 +++++++++++++++++++++++++++-------------------------
@@ -108,5 +108,5 @@ index 611656b..0048f98 100644
  #UseLogin no
  UsePrivilegeSeparation sandbox		# Default for new installations.
 -- 
-2.3.2 (Apple Git-55)
+2.5.4 (Apple Git-61)
 

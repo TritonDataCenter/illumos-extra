@@ -1,7 +1,7 @@
-From 3fddc0b5a5e0097d344a4f1593063fcd5f58e1f1 Mon Sep 17 00:00:00 2001
+From cc35e51bf002891245dfef25d15d9392e48c4c93 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Thu, 15 Oct 2015 16:02:37 -0700
-Subject: [PATCH 35/35] Let us put a fallback copy of DH moduli in a system
+Subject: [PATCH 35/36] Let us put a fallback copy of DH moduli in a system
  path
 
 Live distributions like SmartOS can't keep and update default
@@ -15,7 +15,7 @@ that if we can't find one in the SSHKEYDIR.
  3 files changed, 23 insertions(+), 12 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index a901323..672ff04 100644
+index 54e9724..5ea72a6 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -19,6 +19,7 @@ piddir=@piddir@
@@ -26,7 +26,7 @@ index a901323..672ff04 100644
  
  DESTDIR=
  VPATH=@srcdir@
-@@ -137,8 +138,8 @@ PATHSUBS	= \
+@@ -139,8 +140,8 @@ PATHSUBS	= \
  	-e 's|/etc/ssh/ssh_host_rsa_key|$(keydir)/ssh_host_rsa_key|g' \
  	-e 's|/etc/ssh/ssh_host_ed25519_key|$(keydir)/ssh_host_ed25519_key|g' \
  	-e 's|/var/run/sshd.pid|$(piddir)/sshd.pid|g' \
@@ -37,7 +37,7 @@ index a901323..672ff04 100644
  	-e 's|/etc/ssh/sshrc|$(sysconfdir)/sshrc|g' \
  	-e 's|/usr/X11R6/bin/xauth|$(XAUTH_PATH)|g' \
  	-e 's|/var/empty|$(PRIVSEP_PATH)|g' \
-@@ -361,6 +362,8 @@ install-files:
+@@ -363,6 +364,8 @@ install-files:
  	$(INSTALL) -m 555 smf/method.sh $(SMFMETHODDIR)/sshd
  	$(INSTALL) -m 444 smf/manifest.xml $(SMFNETMANIDIR)/ssh.xml
  	mkdir -p $(DESTDIR)$(keydir)
@@ -46,7 +46,7 @@ index a901323..672ff04 100644
  
  install-sysconf:
  	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then \
-@@ -376,16 +379,6 @@ install-sysconf:
+@@ -378,16 +381,6 @@ install-sysconf:
  	else \
  		echo "$(DESTDIR)$(sysconfdir)/sshd_config already exists, install will not overwrite"; \
  	fi
@@ -64,10 +64,10 @@ index a901323..672ff04 100644
  host-key: ssh-keygen$(EXEEXT)
  	@if [ -z "$(DESTDIR)" ] ; then \
 diff --git a/configure.ac b/configure.ac
-index 453b41e..7292731 100644
+index 0097431..c5da202 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4680,6 +4680,21 @@ AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
+@@ -4713,6 +4713,21 @@ AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
  	[Specify location of SSH host keys])
  AC_SUBST([keydir])
  
@@ -104,5 +104,5 @@ index 4c639ac..a1a0639 100644
  		logit("WARNING: %s does not exist, using fixed modulus",
  		    _PATH_DH_MODULI);
 -- 
-2.3.8 (Apple Git-58)
+2.5.4 (Apple Git-61)
 

@@ -1,7 +1,7 @@
-From 1c716f5328e99153a61c15b88de197bb7eb5cbd0 Mon Sep 17 00:00:00 2001
+From ea16f0f99ee08a9e14fd5d1760c7c091729d9e5a Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 12:19:47 -0700
-Subject: [PATCH 24/30] Add SMF manifest and method, and install them
+Subject: [PATCH 25/36] Add SMF manifest and method, and install them
 
 ---
  Makefile.in      |   6 ++
@@ -12,7 +12,7 @@ Subject: [PATCH 24/30] Add SMF manifest and method, and install them
  create mode 100644 smf/method.sh
 
 diff --git a/Makefile.in b/Makefile.in
-index 52e2d13..ce5d4e4 100644
+index b47d182..351b0ff 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -27,6 +27,8 @@ SFTP_SERVER=$(libexecdir)/sftp-server
@@ -24,7 +24,7 @@ index 52e2d13..ce5d4e4 100644
  PRIVSEP_PATH=@PRIVSEP_PATH@
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
-@@ -353,6 +355,10 @@ install-files:
+@@ -355,6 +357,10 @@ install-files:
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
  	ln -s ./ssh.1 $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
  	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d
@@ -340,5 +340,5 @@ index 0000000..e91ed55
 +exit $?
 \ No newline at end of file
 -- 
-2.3.2 (Apple Git-55)
+2.5.4 (Apple Git-61)
 

@@ -1,7 +1,7 @@
-From f568c53be03ac709ca490be5c5106e970973e6dc Mon Sep 17 00:00:00 2001
+From e8a3adbf44e6e4ddf1e2b92e4f4acd5c596d9538 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 3 Aug 2015 16:27:44 -0700
-Subject: [PATCH 19/30] PubKeyPlugin support
+Subject: [PATCH 21/35] PubKeyPlugin support
 
 This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called
@@ -227,5 +227,5 @@ index 2175645..80e152f 100644
  
  /* Information about the incoming connection as used by Match */
 -- 
-2.3.2 (Apple Git-55)
+2.5.4 (Apple Git-61)
 

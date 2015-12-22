@@ -1,7 +1,7 @@
-From c63d5afcea590ca480a0f3122e56c0559bd9a8f3 Mon Sep 17 00:00:00 2001
+From d1115fd9ade1c1bfd5976e42d5e048dffba49904 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:34 -0700
-Subject: [PATCH 06/30] GSS store creds for Solaris
+Subject: [PATCH 08/36] GSS store creds for Solaris
 
 ---
  configure.ac    |  3 +++
@@ -12,10 +12,10 @@ Subject: [PATCH 06/30] GSS store creds for Solaris
  5 files changed, 71 insertions(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index 9b05c30..81edc01 100644
+index b06cede..2985819 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -910,6 +910,9 @@ mips-sony-bsd|mips-sony-newsos4)
+@@ -939,6 +939,9 @@ mips-sony-bsd|mips-sony-newsos4)
  		],
  	)
  	TEST_SHELL=$SHELL	# let configure find us a capable shell
@@ -174,5 +174,5 @@ index 65ef7e8..3df50f8 100644
  #endif
  #ifdef USE_PAM
 -- 
-2.3.2 (Apple Git-55)
+2.5.4 (Apple Git-61)
 

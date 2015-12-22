@@ -1,7 +1,7 @@
-From 2be8047e24685b6a21c528c452c875822bae04a0 Mon Sep 17 00:00:00 2001
+From 8b825c2f01d7f53d03bf04ca5777f3e1664ad0e5 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:00 -0700
-Subject: [PATCH 08/30] Add DisableBanner option
+Subject: [PATCH 10/36] Add DisableBanner option
 
 #
 # This patch is to add a new DisableBanner option to the ssh client command,
@@ -178,5 +178,5 @@ index 7751031..95593b9 100644
  			len = 65536;
  		msg = xmalloc(len * 4 + 1); /* max expansion from strnvis() */
 -- 
-2.3.2 (Apple Git-55)
+2.5.4 (Apple Git-61)
 

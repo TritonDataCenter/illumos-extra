@@ -1,7 +1,7 @@
-From d78a5081159638c0ab4a4ae655ba5c6773ec5298 Mon Sep 17 00:00:00 2001
+From 4cb3a7bab551ec46a4a806f8a56ce7acfed6dc71 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:37:24 -0700
-Subject: [PATCH 15/30] GSS-API key exchange support
+Subject: [PATCH 16/36] GSS-API key exchange support
 
 ---
  Makefile.in    |   3 +-
@@ -35,7 +35,7 @@ Subject: [PATCH 15/30] GSS-API key exchange support
  create mode 100644 kexgsss.c
 
 diff --git a/Makefile.in b/Makefile.in
-index e19c665..29dc088 100644
+index 75a5f3d..49d06d5 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -87,6 +87,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
@@ -46,7 +46,7 @@ index e19c665..29dc088 100644
  	ssh-pkcs11.o smult_curve25519_ref.o \
  	poly1305.o chacha.o cipher-chachapoly.o \
  	ssh-ed25519.o digest-openssl.o digest-libc.o hmac.o \
-@@ -107,7 +108,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
+@@ -108,7 +109,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
  	auth-skey.o auth-bsdauth.o auth2-hostbased.o auth2-kbdint.o \
  	auth2-none.o auth2-passwd.o auth2-pubkey.o \
  	monitor_mm.o monitor.o monitor_wrap.o auth-krb5.o \
@@ -1937,5 +1937,5 @@ index c8d3cdd..47bd017 100644
  };
  
 -- 
-2.3.2 (Apple Git-55)
+2.5.4 (Apple Git-61)
 

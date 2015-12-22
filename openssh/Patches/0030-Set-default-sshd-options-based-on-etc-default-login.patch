@@ -1,7 +1,7 @@
-From cc91116e7676f57dd2afa3a8aa18dbd661e90e87 Mon Sep 17 00:00:00 2001
+From 704d24979b643f9661546d667d795993319d1a37 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 24 Aug 2015 18:57:27 -0700
-Subject: [PATCH 30/30] Set default sshd options based on /etc/default/login
+Subject: [PATCH 30/36] Set default sshd options based on /etc/default/login
 
 ---
  pathnames.h   |  1 +
@@ -143,5 +143,5 @@ index 0c07fd1..cce3a5a 100644
  Specifies the destinations to which TCP port forwarding is permitted.
  The forwarding specification must be one of the following forms:
 -- 
-2.3.2 (Apple Git-55)
+2.5.4 (Apple Git-61)
 
