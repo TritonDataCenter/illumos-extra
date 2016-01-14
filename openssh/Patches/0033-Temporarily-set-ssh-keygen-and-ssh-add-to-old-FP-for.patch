@@ -1,4 +1,4 @@
-From daed4aa8653532bec88ab798ea841d499b7bb98c Mon Sep 17 00:00:00 2001
+From 59c773c11e5c0bf249e270fc4658513834a754e1 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 9 Sep 2015 10:36:05 -0700
 Subject: [PATCH 33/36] Temporarily set ssh-keygen and ssh-add to old FP format

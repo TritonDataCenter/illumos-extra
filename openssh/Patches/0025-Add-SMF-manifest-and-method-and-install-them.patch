@@ -1,4 +1,4 @@
-From ea16f0f99ee08a9e14fd5d1760c7c091729d9e5a Mon Sep 17 00:00:00 2001
+From 06a23d2cea6e57cca82c47e14a7b6d038b8e4286 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 12:19:47 -0700
 Subject: [PATCH 25/36] Add SMF manifest and method, and install them
@@ -12,7 +12,7 @@ Subject: [PATCH 25/36] Add SMF manifest and method, and install them
  create mode 100644 smf/method.sh
 
 diff --git a/Makefile.in b/Makefile.in
-index b47d182..351b0ff 100644
+index 66c4585..7130542 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -27,6 +27,8 @@ SFTP_SERVER=$(libexecdir)/sftp-server
@@ -24,7 +24,7 @@ index b47d182..351b0ff 100644
  PRIVSEP_PATH=@PRIVSEP_PATH@
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
-@@ -355,6 +357,10 @@ install-files:
+@@ -359,6 +361,10 @@ install-files:
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
  	ln -s ./ssh.1 $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
  	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d

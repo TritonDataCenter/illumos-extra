@@ -1,4 +1,4 @@
-From 25dacc8aaa5e100ffa6fc2ff995b1d88cb31aec9 Mon Sep 17 00:00:00 2001
+From 5d88117bbbf58eab0895f532202ff1c46016ec0f Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:38:41 -0700
 Subject: [PATCH 19/36] Don't call do_pam_setcred twice

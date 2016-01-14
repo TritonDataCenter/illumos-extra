@@ -22,7 +22,7 @@
 # Copyright 2015 Joyent, Inc.
 #
 
-VER =	openssh-portable-7.1p1
+VER =	openssh-portable-7.1p2
 
 include ../Makefile.defs
 

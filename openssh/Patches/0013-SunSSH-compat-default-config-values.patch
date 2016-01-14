@@ -1,4 +1,4 @@
-From 3feb3682867245fe7125ad8beb005ea1738cb977 Mon Sep 17 00:00:00 2001
+From 6286276c8442faf6514f8f8a6ba5993193fb28bb Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:22 -0700
 Subject: [PATCH 13/36] SunSSH compat default config values
@@ -23,7 +23,7 @@ Subject: [PATCH 13/36] SunSSH compat default config values
  4 files changed, 24 insertions(+), 8 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
-index a5c8854..0b48134 100644
+index d0f4068..db37809 100644
 --- a/readconf.c
 +++ b/readconf.c
 @@ -1751,7 +1751,11 @@ fill_default_options(Options * options)

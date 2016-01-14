@@ -1,4 +1,4 @@
-From 288956f207bc1244bfbb553742c60132ac162902 Mon Sep 17 00:00:00 2001
+From 38fc11d61103a3fa75e72b111abaab812dac8061 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 16 Sep 2015 10:54:13 -0700
 Subject: [PATCH 34/36] Restore tcpwrappers/libwrap support
@@ -112,7 +112,7 @@ index 3753f90..345c08f 100644
  .Xr moduli 4 ,
  .Xr sshd_config 4 ,
 diff --git a/sshd.c b/sshd.c
-index 1aa0ef8..2f54ef1 100644
+index f19b398..c32c078 100644
 --- a/sshd.c
 +++ b/sshd.c
 @@ -126,6 +126,13 @@
@@ -129,7 +129,7 @@ index 1aa0ef8..2f54ef1 100644
  #ifndef O_NOCTTY
  #define O_NOCTTY	0
  #endif
-@@ -2160,6 +2167,24 @@ main(int ac, char **av)
+@@ -2166,6 +2173,24 @@ main(int ac, char **av)
  #ifdef SSH_AUDIT_EVENTS
  	audit_connection_from(remote_ip, remote_port);
  #endif

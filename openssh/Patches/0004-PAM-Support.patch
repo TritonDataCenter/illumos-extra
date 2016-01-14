@@ -1,4 +1,4 @@
-From f53e203efc209e1779bdaa16d5d96583cf181977 Mon Sep 17 00:00:00 2001
+From c57262f2123c44f2e306df153d6a3be1558ba228 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:19 -0700
 Subject: [PATCH 04/36] PAM Support

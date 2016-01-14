@@ -1,4 +1,4 @@
-From e385c916d32af6b2fc7b093cdc1b9d9b6771d7e0 Mon Sep 17 00:00:00 2001
+From 3940b5d3e954d472b52da4aed4f8e6f3725411d2 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 3 Aug 2015 16:27:44 -0700
 Subject: [PATCH 21/36] PubKeyPlugin support

@@ -1,4 +1,4 @@
-From 9d30219e37db1d536f0cb7554773aaa38e611bde Mon Sep 17 00:00:00 2001
+From 9406fc5e9296bbba9fe16433d0fea6c0fd40abd7 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:33 -0700
 Subject: [PATCH 14/36] Deprecate SunSSH compatible server options

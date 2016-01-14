@@ -1,6 +1,6 @@
-From 524290bae2746b0f62a9fa33b9d53721c5ef28ae Mon Sep 17 00:00:00 2001
+From f20520c20ef1f0091222188c481928b92c5ac9d4 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
-Date: Tue, 22 Dec 2015 14:30:19 -0800
+Date: Thu, 14 Jan 2016 10:12:07 -0800
 Subject: [PATCH 1/2] SmartOS local: make dtrace lib 32-bit
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH 1/2] SmartOS local: make dtrace lib 32-bit
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 5ea72a6..ebfe819 100644
+index afe15c8..6462088 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -28,7 +28,7 @@ ASKPASS_PROGRAM=$(libexecdir)/ssh-askpass
@@ -28,8 +28,8 @@ index 5ea72a6..ebfe819 100644
 +	/usr/sbin/dtrace -G -xnolibs -s $(srcdir)/sftp_provider.d \
  	    sftp-server.o -o sftp_provider.o
  
- clean:	regressclean
-@@ -358,7 +358,7 @@ install-files:
+ # special case for sftp-server.o, it includes sftp_provider.h
+@@ -362,7 +362,7 @@ install-files:
  	ln -s ./ssh$(EXEEXT) $(DESTDIR)$(bindir)/slogin
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
  	ln -s ./ssh.1 $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1

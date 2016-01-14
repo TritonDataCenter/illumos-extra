@@ -1,4 +1,4 @@
-From caa8ae61331a47424fd53b69707477ef99838fb8 Mon Sep 17 00:00:00 2001
+From b60fe491735349ba901b371dc8a0d1cd5ab163da Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:37:01 -0700
 Subject: [PATCH 15/36] Solaris Auditing support
@@ -70,7 +70,7 @@ index cbbb2df..765d4aa 100644
  --with-pam enables PAM support. If PAM support is compiled in, it must
  also be enabled in sshd_config (refer to the UsePAM directive).
 diff --git a/Makefile.in b/Makefile.in
-index ca9e865..75a5f3d 100644
+index 121a261..62e6a84 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -101,7 +101,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o sshtty.o \
@@ -719,10 +719,10 @@ index fa0ccba..f2c1678 100644
  #  define __func__ __FUNCTION__
  #elif !defined(HAVE___func__)
 diff --git a/sshd.c b/sshd.c
-index 5a00ae2..f577f75 100644
+index 7e519d4..87032ec 100644
 --- a/sshd.c
 +++ b/sshd.c
-@@ -2228,7 +2228,9 @@ main(int ac, char **av)
+@@ -2234,7 +2234,9 @@ main(int ac, char **av)
  	}
  
  #ifdef SSH_AUDIT_EVENTS
@@ -732,7 +732,7 @@ index 5a00ae2..f577f75 100644
  #endif
  
  #ifdef GSSAPI
-@@ -2258,6 +2260,10 @@ main(int ac, char **av)
+@@ -2264,6 +2266,10 @@ main(int ac, char **av)
  		do_pam_session();
  	}
  #endif

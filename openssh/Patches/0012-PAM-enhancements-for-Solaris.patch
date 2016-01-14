@@ -1,4 +1,4 @@
-From 9faacf7e5e0b9a9be2808fb635856ccb0c3ae1f7 Mon Sep 17 00:00:00 2001
+From 8aa9debff40660ed691f984b805e513f3f54334b Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:19 -0700
 Subject: [PATCH 12/36] PAM enhancements for Solaris
@@ -620,10 +620,10 @@ index ada4f25..3753f90 100644
  .Xr scp 1 ,
  .Xr sftp 1 ,
 diff --git a/sshd.c b/sshd.c
-index 3df50f8..5a00ae2 100644
+index 84e1dee..7e519d4 100644
 --- a/sshd.c
 +++ b/sshd.c
-@@ -2159,6 +2159,11 @@ main(int ac, char **av)
+@@ -2165,6 +2165,11 @@ main(int ac, char **av)
  
  	sshd_exchange_identification(sock_in, sock_out);
  

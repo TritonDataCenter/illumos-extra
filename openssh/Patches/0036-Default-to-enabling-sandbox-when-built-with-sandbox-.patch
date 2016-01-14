@@ -1,4 +1,4 @@
-From ce0180f1b3b39d5ffd0de393bfd9a04360d8fd82 Mon Sep 17 00:00:00 2001
+From 98fa54cc412790040fa5232fffae6c82e5c78022 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Tue, 22 Dec 2015 17:42:12 -0800
 Subject: [PATCH 36/36] Default to enabling "sandbox" when built

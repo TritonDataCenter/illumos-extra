@@ -1,4 +1,4 @@
-From f3fe6893dcb3ba66ae7523a63c0f4c9e96e013a4 Mon Sep 17 00:00:00 2001
+From a568c15ab17ad86878c2260ff8d4f8f6c64924d5 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 5 Aug 2015 10:57:08 -0700
 Subject: [PATCH 23/36] Hack around umac_ctx name-punning
@@ -18,7 +18,7 @@ second build of umac.c.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 49d06d5..b47d182 100644
+index 0148742..66c4585 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -228,7 +228,7 @@ umac128.o:	umac.c

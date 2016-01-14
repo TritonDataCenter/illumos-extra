@@ -1,4 +1,4 @@
-From 72259112c9eb2e2141c62355873faf68fe62484b Mon Sep 17 00:00:00 2001
+From b09b8dcdda058d6f237baf50810f13e5b6aa47bb Mon Sep 17 00:00:00 2001
 From: Damien Miller <djm@mindrot.org>
 Date: Fri, 8 Jan 2016 14:24:56 +1100
 Subject: [PATCH 02/36] Support Illumos/Solaris fine-grained privileges

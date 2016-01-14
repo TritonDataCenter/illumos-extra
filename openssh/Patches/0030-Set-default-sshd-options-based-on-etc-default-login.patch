@@ -1,4 +1,4 @@
-From 704d24979b643f9661546d667d795993319d1a37 Mon Sep 17 00:00:00 2001
+From 4e36108ba3e42eb1c4d84b6e31d21a5ca77f33a1 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 24 Aug 2015 18:57:27 -0700
 Subject: [PATCH 30/36] Set default sshd options based on /etc/default/login

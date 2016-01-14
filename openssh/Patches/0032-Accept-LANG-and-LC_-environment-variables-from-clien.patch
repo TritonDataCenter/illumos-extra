@@ -1,4 +1,4 @@
-From c79e786f3da391fdc95056d5cd9bfb56ad963d4d Mon Sep 17 00:00:00 2001
+From 71b520b3fdbd211fc92f455903a3c218250f44b8 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 4 Sep 2015 11:04:30 -0700
 Subject: [PATCH 32/36] Accept LANG and LC_* environment variables from clients
@@ -78,7 +78,7 @@ index f8122aa..245f2fd 100644
  			dst->n[dst->num_n] = xstrdup(src->n[dst->num_n]); \
  	} \
 diff --git a/session.c b/session.c
-index 3b006c7..3429233 100644
+index ab0ac1c..88cd9f0 100644
 --- a/session.c
 +++ b/session.c
 @@ -1019,6 +1019,18 @@ child_set_env(char ***envp, u_int *envsizep, const char *name,
