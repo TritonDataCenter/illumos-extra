@@ -19,10 +19,10 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2015 Joyent, Inc.
+# Copyright 2016 Joyent, Inc.
 #
 
-VER =	ntp-4.2.8p4
+VER =	ntp-4.2.8p5
 
 include ../Makefile.defs
 
