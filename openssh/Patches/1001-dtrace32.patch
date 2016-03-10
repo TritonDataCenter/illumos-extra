@@ -1,6 +1,6 @@
-From f20520c20ef1f0091222188c481928b92c5ac9d4 Mon Sep 17 00:00:00 2001
+From abeab0b2b8f99ea5cf74943f9437d7ae2268f636 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
-Date: Thu, 14 Jan 2016 10:12:07 -0800
+Date: Tue, 22 Dec 2015 14:30:19 -0800
 Subject: [PATCH 1/2] SmartOS local: make dtrace lib 32-bit
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH 1/2] SmartOS local: make dtrace lib 32-bit
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index afe15c8..6462088 100644
+index 5e973f1..7d5d93c 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -28,7 +28,7 @@ ASKPASS_PROGRAM=$(libexecdir)/ssh-askpass
@@ -20,7 +20,7 @@ index afe15c8..6462088 100644
  SMFMETHODDIR=$(DESTDIR)/lib/svc/method
  SMFNETMANIDIR=$(DESTDIR)/lib/svc/manifest/network
  PRIVSEP_PATH=@PRIVSEP_PATH@
-@@ -240,7 +240,7 @@ sftp_provider.h: $(srcdir)/sftp_provider.d
+@@ -238,7 +238,7 @@ sftp_provider.h: $(srcdir)/sftp_provider.d
  	    -o $(srcdir)/sftp_provider.h
  
  sftp_provider.o: sftp_provider.d sftp_provider.h sftp-server.o
@@ -29,10 +29,10 @@ index afe15c8..6462088 100644
  	    sftp-server.o -o sftp_provider.o
  
  # special case for sftp-server.o, it includes sftp_provider.h
-@@ -362,7 +362,7 @@ install-files:
- 	ln -s ./ssh$(EXEEXT) $(DESTDIR)$(bindir)/slogin
- 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
- 	ln -s ./ssh.1 $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
+@@ -356,7 +356,7 @@ install-files:
+ 	$(INSTALL) -m 644 sftp-server.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/sftp-server.1m
+ 	$(INSTALL) -m 644 ssh-keysign.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-keysign.1m
+ 	$(INSTALL) -m 644 ssh-pkcs11-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-pkcs11-helper.1m
 -	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d
 +	mkdir -p $(ROOTDLIBDIR) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR)/sftp.d
  	$(srcdir)/mkinstalldirs $(SMFMETHODDIR)

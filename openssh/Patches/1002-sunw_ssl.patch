@@ -1,6 +1,6 @@
-From 41e3209f0d745802af5dec96b51bca9b07c2c8ab Mon Sep 17 00:00:00 2001
+From 7117609d7dcc4aac30f228a31c291dddeece44bd Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
-Date: Thu, 14 Jan 2016 10:12:49 -0800
+Date: Tue, 22 Dec 2015 14:31:25 -0800
 Subject: [PATCH 2/2] SmartOS local: use sunw_ssl lib from platform
 
 ---
@@ -16,10 +16,10 @@ Subject: [PATCH 2/2] SmartOS local: use sunw_ssl lib from platform
  9 files changed, 35 insertions(+), 35 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index c5da202..a94f8b2 100644
+index 42e24e8..4662a07 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -2414,8 +2414,8 @@ AC_ARG_WITH([ssl-engine],
+@@ -2419,8 +2419,8 @@ AC_ARG_WITH([ssl-engine],
  )
  
  if test "x$openssl" = "xyes" ; then
@@ -30,7 +30,7 @@ index c5da202..a94f8b2 100644
  		[Define if your ssl headers are included
  		with #include <openssl/header.h>])],
  		[
-@@ -2428,7 +2428,7 @@ if test "x$openssl" = "xyes" ; then
+@@ -2433,7 +2433,7 @@ if test "x$openssl" = "xyes" ; then
  			CPPFLAGS="-I/usr/local/ssl/include ${saved_CPPFLAGS}"
  			AC_CHECK_HEADER([openssl/opensslv.h], ,
  			    [AC_MSG_ERROR([*** OpenSSL headers missing - please install first or check config.log ***])])
@@ -39,7 +39,7 @@ index c5da202..a94f8b2 100644
  				[
  					AC_MSG_ERROR([*** Can't find recent OpenSSL libcrypto (see config.log for details) ***])
  				]
-@@ -2572,16 +2572,16 @@ if test "x$openssl" = "xyes" ; then
+@@ -2580,16 +2580,16 @@ if test "x$openssl" = "xyes" ; then
  	)
  
  	AC_CHECK_FUNCS([ \
@@ -66,7 +66,7 @@ index c5da202..a94f8b2 100644
  	])
  
  	if test "x$openssl_engine" = "xyes" ; then
-@@ -2666,8 +2666,8 @@ if test "x$openssl" = "xyes" ; then
+@@ -2674,8 +2674,8 @@ if test "x$openssl" = "xyes" ; then
  		]
  	)
  
@@ -77,7 +77,7 @@ index c5da202..a94f8b2 100644
  		    [Define if libcrypto has EVP_CIPHER_CTX_ctrl])])
  
  	AC_MSG_CHECKING([if EVP_DigestUpdate returns an int])
-@@ -2703,7 +2703,7 @@ if test "x$openssl" = "xyes" ; then
+@@ -2711,7 +2711,7 @@ if test "x$openssl" = "xyes" ; then
  	AC_CHECK_FUNCS([crypt DES_crypt])
  
  	# Search for SHA256 support in libc and/or OpenSSL
@@ -86,7 +86,7 @@ index c5da202..a94f8b2 100644
  	    [unsupported_algorithms="$unsupported_algorithms \
  		hmac-sha2-256 hmac-sha2-512 \
  		diffie-hellman-group-exchange-sha256 \
-@@ -2711,7 +2711,7 @@ if test "x$openssl" = "xyes" ; then
+@@ -2719,7 +2719,7 @@ if test "x$openssl" = "xyes" ; then
  	     ]
  	)
  	# Search for RIPE-MD support in OpenSSL
@@ -119,10 +119,10 @@ index 13b63c2..c6fe9f9 100644
  struct ssh_digest_ctx {
  	int alg;
 diff --git a/kex.c b/kex.c
-index ad0598e..33e3bee 100644
+index 25bc129..1eda52d 100644
 --- a/kex.c
 +++ b/kex.c
-@@ -60,7 +60,7 @@
+@@ -59,7 +59,7 @@
  #endif
  
  #if OPENSSL_VERSION_NUMBER >= 0x00907000L
@@ -131,7 +131,7 @@ index ad0598e..33e3bee 100644
  # define evp_ssh_sha256 EVP_sha256
  # else
  extern const EVP_MD *evp_ssh_sha256(void);
-@@ -82,9 +82,9 @@ static const struct kexalg kexalgs[] = {
+@@ -94,9 +94,9 @@ static const struct kexalg kexalgs[] = {
  	{ KEX_DH1, KEX_DH_GRP1_SHA1, 0, SSH_DIGEST_SHA1 },
  	{ KEX_DH14, KEX_DH_GRP14_SHA1, 0, SSH_DIGEST_SHA1 },
  	{ KEX_DHGEX_SHA1, KEX_DH_GEX_SHA1, 0, SSH_DIGEST_SHA1 },
@@ -143,7 +143,7 @@ index ad0598e..33e3bee 100644
  #ifdef OPENSSL_HAS_ECC
  	{ KEX_ECDH_SHA2_NISTP256, KEX_ECDH_SHA2,
  	    NID_X9_62_prime256v1, SSH_DIGEST_SHA256 },
-@@ -96,9 +96,9 @@ static const struct kexalg kexalgs[] = {
+@@ -108,9 +108,9 @@ static const struct kexalg kexalgs[] = {
  # endif /* OPENSSL_HAS_NISTP521 */
  #endif /* OPENSSL_HAS_ECC */
  #endif /* WITH_OPENSSL */
@@ -198,7 +198,7 @@ index 8c1b3b9..40c2dc8 100644
 +#endif /* !defined(HAVE_SUNW_EVP_SHA256) && (OPENSSL_VERSION_NUMBER >= 0x00907000L) */
  
 diff --git a/myproposal.h b/myproposal.h
-index 5041361..4989518 100644
+index 7b15897..f2dbe11 100644
 --- a/myproposal.h
 +++ b/myproposal.h
 @@ -66,7 +66,7 @@
