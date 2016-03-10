@@ -1,0 +1,126 @@
+From 8d4ac55b33f935f870999e9ccb40da76b7174abf Mon Sep 17 00:00:00 2001
+From: Alex Wilson <alex.wilson@joyent.com>
+Date: Fri, 7 Aug 2015 13:32:53 -0700
+Subject: [PATCH 26/34] Add --with-key-dir configure option to place SSH host
+ keys
+
+---
+ Makefile.in  | 12 +++++++-----
+ configure.ac | 16 ++++++++++++++++
+ pathnames.h  | 16 ++++++++++------
+ 3 files changed, 33 insertions(+), 11 deletions(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 4a05465..c70f71f 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -18,6 +18,7 @@ sysconfdir=@sysconfdir@
+ piddir=@piddir@
+ srcdir=@srcdir@
+ top_srcdir=@top_srcdir@
++keydir=@keydir@
+ 
+ DESTDIR=
+ VPATH=@srcdir@
+@@ -130,11 +131,11 @@ PATHSUBS	= \
+ 	-e 's|/etc/ssh/sshd_config|$(sysconfdir)/sshd_config|g' \
+ 	-e 's|/usr/libexec|$(libexecdir)|g' \
+ 	-e 's|/etc/shosts.equiv|$(sysconfdir)/shosts.equiv|g' \
+-	-e 's|/etc/ssh/ssh_host_key|$(sysconfdir)/ssh_host_key|g' \
+-	-e 's|/etc/ssh/ssh_host_ecdsa_key|$(sysconfdir)/ssh_host_ecdsa_key|g' \
+-	-e 's|/etc/ssh/ssh_host_dsa_key|$(sysconfdir)/ssh_host_dsa_key|g' \
+-	-e 's|/etc/ssh/ssh_host_rsa_key|$(sysconfdir)/ssh_host_rsa_key|g' \
+-	-e 's|/etc/ssh/ssh_host_ed25519_key|$(sysconfdir)/ssh_host_ed25519_key|g' \
++	-e 's|/etc/ssh/ssh_host_key|$(keydir)/ssh_host_key|g' \
++	-e 's|/etc/ssh/ssh_host_ecdsa_key|$(keydir)/ssh_host_ecdsa_key|g' \
++	-e 's|/etc/ssh/ssh_host_dsa_key|$(keydir)/ssh_host_dsa_key|g' \
++	-e 's|/etc/ssh/ssh_host_rsa_key|$(keydir)/ssh_host_rsa_key|g' \
++	-e 's|/etc/ssh/ssh_host_ed25519_key|$(keydir)/ssh_host_ed25519_key|g' \
+ 	-e 's|/var/run/sshd.pid|$(piddir)/sshd.pid|g' \
+ 	-e 's|/etc/moduli|$(sysconfdir)/moduli|g' \
+ 	-e 's|/etc/ssh/moduli|$(sysconfdir)/moduli|g' \
+@@ -359,6 +360,7 @@ install-files:
+ 	$(srcdir)/mkinstalldirs $(SMFNETMANIDIR)
+ 	$(INSTALL) -m 555 smf/method.sh $(SMFMETHODDIR)/sshd
+ 	$(INSTALL) -m 444 smf/manifest.xml $(SMFNETMANIDIR)/ssh.xml
++	mkdir -p $(DESTDIR)$(keydir)
+ 
+ install-sysconf:
+ 	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then \
+diff --git a/configure.ac b/configure.ac
+index 4192a45..1846eb2 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -4655,6 +4655,20 @@ AC_DEFINE_UNQUOTED([_PATH_SSH_PIDDIR], ["$piddir"],
+ 	[Specify location of ssh.pid])
+ AC_SUBST([piddir])
+ 
++keydir=$sysconfdir
++AC_ARG_WITH([key-dir],
++	[  --with-key-dir=PATH      Specify location of SSH host keys],
++	[
++		if test -n "$withval"  &&  test "x$withval" != "xno"  &&  \
++		    test "x${withval}" != "xyes"; then
++			keydir=$withval
++		fi
++	]
++)
++AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
++	[Specify location of SSH host keys])
++AC_SUBST([keydir])
++
+ dnl allow user to disable some login recording features
+ AC_ARG_ENABLE([lastlog],
+ 	[  --disable-lastlog       disable use of lastlog even if detected [no]],
+@@ -4959,12 +4973,14 @@ G=`eval echo ${piddir}` ; G=`eval echo ${G}`
+ H=`eval echo ${PRIVSEP_PATH}` ; H=`eval echo ${H}`
+ I=`eval echo ${user_path}` ; I=`eval echo ${I}`
+ J=`eval echo ${superuser_path}` ; J=`eval echo ${J}`
++K=`eval echo ${keydir}` ; K=`eval echo ${K}`
+ 
+ echo ""
+ echo "OpenSSH has been configured with the following options:"
+ echo "                     User binaries: $B"
+ echo "                   System binaries: $C"
+ echo "               Configuration files: $D"
++echo "                   Keys and moduli: $K"
+ echo "                   Askpass program: $E"
+ echo "                      Manual pages: $F"
+ echo "                          PID file: $G"
+diff --git a/pathnames.h b/pathnames.h
+index ec89fc6..0b2281b 100644
+--- a/pathnames.h
++++ b/pathnames.h
+@@ -22,6 +22,10 @@
+ #define _PATH_SSH_PIDDIR		"/var/run"
+ #endif
+ 
++#ifndef SSHKEYDIR
++#define SSHKEYDIR			SSHDIR
++#endif
++
+ /*
+  * System-wide file containing host keys of known hosts.  This file should be
+  * world-readable.
+@@ -36,12 +40,12 @@
+  */
+ #define _PATH_SERVER_CONFIG_FILE	SSHDIR "/sshd_config"
+ #define _PATH_HOST_CONFIG_FILE		SSHDIR "/ssh_config"
+-#define _PATH_HOST_KEY_FILE		SSHDIR "/ssh_host_key"
+-#define _PATH_HOST_DSA_KEY_FILE		SSHDIR "/ssh_host_dsa_key"
+-#define _PATH_HOST_ECDSA_KEY_FILE	SSHDIR "/ssh_host_ecdsa_key"
+-#define _PATH_HOST_ED25519_KEY_FILE	SSHDIR "/ssh_host_ed25519_key"
+-#define _PATH_HOST_RSA_KEY_FILE		SSHDIR "/ssh_host_rsa_key"
+-#define _PATH_DH_MODULI			SSHDIR "/moduli"
++#define _PATH_HOST_KEY_FILE		SSHKEYDIR "/ssh_host_key"
++#define _PATH_HOST_DSA_KEY_FILE		SSHKEYDIR "/ssh_host_dsa_key"
++#define _PATH_HOST_ECDSA_KEY_FILE	SSHKEYDIR "/ssh_host_ecdsa_key"
++#define _PATH_HOST_ED25519_KEY_FILE	SSHKEYDIR "/ssh_host_ed25519_key"
++#define _PATH_HOST_RSA_KEY_FILE		SSHKEYDIR "/ssh_host_rsa_key"
++#define _PATH_DH_MODULI			SSHKEYDIR "/moduli"
+ /* Backwards compatibility */
+ #define _PATH_DH_PRIMES			SSHDIR "/primes"
+ 
+-- 
+2.5.4 (Apple Git-61)
+

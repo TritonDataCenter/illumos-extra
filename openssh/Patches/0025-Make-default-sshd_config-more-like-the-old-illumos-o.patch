@@ -1,0 +1,112 @@
+From d4ee7fdb427a79b4013370822c50d49d1b2ffeb1 Mon Sep 17 00:00:00 2001
+From: Alex Wilson <alex.wilson@joyent.com>
+Date: Fri, 7 Aug 2015 13:24:58 -0700
+Subject: [PATCH 25/34] Make default sshd_config more like the old illumos one
+
+---
+ sshd_config | 52 +++++++++++++++++++++++++++-------------------------
+ 1 file changed, 27 insertions(+), 25 deletions(-)
+
+diff --git a/sshd_config b/sshd_config
+index 7322872..05317eb 100644
+--- a/sshd_config
++++ b/sshd_config
+@@ -10,7 +10,7 @@
+ # possible, but leave them commented.  Uncommented options override the
+ # default value.
+ 
+-#Port 22
++Port 22
+ #AddressFamily any
+ #ListenAddress 0.0.0.0
+ #ListenAddress ::
+@@ -21,10 +21,10 @@
+ # HostKey for protocol version 1
+ #HostKey /etc/ssh/ssh_host_key
+ # HostKeys for protocol version 2
+-#HostKey /etc/ssh/ssh_host_rsa_key
+-#HostKey /etc/ssh/ssh_host_dsa_key
+-#HostKey /etc/ssh/ssh_host_ecdsa_key
+-#HostKey /etc/ssh/ssh_host_ed25519_key
++HostKey /var/ssh/ssh_host_rsa_key
++HostKey /var/ssh/ssh_host_dsa_key
++HostKey /var/ssh/ssh_host_ecdsa_key
++HostKey /var/ssh/ssh_host_ed25519_key
+ 
+ # Lifetime and size of ephemeral version 1 server key
+ #KeyRegenerationInterval 1h
+@@ -35,13 +35,13 @@
+ 
+ # Logging
+ # obsoletes QuietMode and FascistLogging
+-#SyslogFacility AUTH
+-#LogLevel INFO
++SyslogFacility AUTH
++LogLevel INFO
+ 
+ # Authentication:
+ 
+ #LoginGraceTime 2m
+-#PermitRootLogin prohibit-password
++PermitRootLogin without-password
+ #StrictModes yes
+ #MaxAuthTries 6
+ #MaxSessions 10
+@@ -69,8 +69,8 @@ AuthorizedKeysFile	.ssh/authorized_keys
+ #IgnoreRhosts yes
+ 
+ # To disable tunneled clear text passwords, change to no here!
+-#PasswordAuthentication yes
+-#PermitEmptyPasswords no
++PasswordAuthentication yes
++PermitEmptyPasswords no
+ 
+ # Change to no to disable s/key passwords
+ #ChallengeResponseAuthentication yes
+@@ -86,26 +86,28 @@ AuthorizedKeysFile	.ssh/authorized_keys
+ #GSSAPICleanupCredentials yes
+ #GSSAPIKeyExchange yes
+ 
+-# Set this to 'yes' to enable PAM authentication, account processing,
+-# and session processing. If this is enabled, PAM authentication will
+-# be allowed through the ChallengeResponseAuthentication and
+-# PasswordAuthentication.  Depending on your PAM configuration,
+-# PAM authentication via ChallengeResponseAuthentication may bypass
+-# the setting of "PermitRootLogin without-password".
+-# If you just want the PAM account and session checks to run without
+-# PAM authentication, then enable this but set PasswordAuthentication
+-# and ChallengeResponseAuthentication to 'no'.
+-#UsePAM no
++# On Illumos OpenSSH will always use PAM for authentication.
++# This config option is valid but will have no effect.
++#UsePAM yes
++
++# KeepAlive specifies whether keep alive messages are sent to the client.
++# See sshd(1) for detailed description of what this means.
++# Note that the client may also be sending keep alive messages to the server.
++KeepAlive yes
+ 
+ #AllowAgentForwarding yes
+ #AllowTcpForwarding yes
+ #GatewayPorts no
+-#X11Forwarding no
+-#X11DisplayOffset 10
+-#X11UseLocalhost yes
++X11Forwarding yes
++X11DisplayOffset 10
++X11UseLocalhost yes
+ #PermitTTY yes
+-#PrintMotd yes
+-#PrintLastLog yes
++
++# Should sshd print the /etc/motd file and check for mail.
++# On Solaris it is assumed that the login shell will do these (eg /etc/profile).
++PrintMotd no
++PrintLastLog no
++
+ #TCPKeepAlive yes
+ #UseLogin no
+ #UsePrivilegeSeparation sandbox
+-- 
+2.5.4 (Apple Git-61)
+
