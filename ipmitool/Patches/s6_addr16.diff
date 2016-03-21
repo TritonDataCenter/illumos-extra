@@ -1,7 +1,8 @@
-diff -ur ipmitool-1.8.14/src/plugins/ipmi_intf.c ipmitool-1.8.14.N/src/plugins/ipmi_intf.c
---- ipmitool-1.8.14/src/plugins/ipmi_intf.c	2014-04-17 19:13:42.000000000 +0000
-+++ ipmitool-1.8.14.N/src/plugins/ipmi_intf.c	2014-05-09 01:17:45.847307379 +0000
-@@ -464,10 +464,12 @@
+diff --git a/src/plugins/ipmi_intf.c b/src/plugins/ipmi_intf.c
+index a84237e..621a235 100644
+--- a/src/plugins/ipmi_intf.c
++++ b/src/plugins/ipmi_intf.c
+@@ -477,10 +477,12 @@ ipmi_intf_socket_connect(struct ipmi_intf * intf)
  							 * byte. See also this page:
  							 * http://www.freebsd.org/doc/en/books/developers-handbook/ipv6.html
  							 */

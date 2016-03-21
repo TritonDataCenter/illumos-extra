@@ -1,6 +1,7 @@
-diff -ur ipmitool-1.8.14/lib/ipmi_hpmfwupg.c ipmitool-1.8.14.N/lib/ipmi_hpmfwupg.c
---- ipmitool-1.8.14/lib/ipmi_hpmfwupg.c	2014-04-17 19:13:42.000000000 +0000
-+++ ipmitool-1.8.14.N/lib/ipmi_hpmfwupg.c	2014-05-09 01:19:10.569689015 +0000
+diff --git a/lib/ipmi_hpmfwupg.c b/lib/ipmi_hpmfwupg.c
+index fbb5a62..7f6bc49 100644
+--- a/lib/ipmi_hpmfwupg.c
++++ b/lib/ipmi_hpmfwupg.c
 @@ -41,6 +41,7 @@
  #include <stdio.h>
  #include <time.h>
