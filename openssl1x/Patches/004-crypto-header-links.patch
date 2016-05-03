@@ -1,0 +1,54 @@
+diff --git a/Configure b/Configure
+index c79365f..223637d 100755
+--- a/Configure
++++ b/Configure
+@@ -1617,6 +1617,8 @@ unlink("$Makefile.new") || die "unable to remove old $Makefile.new:$!\n" if -e "
+ open(OUT,">$Makefile.new") || die "unable to create $Makefile.new:$!\n";
+ print OUT "### Generated automatically from Makefile.org by Configure.\n\n";
+ my $sdirs=0;
++my $skipdirs=0;
++my @skipped=();
+ while (<IN>)
+ 	{
+ 	chomp;
+@@ -1624,9 +1626,11 @@ while (<IN>)
+ 	if ($sdirs) {
+ 		my $dir;
+ 		foreach $dir (@skip) {
++			push @skipped, $dir if (/$dir\s/ || /$dir$/);
+ 			s/(\s)$dir /$1/;
+ 			s/\s$dir$//;
+ 			}
++		$skipdirs = 1 unless (/\\$/);
+ 		}
+ 	$sdirs = 0 unless /\\$/;
+         s/engines // if (/^DIRS=/ && $disabled{"engine"});
+@@ -1718,6 +1722,15 @@ while (<IN>)
+ 		}
+ 	s/^SHARED_LDFLAGS=.*/SHARED_LDFLAGS=$shared_ldflag/;
+ 	print OUT $_."\n";
++	if ($skipdirs) {
++		my $dir;
++		print OUT "SKIPDIRS= \\\n\t";
++		foreach $dir (@skipped) {
++			print OUT " " . $dir;
++			}
++		print OUT "\n";
++		}
++	$skipdirs = 0;
+ 	}
+ close(IN);
+ close(OUT);
+diff --git a/Makefile.org b/Makefile.org
+index 580d3e8..952d3bf 100644
+--- a/Makefile.org
++++ b/Makefile.org
+@@ -429,6 +429,8 @@ files:
+ 	@set -e; target=files; $(RECURSIVE_BUILD_CMD)
+ 
+ links:
++	@$(MAKE) SDIRS='$(SDIRS) $(SKIPDIRS)' all-links
++all-links:
+ 	@$(PERL) $(TOP)/util/mkdir-p.pl include/openssl
+ 	@$(PERL) $(TOP)/util/mklink.pl include/openssl $(EXHEADER)
+ 	@set -e; target=links; $(RECURSIVE_BUILD_CMD)

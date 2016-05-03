@@ -1,0 +1,178 @@
+diff --git a/Configure b/Configure
+index 93c4cc1..c79365f 100755
+--- a/Configure
++++ b/Configure
+@@ -217,6 +217,14 @@ my %table=(
+ "vos-gcc","gcc:-O3 -Wall -DOPENSSL_SYSNAME_VOS -D_POSIX_C_SOURCE=200112L -D_BSD -D_VOS_EXTENDED_NAMES -DB_ENDIAN::(unknown):VOS:-Wl,-map:BN_LLONG:${no_asm}:::::.so:",
+ "debug-vos-gcc","gcc:-O0 -g -Wall -DOPENSSL_SYSNAME_VOS -D_POSIX_C_SOURCE=200112L -D_BSD -D_VOS_EXTENDED_NAMES -DB_ENDIAN -DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DCRYPTO_MDEBUG::(unknown):VOS:-Wl,-map:BN_LLONG:${no_asm}:::::.so:",
+ 
++#### SmartOS setups
++# These always use gcc.  Also, because these interfaces are private on SmartOS,
++# we needn't jump through so many hoops.  We allow this to be templatised by
++# higher-level build software.  Otherwise similar to Solaris.
++"smartos-x86-gcc","@@CC@@:@@CPPFLAGS@@ @@CFLAGS@@ -DL_ENDIAN::@@MT_CPPFLAGS@@::@@LDFLAGS@@ @@LIBS@@:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:${x86_elf_asm}:dlfcn:solaris-shared:@@SHARED_CFLAGS@@:@@CFLAGS@@ @@SHARED_CFLAGS@@ @@SHARED_LDFLAGS@@:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++
++"smartos64-x86_64-gcc","@@CC@@:@@CPPFLAGS@@ @@CFLAGS@@ -DL_ENDIAN::@@MT_CPPFLAGS@@::@@LDFLAGS@@ @@LIBS@@:SIXTY_FOUR_BIT_LONG RC4_CHUNK DES_INT DES_UNROLL:${x86_64_asm}:elf:dlfcn:solaris-shared:@@SHARED_CFLAGS@@:@@CFLAGS@@ @@SHARED_CFLAGS@@ @@SHARED_LDFLAGS@@:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):::/64",
++
+ #### Solaris x86 with GNU C setups
+ # -DOPENSSL_NO_INLINE_ASM switches off inline assembler. We have to do it
+ # here because whenever GNU C instantiates an assembler template it
+@@ -1833,12 +1841,6 @@ while (<IN>)
+ 		$foo =~ s/\\/\\\\/g;
+ 		print OUT "#define OPENSSLDIR \"$foo\"\n";
+ 		}
+-	elsif	(/^#define\s+ENGINESDIR/)
+-		{
+-		my $foo = "$prefix/$libdir/engines";
+-		$foo =~ s/\\/\\\\/g;
+-		print OUT "#define ENGINESDIR \"$foo\"\n";
+-		}
+ 	elsif	(/^#((define)|(undef))\s+OPENSSL_EXPORT_VAR_AS_FUNCTION/)
+ 		{ printf OUT "#undef OPENSSL_EXPORT_VAR_AS_FUNCTION\n"
+ 			if $export_var_as_fn;
+@@ -1849,39 +1851,14 @@ while (<IN>)
+ 		$unistd = "<unistd.h>" if $unistd eq "";
+ 		print OUT "#define OPENSSL_UNISTD $unistd\n";
+ 		}
+-	elsif	(/^#((define)|(undef))\s+SIXTY_FOUR_BIT_LONG/)
+-		{ printf OUT "#%s SIXTY_FOUR_BIT_LONG\n",($b64l)?"define":"undef"; }
+-	elsif	(/^#((define)|(undef))\s+SIXTY_FOUR_BIT/)
+-		{ printf OUT "#%s SIXTY_FOUR_BIT\n",($b64)?"define":"undef"; }
+-	elsif	(/^#((define)|(undef))\s+THIRTY_TWO_BIT/)
+-		{ printf OUT "#%s THIRTY_TWO_BIT\n",($b32)?"define":"undef"; }
+ 	elsif	(/^#((define)|(undef))\s+SIXTEEN_BIT/)
+ 		{ printf OUT "#%s SIXTEEN_BIT\n",($b16)?"define":"undef"; }
+ 	elsif	(/^#((define)|(undef))\s+EIGHT_BIT/)
+ 		{ printf OUT "#%s EIGHT_BIT\n",($b8)?"define":"undef"; }
+-	elsif	(/^#((define)|(undef))\s+BN_LLONG\s*$/)
+-		{ printf OUT "#%s BN_LLONG\n",($bn_ll)?"define":"undef"; }
+-	elsif	(/^\#define\s+DES_LONG\s+.*/)
+-		{ printf OUT "#define DES_LONG unsigned %s\n",
+-			($des_int)?'int':'long'; }
+-	elsif	(/^\#(define|undef)\s+DES_PTR/)
+-		{ printf OUT "#%s DES_PTR\n",($des_ptr)?'define':'undef'; }
+-	elsif	(/^\#(define|undef)\s+DES_RISC1/)
+-		{ printf OUT "#%s DES_RISC1\n",($des_risc1)?'define':'undef'; }
+ 	elsif	(/^\#(define|undef)\s+DES_RISC2/)
+ 		{ printf OUT "#%s DES_RISC2\n",($des_risc2)?'define':'undef'; }
+ 	elsif	(/^\#(define|undef)\s+DES_UNROLL/)
+ 		{ printf OUT "#%s DES_UNROLL\n",($des_unroll)?'define':'undef'; }
+-	elsif	(/^#define\s+RC4_INT\s/)
+-		{ printf OUT "#define RC4_INT unsigned %s\n",$type[$rc4_int]; }
+-	elsif	(/^#undef\s+RC4_CHUNK/)
+-		{
+-		printf OUT "#undef RC4_CHUNK\n" if $rc4_chunk==0;
+-		printf OUT "#define RC4_CHUNK unsigned long\n" if $rc4_chunk==1;
+-		printf OUT "#define RC4_CHUNK unsigned long long\n" if $rc4_chunk==2;
+-		}
+-	elsif	(/^#((define)|(undef))\s+RC4_INDEX/)
+-		{ printf OUT "#%s RC4_INDEX\n",($rc4_idx)?"define":"undef"; }
+ 	elsif (/^#(define|undef)\s+I386_ONLY/)
+ 		{ printf OUT "#%s I386_ONLY\n", ($processor eq "386")?
+ 			"define":"undef"; }
+diff --git a/crypto/opensslconf.h.in b/crypto/opensslconf.h.in
+index 7a1c85d..67e5cff 100644
+--- a/crypto/opensslconf.h.in
++++ b/crypto/opensslconf.h.in
+@@ -1,11 +1,19 @@
+ /* crypto/opensslconf.h.in */
+ 
++#ifdef	__sparc
++#error	"SPARC is not currently supported by the build system."
++#endif
++
+ /* Generate 80386 code? */
+ #undef I386_ONLY
+ 
+ #if !(defined(VMS) || defined(__VMS)) /* VMS uses logical names instead */
+ #if defined(HEADER_CRYPTLIB_H) && !defined(OPENSSLDIR)
+-#define ENGINESDIR "/usr/local/lib/engines"
++#if defined(__x86_64)
++#define ENGINESDIR "/usr/lib/64/engines"
++#else
++#define ENGINESDIR "/usr/lib/engines"
++#endif	/* __x86_64 */
+ #define OPENSSLDIR "/usr/local/ssl"
+ #endif
+ #endif
+@@ -44,7 +52,11 @@
+  * This enables code handling data aligned at natural CPU word
+  * boundary. See crypto/rc4/rc4_enc.c for further details.
+  */
++#if defined(__x86_64)
++#define	RC4_CHUNK unsigned long
++#else
+ #undef RC4_CHUNK
++#endif	/* __x86_64 */
+ #endif
+ #endif
+ 
+@@ -52,27 +64,44 @@
+ /* If this is set to 'unsigned int' on a DEC Alpha, this gives about a
+  * %20 speed up (longs are 8 bytes, int's are 4). */
+ #ifndef DES_LONG
++#if defined(__x86_64)
++#define	DES_LONG unsigned int
++#else
+ #define DES_LONG unsigned long
++#endif /* __x86_64 */
+ #endif
+ #endif
+ 
+ #if defined(HEADER_BN_H) && !defined(CONFIG_HEADER_BN_H)
+ #define CONFIG_HEADER_BN_H
++#if defined(__x86_64)
+ #undef BN_LLONG
++#else
++#define	BN_LLONG
++#endif	/* __x86_64 */
+ 
+ /* Should we define BN_DIV2W here? */
+ 
+ /* Only one for the following should be defined */
++#if defined(__x86_64)
++#define	SIXTY_FOUR_BIT_LONG
++#undef	THIRTY_TWO_BIT
++#else
+ #undef SIXTY_FOUR_BIT_LONG
+-#undef SIXTY_FOUR_BIT
+ #define THIRTY_TWO_BIT
++#endif	/* __x86_64 */
++#undef SIXTY_FOUR_BIT
+ #endif
+ 
+ #if defined(HEADER_RC4_LOCL_H) && !defined(CONFIG_HEADER_RC4_LOCL_H)
+ #define CONFIG_HEADER_RC4_LOCL_H
+ /* if this is defined data[i] is used instead of *data, this is a %20
+  * speedup on x86 */
++#if defined(__x86_64)
+ #undef RC4_INDEX
++#else
++#define	RC4_INDEX
++#endif	/* __x86_64 */
+ #endif
+ 
+ #if defined(HEADER_BF_LOCL_H) && !defined(CONFIG_HEADER_BF_LOCL_H)
+@@ -86,14 +115,22 @@
+ /* the following is tweaked from a config script, that is why it is a
+  * protected undef/define */
+ #ifndef DES_PTR
++#if defined(__x86_64)
+ #undef DES_PTR
++#else
++#define	DES_PTR
++#endif	/* __x86_64 */
+ #endif
+ 
+ /* This helps C compiler generate the correct code for multiple functional
+  * units.  It reduces register dependancies at the expense of 2 more
+  * registers */
+ #ifndef DES_RISC1
++#if defined(__x86_64)
+ #undef DES_RISC1
++#else
++#define	DES_RISC1
++#endif	/* __x86_64 */
+ #endif
+ 
+ #ifndef DES_RISC2
