@@ -1,16 +1,15 @@
 diff -ur bash-4.1.orig/shell.c bash-4.1/shell.c
 --- bash-4.1.orig/shell.c	2009-11-19 15:05:54.000000000 +0000
 +++ bash-4.1/shell.c	2014-09-26 17:32:15.075625442 +0000
-@@ -225,7 +225,7 @@
+@@ -229,6 +229,6 @@
  #else
  int posixly_correct = 0;	/* Non-zero means posix.2 superset. */
  #endif
 -
 +int import_functions = 0;	/* Import functions from environment */
- 
  /* Some long-winded argument names.  These are obviously new. */
  #define Int 1
-@@ -245,6 +245,7 @@
+@@ -248,6 +248,7 @@
    { "help", Int, &want_initial_help, (char **)0x0 },
    { "init-file", Charp, (int *)0x0, &bashrc_file },
    { "login", Int, &make_login_shell, (char **)0x0 },
@@ -21,20 +20,21 @@ diff -ur bash-4.1.orig/shell.c bash-4.1/shell.c
 diff -ur bash-4.1.orig/variables.c bash-4.1/variables.c
 --- bash-4.1.orig/variables.c	2014-09-26 17:30:13.517119943 +0000
 +++ bash-4.1/variables.c	2014-09-26 17:33:07.686094771 +0000
-@@ -99,6 +99,7 @@
+@@ -109,7 +109,8 @@
  extern time_t shell_start_time;
  extern int assigning_in_environment;
  extern int executing_builtin;
+ extern int funcnest_max;
 +extern int import_functions;
  
  #if defined (READLINE)
  extern int no_line_editing;
-@@ -338,7 +339,7 @@
+@@ -354,7 +354,7 @@
  
        /* If exported function, define it now.  Don't import functions from
  	 the environment in privileged mode. */
--      if (privmode == 0 && read_but_dont_execute == 0 && STREQN ("() {", string, 4))
-+      if (import_functions && privmode == 0 && read_but_dont_execute == 0 && STREQN ("() {", string, 4))
- 	{
- 	  string_length = strlen (string);
- 	  temp_string = (char *)xmalloc (3 + string_length + char_index);
+-      if (privmode == 0 && read_but_dont_execute == 0 && 
++      if (import_functions && privmode == 0 && read_but_dont_execute == 0 && 
+           STREQN (BASHFUNC_PREFIX, name, BASHFUNC_PREFLEN) &&
+           STREQ (BASHFUNC_SUFFIX, name + char_index - BASHFUNC_SUFFLEN) &&
+ 	  STREQN ("() {", string, 4))
