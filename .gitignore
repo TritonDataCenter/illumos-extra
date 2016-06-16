@@ -64,7 +64,7 @@
 /tun/tun-1.3-64
 /uuid/uuid-1.6.2-32
 /vim/vim73-32
-/wget/wget-1.12-32
+/wget/wget-1.*-32
 /illumos-extra-*.tgz
 /*/ctfobjects-32
 /*/ctfobjects-64
