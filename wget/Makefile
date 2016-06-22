@@ -47,6 +47,13 @@ include ../Makefile.targ
 
 all: all_autoconf
 
+#
+# This version of the wget configure.ac script requires m4 macros from
+# pkg-config in order to correctly generate configure via autoreconf.  Rather
+# than require pkg-config be installed on the build machine, as we do not
+# intend to _run_ it, we drop an appropriate copy of "pkg.m4" in the right
+# place here.
+#
 $(VER.32)/configure: $(VER.32)/configure.ac
 	test -f $(VER.32)/m4/pkg.m4 || cp pkg.m4 $(VER.32)/m4/pkg.m4
 	cd $(VER.32) && env - PATH=$(PATH) $(AUTOCONF_ENV) autoreconf
