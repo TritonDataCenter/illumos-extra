@@ -1,0 +1,105 @@
+diff -ur wget-1.18/configure.ac wget-1.18-patched/configure.ac
+--- wget-1.18/configure.ac	2016-03-25 15:23:19.000000000 +0000
++++ wget-1.18-patched/configure.ac	2016-06-16 08:30:58.383582606 +0000
+@@ -341,18 +341,6 @@
+ ])
+ 
+ AS_IF([test x"$with_ssl" = xopenssl], [
+-  if [test x"$with_libssl_prefix" = x]; then
+-    PKG_CHECK_MODULES([OPENSSL], [openssl], [
+-      AC_MSG_NOTICE([compiling in support for SSL via OpenSSL])
+-      AC_LIBOBJ([openssl])
+-      LIBS="$OPENSSL_LIBS $LIBS"
+-      CFLAGS="$OPENSSL_CFLAGS -DHAVE_LIBSSL $CFLAGS"
+-      LIBSSL=" " # ntlm check below wants this
+-      AC_CHECK_FUNCS([RAND_egd])
+-      AC_DEFINE([HAVE_LIBSSL], [1], [Define if using openssl.])
+-      ssl_found=yes
+-    ])
+-  fi
+   if [test x"$ssl_found" != xyes]; then
+     dnl As of this writing (OpenSSL 0.9.6), the libcrypto shared library
+     dnl doesn't record its dependency on libdl, so we need to make sure
+@@ -388,8 +376,8 @@
+     esac
+ 
+     AS_IF([test x$ssl_found != xyes], [
+-      dnl Now actually check for -lssl if it wasn't already found
+-      AC_LIB_HAVE_LINKFLAGS([ssl], [crypto], [
++      dnl Now actually check for -lsunw_ssl if it wasn't already found
++      AC_LIB_HAVE_LINKFLAGS([sunw_ssl], [sunw_crypto], [
+ #include <openssl/ssl.h>
+ #include <openssl/x509.h>
+ #include <openssl/err.h>
+@@ -398,10 +386,31 @@
+ #include <openssl/md4.h>
+ #include <openssl/md5.h>
+       ], [SSL_library_init ()])
++
++      LIBSSL="$LIBSUNW_SSL"
++      LIBCRYPTO="$LIBSUNW_CRYPTO"
++      HAVE_LIBSSL="$HAVE_LIBSUNW_SSL"
++      HAVE_LIBCRYPTO="$HAVE_LIBSUNW_CRYPTO"
++      LTLIBSSL="$LTLIBSUNW_SSL"
++      LTLIBCRYPTO="$LTLIBSUNW_CRYPTO"
++
++      AC_SUBST(HAVE_LIBSSL)
++      AC_SUBST(HAVE_LIBCRYPTO)
++      AC_SUBST(LIBSSL)
++      AC_SUBST(LIBCRYPTO)
++      AC_SUBST(LTLIBSSL)
++      AC_SUBST(LTLIBCRYPTO)
++
++      if test x"$LIBSSL" != x
++      then
++        AC_DEFINE([HAVE_LIBSSL], 1, [SSL])
++        AC_DEFINE([HAVE_LIBCRYPTO], 1, [CRYPTO])
++      fi
++
+       if test x"$LIBSSL" != x
+       then
+         ssl_found=yes
+-        AC_MSG_NOTICE([compiling in support for SSL via OpenSSL])
++        AC_MSG_NOTICE([compiling in support for SSL via OpenSSL (sunw)])
+         AC_LIBOBJ([openssl])
+         LIBS="$LIBSSL $LIBS"
+         AC_CHECK_FUNCS([RAND_egd])
+@@ -496,19 +505,6 @@
+     ])
+ 
+   have_gpg=no
+-  AS_IF([test x"$with_metalink" = xyes], [
+-    dnl
+-    dnl Check for GPGME
+-    dnl
+-    m4_ifdef([AM_PATH_GPGME], [
+-      AM_PATH_GPGME([], [
+-        LIBS="$GPGME_LIBS $LIBS"
+-        CFLAGS="$GPGME_CFLAGS $CFLAGS"
+-        AC_DEFINE([HAVE_GPGME], [1], [Define if GPGME is available.])
+-        have_gpg=yes
+-      ])
+-    ])
+-  ])
+ ])
+ 
+ dnl **********************************************************************
+diff -ur wget-1.18/doc/Makefile.am wget-1.18-patched/doc/Makefile.am
+--- wget-1.18/doc/Makefile.am	2016-06-03 11:55:13.000000000 +0000
++++ wget-1.18-patched/doc/Makefile.am	2016-06-16 17:44:11.984668940 +0000
+@@ -39,14 +39,13 @@
+ 
+ man_MANS = $(MAN)
+ 
+-all: wget.info @COMMENT_IF_NO_POD2MAN@$(MAN)
++all: @COMMENT_IF_NO_POD2MAN@$(MAN)
+ 
+ everything: all wget_us.ps wget_a4.ps wget_toc.html
+ 
+ $(SAMPLERCTEXI): $(srcdir)/sample.wgetrc
+ 	sed s/@/@@/g $? > $@
+ 
+-info_TEXINFOS = wget.texi
+ wget_TEXINFOS = fdl.texi sample.wgetrc.munged_for_texi_inclusion
+ 
+ EXTRA_DIST = sample.wgetrc \
