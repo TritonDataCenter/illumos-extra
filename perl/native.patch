@@ -1,0 +1,200 @@
+From e97fc2efacde56876b7f7dae841df5beff827b78 Mon Sep 17 00:00:00 2001
+From: Robert Mustacchi <rm@joyent.com>
+Date: Mon, 1 Aug 2016 18:03:26 +0000
+Subject: [PATCH] Properly add support for building miniperl natively
+
+---
+ Configure   |  6 ++++++
+ Makefile.SH | 43 +++++++++++++++++++++++++++++--------------
+ cflags.SH   | 16 +++++++++++++++-
+ 3 files changed, 50 insertions(+), 15 deletions(-)
+
+diff --git a/Configure b/Configure
+index 3a8732b..71a0ca1 100755
+--- a/Configure
++++ b/Configure
+@@ -345,8 +345,10 @@ userelocatableinc=''
+ byteorder=''
+ cc=''
+ ccflags=''
++mini_ccflags=''
+ cppflags=''
+ ldflags=''
++mini_ldflags=''
+ lkflags=''
+ locincpth=''
+ optimize=''
+@@ -837,6 +839,7 @@ ccdlflags=''
+ dlsrc=''
+ ld=''
+ lddlflags=''
++mini_lddlflags=''
+ usedl=''
+ doublesize=''
+ ebcdic=''
+@@ -22313,6 +22316,7 @@ cc='$cc'
+ cccdlflags='$cccdlflags'
+ ccdlflags='$ccdlflags'
+ ccflags='$ccflags'
++mini_ccflags='$mini_ccflags'
+ ccflags_uselargefiles='$ccflags_uselargefiles'
+ ccname='$ccname'
+ ccsymbols='$ccsymbols'
+@@ -23016,7 +23020,9 @@ known_extensions='$known_extensions'
+ ksh='$ksh'
+ ld='$ld'
+ lddlflags='$lddlflags'
++mini_lddlflags='$mini_lddlflags'
+ ldflags='$ldflags'
++mini_ldflags='$mini_ldflags'
+ ldflags_uselargefiles='$ldflags_uselargefiles'
+ ldlibpthname='$ldlibpthname'
+ less='$less'
+diff --git a/Makefile.SH b/Makefile.SH
+index 7e76ab8..5248644 100755
+--- a/Makefile.SH
++++ b/Makefile.SH
+@@ -249,6 +249,7 @@ LD = $ld
+ 
+ LDFLAGS = $ldflags
+ CLDFLAGS = $ldflags
++MINI_CLDFLAGS = $mini_ldflags
+ 
+ mallocsrc = $mallocsrc
+ mallocobj = $mallocobj
+@@ -394,6 +395,7 @@ case $CROSS_NAME in
+ $spitshell >>$Makefile <<'!NO!SUBS!'
+ 
+ CCCMD    = `sh $(shellflags) cflags "optimize='$(OPTIMIZE)'" $@`
++CCCMD_MINI = `sh $(shellflags) cflags "optimize='$(OPTIMIZE)'" mini $@`
+ 
+ CCCMDSRC = `sh $(shellflags) cflags "optimize='$(OPTIMIZE)'" $<`
+ 
+@@ -479,8 +481,11 @@ obj1 = $(madlyobj) $(mallocobj) gv$(OBJ_EXT) toke$(OBJ_EXT) perly$(OBJ_EXT) pad$
+ obj2 = hv$(OBJ_EXT) av$(OBJ_EXT) run$(OBJ_EXT) pp_hot$(OBJ_EXT) sv$(OBJ_EXT) pp$(OBJ_EXT) scope$(OBJ_EXT) pp_ctl$(OBJ_EXT) pp_sys$(OBJ_EXT)
+ obj3 = doop$(OBJ_EXT) doio$(OBJ_EXT) regexec$(OBJ_EXT) utf8$(OBJ_EXT) taint$(OBJ_EXT) deb$(OBJ_EXT) universal$(OBJ_EXT) globals$(OBJ_EXT) perlio$(OBJ_EXT) perlapi$(OBJ_EXT) numeric$(OBJ_EXT) mathoms$(OBJ_EXT) locale$(OBJ_EXT) pp_pack$(OBJ_EXT) pp_sort$(OBJ_EXT)
+ 
++mini_dir = miniperl_build
+ minindt_obj = $(obj1) $(obj2) $(obj3) $(ARCHOBJS)
+-mini_obj = $(minindt_obj) $(MINIDTRACE_O)
++minialt_obj = miniperlmain$(OBJ_EXT) opmini$(OBJ_EXT) perlmini$(OBJ_EXT)
++minindt_robj = $(minindt_obj:%.o=$(mini_dir)/%.o)
++mini_obj = $(minindt_robj) $(MINIDTRACE_O) $(minialt_obj:%.o=$(mini_dir)/%.o)
+ ndt_obj = $(obj0) $(obj1) $(obj2) $(obj3) $(ARCHOBJS)
+ obj = $(ndt_obj) $(DTRACE_O)
+ 
+@@ -560,6 +565,17 @@ all: $(FIRSTMAKEFILE) $(MINIPERL_EXE) $(generated_pods) $(private) $(unidatafile
+ 	@echo " ";
+ 	@echo "	Everything is up to date. Type '$(MAKE) test' to run test suite."
+ 
++#
++# Things we need to try and make miniperl build.
++#
++$(mini_dir):
++	mkdir -p $@
++
++$(mini_dir)/%.o: %.c $(mini_dir)
++	$(CCCMD_MINI) $(PLDLFLAGS) -o $@ $*.c
++
++
++
+ .PHONY: all translators utilities
+ 
+ # Both git_version.h and lib/Config_git.pl are built
+@@ -598,17 +614,17 @@ opmini.c: op.c
+ 	\$(RMS) opmini.c
+ 	\$(CPS) op.c opmini.c
+ 
+-opmini\$(OBJ_EXT): opmini.c
+-	\$(CCCMD) \$(PLDLFLAGS) $DPERL_EXTERNAL_GLOB opmini.c
++\$(mini_dir)/opmini\$(OBJ_EXT): opmini.c
++	\$(CCCMD_MINI) \$(PLDLFLAGS) $DPERL_EXTERNAL_GLOB -o \$@ opmini.c
+ 
+ perlmini.c: perl.c
+ 	\$(RMS) perlmini.c
+ 	\$(CPS) perl.c perlmini.c
+ 
+-perlmini\$(OBJ_EXT): perlmini.c
+-	\$(CCCMD) \$(PLDLFLAGS) $DPERL_IS_MINIPERL perlmini.c
++\$(mini_dir)/perlmini\$(OBJ_EXT): perlmini.c
++	\$(CCCMD_MINI) \$(PLDLFLAGS) $DPERL_IS_MINIPERL -o \$@ perlmini.c
+ 
+-globals\$(OBJ_EXT): uudmap.h bitcount.h
++\$(mini_dir)/globals\$(OBJ_EXT) globals\$(OBJ_EXT): uudmap.h bitcount.h
+ 
+ uudmap.h: bitcount.h
+ 
+@@ -620,8 +636,8 @@ generate_uudmap\$(HOST_EXE_EXT): generate_uudmap\$(OBJ_EXT)
+ 
+ !GROK!THIS!
+ $spitshell >>$Makefile <<'!NO!SUBS!'
+-miniperlmain$(OBJ_EXT): miniperlmain.c patchlevel.h
+-	$(CCCMD) $(PLDLFLAGS) $*.c
++$(mini_dir)/miniperlmain$(OBJ_EXT): miniperlmain.c patchlevel.h
++	$(CCCMD_MINI) $(PLDLFLAGS) -o $@ miniperlmain.c
+ 
+ perlmain.c: miniperlmain.c config.sh $(FIRSTMAKEFILE)
+ 	sh writemain $(DYNALOADER) $(static_ext) > perlmain.c
+@@ -740,8 +756,8 @@ mydtrace.h: $(DTRACE_H)
+ $(DTRACE_O): perldtrace.d $(ndt_obj)
+ 	$(DTRACE) -G -s perldtrace.d -o $(DTRACE_O) $(ndt_obj)
+ 
+-$(MINIDTRACE_O): perldtrace.d $(minindt_obj)
+-	$(DTRACE) -G -s perldtrace.d -o $(MINIDTRACE_O) $(minindt_obj)
++$(MINIDTRACE_O): perldtrace.d $(minindt_robj)
++	$(DTRACE) -G -s perldtrace.d -o $(MINIDTRACE_O) $(minindt_robj)
+ 
+ !NO!SUBS!
+ 		;;
+@@ -829,11 +845,10 @@ $(MINIPERL_EXE): $& miniperlmain$(OBJ_EXT) $(mini_obj) opmini$(OBJ_EXT) perlmini
+ 		;;
+ 	*)
+ 		$spitshell >>$Makefile <<'!NO!SUBS!'
+-$(MINIPERL_EXE): $& miniperlmain$(OBJ_EXT) $(mini_obj) opmini$(OBJ_EXT) perlmini$(OBJ_EXT)
++$(MINIPERL_EXE): $& $(mini_obj)
+ 	-@rm -f miniperl.xok
+-	$(LDLIBPTH) $(CC) $(CLDFLAGS) -o $(MINIPERL_EXE) \
+-	    $(mini_obj) \
+-	    miniperlmain$(OBJ_EXT) opmini$(OBJ_EXT) perlmini$(OBJ_EXT) $(libs)
++	$(LDLIBPTH) $(CC) $(MINI_CLDFLAGS) -o $(MINIPERL_EXE) \
++	    $(mini_obj) $(libs)
+ 	$(LDLIBPTH) $(RUN) ./miniperl$(HOST_EXE_EXT) -w -Ilib -MExporter -e '<?>' || $(MAKE) minitest
+ !NO!SUBS!
+ 		;;
+diff --git a/cflags.SH b/cflags.SH
+index a5d71b9..7fd0c5c 100755
+--- a/cflags.SH
++++ b/cflags.SH
+@@ -234,7 +234,7 @@ case $PERL_CONFIG_SH in
+ 	;;
+ esac
+ 
+-: syntax: cflags [optimize=XXX] [file[.suffix]]
++: syntax: cflags [optimize=XXX] [mini] [file[.suffix]]
+ : displays the compiler command line for file
+ 
+ case "X$1" in
+@@ -244,6 +244,20 @@ Xoptimize=*|X"optimize=*")
+ 	;;
+ esac
+ 
++#
++# This is not part of the original perl source code. This was added to
++# try and make the miniperl build somewhat sane. At least sane enough
++# that it can come from the proto area.
++#
++case "X$1" in
++Xmini|X"mini")
++	ccflags=$mini_ccflags
++	ldflags=$mini_ldflags
++	lddlflags=$mini_lddlflags
++	shift
++	;;
++esac
++
+ also=': '
+ case $# in
+ 1) also='echo 1>&2 "	  CCCMD = "'
+-- 
+2.2.1
+

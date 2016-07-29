@@ -1,25 +1,18 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
+
 #
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
+# Copyright 2016 Joyent, Inc.
 #
-# CDDL HEADER END
-#
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
-#
+
 
 VER =	perl-5.12.3
 
@@ -41,26 +34,28 @@ CPPFLAGS += \
 	$(LF_CPPFLAGS) \
 	-DPERL_USE_SAFE_PUTENV
 
+NATIVE_CPPFLAGS += \
+	$(BASIC_CPPFLAGS) \
+	$(LF_CPPFLAGS) \
+	-DPERL_USE_SAFE_PUTENV
+
 LDFLAGS += \
+	-fstack-protector
+
+NATIVE_LDFLAGS += \
 	-fstack-protector
 
 SHARED_LDFLAGS = \
 	-G \
 	$(LDFLAGS)
 
-PATCHES += \
-	dtrace.patch
+NATIVE_SHARED_LDFLAGS = \
+	-G \
+	$(NATIVE_LDFLAGS)
 
-#
-# Perl doesn't know how to build native tools for use during the build.
-# It instead assumes that it's safe to run target programs.  This is broken
-# in several ways.  We partially work around it here by forcing it to pick
-# up the new platform libraries as well.  This will break if there has been
-# a user/kernel change relative to the build system.  The correct solution
-# is for perl to build native copies of anything needed at build time -- as
-# for any cross-compilation environment.
-#
-OS_1828_WAR = LDLIBPTH="LD_LIBRARY_PATH=$(DESTDIR)/usr/lib:$(DESTDIR)/lib"
+PATCHES += \
+	dtrace.patch \
+	native.patch
 
 #
 # This is where things get really gross.  There is stuff in ON that is going
@@ -117,13 +112,17 @@ XFORM.sh = \
 	sed -e 's;@@CC@@;$(GCC);g' \
 	    -e 's;@@CPPFLAGS@@;$(CPPFLAGS);g' \
 	    -e 's;@@CFLAGS@@;$(CFLAGS);g' \
+	    -e 's;@@NATIVE_CPPFLAGS@@;$(NATIVE_CPPFLAGS);g' \
+	    -e 's;@@NATIVE_CFLAGS@@;$(NATIVE_CFLAGS);g' \
 	    -e 's;@@BASIC_CPPFLAGS@@;$(BASIC_CPPFLAGS);g' \
 	    -e 's;@@LF_CPPFLAGS@@;$(LF_CPPFLAGS);g' \
 	    -e 's;@@LDFLAGS@@;$(LDFLAGS);g' \
+	    -e 's;@@NATIVE_LDFLAGS@@;$(NATIVE_LDFLAGS);g' \
 	    -e 's;@@LIBS@@;$(LIBS);g' \
 	    -e 's;@@GMAKE@@;$(MAKE);g' \
 	    -e 's;@@THISPROTO@@;$(STRAP:strap=$(DESTDIR));g' \
 	    -e 's;@@NEXTPROTO@@;$(NEXTPROTO);g' \
+	    -e 's;@@NATIVE_SHARED_LDFLAGS@@;$(NATIVE_SHARED_LDFLAGS);g' \
 	    -e 's;@@SHARED_LDFLAGS@@;$(SHARED_LDFLAGS);g' < $< > $@
 
 include ../Makefile.targ

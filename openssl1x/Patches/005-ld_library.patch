@@ -1,0 +1,32 @@
+From f87c6ab9355bed4277e4f6ad7325d695bc3d2f24 Mon Sep 17 00:00:00 2001
+From: Robert Mustacchi <rm@joyent.com>
+Date: Fri, 29 Jul 2016 19:02:16 +0000
+Subject: [PATCH] Don't set shared library paths
+
+---
+ Makefile.shared | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/Makefile.shared b/Makefile.shared
+index b1a79d4..b809c34 100644
+--- a/Makefile.shared
++++ b/Makefile.shared
+@@ -95,7 +95,6 @@ LINK_APP=	\
+     LDCMD="$${LDCMD:-$(CC)}"; LDFLAGS="$${LDFLAGS:-$(CFLAGS)}"; \
+     LIBPATH=`for x in $$LIBDEPS; do echo $$x; done | sed -e 's/^ *-L//;t' -e d | uniq`; \
+     LIBPATH=`echo $$LIBPATH | sed -e 's/ /:/g'`; \
+-    LD_LIBRARY_PATH=$$LIBPATH:$$LD_LIBRARY_PATH \
+     $${LDCMD} $${LDFLAGS} -o $${APPNAME:=$(APPNAME)} $(OBJECTS) $${LIBDEPS} )
+ 
+ LINK_SO=	\
+@@ -105,7 +104,6 @@ LINK_SO=	\
+     SHAREDFLAGS="$${SHAREDFLAGS:-$(CFLAGS) $(SHARED_LDFLAGS)}"; \
+     LIBPATH=`for x in $$LIBDEPS; do echo $$x; done | sed -e 's/^ *-L//;t' -e d | uniq`; \
+     LIBPATH=`echo $$LIBPATH | sed -e 's/ /:/g'`; \
+-    LD_LIBRARY_PATH=$$LIBPATH:$$LD_LIBRARY_PATH \
+     $${SHAREDCMD} $${SHAREDFLAGS} \
+ 	-o $$SHLIB$$SHLIB_SOVER$$SHLIB_SUFFIX \
+ 	$$ALLSYMSFLAGS $$SHOBJECTS $$NOALLSYMSFLAGS $$LIBDEPS \
+-- 
+2.2.1
+
