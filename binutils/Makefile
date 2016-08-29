@@ -32,6 +32,8 @@ AUTOCONF_OPTS = \
 	--enable-64-bit-bfd \
 	--program-prefix=g
 
+PATCHES =	patches/*
+
 AUTOCONF_ENV += \
 	CC=gcc \
 	CXX=g++ \
