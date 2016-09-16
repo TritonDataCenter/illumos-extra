@@ -1,0 +1,10 @@
+--- ignore/nss/lib/sqlite/Makefile.orig	Tue Sep  6 23:47:39 2016
++++ ignore/nss/lib/sqlite/Makefile	Tue Sep  6 23:49:28 2016
+@@ -51,3 +51,7 @@
+ OS_CFLAGS += -w44996
+ endif
+ 
++ifeq (SunOS,$(OS_ARCH))
++# sqlite needs C99 for access to newer SUS standards
++OS_CFLAGS += -std=gnu99
++endif

@@ -1,12 +1,25 @@
-diff -urN nss-3.12.8.orig/mozilla/security/nss/Makefile nss-3.12.8/mozilla/security/nss/Makefile
---- nss-3.12.8.orig/mozilla/security/nss/Makefile	2009-12-08 16:47:03.000000000 +0000
-+++ nss-3.12.8/mozilla/security/nss/Makefile	2014-07-15 16:43:29.856578292 +0000
-@@ -108,7 +108,7 @@
- NSPR_CONFIGURE_OPTS += --enable-debug-rtl
+From e392c6e9f6f656ef4be0c22797d77e4345525202 Mon Sep 17 00:00:00 2001
+From: Robert Mustacchi <rm@joyent.com>
+Date: Tue, 6 Sep 2016 22:56:42 +0000
+Subject: [PATCH] Use correct compiler
+
+---
+ nss/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/nss/Makefile b/nss/Makefile
+index aa346ae..4800764 100644
+--- a/nss/Makefile
++++ b/nss/Makefile
+@@ -83,7 +83,7 @@ ifdef USE_STATIC_RTL
+ NSPR_CONFIGURE_OPTS += --enable-static-rtl
  endif
  ifdef NS_USE_GCC
--NSPR_COMPILERS = CC=gcc CXX=g++
-+NSPR_COMPILERS = CC="$(CC)" CXX="$(CXX)"
+-NSPR_CONFIGURE_ENV = CC=gcc CXX=g++
++NSPR_CONFIGURE_ENV = CC="$(CC)" CXX="$(CXX)"
  endif
  
- #
+ ifdef SANITIZER_CFLAGS
+-- 
+2.2.1
+

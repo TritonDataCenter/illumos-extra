@@ -1,26 +1,19 @@
 #!/usr/bin/ksh93
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License, Version 1.0 only
-# (the "License").  You may not use this file except in compliance
-# with the License.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
-# You can obtain a copy of the license at COPYING
-# See the License for the specific language governing permissions
-# and limitations under the License.
+
 #
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at COPYING.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
+# Copyright 2016 Joyent, Inc.
 #
-# CDDL HEADER END
-#
-# Copyright (c) 2010 Joyent Inc., All rights reserved.
-#
+
 
 set -o errexit
 
@@ -38,7 +31,7 @@ mkdir -p ${INC_PREFIX}
 
 source ../install.subr
 
-cd ${ROOT}/${VERS}/mozilla/dist/SunOS5.11_i86pc_gcc_OPT.OBJ
+cd ${ROOT}/${VERS}/dist/SunOS5.11_i86pc_gcc_OPT.OBJ
 
 _install N lib/libfreebl3.chk ${PREFIX}/libfreebl3.chk 555
 _install N lib/libfreebl3.so ${PREFIX}/libfreebl3.so 555
@@ -59,6 +52,6 @@ _install N lib/libplds4.so ${PREFIX}/libplds4.so 555
 
 _install N bin/certutil ${BIN_PREFIX}/certutil 555
 
-cp -Lpr ${ROOT}/${VERS}/mozilla/dist/SunOS5.11_i86pc_gcc_OPT.OBJ/include/* \
+cp -Lpr ${ROOT}/${VERS}/dist/SunOS5.11_i86pc_gcc_OPT.OBJ/include/* \
     ${INC_PREFIX}
-cp ${ROOT}/${VERS}/mozilla/dist/public/nss/* ${INC_PREFIX}
+cp ${ROOT}/${VERS}/dist/public/nss/* ${INC_PREFIX}
