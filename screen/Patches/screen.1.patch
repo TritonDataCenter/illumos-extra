@@ -2,7 +2,7 @@ diff --git a/doc/screen.1 b/doc/screen.1
 index 348d357..6886d2a 100644
 --- a/doc/screen.1
 +++ b/doc/screen.1
-@@ -594,7 +594,7 @@ in the environment variable $SCREENDIR.
+@@ -649,7 +649,7 @@ in the environment variable $SCREENDIR.
  When
  .I screen
  is invoked, it executes initialization commands from the files
@@ -11,7 +11,7 @@ index 348d357..6886d2a 100644
  \*Q.screenrc\*U in the user's home directory. These are the \*Qprogrammer's
  defaults\*U that can be overridden in the following ways: for the
  global screenrc file 
-@@ -4416,12 +4416,12 @@ Examples in the
+@@ -4903,12 +4903,12 @@ Examples in the
  .I screen
  distribution package for private and global initialization files.
  .IP $SYSSCREENRC 
@@ -23,6 +23,6 @@ index 348d357..6886d2a 100644
  .IP $HOME/.screenrc
 -Read in after /usr/local/etc/screenrc
 +Read in after /etc/screenrc
- .IP $SCREENDIR/S-<login>
- .IP /local/screens/S-<login>
+ .IP $SCREENDIR/S\-<login>
+ .IP /local/screens/S\-<login>
  Socket directories (default)
