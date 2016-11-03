@@ -1,0 +1,46 @@
+From: Patrick Mooney <patrick.mooney@joyent.com>
+Date: Fri, 04 Nov 2016 18:37:23 +0000
+
+As of 7.51.0, curl uses libidn2 instead of libidn.  We ship that library with a
+prefixed SONAME to avoid unintentional linking from any other consumers.
+
+--- a/configure
++++ b/configure
+@@ -26666,7 +26666,7 @@
+          $PKGCONFIG --cflags-only-I libidn2 2>/dev/null`
+       IDN_DIR=`echo $IDN_LDFLAGS | $SED -e 's/-L//'`
+     else
+-            IDN_LIBS="-lidn2"
++            IDN_LIBS="-ljoy_idn2"
+       IDN_LDFLAGS="-L$want_idn_path/lib$libsuff"
+       IDN_CPPFLAGS="-I$want_idn_path/include"
+       IDN_DIR="$want_idn_path/lib$libsuff"
+@@ -26804,7 +26804,7 @@
+       IDN_CPPFLAGS=`$PKGCONFIG --cflags-only-I libidn2 2>/dev/null`
+       IDN_DIR=`echo $IDN_LDFLAGS | $SED -e 's/-L//'`
+     else
+-            IDN_LIBS="-lidn2"
++            IDN_LIBS="-ljoy_idn2"
+     fi
+   fi
+   #
+--- a/configure.ac
++++ b/configure.ac
+@@ -2881,7 +2881,7 @@
+       IDN_DIR=`echo $IDN_LDFLAGS | $SED -e 's/-L//'`
+     else
+       dnl pkg-config not available or provides no info
+-      IDN_LIBS="-lidn2"
++      IDN_LIBS="-ljoy_idn2"
+       IDN_LDFLAGS="-L$want_idn_path/lib$libsuff"
+       IDN_CPPFLAGS="-I$want_idn_path/include"
+       IDN_DIR="$want_idn_path/lib$libsuff"
+@@ -2896,7 +2896,7 @@
+       IDN_DIR=`echo $IDN_LDFLAGS | $SED -e 's/-L//'`
+     else
+       dnl pkg-config not available or provides no info
+-      IDN_LIBS="-lidn2"
++      IDN_LIBS="-ljoy_idn2"
+     fi
+   fi
+   #

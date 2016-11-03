@@ -1,0 +1,40 @@
+#!/bin/sh
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Joyent, Inc.
+#
+
+PREFIX=${DESTDIR}/usr
+LIBDIR=${PREFIX}/lib
+INCDIR=${PREFIX}/include
+
+mkdir -p ${LIBDIR} ${INCDIR}
+
+. ../install.subr
+
+cd ${VERS}
+
+LVER=0.0.11
+set -x
+
+# Perform manual install in order to alter SONAME
+rm -f ${LIBDIR}/libjoy_idn2.so.${LVER}
+/usr/bin/elfedit -e 'dyn:value -s SONAME libjoy_idn2.so.0' \
+	.libs/libidn2.so.${LVER} ${LIBDIR}/libjoy_idn2.so.${LVER}
+chmod 0555 ${LIBDIR}/libjoy_idn2.so.${LVER}
+
+_install L libjoy_idn2.so.0.0.11 ${LIBDIR}/libjoy_idn2.so
+_install L libjoy_idn2.so.0.0.11 ${LIBDIR}/libjoy_idn2.so.0
+_install N idn2.h ${INCDIR}/idn2.h 0444
+
+exit 0

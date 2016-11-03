@@ -49,6 +49,7 @@ SUBDIRS = \
 	less \
 	libexpat \
 	libidn \
+	libidn2 \
 	libxml \
 	libz \
 	make \
@@ -104,7 +105,7 @@ all: $(SUBDIRS)
 
 strap: $(STRAP_SUBDIRS)
 
-curl: libz openssl1x libidn
+curl: libz openssl1x libidn2
 gzip: libz
 node.js: openssl1x
 dialog: ncurses

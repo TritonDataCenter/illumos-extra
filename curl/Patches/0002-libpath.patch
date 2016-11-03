@@ -16,7 +16,7 @@ diff --git a/configure b/configure
 index 3bab245..954f9f7 100755
 --- a/configure
 +++ b/configure
-@@ -22001,10 +22001,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+@@ -22783,10 +22783,7 @@
    if test "$OPENSSL_ENABLED" = "1"; then
      if test -n "$LIB_OPENSSL"; then
                              if test "x$cross_compiling" != "xyes"; then
@@ -24,7 +24,7 @@ index 3bab245..954f9f7 100755
 -         export LD_LIBRARY_PATH
 -         { $as_echo "$as_me:${as_lineno-$LINENO}: Added $LIB_OPENSSL to LD_LIBRARY_PATH" >&5
 -$as_echo "$as_me: Added $LIB_OPENSSL to LD_LIBRARY_PATH" >&6;}
-+	/bin/true
++         /bin/true
         fi
      fi
  
@@ -32,17 +32,16 @@ diff --git a/configure.ac b/configure.ac
 index 41f7f92..24a78a0 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1624,9 +1624,7 @@ if test "$curl_ssl_msg" = "$init_ssl_msg" && test X"$OPT_SSL" != Xno; then
+@@ -1685,9 +1685,7 @@
         dnl linker doesn't search through, we need to add it to LD_LIBRARY_PATH
         dnl to prevent further configure tests to fail due to this
         if test "x$cross_compiling" != "xyes"; then
 -         LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$LIB_OPENSSL"
 -         export LD_LIBRARY_PATH
 -         AC_MSG_NOTICE([Added $LIB_OPENSSL to LD_LIBRARY_PATH])
-+	/bin/true
++         /bin/true
         fi
      fi
      CURL_CHECK_OPENSSL_API
 -- 
 1.8.4
-

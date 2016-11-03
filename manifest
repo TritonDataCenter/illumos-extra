@@ -88,8 +88,8 @@ d usr/ccs/lib 0755 root bin
 s usr/ccs/lib/cpp=../../lib/cpp
 f usr/lib/cpp 0555 root bin
 # curl
-f usr/lib/libcurl.so.4.3.0 0755 root bin
-s usr/lib/libcurl.so.4=libcurl.so.4.3.0
+f usr/lib/libcurl.so.4.4.0 0755 root bin
+s usr/lib/libcurl.so.4=libcurl.so.4.4.0
 d usr/include/curl 0755 root bin
 f usr/share/man/man1/curl.1 0444 root bin
 f usr/bin/curl 0755 root bin
@@ -180,6 +180,9 @@ s usr/lib/libexpat.so.1=libexpat.so.1.5.2
 # libidn
 f usr/lib/libidn.so.11.5.40 0755 root bin
 s usr/lib/libidn.so.11=libidn.so.11.5.40
+# libidn2
+f usr/lib/libjoy_idn2.so.0.0.11 0755 root bin
+s usr/lib/libjoy_idn2.so.0=libjoy_idn2.so.0.0.11
 # libxml
 s usr/lib/amd64/libxml2.so.2=../../../lib/amd64/libxml2.so.2
 f lib/amd64/libxml2.so.2 0555 root bin
