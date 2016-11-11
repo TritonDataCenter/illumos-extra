@@ -1,0 +1,18 @@
+From: Patrick Mooney <patrick.mooney@joyent.com>
+Date: Fri, 11 Nov 2016 18:07:10 +0000
+
+Disable the building of documentation.  If one attempts to build that target,
+it will invoke automake which has a tendency to be very picky about version.
+Since we aren't shipping the docs anyways, it's unecessary to fret about them.
+
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -596,7 +596,7 @@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
+-SUBDIRS = gl . src doc examples tests
++SUBDIRS = gl . src examples tests
+ ACLOCAL_AMFLAGS = -I m4 -I gl/m4
+ EXTRA_DIST = gl/m4/gnulib-cache.m4 gen-tables-from-rfc5892.pl \
+ 	gen-tables-from-iana.pl

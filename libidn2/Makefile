@@ -23,7 +23,7 @@ CFLAGS +=	-g
 AUTOCONF_ENV += \
 	INSTALL="/usr/ucb/install -c"
 
-#PATCHES =	Patches/*
+PATCHES =	Patches/*
 
 include ../Makefile.targ
 
