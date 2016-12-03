@@ -54,6 +54,12 @@ OVERRIDES += \
 	CFLAGS_FOR_TARGET="$(CFLAGS)"
 
 #
+# Because we use a different build directory, we need to make sure we
+# catch that when cleaning.
+#
+CLEANFILES += $(VER)-32.build $(VER)-32strap.build
+
+#
 # The runtime libraries that we build into proto.strap should be made to search
 # for their dependencies there as well, so that programs built to run on the
 # build machine (from proto.strap) find the correct copies of these libraries.
