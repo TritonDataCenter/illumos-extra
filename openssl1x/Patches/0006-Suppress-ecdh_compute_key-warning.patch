@@ -1,0 +1,25 @@
+From 06262e764d8a6f1df51c03846de756fab04ff72b Mon Sep 17 00:00:00 2001
+From: Patrick Mooney <pmooney@pfmooney.com>
+Date: Fri, 27 Jan 2017 16:12:39 +0000
+Subject: [PATCH 6/6] Suppress ecdh_compute_key warning
+
+---
+ crypto/ecdh/ech_ossl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/crypto/ecdh/ech_ossl.c b/crypto/ecdh/ech_ossl.c
+index d3b0524..4ae53fd 100644
+--- a/crypto/ecdh/ech_ossl.c
++++ b/crypto/ecdh/ech_ossl.c
+@@ -116,7 +116,7 @@ static int ecdh_compute_key(void *out, size_t outlen, const EC_POINT *pub_key,
+     const BIGNUM *priv_key;
+     const EC_GROUP *group;
+     int ret = -1;
+-    size_t buflen, len;
++    size_t buflen = 0, len;
+     unsigned char *buf = NULL;
+ 
+     if (outlen > INT_MAX) {
+-- 
+2.2.1
+

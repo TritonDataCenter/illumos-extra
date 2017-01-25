@@ -1,0 +1,60 @@
+From 98a1a64f0c7372125823a7084ee785bf4211174c Mon Sep 17 00:00:00 2001
+From: Patrick Mooney <pmooney@pfmooney.com>
+Date: Wed, 25 Jan 2017 19:26:45 +0000
+Subject: [PATCH 2/6] Add pkcs11 engine support
+
+---
+ crypto/engine/Makefile  | 4 ++--
+ crypto/engine/eng_all.c | 3 +++
+ crypto/engine/engine.h  | 1 +
+ 3 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/crypto/engine/Makefile b/crypto/engine/Makefile
+index 426388e..d77f5db 100644
+--- a/crypto/engine/Makefile
++++ b/crypto/engine/Makefile
+@@ -22,13 +22,13 @@ LIBSRC= eng_err.c eng_lib.c eng_list.c eng_init.c eng_ctrl.c \
+ 	tb_rsa.c tb_dsa.c tb_ecdsa.c tb_dh.c tb_ecdh.c tb_rand.c tb_store.c \
+ 	tb_cipher.c tb_digest.c tb_pkmeth.c tb_asnmth.c \
+ 	eng_openssl.c eng_cnf.c eng_dyn.c eng_cryptodev.c \
+-	eng_rdrand.c
++	eng_rdrand.c hw_pk11.c hw_pk11_pub.c hw_pk11_uri.c
+ LIBOBJ= eng_err.o eng_lib.o eng_list.o eng_init.o eng_ctrl.o \
+ 	eng_table.o eng_pkey.o eng_fat.o eng_all.o \
+ 	tb_rsa.o tb_dsa.o tb_ecdsa.o tb_dh.o tb_ecdh.o tb_rand.o tb_store.o \
+ 	tb_cipher.o tb_digest.o tb_pkmeth.o tb_asnmth.o \
+ 	eng_openssl.o eng_cnf.o eng_dyn.o eng_cryptodev.o \
+-	eng_rdrand.o
++	eng_rdrand.o hw_pk11.o hw_pk11_pub.o hw_pk11_uri.o
+ 
+ SRC= $(LIBSRC)
+ 
+diff --git a/crypto/engine/eng_all.c b/crypto/engine/eng_all.c
+index 48ad0d2..d6ca755 100644
+--- a/crypto/engine/eng_all.c
++++ b/crypto/engine/eng_all.c
+@@ -80,6 +80,9 @@ void ENGINE_load_builtin_engines(void)
+     ENGINE_load_rdrand();
+ #endif
+     ENGINE_load_dynamic();
++#ifndef	OPENSSL_NO_HW_PKCS11
++    ENGINE_load_pk11();
++#endif
+ #ifndef OPENSSL_NO_STATIC_ENGINE
+ # ifndef OPENSSL_NO_HW
+ #  ifndef OPENSSL_NO_HW_4758_CCA
+diff --git a/crypto/engine/engine.h b/crypto/engine/engine.h
+index bd7b591..0630758 100644
+--- a/crypto/engine/engine.h
++++ b/crypto/engine/engine.h
+@@ -413,6 +413,7 @@ void ENGINE_load_gost(void);
+ #  endif
+ # endif
+ void ENGINE_load_cryptodev(void);
++void ENGINE_load_pk11(void);
+ void ENGINE_load_rdrand(void);
+ void ENGINE_load_builtin_engines(void);
+ 
+-- 
+2.2.1
+
