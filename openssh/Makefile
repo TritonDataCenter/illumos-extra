@@ -22,7 +22,7 @@
 # Copyright 2015 Joyent, Inc.
 #
 
-VER =	openssh-portable-7.2p2
+VER =	openssh-portable-7.4p1
 
 include ../Makefile.defs
 
@@ -42,6 +42,7 @@ AUTOCONF_OPTS += \
 	--with-tcp-wrappers \
 	--with-4in6 \
 	--with-xauth=/usr/bin/xauth \
+	--with-Werror=no \
 	--enable-strip=no \
 	--without-rpath \
 	--disable-lastlog \
