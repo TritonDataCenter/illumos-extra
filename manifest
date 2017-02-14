@@ -197,6 +197,9 @@ f lib/amd64/libz.so.1 0755 root bin
 s usr/lib/amd64/libz.so.1=../../../lib/amd64/libz.so.1
 f lib/libz.so.1 0755 root bin
 s usr/lib/libz.so.1=../../lib/libz.so.1
+# mdb_v8
+f usr/lib/mdb/proc/v8.so 0555 root sys
+f usr/lib/mdb/proc/amd64/v8.so 0555 root sys
 # ncurses
 f usr/gnu/lib/amd64/libform.so.5.7 0755 root bin
 s usr/gnu/lib/amd64/libform.so.5=libform.so.5.7

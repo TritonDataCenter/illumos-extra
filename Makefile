@@ -53,6 +53,7 @@ SUBDIRS = \
 	libxml \
 	libz \
 	make \
+	mdb_v8 \
 	ncurses \
 	node.js \
 	nss-nspr \
