@@ -1,0 +1,27 @@
+--- binutils-2.25-orig/bfd/cache.c	Tue Oct 14 03:32:02 2014
++++ binutils-2.25/bfd/cache.c	Mon Jan 30 12:09:46 2017
+@@ -82,7 +82,24 @@
+       struct rlimit rlim;
+       if (getrlimit (RLIMIT_NOFILE, &rlim) == 0
+ 	  && rlim.rlim_cur != (rlim_t) RLIM_INFINITY)
++      {
++#if defined(__sun__) && defined(_ILP32)
++	/*
++	 * Solarish stdio for 32-bit has an ABI-constrained limit that
++	 * the UNIX file descriptor must be 255 or less.
++	 *
++	 * This can be corrected by enabling extended FILE stdio, which
++	 * we do here if the reported rlimit allows us to do so.
++	 */
++	if (rlim.rlim_cur > 256 &&
++		enable_extended_FILE_stdio(-1, -1) == -1) {
++	  perror("Can't enable extended FILE");
++	  /* Cap it at 250 to not break stdio. */
++	  max = 250;
++	} else
++#endif /* __sun__ */
+ 	max = rlim.rlim_cur / 8;
++      }
+       else
+ #endif /* HAVE_GETRLIMIT */
+ #ifdef _SC_OPEN_MAX
