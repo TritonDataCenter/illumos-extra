@@ -28,7 +28,7 @@ include ../Makefile.defs
 TARBALL =		$(VER).tar.bz2
 TARBALL_COMPRESS =	-j
 
-AUTOCONF_OPTS +=	--with-ssl=$(DESTDIR)/usr
+AUTOCONF_OPTS +=	--with-ssl=$(DESTDIR)/usr --with-ca-bundle=/opt/local/share/ncat/ca-bundle.crt
 
 PATCHES =	Patches/*
 
