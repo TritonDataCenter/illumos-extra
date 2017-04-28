@@ -48,8 +48,8 @@
 /ntp/ntp-4.2.8p?-32
 /openldap/openldap-2.4.26-32
 /openlldp/openlldp-0.4alpha-32
-/openssl/openssl-0.9.8za
-/openssl/openssl-0.9.8za-64
+/openssl/openssl-0.9.8??
+/openssl/openssl-0.9.8??-64
 /openssl1x/openssl-1.0.1h-32*
 /openssl1x/openssl-1.0.1h-64*
 /pbzip2/pbzip2-1.1.6-32

@@ -19,10 +19,9 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2015 Joyent, Inc.
+# Copyright (c) 2017, Joyent, Inc.
 #
 
-VERSION=0.9.8zg
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 
@@ -49,25 +48,26 @@ all64: $(VER64)/$(CONFIG_STATUS)
 # opensslconf.h is patched to ensure suitability for both 64bit and 32bit
 $(VER)/$(CONFIG_STATUS): $(VER)/configure
 	cd $(VER); env - PATH=$(PATH) \
-	ksh93 ./Configure $(CONFIGURE_OPTIONS) 
+	PERL=$(NATIVE_PERL) ksh93 ./Configure $(CONFIGURE_OPTIONS)
 	gpatch -p1 $(VER)/crypto/opensslconf.h opensslconf.patch
 	cd $(VER); gmake  depend
 	touch $@
 
 $(VER64)/$(CONFIG_STATUS): $(VER)/configure
 	cd $(VER64); env - PATH=$(PATH) \
-	ksh93 ./Configure $(CONFIGURE_OPTIONS64)
+	PERL=$(NATIVE_PERL) ksh93 ./Configure $(CONFIGURE_OPTIONS64)
 	cd $(VER64); gmake  depend
 	touch $@
 
 install: all install32 install64
 
 install32: all32
-	MACH32=i386 BASE=$(BASE) DESTDIR=$(DESTDIR) VERDIR=$(VER) VERSION=$(VERSION) ksh93 ./install-sfw
+	MACH32=i386 VERDIR=$(VER) BASE=$(BASE) DESTDIR=$(DESTDIR) \
+	    VERSION=$(BVER) ksh93 ./install-sfw
 
 install64: all64
 	MACH64=amd64 VERDIR=$(VER64) BASE=$(BASE) DESTDIR=$(DESTDIR) \
-	    VERSION=$(VERSION) ksh93 ./install-sfw-64
+	    VERSION=$(BVER) ksh93 ./install-sfw-64
 
 $(VER)/configure: $(BVER)-src
 	cp -r $(BVER)-src $(VER) 
