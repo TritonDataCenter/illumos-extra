@@ -23,16 +23,14 @@
 # Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
-# Copyright (c) 2015 Joyent Inc.
+# Copyright (c) 2017, Joyent, Inc.
 #
 
 
 METAINFO_FILE = ../METADATA
-BVER = openssl-0.9.8zf
+BVER = openssl-0.9.8zg
 VER = $(BVER)$(STRAP)
 VER64 =$(VER)-64
-
-TARBALL = $(VER).tar.gz
 
 PKCS11_LIB = /usr/lib/libpkcs11.so.1
 PKCS11_LIB64 = /usr/lib/64/libpkcs11.so.1
