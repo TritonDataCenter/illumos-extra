@@ -58,13 +58,6 @@ SEPARATE_BUILD =
 CPPFLAGS =	$(SYSINCDIRS:%=-isystem $(DESTDIR)/%)
 
 #
-# Some software (e.g., OpenSSL 0.9.8) is very particular about the Perl
-# interpreter used during the build.  This is the full path to the version
-# built during the strap build, which is safe to use on the build machine:
-#
-NATIVE_PERL =	$(STRAPPROTO)/usr/perl5/5.12/bin/perl
-
-#
 # We ship platform-private perl modules (e.g. from ntp) in this directory,
 # and using this perl interpeter:
 #

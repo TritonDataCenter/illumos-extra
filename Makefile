@@ -96,6 +96,19 @@ GITDESCRIBE = \
 
 TARBALL =	$(NAME)-$(BRANCH)-$(TIMESTAMP)-$(GITDESCRIBE).tgz
 
+#
+# Some software (e.g., OpenSSL 0.9.8) is very particular about the Perl
+# interpreter used during the build.  This is the full path to the version
+# built during the strap build, which is safe to use on the build machine.
+#
+# This definition would perhaps more appropriately appear in "Makefile.defs",
+# but that file is not used in the OpenSSL 0.9.8 build and is also not included
+# by this file; absent deeper refactoring, we shall pass it via the environment
+# in the $(SUBDIRS) target below.
+#
+NATIVE_PERL =	$(STRAPPROTO)/usr/perl5/5.12/bin/perl
+
+
 all: $(SUBDIRS)
 
 strap: $(STRAP_SUBDIRS)
