@@ -21,7 +21,7 @@
 # Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 #
 
-VER =	rsync-3.0.6
+VER =	rsync-3.1.2
 
 include ../Makefile.defs
 
