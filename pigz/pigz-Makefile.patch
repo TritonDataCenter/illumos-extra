@@ -1,0 +1,9 @@
+--- pigz-2.3.4/Makefile	2016-05-29 22:09:41.000000000 -0700
++++ pigz-2.3.4/Makefile	2017-06-14 17:04:57.000000000 -0700
+@@ -1,5 +1,6 @@
+ CC=cc
+ CFLAGS=-O3 -Wall -Wextra
++CFLAGS+=-std=gnu99
+ LDFLAGS=
+ LIBS=-lm -lpthread -lz
+ ZOPFLI=zopfli/src/zopfli/

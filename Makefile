@@ -59,6 +59,7 @@ SUBDIRS = \
 	openssh \
 	pbzip2 \
 	perl \
+	pigz \
 	rsync \
 	rsyslog \
 	screen \
@@ -117,6 +118,7 @@ curl: libz openssl1x libidn2
 gzip: libz
 node.js: openssl1x
 dialog: ncurses
+pigz: libz
 socat: openssl1x
 wget: openssl1x libidn
 openldap: openssl1x

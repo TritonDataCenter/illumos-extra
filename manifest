@@ -2987,6 +2987,8 @@ s usr/perl5/bin/perl=../5.12/bin/perl
 d usr/perl5/site_perl 0755 root bin
 d usr/perl5/site_perl/5.12 0755 root bin
 d usr/perl5/site_perl/5.12/i86pc-solaris-64int 0755 root bin
+# pigz
+f usr/img/sbin/pigz 0555 root bin
 # rsync
 f usr/bin/rsync 0555 root bin
 f usr/share/man/man1/rsync.1 0444 root bin

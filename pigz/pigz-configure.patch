@@ -1,0 +1,6 @@
+This patch creates an empty pigz configure file, as the illumos-extra build
+system expects a configure file to exist in each component subdirectory.
+exist the illumos-extra build system to function correctly.
+diff --git 2.3.4/configure 2.3.4/configure
+new file mode 100644
+index 0000000..e69de29
