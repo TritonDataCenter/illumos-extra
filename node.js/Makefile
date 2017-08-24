@@ -52,6 +52,7 @@ endif
 
 AUTOCONF_OPTS += \
 	--with-dtrace \
+	--without-snapshot \
 	--openssl-use-sys \
 	--openssl-libpath=$(DESTDIR)/lib \
 	--openssl-includes=$(DESTDIR)/usr/include \
