@@ -1,0 +1,137 @@
+From 05291454b0ebd1468b7c0e5e5cf4c093ab3f0dad Mon Sep 17 00:00:00 2001
+From: Hans Rosenfeld <hans.rosenfeld@joyent.com>
+Date: Fri, 9 Feb 2018 13:05:51 +0000
+Subject: [PATCH 1/3] Add ILGCC target to build on illumos.
+
+---
+ BaseTools/Conf/illumos.specs                 |  4 ++
+ BaseTools/Conf/tools_def.template            | 75 ++++++++++++++++++++++++++++
+ BaseTools/Source/C/Makefiles/header.makefile | 11 +++-
+ 3 files changed, 89 insertions(+), 1 deletion(-)
+ create mode 100644 BaseTools/Conf/illumos.specs
+
+diff --git a/BaseTools/Conf/illumos.specs b/BaseTools/Conf/illumos.specs
+new file mode 100644
+index 0000000..41713fb
+--- /dev/null
++++ b/BaseTools/Conf/illumos.specs
+@@ -0,0 +1,4 @@
++%rename	cpp	old_cpp
++
++*cpp:
++%(cpp_subtarget)
+diff --git a/BaseTools/Conf/tools_def.template b/BaseTools/Conf/tools_def.template
+index 3fb1216..1b9099e 100644
+--- a/BaseTools/Conf/tools_def.template
++++ b/BaseTools/Conf/tools_def.template
+@@ -4127,6 +4127,81 @@ DEFINE GCC49_AARCH64_ASLDLINK_FLAGS  = DEF(GCC_ARM_AARCH64_ASLDLINK_FLAGS)
+ *_GCC44_X64_OBJCOPY_FLAGS        = 
+ *_GCC44_X64_NASM_FLAGS           = -f elf64
+ 
++#############################################################################
++#
++# ILGCC       -- illumos
++#         This configuration is used to compile under illumos to produce
++#         PE/COFF binaries using GCC 4.4.4
++#
++#############################################################################
++
++*_ILGCC_*_*_FAMILY			= GCC
++
++DEFINE ILGCC_PREFIX			= ENV(ILGCC_BIN)
++DEFINE ILGCC_IA32_PREFIX		= DEF(ILGCC_PREFIX)
++DEFINE ILGCC_X64_PREFIX			= DEF(ILGCC_PREFIX)
++
++DEFINE ILGCC_ALL_CC_FLAGS		= DEF(GCC44_ALL_CC_FLAGS)
++DEFINE ILGCC_IA32_CC_FLAGS		= DEF(GCC44_IA32_CC_FLAGS)
++DEFINE ILGCC_X64_CC_FLAGS		= DEF(GCC44_X64_CC_FLAGS)
++DEFINE ILGCC_IA32_X64_DLINK_COMMON	= DEF(GCC44_IA32_X64_DLINK_COMMON)
++DEFINE ILGCC_IA32_X64_ASLDLINK_FLAGS	= DEF(GCC44_IA32_X64_ASLDLINK_FLAGS)
++DEFINE ILGCC_IA32_X64_DLINK_FLAGS	= DEF(GCC44_IA32_X64_DLINK_FLAGS)
++DEFINE ILGCC_X64_DLINK_FLAGS		= DEF(ILGCC_IA32_X64_DLINK_FLAGS) -melf_x86_64_sol2 --oformat=elf64-x86-64-sol2
++DEFINE ILGCC_ASM_FLAGS			= DEF(GCC44_ASM_FLAGS)
++
++*_ILGCC_*_MAKE_PATH			= DEF(ILGCC_PREFIX)make
++*_ILGCC_*_*_DLL				= ENV(GCC44_DLL)
++*_ILGCC_*_ASL_PATH			= DEF(UNIX_IASL_BIN)
++
++*_ILGCC_*_OBJCOPY_PATH			= DEF(ILGCC_PREFIX)objcopy
++*_ILGCC_*_CC_PATH			= DEF(ILGCC_PREFIX)gcc
++*_ILGCC_*_SLINK_PATH			= DEF(ILGCC_PREFIX)ar
++*_ILGCC_*_DLINK_PATH			= DEF(ILGCC_PREFIX)ld
++*_ILGCC_*_ASLDLINK_PATH			= DEF(ILGCC_PREFIX)ld
++*_ILGCC_*_ASM_PATH			= DEF(ILGCC_PREFIX)gcc
++*_ILGCC_*_PP_PATH			= DEF(ILGCC_PREFIX)gcc
++*_ILGCC_*_VFRPP_PATH			= DEF(ILGCC_PREFIX)gcc
++*_ILGCC_*_ASLCC_PATH			= DEF(ILGCC_PREFIX)gcc
++*_ILGCC_*_ASLPP_PATH			= DEF(ILGCC_PREFIX)gcc
++*_ILGCC_*_RC_PATH			= DEF(ILGCC_PREFIX)objcopy
++
++# Specify an alternative specs file that doesn't remove line number information
++# when pre-processing assembly language files.
++*_ILGCC_*_PP_FLAGS                     = DEF(GCC_PP_FLAGS) -specs=ENV(WORKSPACE)/BaseTools/Conf/illumos.specs
++*_ILGCC_*_ASLPP_FLAGS                  = DEF(GCC_ASLPP_FLAGS)
++*_ILGCC_*_ASLCC_FLAGS                  = DEF(GCC_ASLCC_FLAGS)
++*_ILGCC_*_VFRPP_FLAGS                  = DEF(GCC_VFRPP_FLAGS)
++*_ILGCC_*_APP_FLAGS                    = DEF(GCC_PP_FLAGS)
++*_ILGCC_*_ASL_FLAGS                    = DEF(IASL_FLAGS)
++*_ILGCC_*_ASL_OUTFLAGS                 = DEF(IASL_OUTFLAGS)
++
++##################
++# ILGCC IA32 definitions
++##################
++
++*_ILGCC_IA32_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m32
++*_ILGCC_IA32_ASLDLINK_FLAGS       = DEF(ILGCC_IA32_X64_ASLDLINK_FLAGS) -m elf_i386
++*_ILGCC_IA32_ASM_FLAGS            = DEF(ILGCC_ASM_FLAGS) -m32 --32 -march=i386
++*_ILGCC_IA32_CC_FLAGS             = DEF(ILGCC_IA32_CC_FLAGS) -nostdinc -Os
++*_ILGCC_IA32_DLINK_FLAGS          = DEF(ILGCC_IA32_X64_DLINK_FLAGS) -m elf_i386 --oformat=elf32-i386
++*_ILGCC_IA32_RC_FLAGS             = DEF(GCC_IA32_RC_FLAGS)
++*_ILGCC_IA32_OBJCOPY_FLAGS        = 
++*_ILGCC_IA32_NASM_FLAGS           = -f elf32
++
++##################
++# ILGCC X64 definitions
++##################
++
++*_ILGCC_X64_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m64
++*_ILGCC_X64_ASLDLINK_FLAGS       = DEF(ILGCC_IA32_X64_ASLDLINK_FLAGS) -m elf_x86_64_sol2
++*_ILGCC_X64_ASM_FLAGS            = DEF(ILGCC_ASM_FLAGS) -m64 --64 -melf_x86_64_sol2
++*_ILGCC_X64_CC_FLAGS             = DEF(ILGCC_X64_CC_FLAGS) -nostdinc 
++*_ILGCC_X64_DLINK_FLAGS          = DEF(ILGCC_X64_DLINK_FLAGS)
++*_ILGCC_X64_RC_FLAGS             = DEF(GCC_X64_RC_FLAGS)
++*_ILGCC_X64_OBJCOPY_FLAGS        = 
++*_ILGCC_X64_NASM_FLAGS           = -f elf64
++
+ ####################################################################################
+ #
+ # GCC 4.5 - This configuration is used to compile under Linux to produce
+diff --git a/BaseTools/Source/C/Makefiles/header.makefile b/BaseTools/Source/C/Makefiles/header.makefile
+index 09d2bff..d89f849 100644
+--- a/BaseTools/Source/C/Makefiles/header.makefile
++++ b/BaseTools/Source/C/Makefiles/header.makefile
+@@ -20,6 +20,7 @@ ARCH ?= IA32
+ CYGWIN:=$(findstring CYGWIN, $(shell uname -s))
+ LINUX:=$(findstring Linux, $(shell uname -s))
+ DARWIN:=$(findstring Darwin, $(shell uname -s))
++SUNOS:=$(findstring SunOS, $(shell uname -s))
+ 
+ CC ?= gcc
+ CXX ?= g++
+@@ -66,7 +67,15 @@ ifeq ($(DARWIN),Darwin)
+ endif
+ endif
+ 
+-  
++ifeq ($(ARCH), X64)
++ifeq ($(SUNOS),SunOS)
++  CFLAGS   += -m64
++  CPPFLAGS   += -m64
++  LFLAGS   += -m64
++endif
++endif
++
++
+ .PHONY: all
+ .PHONY: install
+ .PHONY: clean

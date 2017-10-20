@@ -1,0 +1,50 @@
+From 5467ef660b72196164e49141da556400c37348fe Mon Sep 17 00:00:00 2001
+From: Hans Rosenfeld <hans.rosenfeld@joyent.com>
+Date: Fri, 9 Feb 2018 13:08:04 +0000
+Subject: [PATCH 2/3] Fix build of BhyveCsm16.
+
+---
+ BhyvePkg/Csm/BhyveCsm16/BhyveCsm16Asm.S | 2 +-
+ BhyvePkg/Csm/BhyveCsm16/GNUmakefile     | 2 +-
+ BhyvePkg/Csm/BhyveCsm16/linker.lds      | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/BhyvePkg/Csm/BhyveCsm16/BhyveCsm16Asm.S b/BhyvePkg/Csm/BhyveCsm16/BhyveCsm16Asm.S
+index cb4e02c..045b691 100644
+--- a/BhyvePkg/Csm/BhyveCsm16/BhyveCsm16Asm.S
++++ b/BhyvePkg/Csm/BhyveCsm16/BhyveCsm16Asm.S
+@@ -368,7 +368,7 @@ CsmEntry:
+ 
+         /*  Zero out the 24KB buffer. */
+         push    %di
+-        mov     $(6*(4096/4)), %ecx
++        mov     $6144, %ecx
+         xor     %eax, %eax
+         cld
+         rep stos %eax,(%di)
+diff --git a/BhyvePkg/Csm/BhyveCsm16/GNUmakefile b/BhyvePkg/Csm/BhyveCsm16/GNUmakefile
+index f345730..390e884 100644
+--- a/BhyvePkg/Csm/BhyveCsm16/GNUmakefile
++++ b/BhyvePkg/Csm/BhyveCsm16/GNUmakefile
+@@ -61,7 +61,7 @@ Bin/%.o: %.S
+ 	$(CC) $(ASFLAGS) $(CPPFLAGS) -c -o $@ $<
+ 
+ Bin/BhyveCsm16.bin: linker.lds $(OBJECTS)
+-	$(LD) -Tlinker.lds -m elf_x86_64_fbsd -o Bin/BhyveCsm16.raw.o -Map Bin/BhyveCsm16.bin.map $(OBJECTS)
++	$(LD) -Tlinker.lds -m elf_x86_64_sol2 -o Bin/BhyveCsm16.raw.o -Map Bin/BhyveCsm16.bin.map $(OBJECTS)
+ 	$(OBJCOPY) --only-section .raw --output-target binary --pad-to 0x100000 Bin/BhyveCsm16.raw.o Bin/BhyveCsm16.bin
+ 
+ clean:
+diff --git a/BhyvePkg/Csm/BhyveCsm16/linker.lds b/BhyvePkg/Csm/BhyveCsm16/linker.lds
+index 0662745..a0b23a0 100644
+--- a/BhyvePkg/Csm/BhyveCsm16/linker.lds
++++ b/BhyvePkg/Csm/BhyveCsm16/linker.lds
+@@ -11,7 +11,7 @@
+  * EXPRESS OR IMPLIED.
+  */
+ 
+-OUTPUT_FORMAT("elf64-x86-64")
++OUTPUT_FORMAT("elf64-x86-64-sol2")
+ OUTPUT_ARCH(i386:x86-64)
+ 
+ SECTIONS

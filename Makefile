@@ -73,6 +73,7 @@ SUBDIRS = \
 	screen \
 	socat \
 	tun \
+	uefi-edk2 \
 	uuid \
 	vim \
 	wget \

@@ -1,0 +1,25 @@
+From c1696407cd411d7a6213956f2e5fcbc951897901 Mon Sep 17 00:00:00 2001
+From: Hans Rosenfeld <hans.rosenfeld@joyent.com>
+Date: Fri, 9 Feb 2018 13:08:53 +0000
+Subject: [PATCH 3/3] Increase maximum memory range in bhyve DSDT table.
+
+---
+ BhyvePkg/BhyveAcpiTables/Dsdt.asl | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/BhyvePkg/BhyveAcpiTables/Dsdt.asl b/BhyvePkg/BhyveAcpiTables/Dsdt.asl
+index a180b52..e622619 100644
+--- a/BhyvePkg/BhyveAcpiTables/Dsdt.asl
++++ b/BhyvePkg/BhyveAcpiTables/Dsdt.asl
+@@ -99,9 +99,9 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "BHYVE", "BVDSDT", 0x00000001)
+                 QWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, NonCacheable, ReadWrite,
+                     0x0000000000000000, // Granularity
+                     0x000000D000000000, // Range Minimum
+-                    0x000000D0000FFFFF, // Range Maximum
++                    0x000000DFFFFFFFFF, // Range Maximum
+                     0x0000000000000000, // Translation Offset
+-                    0x0000000000100000, // Length
++                    0x0000001000000000, // Length
+                     ,, , AddressRangeMemory, TypeStatic)
+             })
+             Name (PPRT, Package ()

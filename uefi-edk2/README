@@ -1,0 +1,2 @@
+This is uefi-edk2 from FreeBSD for bhyve. The upstream for this is the
+bhyve/UDK2014.SP1 branch in git@github.com:freebsd/uefi-edk2.git.
