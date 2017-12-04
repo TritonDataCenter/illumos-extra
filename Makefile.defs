@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright (c) 2017, Joyent, Inc.
+# Copyright (c) 2018, Joyent, Inc.
 #
 
 BASE =		$(PWD)
@@ -22,10 +22,16 @@ OBJ.64 =	$(VER.64)$(SEPARATE_BUILD:yes=.build)
 CTF.32 =	ctfobjects-32$(STRAP)
 CTF.64 =	ctfobjects-64$(STRAP)
 
+FETCH_BASE =	https://us-east.manta.joyent.com/Joyent_Dev/public/illumos-extra
+
 ifeq ($(STRAP),strap)
 STRAPPROTO =	$(DESTDIR)
+GCC =		$(DESTDIR)/usr/gcc/4/bin/gcc
+GXX =		$(DESTDIR)/usr/gcc/4/bin/g++
 else
 STRAPPROTO =	$(DESTDIR:proto=proto.strap)
+GCC =		$(DESTDIR)/usr/bin/gcc
+GXX =		$(DESTDIR)/usr/bin/g++
 endif
 
 PATH =		$(STRAPPROTO)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
@@ -34,8 +40,6 @@ MAKE =		gmake
 MAX_JOBS =	128
 PARALLEL =	-j$(MAX_JOBS)
 MAKE_VERBOSE =	V=1
-GCC =		$(DESTDIR)/usr/bin/gcc
-GXX =		$(DESTDIR)/usr/bin/g++
 GCC.64 =	$(GCC) -m64
 GXX.64 =	$(GXX) -m64
 

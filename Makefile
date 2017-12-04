@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright (c) 2017, Joyent, Inc.
+# Copyright (c) 2018, Joyent, Inc.
 #
 
 #
@@ -34,6 +34,12 @@ SUBDIRS = \
 	nss-nspr \
 	openssl1x \
 	perl
+
+ifeq ($(BUILD_EXTRA_GCC),yes)
+SUBDIRS +=	gcc6
+STRAPFIX +=	gcc6
+STRAPFIX_SUBDIRS=$(STRAPFIX:%=%.strapfix)
+endif
 else
 STRAPPROTO =	$(DESTDIR:proto=proto.strap)
 SUBDIRS = \
@@ -77,7 +83,6 @@ SUBDIRS = \
 	vim \
 	wget \
 	xz
-
 endif
 
 PATH =		$(STRAPPROTO)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
@@ -133,13 +138,41 @@ openssh: openssl1x
 # gets appended.
 #
 
+
 $(DESTDIR)/usr/gnu/bin/gas: FRC
 	(cd binutils && \
 	    PKG_CONFIG_LIBDIR="" \
 	    STRAP=$(STRAP) \
 	    $(MAKE) DESTDIR=$(DESTDIR) install)
 
+#
+# gcc lives in a different prefix when building the bootstrap, but not
+# gas.
+#
+ifeq ($(STRAP),strap)
+$(DESTDIR)/usr/gcc/4/bin/gcc: $(DESTDIR)/usr/gnu/bin/gas
+	(cd gcc4 && \
+	    PKG_CONFIG_LIBDIR="" \
+	    STRAP=$(STRAP) \
+	    $(MAKE) DESTDIR=$(DESTDIR) install strapfix)
 
+$(SUBDIRS): $(DESTDIR)/usr/gcc/4/bin/gcc
+	(cd $@ && \
+	    PKG_CONFIG_LIBDIR="" \
+	    STRAP=$(STRAP) \
+	    CTFMERGE=$(CTFMERGE) \
+	    CTFCONVERT=$(CTFCONVERT) \
+	    ALTCTFCONVERT=$(ALTCTFCONVERT) \
+	    NATIVE_PERL=$(NATIVE_PERL) \
+	    $(MAKE) DESTDIR=$(DESTDIR) install)
+
+$(STRAPFIX_SUBDIRS): $(SUBDIRS)
+	(cd $$(basename $@ .strapfix) && \
+	    PKG_CONFIG_LIBDIR="" \
+	    STRAP=$(STRAP) \
+	    $(MAKE) DESTDIR=$(DESTDIR) strapfix)
+
+else
 $(DESTDIR)/usr/bin/gcc: $(DESTDIR)/usr/gnu/bin/gas
 	(cd gcc4 && \
 	    PKG_CONFIG_LIBDIR="" \
@@ -155,10 +188,14 @@ $(SUBDIRS): $(DESTDIR)/usr/bin/gcc
 	    ALTCTFCONVERT=$(ALTCTFCONVERT) \
 	    NATIVE_PERL=$(NATIVE_PERL) \
 	    $(MAKE) DESTDIR=$(DESTDIR) install)
+endif
+
 
 install: $(SUBDIRS) gcc4 binutils
 
-install_strap: $(SUBDIRS) gcc4 binutils
+fixup_strap: $(STRAPFIX_SUBDIRS)
+
+install_strap: $(SUBDIRS) gcc4 binutils fixup_strap
 
 clean:
 	-for dir in $(SUBDIRS) gcc4 binutils; \

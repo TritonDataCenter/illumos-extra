@@ -1,40 +1,31 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
-#
-# Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
-# Use is subject to license terms.
-# Copyright (c) 2018, Joyent, Inc.  All rights reserved.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
-VER =	gcc-4.4.4
-MPFR_VER =	mpfr-3.1.2
-GMP_VER =	gmp-5.1.1
-PREFIX =	/usr/gcc/4
+#
+# Copyright (c) 2018, Joyent, Inc.
+#
+
+VER =		gcc-6.4.0
+MPFR_VER =	mpfr-3.1.6
+GMP_VER =	gmp-6.1.2
+MPC_VER =	mpc-1.0.3
+PREFIX =	/usr/gcc/6
 
 include ../Makefile.defs
 
 SEPARATE_BUILD =	yes
 
 GCC =	/opt/local/bin/gcc
-GXX =	/bin/false
-CFLAGS =	-nostdinc -isystem /usr/include -g -O2
+GXX =	/opt/local/bin/g++
+CFLAGS = -g -O2
 
 AUTOCONF_OPTS += \
 	--with-ld=/usr/bin/ld \
@@ -82,7 +73,6 @@ ifeq ($(STRAP),strap)
 		$(DESTDIR)/$(PREFIX)/lib/64/libgcc_s.so.1 \
 		$(DESTDIR)/$(PREFIX)/lib/64/libstdc++.so.6
 	STRAPFIX_FILES = $(STRAPFIX_FILES_32) $(STRAPFIX_FILES_64)
-	STRAPFIX_BINS = gcc g++ cpp
 endif
 
 #
@@ -104,6 +94,21 @@ include ../Makefile.targ
 include ../Makefile.targ.autoconf
 
 #
+# To reduce repository size, the source files are stored in Manta and
+# need to be downloaded.
+#
+$(TARBALL) $(MPFR_VER).tar.bz2 $(GMP_VER).tar.bz2 $(MPC_VER).tar.gz:
+	if [[ ! -f $@.sha1 ]]; then \
+		echo "Missing required digest file!"; \
+		exit 1; \
+	fi; \
+	curl -o $@.tmp $(FETCH_BASE)/$@
+	digest -a sha1 $@.tmp > $@.tmp.sha1
+	cmp -s $@.sha1 $@.tmp.sha1
+	rm -f $@.tmp.sha1
+	mv $@.tmp $@
+
+#
 # We could use the mpfr and gmp from the build system (since the compiler will
 # be run here), but there's no good way to make gcc build itself correctly if
 # we do.  There are two main problems:
@@ -121,12 +126,12 @@ include ../Makefile.targ.autoconf
 #
 # Instead we have mpfr and gmp built as part of the gcc build itself.
 #
-$(AUTOCONF_OUT.32): | $(VER.32)/mpfr $(VER.32)/gmp
+$(AUTOCONF_OUT.32): | $(VER.32)/mpfr $(VER.32)/gmp $(VER.32)/mpc
 
-$(VER.32)/mpfr: $(MPFR_VER).tar.gz | $(VER.32)
+$(VER.32)/mpfr: $(MPFR_VER).tar.bz2 | $(VER.32)
 	-rm -rf $@
 	mkdir -p .unpack32
-	gtar x -C .unpack32 -z --no-same-owner -f $(MPFR_VER).tar.gz
+	gtar x -C .unpack32 -j --no-same-owner -f $(MPFR_VER).tar.bz2
 	mv -f .unpack32/$(MPFR_VER) ./$@
 	-rmdir .unpack32
 	chmod 755 $@/configure
@@ -137,6 +142,15 @@ $(VER.32)/gmp: $(GMP_VER).tar.bz2 | $(VER.32)
 	mkdir -p .unpack32
 	gtar x -C .unpack32 -j --no-same-owner -f $(GMP_VER).tar.bz2
 	mv -f .unpack32/$(GMP_VER) ./$@
+	-rmdir .unpack32
+	chmod 755 $@/configure
+	touch $@/configure
+
+$(VER.32)/mpc: $(MPC_VER).tar.gz | $(VER.32)
+	-rm -rf $@
+	mkdir -p .unpack32
+	gtar x -C .unpack32 -z --no-same-owner -f $(MPC_VER).tar.gz
+	mv -f .unpack32/$(MPC_VER) ./$@
 	-rmdir .unpack32
 	chmod 755 $@/configure
 	touch $@/configure
@@ -152,10 +166,6 @@ strapfix: $(STRAPFIX_LINKS) $(STRAPFIX_FILES) | install
 		/usr/bin/elfedit -e \
 		    'dyn:runpath $(DESTDIR)/$(PREFIX)/lib/64' \
 		    $$f; \
-	done
-	mkdir -p $(DESTDIR)/usr/bin
-	for f in $(STRAPFIX_BINS); do \
-		ln -sf $(DESTDIR)/$(PREFIX)/bin/$$f $(DESTDIR)/usr/bin/$$f; \
 	done
 
 $(STRAPFIX_LINKS):
