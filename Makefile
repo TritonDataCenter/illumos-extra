@@ -22,11 +22,20 @@ DESTDIR =	$(BASE)/proto
 
 ifeq ($(STRAP),strap)
 STRAPPROTO =	$(DESTDIR)
+SUBDIRS = \
+	cpp \
+	bzip2 \
+	libexpat \
+	libidn \
+	libxml \
+	libz \
+	make \
+	node.js \
+	nss-nspr \
+	openssl1x \
+	perl
 else
 STRAPPROTO =	$(DESTDIR:proto=proto.strap)
-endif
-
-PATH =		$(STRAPPROTO)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
 SUBDIRS = \
 	bash \
 	bind \
@@ -69,18 +78,9 @@ SUBDIRS = \
 	wget \
 	xz
 
-STRAP_SUBDIRS = \
-	cpp \
-	bzip2 \
-	libexpat \
-	libidn \
-	libxml \
-	libz \
-	make \
-	node.js \
-	nss-nspr \
-	openssl1x \
-	perl
+endif
+
+PATH =		$(STRAPPROTO)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
 
 NAME =	illumos-extra
 
@@ -111,7 +111,7 @@ NATIVE_PERL =	$(STRAPPROTO)/usr/perl5/5.12/bin/perl
 
 all: $(SUBDIRS)
 
-strap: $(STRAP_SUBDIRS)
+strap: $(SUBDIRS)
 
 curl: libz openssl1x libidn2
 gzip: libz
@@ -158,7 +158,7 @@ $(SUBDIRS): $(DESTDIR)/usr/bin/gcc
 
 install: $(SUBDIRS) gcc4 binutils
 
-install_strap: $(STRAP_SUBDIRS) gcc4 binutils
+install_strap: $(SUBDIRS) gcc4 binutils
 
 clean:
 	-for dir in $(SUBDIRS) gcc4 binutils; \
