@@ -1,0 +1,28 @@
+From 88693b231f8bacd4df1dbe84d25c90d7242fc905 Mon Sep 17 00:00:00 2001
+From: Robert Mustacchi <rm@joyent.com>
+Date: Mon, 11 Dec 2017 23:21:15 +0000
+Subject: [PATCH 7/7] Fix gcc 4.4.4 bad uninitialized variable warning
+
+gcc 4.4.4 misdiagnoses the dblen variable as being uninitialized. Based
+on analysis, that is not the case. We opt to deal with this by doing a
+token initialization such that we don't gag the warning.
+---
+ crypto/rsa/rsa_oaep.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/crypto/rsa/rsa_oaep.c b/crypto/rsa/rsa_oaep.c
+index 9a01b4a..9def7a0 100644
+--- a/crypto/rsa/rsa_oaep.c
++++ b/crypto/rsa/rsa_oaep.c
+@@ -120,7 +120,7 @@ int RSA_padding_check_PKCS1_OAEP_mgf1(unsigned char *to, int tlen,
+                                       int plen, const EVP_MD *md,
+                                       const EVP_MD *mgf1md)
+ {
+-    int i, dblen, mlen = -1, one_index = 0, msg_index;
++    int i, dblen = 0, mlen = -1, one_index = 0, msg_index;
+     unsigned int good, found_one_byte;
+     const unsigned char *maskedseed, *maskeddb;
+     /*
+-- 
+2.7.3
+

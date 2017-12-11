@@ -19,10 +19,10 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2016 Joyent, Inc.
+# Copyright (c) 2017, Joyent, Inc.
 #
 
-VER = openssl-1.0.2k
+VER = openssl-1.0.2n
 LIBVER =	1.0.0
 
 include ../Makefile.defs
@@ -157,18 +157,9 @@ $(VER.64)/configure: $(VER.64)/Configure Makefile $(PKCS11.64) \
 
 all: all_autoconf
 
-check: $(CHECK_LIBS:%=%.check)
-
-%.check: %
-	syms="$$(/usr/bin/nm -ph $< | \
-	    awk '$$2 == T && $$3 != _init && $$3 != _fini { print $$3 }' | \
-	    grep -v ^sunw_)"; \
-	if [[ -n "$$syms" ]]; then \
-		echo "Unprefixed symbols found in $<: $$syms"; \
-		exit 1; \
-	else \
-		touch $@; \
-	fi
+.PHONY: check
+check: $(CHECK_LIBS)
+	./tools/checksyms.bash $(CHECK_LIBS)
 
 $(CHECK_LIBS): all
 
