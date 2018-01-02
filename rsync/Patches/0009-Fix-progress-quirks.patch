@@ -1,0 +1,130 @@
+From: Wayne Davison <wayned@samba.org>
+Subject: Fixes for --progress quirks; originally templines.diff from Debian patches
+Origin: https://git.samba.org/rsync.git/?p=rsync.git;a=commit;h=e02b89d0d35ab8acbd522983c08d2519d8bd12d4
+Origin: https://git.samba.org/rsync.git/?p=rsync.git;a=commit;h=ff66fd4bb6cc76488c6ea1e4b651a869847f6375
+Bug: https://bugzilla.samba.org/show_bug.cgi?id=12367
+
+---
+
+diff a/flist.c b/flist.c
+--- a/flist.c	2016-10-07 13:31:58.347895363 +0200
++++ b/flist.c	2016-11-09 14:57:58.697060497 +0100
+@@ -36,6 +36,7 @@
+ extern int module_id;
+ extern int ignore_errors;
+ extern int numeric_ids;
++extern int quiet;
+ extern int recurse;
+ extern int use_qsort;
+ extern int xfer_dirs;
+@@ -127,6 +128,7 @@
+ 
+ static char empty_sum[MAX_DIGEST_LEN];
+ static int flist_count_offset; /* for --delete --progress */
++static int show_filelist_progress;
+ 
+ static void flist_sort_and_clean(struct file_list *flist, int strip_root);
+ static void output_flist(struct file_list *flist);
+@@ -142,13 +144,10 @@
+ 		     : MD5_DIGEST_LEN;
+ }
+ 
+-static int show_filelist_p(void)
+-{
+-	return INFO_GTE(FLIST, 1) && xfer_dirs && !am_server && !inc_recurse;
+-}
+-
+ static void start_filelist_progress(char *kind)
+ {
++	if (quiet)
++		return;
+ 	rprintf(FCLIENT, "%s ... ", kind);
+ 	output_needs_newline = 1;
+ 	rflush(FINFO);
+@@ -156,23 +155,28 @@
+ 
+ static void emit_filelist_progress(int count)
+ {
++	if (quiet)
++		return;
++	if (output_needs_newline == 2) /* avoid a newline in the middle of this filelist-progress output */
++		output_needs_newline = 0;
+ 	rprintf(FCLIENT, " %d files...\r", count);
++	output_needs_newline = 2;
+ }
+ 
+ static void maybe_emit_filelist_progress(int count)
+ {
+-	if (INFO_GTE(FLIST, 2) && show_filelist_p() && (count % 100) == 0)
++	if (INFO_GTE(FLIST, 2) && show_filelist_progress && (count % 100) == 0)
+ 		emit_filelist_progress(count);
+ }
+ 
+ static void finish_filelist_progress(const struct file_list *flist)
+ {
++	output_needs_newline = 0;
+ 	if (INFO_GTE(FLIST, 2)) {
+ 		/* This overwrites the progress line */
+ 		rprintf(FINFO, "%d file%sto consider\n",
+ 			flist->used, flist->used == 1 ? " " : "s ");
+ 	} else {
+-		output_needs_newline = 0;
+ 		rprintf(FINFO, "done\n");
+ 	}
+ }
+@@ -2087,7 +2091,7 @@
+ 	int implied_dot_dir = 0;
+ 
+ 	rprintf(FLOG, "building file list\n");
+-	if (show_filelist_p())
++	if (show_filelist_progress)
+ 		start_filelist_progress("building file list");
+ 	else if (inc_recurse && INFO_GTE(FLIST, 1) && !am_server)
+ 		rprintf(FCLIENT, "sending incremental file list\n");
+@@ -2361,7 +2365,7 @@
+ 		idev_destroy();
+ #endif
+ 
+-	if (show_filelist_p())
++	if (show_filelist_progress)
+ 		finish_filelist_progress(flist);
+ 
+ 	gettimeofday(&end_tv, NULL);
+@@ -2443,7 +2447,7 @@
+ 	int64 start_read;
+ 
+ 	if (!first_flist) {
+-		if (show_filelist_p())
++		if (show_filelist_progress)
+ 			start_filelist_progress("receiving file list");
+ 		else if (inc_recurse && INFO_GTE(FLIST, 1) && !am_server)
+ 			rprintf(FCLIENT, "receiving incremental file list\n");
+@@ -2539,7 +2543,7 @@
+ 	if (DEBUG_GTE(FLIST, 2))
+ 		rprintf(FINFO, "received %d names\n", flist->used);
+ 
+-	if (show_filelist_p())
++	if (show_filelist_progress)
+ 		finish_filelist_progress(flist);
+ 
+ 	if (need_unsorted_flist) {
+diff a/progress.c b/progress.c
+--- a/progress.c	2015-12-30 08:33:38.268872577 +0100
++++ b/progress.c	2016-11-09 14:58:39.373429408 +0100
+@@ -25,6 +25,7 @@
+ 
+ extern int am_server;
+ extern int flist_eof;
++extern int quiet;
+ extern int need_unsorted_flist;
+ extern int output_needs_newline;
+ extern struct stats stats;
+@@ -127,7 +128,7 @@
+ 	pct = ofs == size ? 100 : (int) (100.0 * ofs / size);
+ 	rprintf(FCLIENT, "\r%15s %3d%% %7.2f%s %s%s",
+ 		human_num(ofs), pct, rate, units, rembuf, eol);
+-	if (!is_last) {
++	if (!is_last && !quiet) {
+ 		output_needs_newline = 1;
+ 		rflush(FCLIENT);
+ 	}

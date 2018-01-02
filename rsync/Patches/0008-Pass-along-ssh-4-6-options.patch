@@ -1,0 +1,120 @@
+From rsync-patches-3.1.2.tar.gz; originally ssh-4-6-options.diff
+
+This patch adds the sending of the -4 or -6 option to ssh when the
+-4 or -6 option was given to rsync.
+
+To use this patch, run these commands for a successful build:
+
+    patch -p1 <patches/ssh-4-6-options.diff
+    ./configure                         (optional if already run)
+    make
+
+based-on: 16b49716d55a50f2e985b879b720b2c53c892a3a
+---
+
+diff --git a/main.c b/main.c
+--- a/main.c
++++ b/main.c
+@@ -78,6 +78,7 @@ extern BOOL flist_receiving_enabled;
+ extern BOOL shutting_down;
+ extern int backup_dir_len;
+ extern int basis_dir_cnt;
++extern int default_af_hint;
+ extern struct stats stats;
+ extern char *stdout_format;
+ extern char *logfile_format;
+@@ -447,6 +448,11 @@ static pid_t do_cmd(char *cmd, char *machine, char *user, char **remote_argv, in
+ 			*t++ = '\0';
+ 		}
+ 
++		if ((t = strrchr(cmd, '/')) != NULL)
++		    t++;
++		else
++		    t = cmd;
++
+ 		/* check to see if we've already been given '-l user' in
+ 		 * the remote-shell command */
+ 		for (i = 0; i < argc-1; i++) {
+@@ -466,20 +472,25 @@ static pid_t do_cmd(char *cmd, char *machine, char *user, char **remote_argv, in
+ 			args[argc++] = "-l";
+ 			args[argc++] = user;
+ 		}
++#ifdef AF_INET
++		if (default_af_hint == AF_INET && strcmp(cmd, "ssh") == 0) {
++			/* we're using ssh so we can add a -4 option */
++			args[argc++] = "-4";
++		}
++#endif
++#ifdef AF_INET6
++		if (default_af_hint == AF_INET6 && strcmp(cmd, "ssh") == 0) {
++			/* we're using ssh so we can add a -6 option */
++			args[argc++] = "-6";
++		}
++#endif
+ 		args[argc++] = machine;
+ #endif
+ 
+ 		args[argc++] = rsync_path;
+ 
+-		if (blocking_io < 0) {
+-			char *cp;
+-			if ((cp = strrchr(cmd, '/')) != NULL)
+-				cp++;
+-			else
+-				cp = cmd;
+-			if (strcmp(cp, "rsh") == 0 || strcmp(cp, "remsh") == 0)
+-				blocking_io = 1;
+-		}
++		if (blocking_io < 0 && (strcmp(t, "rsh") == 0 || strcmp(t, "remsh") == 0))
++			blocking_io = 1;
+ 
+ 		server_options(args,&argc);
+ 
+diff --git a/rsync.yo b/rsync.yo
+--- a/rsync.yo
++++ b/rsync.yo
+@@ -2589,14 +2589,18 @@ regardless of the remote charset you actually pass.  Thus, you may feel free to
+ specify just the local charset for a daemon transfer (e.g. bf(--iconv=utf8)).
+ 
+ dit(bf(-4, --ipv4) or bf(-6, --ipv6)) Tells rsync to prefer IPv4/IPv6
+-when creating sockets.  This only affects sockets that rsync has direct
++when creating sockets.  This affects sockets that rsync has direct
+ control over, such as the outgoing socket when directly contacting an
+-rsync daemon.  See also these options in the bf(--daemon) mode section.
++rsync daemon, as well as forwaring the -4 or -6 option to ssh, if rsync
++deduces that ssh is being used as the remote shell.  For other remote
++shells, see the bf(--rsh) option.
+ 
+ If rsync was complied without support for IPv6, the bf(--ipv6) option
+ will have no effect.  The bf(--version) output will tell you if this
+ is the case.
+ 
++See also these options in the bf(--daemon) mode section.
++
+ dit(bf(--checksum-seed=NUM)) Set the checksum seed to the integer NUM.  This 4
+ byte checksum seed is included in each block and MD4 file checksum calculation
+ (the more modern MD5 file checksums don't use a seed).  By default the checksum
+diff -Nurp a/rsync.1 b/rsync.1
+--- a/rsync.1
++++ b/rsync.1
+@@ -2943,14 +2943,18 @@ specify just the local charset for a dae
+ .IP 
+ .IP "\fB\-4, \-\-ipv4\fP or \fB\-6, \-\-ipv6\fP"
+ Tells rsync to prefer IPv4/IPv6
+-when creating sockets.  This only affects sockets that rsync has direct
++when creating sockets.  This affects sockets that rsync has direct
+ control over, such as the outgoing socket when directly contacting an
+-rsync daemon.  See also these options in the \fB\-\-daemon\fP mode section.
++rsync daemon, as well as forwaring the \-4 or \-6 option to ssh, if rsync
++deduces that ssh is being used as the remote shell.  For other remote
++shells, see the \fB\-\-rsh\fP option.
+ .IP 
+ If rsync was complied without support for IPv6, the \fB\-\-ipv6\fP option
+ will have no effect.  The \fB\-\-version\fP output will tell you if this
+ is the case.
+ .IP 
++See also these options in the \fB\-\-daemon\fP mode section.
++.IP 
+ .IP "\fB\-\-checksum\-seed=NUM\fP"
+ Set the checksum seed to the integer NUM.  This 4
+ byte checksum seed is included in each block and MD4 file checksum calculation

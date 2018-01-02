@@ -30,7 +30,7 @@ AUTOCONF_ENV += \
 AUTOCONF_OPTS += \
 	--with-included-popt
 
-PATCHES =	rsync.1.diff
+PATCHES =	Patches/*
 
 include ../Makefile.targ
 

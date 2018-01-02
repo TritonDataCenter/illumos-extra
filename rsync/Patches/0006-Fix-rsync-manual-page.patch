@@ -1,3 +1,8 @@
+From: Joyent
+Date: Wed Dec 8 23:26:28 2010 -0800
+Subject: Fixup rsync(1) manual page
+---
+
 --- rsync-3.1.2/rsync.1	Thu Sep 17 01:30:37 2009
 +++ rsync-3.1.2/rsync.1.new	Thu Sep 17 01:32:44 2009
 @@ -1426,5 +1426,8 @@
