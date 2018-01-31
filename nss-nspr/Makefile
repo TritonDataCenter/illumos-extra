@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 Joyent, Inc.
+# Copyright 2018 Joyent, Inc.
 #
 
 VER =	nss-3.25
@@ -49,3 +49,10 @@ all_64: $(VER.64)/$(UNPACK_SENTINEL)
 install: all
 	DESTDIR=$(DESTDIR) ksh93 ./install-nss $(VER.32)
 	DESTDIR=$(DESTDIR) MACH64=amd64 ksh93 ./install-nss-64 $(VER.64)
+	# Apology in advance; see OS-6582 for why we're doing this.
+	if [[ ! -f $(DESTDIR)/usr/include/zconf.h.orig ]]; then \
+		cp $(DESTDIR)/usr/include/zconf.h \
+		   $(DESTDIR)/usr/include/zconf.h.orig; \
+		$(GPATCH) -d $(DESTDIR)/usr/include -p$(PATCHSTRIP) \
+		    <zconf.patch; \
+	fi
