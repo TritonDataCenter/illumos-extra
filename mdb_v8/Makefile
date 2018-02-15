@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright (c) 2017, Joyent, Inc.
+# Copyright (c) 2018, Joyent, Inc.
 #
 
 #
@@ -23,7 +23,7 @@
 # 3. From one directory up, run tar cvzf mdb_v8-<ver>.tar.gz mdb_v8-<ver>
 #
 
-VER =	mdb_v8-1.1.4
+VER =	mdb_v8-1.3.0
 
 include ../Makefile.defs
 include ../Makefile.targ
