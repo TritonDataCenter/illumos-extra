@@ -31,6 +31,8 @@ AUTOCONF_OPTS += \
 	--enable-mail=yes \
 	--enable-omprog=yes
 
+PATCHES = patches/*
+
 include ../Makefile.targ
 
 all: all_autoconf

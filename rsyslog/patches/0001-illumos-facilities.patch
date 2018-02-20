@@ -1,0 +1,15 @@
+--- a/runtime/srutils.c	2018-02-19 01:59:24.000000000 -0800
++++ b/runtime/srutils.c	2018-02-19 02:04:38.000000000 -0800
+@@ -94,6 +94,12 @@
+ #if defined(LOG_FTP)
+ 	{"ftp",          LOG_FTP},
+ #endif
++#if defined(__sun)
++	{"audit",        LOG_AUDIT},
++	{"altcron",      LOG_ALTCRON},
++	{"console",      LOG_CONSOLE},
++	{"ntp",          LOG_NTP},
++#endif
+ 	{"local0",       LOG_LOCAL0},
+ 	{"local1",       LOG_LOCAL1},
+ 	{"local2",       LOG_LOCAL2},
