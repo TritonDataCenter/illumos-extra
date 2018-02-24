@@ -3022,7 +3022,7 @@ f usr/share/man/man1/screen.1 0444 root bin
 f usr/bin/socat 0555 root bin
 f usr/share/man/man1/socat.1 0444 root bin
 # uefi-edk2
-f usr/share/bhyve/uefi-csm-rom.bin 0644 root bin
+# f usr/share/bhyve/uefi-csm-rom.bin 0644 root bin
 # uuid
 f usr/bin/uuid 0755 root bin
 f usr/share/man/man1/uuid.1 0644 root bin
