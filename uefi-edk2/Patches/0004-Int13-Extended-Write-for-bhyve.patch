@@ -1,0 +1,39 @@
+From f7714dd1907ad2ad09d254bda3c2dac064baba33 Mon Sep 17 00:00:00 2001
+From: Mike Gerdts <mike.gerdts@joyent.com>
+Date: Mon, 26 Feb 2018 02:18:50 +0000
+Subject: [PATCH] Int13 Extended Write for bhyve
+
+---
+ BhyvePkg/Csm/BhyveCsm16/Bios.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/BhyvePkg/Csm/BhyveCsm16/Bios.c b/BhyvePkg/Csm/BhyveCsm16/Bios.c
+index 3cfedf6..39017be 100644
+--- a/BhyvePkg/Csm/BhyveCsm16/Bios.c
++++ b/BhyvePkg/Csm/BhyveCsm16/Bios.c
+@@ -201,6 +201,22 @@ InterruptVector0x13(EFI_IA32_REGISTER_SET *Regs)
+     Regs->E.EFlags.CF = 0;
+     Regs->H.AH = 0;
+     break;
++  case 0x43:    /* Extended Write */
++    DPRINTF (DBG_VERB, ("XXX InterruptVector0x13() Extended Write Drive=0%x Packet=0x%x:0x%x\n", Regs->H.DL, Regs->E.DS, Regs->X.SI));
++    AddressPacket = (EDD_DEVICE_ADDRESS_PACKET *)(UINT64)((Regs->X.DS << 4) + (Regs->X.SI));
++
++    DPRINTF (DBG_VERB, ("XXX Packet->NumberOfBlocks=%d\n", AddressPacket->NumberOfBlocks));
++    DPRINTF (DBG_VERB, ("XXX Packet->Lba=0x%llx\n", AddressPacket->Lba));
++    DPRINTF (DBG_VERB, ("XXX Packet->SegOffset=0x%x\n", AddressPacket->SegOffset));
++    DPRINTF (DBG_VERB, ("XXX Packet->TransferBuffer=0x%llx\n", AddressPacket->TransferBuffer));
++    DPRINTF (DBG_VERB, ("XXX Segment 0x%x Offset=0x%x %x\n", AddressPacket->SegOffset >> 16, AddressPacket->SegOffset & 0xffff, (((AddressPacket->SegOffset >> 16) << 4) + (UINT16)AddressPacket->SegOffset)));
++
++    Status = mDeviceBlockIo->WriteBlocks(mDeviceBlockIo, mDeviceBlockIo->Media->MediaId, AddressPacket->Lba, AddressPacket->NumberOfBlocks * mDeviceBlockIo->Media->BlockSize, (VOID *)(UINT64)(((AddressPacket->SegOffset >> 16) << 4) + (UINT16)AddressPacket->SegOffset));
++
++    DPRINTF (DBG_VERB, ("XXX Status = 0x%x\n", Status));
++    Regs->E.EFlags.CF = 0;
++    Regs->H.AH = 0;
++    break;
+   case 0x48:    /* Extended Drive Parameters */
+     DPRINTF (DBG_INFO, ("XXX InterruptVector0x13() Extended Drive Parameters Drive=0%x Packet=0x%x:0x%x\n", Regs->H.DL, Regs->E.DS, Regs->X.SI));
+     DriveNumber = Regs->H.DL;
+-- 
+2.2.1
+
