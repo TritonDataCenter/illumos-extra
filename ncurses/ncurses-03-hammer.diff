@@ -1,0 +1,14 @@
+--- ncurses-5.7/configure.orig	2018-03-01 09:08:55.764952952 +0000
++++ ncurses-5.7/configure	2018-03-01 10:58:54.245685688 +0000
+@@ -18316,9 +18316,11 @@
+ 	echo "s/<curses.h>/<ncurses.h>/" >> \$TMPSED
+ 	;;
+ esac
++
+ CF_EOF
+ fi
+ cat >>headers.sh <<CF_EOF
++
+ rm -f \$TMPSRC
+ sed -f \$TMPSED \$SRC > \$TMPSRC
+ NAME=\`basename \$SRC\`

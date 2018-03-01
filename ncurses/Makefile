@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2018, Joyent, Inc.  All rights reserved.
 #
 
 VER =	ncurses-5.7
@@ -42,7 +42,7 @@ LDFLAGS.64 +=	-R/usr/gnu/lib/amd64
 PATCHES = \
 	ncurses-01-widec.diff \
 	ncurses-02-rpath.diff \
-	ncurses-03-uughksh.diff
+	ncurses-03-hammer.diff
 
 USRDIR =	$(DESTDIR)/usr
 
