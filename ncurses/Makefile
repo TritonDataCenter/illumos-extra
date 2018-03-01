@@ -85,9 +85,9 @@ unhack-curses:
 
 install: all unhack-curses
 	mkdir -p $(DESTDIR)
-	(cd $(VER.64); env - PATH=/usr/bin:$(PATH) \
+	(cd $(VER.64); env - SHELL=/usr/bin/bash PATH=/usr/bin:$(PATH) \
 	    gmake DESTDIR=$(DESTDIR) install)
-	(cd $(VER.32); env - PATH=/usr/bin:$(PATH) \
+	(cd $(VER.32); env - SHELL=/usr/bin/bash PATH=/usr/bin:$(PATH) \
 	    gmake DESTDIR=$(DESTDIR) install)
 	mv $(USRDIR)/gnu/bin/infocmp $(USRDIR)/bin/ginfocmp
 	mv $(USRDIR)/gnu/bin/tic $(USRDIR)/bin/gtic
