@@ -41,12 +41,10 @@ LDFLAGS.64 +=	-R/usr/gnu/lib/amd64
 
 PATCHES = \
 	ncurses-01-widec.diff \
-	ncurses-02-rpath.diff
+	ncurses-02-rpath.diff \
+	ncurses-03-uughksh.diff
 
 USRDIR =	$(DESTDIR)/usr
-
-OVERRIDES = SHELL=/usr/bin/bash
-OVERRIDES.64 = SHELL=/usr/bin/bash
 
 include ../Makefile.targ
 
