@@ -1,0 +1,38 @@
+--- ncurses-5.7/configure.orig	2018-03-02 12:31:39.393356747 +0000
++++ ncurses-5.7/configure	2018-03-02 12:32:30.694641506 +0000
+@@ -18280,7 +18280,7 @@
+ CF_EOF
+ 
+ if test $WITH_CURSES_H = yes; then
+-	cat >>headers.sh <<CF_EOF
++	/bin/cat >>headers.sh <<CF_EOF
+ case \$DST in
+ /*/include/*)
+ 	END=\`basename \$DST\`
+@@ -18297,7 +18297,7 @@
+ CF_EOF
+ 
+ else
+-	cat >>headers.sh <<CF_EOF
++	/bin/cat >>headers.sh <<CF_EOF
+ case \$DST in
+ /*/include/*)
+ 	END=\`basename \$DST\`
+@@ -18318,7 +18318,7 @@
+ esac
+ CF_EOF
+ fi
+-cat >>headers.sh <<CF_EOF
++/bin/cat >>headers.sh <<CF_EOF
+ rm -f \$TMPSRC
+ sed -f \$TMPSED \$SRC > \$TMPSRC
+ NAME=\`basename \$SRC\`
+@@ -18328,7 +18328,7 @@
+ test "\$NAME" = "curses.h" && NAME=ncurses.h
+ CF_EOF
+ fi
+-cat >>headers.sh <<CF_EOF
++/bin/cat >>headers.sh <<CF_EOF
+ # Just in case someone gzip'd manpages, remove the conflicting copy.
+ test -f \$DST/\$NAME.gz && rm -f \$DST/\$NAME.gz
+ 
