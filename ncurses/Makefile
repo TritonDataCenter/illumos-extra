@@ -36,13 +36,15 @@ AUTOCONF_OPTS += \
 AUTOCONF_OPTS.64 += \
 	--libdir=/usr/gnu/lib/amd64
 
+AUTOCONF_ENV += 	CONFIG_SHELL=/bin/bash
+AUTOCONF_ENV.64 +=	CONFIG_SHELL=/bin/bash
+
 LDFLAGS +=	-R/usr/gnu/lib
 LDFLAGS.64 +=	-R/usr/gnu/lib/amd64
 
 PATCHES = \
 	ncurses-01-widec.diff \
-	ncurses-02-rpath.diff \
-	ncurses-03-cat.diff
+	ncurses-02-rpath.diff
 
 USRDIR =	$(DESTDIR)/usr
 
