@@ -41,8 +41,7 @@ LDFLAGS.64 +=	-R/usr/gnu/lib/amd64
 
 PATCHES = \
 	ncurses-01-widec.diff \
-	ncurses-02-rpath.diff \
-	ncurses-03-bincat.diff
+	ncurses-02-rpath.diff
 
 USRDIR =	$(DESTDIR)/usr
 
@@ -87,8 +86,10 @@ unhack-curses:
 install: all unhack-curses
 	mkdir -p $(DESTDIR)
 	(cd $(VER.64); env - PATH=/usr/bin:$(PATH) \
+	    CONFIG_SHELL=/bin/bash \
 	    gmake DESTDIR=$(DESTDIR) install)
 	(cd $(VER.32); env - PATH=/usr/bin:$(PATH) \
+	    CONFIG_SHELL=/bin/bash \
 	    gmake DESTDIR=$(DESTDIR) install)
 	mv $(USRDIR)/gnu/bin/infocmp $(USRDIR)/bin/ginfocmp
 	mv $(USRDIR)/gnu/bin/tic $(USRDIR)/bin/gtic
