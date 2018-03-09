@@ -36,6 +36,8 @@ AUTOCONF_OPTS += \
 AUTOCONF_OPTS.64 += \
 	--libdir=/usr/gnu/lib/amd64
 
+CONFIG_SHELL =		/bin/bash
+
 LDFLAGS +=	-R/usr/gnu/lib
 LDFLAGS.64 +=	-R/usr/gnu/lib/amd64
 
@@ -86,10 +88,8 @@ unhack-curses:
 install: all unhack-curses
 	mkdir -p $(DESTDIR)
 	(cd $(VER.64); env - PATH=/usr/bin:$(PATH) \
-	    CONFIG_SHELL=/bin/bash \
 	    gmake DESTDIR=$(DESTDIR) install)
 	(cd $(VER.32); env - PATH=/usr/bin:$(PATH) \
-	    CONFIG_SHELL=/bin/bash \
 	    gmake DESTDIR=$(DESTDIR) install)
 	mv $(USRDIR)/gnu/bin/infocmp $(USRDIR)/bin/ginfocmp
 	mv $(USRDIR)/gnu/bin/tic $(USRDIR)/bin/gtic
