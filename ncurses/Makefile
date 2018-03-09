@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright (c) 2018, Joyent, Inc.  All rights reserved.
 #
 
 VER =	ncurses-5.7
@@ -35,6 +35,12 @@ AUTOCONF_OPTS += \
 
 AUTOCONF_OPTS.64 += \
 	--libdir=/usr/gnu/lib/amd64
+
+# /bin/sh (aka ksh93)'s cat builtin likes to omit the final newline, which
+# causes problems with generating headers.sh using successive here docs.
+# Use bash for now to avoid lines being merged by this.
+AUTOCONF_ENV += 	CONFIG_SHELL=/bin/bash
+AUTOCONF_ENV.64 +=	CONFIG_SHELL=/bin/bash
 
 LDFLAGS +=	-R/usr/gnu/lib
 LDFLAGS.64 +=	-R/usr/gnu/lib/amd64
