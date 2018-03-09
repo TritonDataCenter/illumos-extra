@@ -1,0 +1,11 @@
+--- ncurses-5.7/configure.orig	2018-03-09 08:43:22.872550035 +0000
++++ ncurses-5.7/configure	2018-03-09 14:51:26.559266639 +0000
+@@ -8,6 +8,8 @@
+ # This configure script is free software; the Free Software Foundation
+ # gives unlimited permission to copy, distribute and modify it.
+ 
++builtin -d /bin/cat
++
+ # Avoid depending upon Character Ranges.
+ as_cr_letters='abcdefghijklmnopqrstuvwxyz'
+ as_cr_LETTERS='ABCDEFGHIJKLMNOPQRSTUVWXYZ'
