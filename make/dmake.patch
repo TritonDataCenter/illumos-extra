@@ -309,6 +309,30 @@ index fc4306b..1211caf 100644
  #if defined(DISTRIBUTED)
  #	include <dm/Avo_CmdOutput.h>
  #	include <rw/xdrstrea.h>
+@@ -401,8 +403,9 @@
+ 		}
+ 	}
+ 	if (childPid  == -1) {
+-		fatal_mksh(catgets(libmksdmsi18n_catd, 1, 94, "fork failed: %s"),
+-		      errmsg(errno));
++		int save_errno = errno;
++		fatal_mksh(catgets(libmksdmsi18n_catd, 1, 94, "doshell() fork failed: %s"),
++		      errmsg(save_errno));
+ 	}
+ 	retmem_mb(argv[cmd_argv_index]);
+ 	return childPid;
+@@ -591,8 +594,9 @@
+ 		fatal_mksh(catgets(libmksdmsi18n_catd, 1, 96, "Cannot load command `%s': %s"), argv[1], errmsg(errno));
+ 	}
+ 	if (childPid  == -1) {
+-		fatal_mksh(catgets(libmksdmsi18n_catd, 1, 97, "fork failed: %s"),
+-		      errmsg(errno));
++		int save_errno = errno;
++		fatal_mksh(catgets(libmksdmsi18n_catd, 1, 97, "doexec() fork failed: %s"),
++		      errmsg(save_errno));
+ 	}
+ 	for (int i = 0; argv[i] != NULL; i++) {
+ 		retmem_mb(argv[i]);
 diff --git a/src/make_src/Make/lib/mksh/src/mksh.cc b/src/make_src/Make/lib/mksh/src/mksh.cc
 index 98c9601..8004ac2 100644
 --- a/src/make_src/Make/lib/mksh/src/mksh.cc
