@@ -36,8 +36,8 @@ SUBDIRS = \
 	perl
 
 ifeq ($(BUILD_EXTRA_GCC),yes)
-SUBDIRS +=	gcc6
-STRAPFIX +=	gcc6
+SUBDIRS +=	gcc6 gcc7
+STRAPFIX +=	gcc6 gcc7
 STRAPFIX_SUBDIRS=$(STRAPFIX:%=%.strapfix)
 endif
 else
