@@ -1,0 +1,35 @@
+From a8616db9998375bc2a8f68154b7eb85c9aa5d969 Mon Sep 17 00:00:00 2001
+From: Peter Grehan <grehan@nahannisys.com>
+Date: Sun, 8 Apr 2018 10:58:41 -0700
+Subject: [PATCH] Force local APIC physical-destination mode in the ACPI
+ FADT table.
+
+This matches the setting in the flags field of the bhyve-created
+FADT, and also fixes an issue with the Linux 4.15 kernel when, unless
+this is set, the IOAPIC gets reprogrammed to ID 0 and vCPUs starting
+at 1, resulting in MSI interrupts being mis-delivered and i/o devices
+timing out.
+
+Tested with Linux distros with >= 4.15 kernels (Ubuntu 18.04, Arch
+2018.03.01) and no regression with install/boot tests of Win 7/8.1/10
+and server 2k16.
+
+(issue originally reported in the FreeNAS forums)
+---
+ BhyvePkg/BhyveAcpiTables/Platform.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/BhyvePkg/BhyveAcpiTables/Platform.h b/BhyvePkg/BhyveAcpiTables/Platform.h
+index 0f5d8e318..8ff86276d 100644
+--- a/BhyvePkg/BhyveAcpiTables/Platform.h
++++ b/BhyvePkg/BhyveAcpiTables/Platform.h
+@@ -60,7 +60,8 @@
+ #define IAPC_BOOT_ARCH  0x12	/* 8042 present, disable PCIe ASPM */
+ #define FACP_FLAGS	(EFI_ACPI_1_0_WBINVD | EFI_ACPI_1_0_PROC_C1 |	      \
+ 			EFI_ACPI_1_0_SLP_BUTTON | EFI_ACPI_1_0_TMR_VAL_EXT |  \
+-			EFI_ACPI_2_0_RESET_REG_SUP)
++			EFI_ACPI_2_0_RESET_REG_SUP |			      \
++			EFI_ACPI_3_0_FORCE_APIC_PHYSICAL_DESTINATION_MODE)
+ #define	FACP_RESET_REG	{						\
+ 	EFI_ACPI_3_0_SYSTEM_IO,		/* Address Space ID */		\
+ 	8,				/* Bit Width */			\
