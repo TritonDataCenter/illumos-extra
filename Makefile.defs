@@ -15,6 +15,9 @@
 
 BASE =		$(PWD)
 DESTDIR =	$(BASE)/../proto
+
+include $(BASE)/../../../build.env
+
 VER.32 =	$(VER)-32$(STRAP)
 VER.64 =	$(VER)-64$(STRAP)
 OBJ.32 =	$(VER.32)$(SEPARATE_BUILD:yes=.build)
@@ -26,8 +29,9 @@ FETCH_BASE =	https://us-east.manta.joyent.com/Joyent_Dev/public/illumos-extra
 
 ifeq ($(STRAP),strap)
 STRAPPROTO =	$(DESTDIR)
-GCC =		$(DESTDIR)/usr/gcc/4/bin/gcc
-GXX =		$(DESTDIR)/usr/gcc/4/bin/g++
+GCC =		$(DESTDIR)/usr/gcc/$(PRIMARY_COMPILER_VER)/bin/gcc
+GXX =		$(DESTDIR)/usr/gcc/$(PRIMARY_COMPILER_VER)/bin/g++
+LIBSTDCXX_RUNPATH = usr/gcc/$(PRIMARY_COMPILER_VER)/lib
 else
 STRAPPROTO =	$(DESTDIR:proto=proto.strap)
 GCC =		$(DESTDIR)/usr/bin/gcc

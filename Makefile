@@ -17,10 +17,13 @@
 # To build everything just run 'gmake' in this directory.
 #
 
-BASE =		$(PWD)
+include $(CURDIR)/../../build.env
+
+BASE =		$(CURDIR)
 DESTDIR =	$(BASE)/proto
 
 ifeq ($(STRAP),strap)
+
 STRAPPROTO =	$(DESTDIR)
 SUBDIRS = \
 	cpp \
@@ -35,12 +38,14 @@ SUBDIRS = \
 	openssl1x \
 	perl
 
-ifeq ($(BUILD_EXTRA_GCC),yes)
-SUBDIRS +=	gcc6 gcc7
-STRAPFIX +=	gcc6 gcc7
+COMMA=,
+EXTRA_COMPILERS = $(subst $(COMMA), , $(SHADOW_COMPILERS))
+SUBDIRS +=	$(EXTRA_COMPILERS)
+STRAPFIX +=	$(EXTRA_COMPILERS)
 STRAPFIX_SUBDIRS=$(STRAPFIX:%=%.strapfix)
-endif
+
 else
+
 STRAPPROTO =	$(DESTDIR:proto=proto.strap)
 SUBDIRS = \
 	bash \
@@ -83,6 +88,7 @@ SUBDIRS = \
 	vim \
 	wget \
 	xz
+
 endif
 
 PATH =		$(STRAPPROTO)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
@@ -100,6 +106,10 @@ GITDESCRIBE = \
 	g$(shell git describe --all --long | $(AWK) -F'-g' '{print $$NF}')
 
 TARBALL =	$(NAME)-$(BRANCH)-$(TIMESTAMP)-$(GITDESCRIBE).tgz
+
+LIBSTDCXXVER_4 = 6.0.13
+LIBSTDCXXVER_6 = 6.0.22
+LIBSTDCXXVER_7 = 6.0.24
 
 #
 # Some software (e.g., OpenSSL 0.9.8) is very particular about the Perl
@@ -150,13 +160,14 @@ $(DESTDIR)/usr/gnu/bin/gas: FRC
 # gas.
 #
 ifeq ($(STRAP),strap)
-$(DESTDIR)/usr/gcc/4/bin/gcc: $(DESTDIR)/usr/gnu/bin/gas
-	(cd gcc4 && \
+
+$(DESTDIR)/usr/gcc/$(PRIMARY_COMPILER_VER)/bin/gcc: $(DESTDIR)/usr/gnu/bin/gas
+	(cd $(PRIMARY_COMPILER) && \
 	    PKG_CONFIG_LIBDIR="" \
 	    STRAP=$(STRAP) \
 	    $(MAKE) DESTDIR=$(DESTDIR) install strapfix)
 
-$(SUBDIRS): $(DESTDIR)/usr/gcc/4/bin/gcc
+$(SUBDIRS): $(DESTDIR)/usr/gcc/$(PRIMARY_COMPILER_VER)/bin/gcc
 	(cd $@ && \
 	    PKG_CONFIG_LIBDIR="" \
 	    STRAP=$(STRAP) \
@@ -173,8 +184,9 @@ $(STRAPFIX_SUBDIRS): $(SUBDIRS)
 	    $(MAKE) DESTDIR=$(DESTDIR) strapfix)
 
 else
+
 $(DESTDIR)/usr/bin/gcc: $(DESTDIR)/usr/gnu/bin/gas
-	(cd gcc4 && \
+	(cd $(PRIMARY_COMPILER) && \
 	    PKG_CONFIG_LIBDIR="" \
 	    STRAP=$(STRAP) \
 	    $(MAKE) DESTDIR=$(DESTDIR) install strapfix)
@@ -191,19 +203,20 @@ $(SUBDIRS): $(DESTDIR)/usr/bin/gcc
 endif
 
 
-install: $(SUBDIRS) gcc4 binutils
+install: $(SUBDIRS) $(PRIMARY_COMPILER) binutils
 
 fixup_strap: $(STRAPFIX_SUBDIRS)
 
-install_strap: $(SUBDIRS) gcc4 binutils fixup_strap
+install_strap: $(SUBDIRS) $(PRIMARY_COMPILER) binutils fixup_strap
 
 clean:
-	-for dir in $(SUBDIRS) gcc4 binutils; \
+	-for dir in $(SUBDIRS) $(PRIMARY_COMPILER) binutils; \
 	    do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) clean); done
 	-rm -rf proto
 
 manifest:
-	cp manifest $(DESTDIR)/$(DESTNAME)
+	sed 's/$$LIBSTDCXXVER/$(LIBSTDCXXVER_$(PRIMARY_COMPILER_VER))/g' \
+	    manifest >$(DESTDIR)/$(DESTNAME)
 
 mancheck_conf:
 	cp mancheck.conf $(DESTDIR)/$(DESTNAME)

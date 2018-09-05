@@ -1,0 +1,23 @@
+From 2dbe76aed64d04ff840d90523f19b27433ac9c8f Mon Sep 17 00:00:00 2001
+From: John Levon <john.levon@joyent.com>
+Date: Wed, 5 Sep 2018 10:51:40 +0000
+Subject: [PATCH] turn off various warnings that break the build
+
+---
+ nss/coreconf/config.mk | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/nss/coreconf/config.mk b/nss/coreconf/config.mk
+index bb87ad3..0dd4591 100644
+--- a/nss/coreconf/config.mk
++++ b/nss/coreconf/config.mk
+@@ -221,3 +221,6 @@ $(error Setting NSS_ENABLE_TLS_1_3 and NSS_DISABLE_ECC isn't a good idea.)
+ endif
+ DEFINES += -DNSS_ENABLE_TLS_1_3
+ endif
++
++CFLAGS += -Wno-unused -Wno-int-in-bool-context
++CXXFLAGS += -Wno-unused -Wno-int-in-bool-context
+-- 
+2.14.1
+

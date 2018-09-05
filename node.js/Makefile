@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Joyent, Inc.  All rights reserved.
+# Copyright 2018 Joyent, Inc.
 #
 
 MAJOR_VER =	0.10
@@ -29,7 +29,19 @@ include ../Makefile.defs
 NODE_ROOT =	$(DESTDIR)/usr/node/$(MAJOR_VER)
 VERSIONJS =	$(NODE_ROOT)/node_modules/platform_node_version.js
 
-CFLAGS +=	-Wno-unknown-pragmas
+#
+# ../deps/v8/src/objects.h:5188:44: error: left operand of shift expression
+# '(-1 << 3)' is negative
+#
+CXXFLAGS +=	-fpermissive
+
+#
+# https://github.com/nodejs/node/issues/6272
+#
+# Aside from the issues listed there, this causes v8 to explode during init in
+# AdvanceSweeper.
+#
+CXXFLAGS += -fno-delete-null-pointer-checks
 
 #
 # Node's build system is super broken.  If we pass it LIBS at configure time,
@@ -46,8 +58,12 @@ CFLAGS +=	-Wno-unknown-pragmas
 #
 LDFLAGS +=	-lumem
 
+#
+# Don't ask how long it took to get the literal $ORIGIN into the compiler
+# invocation here...
+#
 ifeq ($(STRAP),strap)
-	LDFLAGS += $(SYSLIBDIRS:%=-R$(DESTDIR)/%)
+	LDFLAGS += $(SYSLIBDIRS:%=-R$(DESTDIR)/%) -R'$$\$$'ORIGIN/../../../../$(LIBSTDCXX_RUNPATH)
 endif
 
 AUTOCONF_OPTS += \
@@ -64,7 +80,7 @@ AUTOCONF_OPTS += \
 
 AUTOCONF_CFLAGS =	CFLAGS="$(CPPFLAGS) $(CFLAGS)"
 AUTOCONF_LIBS =
-AUTOCONF_ENV +=		CXXFLAGS="$(CPPFLAGS) $(CFLAGS)"
+AUTOCONF_ENV +=		CXXFLAGS="$(CPPFLAGS) $(CFLAGS) $(CXXFLAGS)"
 
 #
 # Jump through hoops to get the locally-run build tools to build with the

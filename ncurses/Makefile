@@ -31,6 +31,7 @@ AUTOCONF_PREFIX =	/usr/gnu
 AUTOCONF_OPTS += \
 	-C \
 	--with-shared \
+	--without-cxx-binding \
 	--without-normal
 
 AUTOCONF_OPTS.64 += \

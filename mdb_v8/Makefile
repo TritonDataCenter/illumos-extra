@@ -39,6 +39,11 @@ CTF_LIBS = $(VER)/build/ia32/mdb_v8.so \
 CFLAGS += -g
 
 #
+# To avoid "error: left shift of negative value"
+#
+CFLAGS += -Wno-shift-negative-value
+
+#
 # There are a couple of bugs in the currently released version of mdb_v8
 # that do not support parallelism, thus we explicitly do not include any
 # -j options below. The build is also very small, so it is unlikely to

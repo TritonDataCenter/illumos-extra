@@ -1,0 +1,40 @@
+From 87539f2888aa1c0c7e37e0a7bc8c6d08127e1c55 Mon Sep 17 00:00:00 2001
+From: John Levon <john.levon@joyent.com>
+Date: Wed, 5 Sep 2018 09:39:24 +0000
+Subject: [PATCH] Disable the signbit hack for recent gcc, which does make it
+ visible to v8
+
+---
+ deps/v8/src/platform-solaris.cc | 2 +-
+ deps/v8/src/platform.h          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/deps/v8/src/platform-solaris.cc b/deps/v8/src/platform-solaris.cc
+index 07718fe..2bd3c17 100644
+--- a/deps/v8/src/platform-solaris.cc
++++ b/deps/v8/src/platform-solaris.cc
+@@ -61,7 +61,7 @@
+ // It seems there is a bug in some Solaris distributions (experienced in
+ // SunOS 5.10 Generic_141445-09) which make it difficult or impossible to
+ // access signbit() despite the availability of other C99 math functions.
+-#ifndef signbit
++#if !defined(signbit) && __GNUC__ < 6
+ // Test sign - usually defined in math.h
+ int signbit(double x) {
+   // We need to take care of the special case of both positive and negative
+diff --git a/deps/v8/src/platform.h b/deps/v8/src/platform.h
+index 63a6e44..db1b2ec 100644
+--- a/deps/v8/src/platform.h
++++ b/deps/v8/src/platform.h
+@@ -44,7 +44,7 @@
+ #ifndef V8_PLATFORM_H_
+ #define V8_PLATFORM_H_
+ 
+-#ifdef __sun
++#if defined(__sun) && __GNUC__ < 6
+ # ifndef signbit
+ int signbit(double x);
+ # endif
+-- 
+2.14.1
+

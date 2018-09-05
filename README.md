@@ -5,7 +5,7 @@
 This repository, illumos-extra, is a collection of software which falls
 into two categories: either it is an illumos build and/or run-time
 dependency or it is a piece of additional software that SmartOS uses.
-For example, the `gcc` and `binutils` directories are examples of
+For example, the `gcc*` and `binutils` directories are examples of
 illumos dependencies, while `node.js` and `lldp` are examples of extra
 pieces of software that SmartOS uses to form its core ram-disk.
 illumos-extra is a fundamental part of the SmartOS build process;

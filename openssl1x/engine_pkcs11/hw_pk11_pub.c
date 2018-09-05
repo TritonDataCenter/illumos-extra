@@ -1247,7 +1247,7 @@ EVP_PKEY *pk11_load_privkey(ENGINE* e, const char *privkey_id,
 	pkcs11_uri uri_struct;
 	CK_RV rv;
 	CK_BBOOL is_token = CK_TRUE;
-	CK_BBOOL rollback = CK_FALSE;
+	CK_BBOOL rollback __attribute__((__unused__)) = CK_FALSE;
 	CK_BYTE attr_data[8][MAXATTR];
 	CK_OBJECT_CLASS key_class = CKO_PRIVATE_KEY;
 	CK_OBJECT_HANDLE ks_key = CK_INVALID_HANDLE;	/* key in keystore */

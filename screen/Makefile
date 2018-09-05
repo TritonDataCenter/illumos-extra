@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2016, Joyent, Inc.  All rights reserved.
+# Copyright 2018, Joyent, Inc.  All rights reserved.
 #
 
 VER =	screen-4.4.0
@@ -28,11 +28,11 @@ include ../Makefile.defs
 PATCHES =	Patches/*
 
 #
-# We set _XOPEN_SOURCE=500 so that screen can access additional fields in
+# We set _XOPEN_SOURCE=700 so that screen can access additional fields in
 # struct msghdr. pkgsrc also does this.
 #
 AUTOCONF_ENV += \
-	CFLAGS=-D_XOPEN_SOURCE=500
+	CFLAGS="-std=c99 -D_XOPEN_SOURCE=700"
 
 #
 # It is important to make sure that screen has a prefix of /usr. When screen

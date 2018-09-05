@@ -1,0 +1,25 @@
+From 22ae87c9780464c6e8d35fa8be77d3a5123afce2 Mon Sep 17 00:00:00 2001
+From: John Levon <john.levon@joyent.com>
+Date: Wed, 5 Sep 2018 18:25:21 +0000
+Subject: [PATCH] converting from std::nullptr_t requires static_cast<>
+
+---
+ deps/v8/src/stub-cache.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/deps/v8/src/stub-cache.cc b/deps/v8/src/stub-cache.cc
+index 8490c7e..54947e1 100644
+--- a/deps/v8/src/stub-cache.cc
++++ b/deps/v8/src/stub-cache.cc
+@@ -1361,7 +1361,7 @@ Handle<Code> StubCompiler::GetCodeWithFlags(Code::Flags flags,
+                                             Handle<String> name) {
+   return (FLAG_print_code_stubs && !name.is_null())
+       ? GetCodeWithFlags(flags, *name->ToCString())
+-      : GetCodeWithFlags(flags, reinterpret_cast<char*>(NULL));
++      : GetCodeWithFlags(flags, static_cast<char*>(NULL));
+ }
+ 
+ 
+-- 
+2.14.1
+

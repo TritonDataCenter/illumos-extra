@@ -1,0 +1,30 @@
+From 0e72ad50e11376749d41fbb2cce7fe1d6478ba14 Mon Sep 17 00:00:00 2001
+From: John Levon <john.levon@joyent.com>
+Date: Thu, 6 Sep 2018 11:42:17 +0000
+Subject: [PATCH] With C99, we need to explicitly ask for the old-style inline
+ semantics
+
+---
+ mpi/mpi-inline.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/mpi/mpi-inline.h b/mpi/mpi-inline.h
+index f5e84e8..bb72e4a 100644
+--- a/mpi/mpi-inline.h
++++ b/mpi/mpi-inline.h
+@@ -29,8 +29,12 @@
+ #define G10_MPI_INLINE_H
+ 
+ #ifndef G10_MPI_INLINE_DECL
++#ifdef __GNUC_STDC_INLINE__
++#define G10_MPI_INLINE_DECL  extern inline __attribute__ ((__gnu_inline__))
++#else
+ #define G10_MPI_INLINE_DECL  extern __inline__
+ #endif
++#endif
+ 
+ G10_MPI_INLINE_DECL  mpi_limb_t
+ mpihelp_add_1( mpi_ptr_t res_ptr, mpi_ptr_t s1_ptr,
+-- 
+2.14.1
+

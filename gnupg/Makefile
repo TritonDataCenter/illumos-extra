@@ -18,10 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2018 Joyent, Inc.
 #
 
 VER =	gnupg-1.4.11
+PATCHES = Patches/*
 
 include ../Makefile.defs
 

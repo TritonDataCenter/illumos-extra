@@ -114,11 +114,11 @@ f usr/lib/iconv/amd64/UCS-2%UTF-8.so 0755 root bin
 f usr/lib/iconv/amd64/UCS-2LE%UTF-8.so 0755 root bin
 # gcc
 f usr/lib/amd64/libgcc_s.so.1 0555 root bin
-f usr/lib/amd64/libstdc++.so.6.0.13 0555 root bin
-s usr/lib/amd64/libstdc++.so.6=libstdc++.so.6.0.13
+f usr/lib/amd64/libstdc++.so.$LIBSTDCXXVER 0555 root bin
+s usr/lib/amd64/libstdc++.so.6=libstdc++.so.$LIBSTDCXXVER
 f usr/lib/libgcc_s.so.1 0555 root bin
-f usr/lib/libstdc++.so.6.0.13 0555 root bin
-s usr/lib/libstdc++.so.6=libstdc++.so.6.0.13
+f usr/lib/libstdc++.so.$LIBSTDCXXVER 0555 root bin
+s usr/lib/libstdc++.so.6=libstdc++.so.$LIBSTDCXXVER
 f usr/lib/libssp.so.0.0.0 0555 root bin
 s usr/lib/libssp.so.0=libssp.so.0.0.0
 f usr/lib/amd64/libssp.so.0.0.0 0555 root bin
