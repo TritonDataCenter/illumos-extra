@@ -11,7 +11,7 @@
 #
 
 #
-# Copyright 2016 Joyent, Inc.
+# Copyright (c) 2018, Joyent, Inc.
 #
 
 
@@ -23,13 +23,19 @@ ROOT=$(pwd)
 BIN_PREFIX=${DESTDIR}/usr/bin
 PREFIX=${DESTDIR}/usr/lib/mps
 INC_PREFIX=${DESTDIR}/usr/include/mps
+MAN1_PREFIX=${DESTDIR}/usr/share/man/man1
 
 echo PREFIX=${PREFIX}
 mkdir -p ${PREFIX}
 mkdir -p ${BIN_PREFIX}
 mkdir -p ${INC_PREFIX}
+mkdir -p ${MAN1_PREFIX}
 
 source ../install.subr
+
+cd ${ROOT}/${VERS}
+
+_install N nss/doc/nroff/certutil.1 ${MAN1_PREFIX}/certutil.1 555
 
 cd ${ROOT}/${VERS}/dist/SunOS5.11_i86pc_gcc_OPT.OBJ
 

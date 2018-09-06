@@ -375,6 +375,7 @@ s usr/lib/mps/secv1/libsoftokn3.chk=../libsoftokn3.chk
 s usr/lib/mps/secv1/libsoftokn3.so=../libsoftokn3.so
 s usr/lib/mps/secv1/libsqlite3.so=../libsqlite3.so
 s usr/lib/mps/secv1/libssl3.so=../libssl3.so
+f usr/share/man/man1/certutil.1 0444 root bin
 # ntp
 f lib/svc/manifest/network/ntp.xml 0444 root sys
 f etc/security/auth_attr.d/ntp 0444 root sys
