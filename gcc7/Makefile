@@ -13,7 +13,14 @@
 # Copyright (c) 2018, Joyent, Inc.
 #
 
-VER =		gcc-7.3.0
+#
+# The GCC tarball is a copy of the https://github.com/illumos/gcc repository,
+# gcc-7.3.0-il-1 branch.  This includes all of the Illumos-specific
+# modifications we need.  We could probably do a git clone instead, but the
+# tarball method is easier given these Makefiles.
+#
+
+VER =		gcc-7.3.0-il-1
 MPFR_VER =	mpfr-3.1.6
 GMP_VER =	gmp-6.1.2
 MPC_VER =	mpc-1.0.3
