@@ -19,7 +19,15 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2017, Joyent, Inc.
+# Copyright (c) 2018, Joyent, Inc.
+#
+
+#
+# openssl has a painfully baroque build system (read Configure if you doubt it).
+# Configure allows us to add -D options, but there's no way to over-ride
+# compiler flags. We want to point to the proto headers, though, so we are
+# forced to hack this in by claiming our compiler is "$(GCC) $(CPPFLAGS)".
+# I'm sorry.
 #
 
 BASE=$(PWD)
@@ -30,52 +38,46 @@ include Makefile.com
 MANDIR = $(DESTDIR)/usr/share/man
 
 CONFIG_STATUS = config.status
-    
+
 all: all32 all64
 
-all32: $(VER)/$(CONFIG_STATUS)
-	cd $(VER); env - PATH=$(PATH) \
-	"CFLAGS=$(CFLAGS)" \
-	"LDFLAGS=$(LDFLAGS)" \
-	gmake 
+all32: $(VER.32)/$(CONFIG_STATUS)
+	cd $(VER.32); gmake
 
-all64: $(VER64)/$(CONFIG_STATUS)
-	cd $(VER64); env - PATH=$(PATH) \
-	"CFLAGS=$(CFLAGS)" \
-	"LDFLAGS=$(LDFLAGS)" \
-	gmake 
+all64: $(VER.64)/$(CONFIG_STATUS)
+	cd $(VER.64); gmake
 
 # opensslconf.h is patched to ensure suitability for both 64bit and 32bit
-$(VER)/$(CONFIG_STATUS): $(VER)/configure
-	cd $(VER); env - PATH=$(PATH) \
+$(VER.32)/$(CONFIG_STATUS): $(VER.32)/configure
+	cd $(VER.32); env - PATH=$(PATH) CC="$(GCC) $(CPPFLAGS)" \
 	PERL=$(NATIVE_PERL) ksh93 ./Configure $(CONFIGURE_OPTIONS)
-	gpatch -p1 $(VER)/crypto/opensslconf.h opensslconf.patch
-	cd $(VER); gmake  depend
+	gpatch -p1 $(VER.32)/crypto/opensslconf.h opensslconf.patch
+	cd $(VER.32); gmake  depend
 	touch $@
 
-$(VER64)/$(CONFIG_STATUS): $(VER)/configure
-	cd $(VER64); env - PATH=$(PATH) \
+$(VER.64)/$(CONFIG_STATUS): $(VER.64)/configure
+	cd $(VER.64); env - PATH=$(PATH) CC="$(GCC) $(CPPFLAGS)" \
 	PERL=$(NATIVE_PERL) ksh93 ./Configure $(CONFIGURE_OPTIONS64)
-	cd $(VER64); gmake  depend
+	cd $(VER.64); gmake  depend
 	touch $@
 
 install: all install32 install64
 
 install32: all32
-	MACH32=i386 VERDIR=$(VER) BASE=$(BASE) DESTDIR=$(DESTDIR) \
-	    VERSION=$(BVER) ksh93 ./install-sfw
+	MACH32=i386 VERDIR=$(VER.32) BASE=$(BASE) DESTDIR=$(DESTDIR) \
+	    VERSION=$(VER) ksh93 ./install-sfw
 
 install64: all64
-	MACH64=amd64 VERDIR=$(VER64) BASE=$(BASE) DESTDIR=$(DESTDIR) \
-	    VERSION=$(BVER) ksh93 ./install-sfw-64
+	MACH64=amd64 VERDIR=$(VER.64) BASE=$(BASE) DESTDIR=$(DESTDIR) \
+	    VERSION=$(VER) ksh93 ./install-sfw-64
 
-$(VER)/configure: $(BVER)-src
-	cp -r $(BVER)-src $(VER) 
-	( cd $(VER) ; gpatch -p1 < ../configure.patch )
-	( cd $(VER) ; gpatch -p1 < ../limits.patch )
-	cp engine_pkcs11/* $(VER)/crypto/engine/
-	touch $(VER)/configure
-	cp -r  $(VER) $(VER64)
+$(VER.32)/configure: $(VER)-src
+	cp -r $(VER)-src $(VER.32)
+	( cd $(VER.32) ; gpatch -p1 < ../configure.patch )
+	( cd $(VER.32) ; gpatch -p1 < ../limits.patch )
+	cp engine_pkcs11/* $(VER.32)/crypto/engine/
+	touch $(VER.32)/configure
+	cp -r $(VER.32) $(VER.64)
 
 clean:
-	-rm -rf $(VER) $(VER64) $(VER)strap $(VER64)strap $(VER)strap-64
+	-rm -rf $(VER.32) $(VER.64)

@@ -19,6 +19,14 @@
 # modifications we need.  We could probably do a git clone instead, but the
 # tarball method is easier given these Makefiles.
 #
+# During a strap build, all compiler versions are built under
+# proto.strap/usr/gcc/X. For the primary compiler, we symlink into
+# proto.strap/usr/bin/gcc etc.
+#
+# For the non-strap build, we purposefully only install what the resulting
+# platform builds: namely the gcc-derived runtime libraries. The shadow
+# compilers are not relevant here.
+#
 
 VER =		gcc-7.3.0-il-1
 MPFR_VER =	mpfr-3.1.6
@@ -33,6 +41,8 @@ SEPARATE_BUILD =	yes
 GCC =	/opt/local/bin/gcc
 GXX =	/opt/local/bin/g++
 CFLAGS = -g -O2
+
+AUTOCONF_PREFIX = $(PREFIX)
 
 AUTOCONF_OPTS += \
 	--with-ld=/usr/bin/ld \
@@ -57,30 +67,6 @@ OVERRIDES += \
 # catch that when cleaning.
 #
 CLEANFILES += $(VER)-32.build $(VER)-32strap.build
-
-#
-# When building the strap code, it needs to exist in a different prefix.
-#
-ifeq ($(STRAP),strap)
-AUTOCONF_PREFIX = $(PREFIX)
-endif
-
-#
-# The runtime libraries that we build into proto.strap should be made to search
-# for their dependencies there as well, so that programs built to run on the
-# build machine (from proto.strap) find the correct copies of these libraries.
-#
-ifeq ($(STRAP),strap)
-	STRAPFIX_LINKS= \
-		$(DESTDIR)/$(PREFIX)/lib/64
-	STRAPFIX_FILES_32 = \
-		$(DESTDIR)/$(PREFIX)/lib/libgcc_s.so.1 \
-		$(DESTDIR)/$(PREFIX)/lib/libstdc++.so.6
-	STRAPFIX_FILES_64 = \
-		$(DESTDIR)/$(PREFIX)/lib/64/libgcc_s.so.1 \
-		$(DESTDIR)/$(PREFIX)/lib/64/libstdc++.so.6
-	STRAPFIX_FILES = $(STRAPFIX_FILES_32) $(STRAPFIX_FILES_64)
-endif
 
 #
 # Unlike everything else, gcc is built to be a cross-compiler, really.  It
@@ -162,19 +148,55 @@ $(VER.32)/mpc: $(MPC_VER).tar.gz | $(VER.32)
 	chmod 755 $@/configure
 	touch $@/configure
 
+LIBTAR=$(STRAPPROTO)/gcclibs.tar.gz
+
+ifeq ($(STRAP),strap)
+
+#
+# The runtime libraries that we build into proto.strap should be made to search
+# for their dependencies there as well, so that programs built to run on the
+# build machine (from proto.strap) find the correct copies of these libraries.
+# (Currently, this is only relevant for libstdc++.)
+#
+# Before we do so, however, we'll keep copies for the non-strap build to pick
+# up.
+#
+# We should also remove the "fixed" includes: they are just bad copies of the
+# potentially old system headers.
+#
+FIXLIBS = libgcc_s.so libstdc++.so libssp.so
+LIBDIR=$(DESTDIR)/$(PREFIX)/lib
+
 .PHONY: strapfix
-strapfix: $(STRAPFIX_LINKS) $(STRAPFIX_FILES) | install
-	for f in $(STRAPFIX_FILES_32); do \
-		/usr/bin/elfedit -e \
-		    'dyn:runpath $(DESTDIR)/$(PREFIX)/lib' \
-		    $$f; \
+strapfix:
+ifeq ($(PRIMARY_COMPILER),gcc7)
+	[[ -h $(LIBDIR)/64 ]] || ln -s amd64 $(LIBDIR)/64
+	mkdir -p $(DESTDIR)/usr/bin
+	for f in gcc g++ cpp; do \
+		ln -sf $(DESTDIR)/$(PREFIX)/bin/$$f $(DESTDIR)/usr/bin/$$f; \
 	done
-	for f in $(STRAPFIX_FILES_64); do \
-		/usr/bin/elfedit -e \
-		    'dyn:runpath $(DESTDIR)/$(PREFIX)/lib/64' \
-		    $$f; \
+	rm -f $(LIBTAR)
+	for lib in $(FIXLIBS); do \
+		(cd $(LIBDIR)/.. && gtar uvf $(LIBTAR) \
+		    lib/$$lib.* lib/64/$$lib.*) ; \
+	done
+endif
+	find $(LIBDIR) -name include-fixed | xargs rm -rf
+	for lib in $(FIXLIBS); do \
+		/usr/bin/elfedit -e 'dyn:runpath $(LIBDIR)' $(LIBDIR)/$$lib ; \
+		/usr/bin/elfedit -e 'dyn:runpath $(LIBDIR)/64' \
+		    $(LIBDIR)/64/$$lib ; \
 	done
 
-$(STRAPFIX_LINKS):
-	mkdir -p `dirname $@`
-	[[ -h $@ ]] || ln -s amd64 $@
+
+else
+
+#
+# A non-strap build: do not install anything other than our saved copy of the
+# runtime libraries. This should only happen for the primary compiler.
+#
+.PHONY: fixup
+fixup:
+	cd $(DESTDIR)/usr && gtar xvf $(LIBTAR)
+
+endif

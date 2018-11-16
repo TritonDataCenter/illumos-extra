@@ -18,12 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2017, Joyent, Inc.
+# Copyright 2018, Joyent, Inc.
 #
 
 VER =	binutils-2.25.1
 
 include ../Makefile.defs
+
+#
+# binutils configure ignores $CPPFLAGS, so pass our needed changes through
+# $CFLAGS.
+#
+CFLAGS += $(CPPFLAGS)
 
 TARBALL =		$(VER).tar.bz2
 TARBALL_COMPRESS =	-j

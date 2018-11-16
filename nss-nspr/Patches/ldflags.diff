@@ -1,0 +1,25 @@
+From 418135dcb6e1a9fc7e1b4b59a32f42959a9b7123 Mon Sep 17 00:00:00 2001
+From: John Levon <john.levon@joyent.com>
+Date: Thu, 15 Nov 2018 22:09:47 +0000
+Subject: [PATCH] Apply $LDFLAGS when building shared libraries
+
+---
+ nss/coreconf/SunOS5.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/nss/coreconf/SunOS5.mk b/nss/coreconf/SunOS5.mk
+index ce9e2cb..84e2093 100644
+--- a/nss/coreconf/SunOS5.mk
++++ b/nss/coreconf/SunOS5.mk
+@@ -79,7 +79,7 @@ endif
+ # Purify doesn't like -MDupdate
+ NOMD_OS_CFLAGS += $(DSO_CFLAGS) $(OS_DEFINES) $(SOL_CFLAGS)
+ 
+-MKSHLIB  = $(CC) $(DSO_LDOPTS) $(RPATH)
++MKSHLIB  = $(CC) $(DSO_LDOPTS) $(RPATH) $(LDFLAGS)
+ ifdef NS_USE_GCC
+ ifeq (GNU,$(findstring GNU,$(shell `$(CC) -print-prog-name=ld` -v 2>&1)))
+ 	GCC_USE_GNU_LD = 1
+-- 
+2.14.1
+

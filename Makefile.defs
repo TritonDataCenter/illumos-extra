@@ -34,8 +34,8 @@ GXX =		$(DESTDIR)/usr/gcc/$(PRIMARY_COMPILER_VER)/bin/g++
 LIBSTDCXX_RUNPATH = usr/gcc/$(PRIMARY_COMPILER_VER)/lib
 else
 STRAPPROTO =	$(DESTDIR:proto=proto.strap)
-GCC =		$(DESTDIR)/usr/bin/gcc
-GXX =		$(DESTDIR)/usr/bin/g++
+GCC =		$(STRAPPROTO)/usr/bin/gcc
+GXX =		$(STRAPPROTO)/usr/bin/g++
 endif
 
 PATH =		$(STRAPPROTO)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
