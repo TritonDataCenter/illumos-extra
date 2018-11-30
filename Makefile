@@ -22,6 +22,12 @@ include $(CURDIR)/../../build.env
 BASE =		$(CURDIR)
 DESTDIR =	$(BASE)/proto
 
+#
+# This contains items that we only build during the strap build itself.
+#
+STRAP_ONLY = \
+	idnkit
+
 ifeq ($(STRAP),strap)
 
 STRAPPROTO =	$(DESTDIR)
@@ -41,7 +47,8 @@ SUBDIRS = \
 	nss-nspr \
 	openssl1x \
 	perl \
-	$(EXTRA_COMPILERS)
+	$(EXTRA_COMPILERS) \
+	$(STRAP_ONLY)
 
 STRAPFIX +=	$(PRIMARY_COMPILER) $(EXTRA_COMPILERS)
 STRAPFIX_SUBDIRS=$(STRAPFIX:%=%.strapfix)
@@ -224,7 +231,7 @@ install: $(PRIMARY_COMPILER) $(SUBDIRS)
 endif
 
 clean:
-	-for dir in $(PRIMARY_COMPILER) $(SUBDIRS) binutils; \
+	-for dir in $(PRIMARY_COMPILER) $(SUBDIRS) $(STRAP_ONLY) binutils; \
 	    do (cd $$dir; $(MAKE) DESTDIR=$(DESTDIR) clean); done
 	-rm -rf proto
 
