@@ -65,7 +65,6 @@ SUBDIRS = \
 	cpp \
 	curl \
 	dialog \
-	g11n \
 	gnupg \
 	gtar \
 	gzip \
@@ -147,7 +146,6 @@ dialog: ncurses
 socat: openssl1x
 wget: openssl1x libidn
 openldap: openssl1x
-g11n: make
 ntp: perl openssl1x
 openssh: openssl1x
 
