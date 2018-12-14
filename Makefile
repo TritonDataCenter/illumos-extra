@@ -42,7 +42,6 @@ SUBDIRS = \
 	libidn \
 	libxml \
 	libz \
-	make \
 	node.js \
 	nss-nspr \
 	openssl1x \
@@ -75,7 +74,6 @@ SUBDIRS = \
 	libidn2 \
 	libxml \
 	libz \
-	make \
 	mdb_v8 \
 	ncurses \
 	node.js \
