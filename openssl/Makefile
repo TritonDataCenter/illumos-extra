@@ -33,6 +33,14 @@
 BASE=$(PWD)
 DESTDIR=$(BASE)/../proto
 
+#
+# This version of openssl is so downrev that its build-time Perl scripts won't
+# work with the /opt/local/ version of Perl, so we have to use our bootstrap
+# Perl here.  And, in fact, this is really the only reason we have the bootstrap
+# Perl.
+#
+PERL=$(STRAPPROTO)/usr/perl5/5.12/bin/perl
+
 include Makefile.com
 
 MANDIR = $(DESTDIR)/usr/share/man
@@ -50,14 +58,14 @@ all64: $(VER.64)/$(CONFIG_STATUS)
 # opensslconf.h is patched to ensure suitability for both 64bit and 32bit
 $(VER.32)/$(CONFIG_STATUS): $(VER.32)/configure
 	cd $(VER.32); env - PATH=$(PATH) CC="$(GCC) $(CPPFLAGS)" \
-	PERL=$(NATIVE_PERL) ksh93 ./Configure $(CONFIGURE_OPTIONS)
+	PERL=$(PERL) ksh93 ./Configure $(CONFIGURE_OPTIONS)
 	gpatch -p1 $(VER.32)/crypto/opensslconf.h opensslconf.patch
 	cd $(VER.32); gmake  depend
 	touch $@
 
 $(VER.64)/$(CONFIG_STATUS): $(VER.64)/configure
 	cd $(VER.64); env - PATH=$(PATH) CC="$(GCC) $(CPPFLAGS)" \
-	PERL=$(NATIVE_PERL) ksh93 ./Configure $(CONFIGURE_OPTIONS64)
+	PERL=$(PERL) ksh93 ./Configure $(CONFIGURE_OPTIONS64)
 	cd $(VER.64); gmake  depend
 	touch $@
 

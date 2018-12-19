@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 Joyent, Inc.
+# Copyright (c) 2018, Joyent, Inc.
 #
 
 VER =			wget-1.18
@@ -21,8 +21,8 @@ UNPACK_SENTINEL =	configure.ac
 
 AUTOCONF_ENV += \
 			LD_OPTIONS="-M $(BASE)/mapfile_noexstk" \
-			PERL=/usr/perl5/5.12/bin/perl \
-			POD2MAN=/usr/perl5/5.12/bin/pod2man \
+			PERL=/opt/local/bin/perl \
+			POD2MAN=/opt/local/bin/pod2man \
 			DESTDIR="$(DESTDIR)" \
 			CTFMERGE="$(CTFMERGE)" \
 			CTFCONVERT="$(CTFCONVERT)" \
