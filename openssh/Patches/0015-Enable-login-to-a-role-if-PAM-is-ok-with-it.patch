@@ -1,4 +1,4 @@
-From bc29dcd14f8623098d2383bd36e486145948a653 Mon Sep 17 00:00:00 2001
+From 326be58a153548e8218d1cdc2b0224612814d63f Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:38:19 -0700
 Subject: [PATCH 15/34] Enable login to a role if PAM is ok with it
@@ -9,14 +9,14 @@ Subject: [PATCH 15/34] Enable login to a role if PAM is ok with it
  auth.h            |  3 +++
  auth2-hostbased.c | 10 ++++++++++
  auth2.c           |  8 ++++++++
- monitor.c         | 15 ++++++++++++++-
- 6 files changed, 53 insertions(+), 1 deletion(-)
+ monitor.c         | 14 ++++++++++++++
+ 6 files changed, 53 insertions(+)
 
 diff --git a/auth-pam.c b/auth-pam.c
-index 70a25c19..46bf722e 100644
+index 01f62036..cf692526 100644
 --- a/auth-pam.c
 +++ b/auth-pam.c
-@@ -1069,6 +1069,20 @@ do_pam_account(void)
+@@ -1149,6 +1149,20 @@ do_pam_account(void)
  	return (sshpam_account_status);
  }
  
@@ -38,13 +38,13 @@ index 70a25c19..46bf722e 100644
  do_pam_setcred(int init)
  {
 diff --git a/auth-pam.h b/auth-pam.h
-index c47b442e..892a27bc 100644
+index 41986074..f5d2092f 100644
 --- a/auth-pam.h
 +++ b/auth-pam.h
-@@ -29,6 +29,10 @@ void start_pam(Authctxt *);
+@@ -31,6 +31,10 @@ void start_pam(Authctxt *);
  void finish_pam(void);
  u_int do_pam_account(void);
- void do_pam_session(void);
+ void do_pam_session(struct ssh *);
 +#ifdef HAVE_PAM_AUSER
 +void do_pam_set_auser(const char *);
 +#endif
@@ -53,10 +53,10 @@ index c47b442e..892a27bc 100644
  void do_pam_chauthtok(void);
  int do_pam_putenv(char *, char *);
 diff --git a/auth.h b/auth.h
-index 4a7f2c1f..b4efc255 100644
+index 34e69270..607aecfa 100644
 --- a/auth.h
 +++ b/auth.h
-@@ -84,6 +84,9 @@ struct Authctxt {
+@@ -99,6 +99,9 @@ struct Authctxt {
  #ifdef PAM_ENHANCEMENT
  	char		*authmethod_name;
  #endif
@@ -64,24 +64,24 @@ index 4a7f2c1f..b4efc255 100644
 +	char		*auser;
 +#endif
  };
+ 
  /*
-  * Every authentication method has to handle authentication requests for
 diff --git a/auth2-hostbased.c b/auth2-hostbased.c
-index 1b3c3b20..2c51bd2b 100644
+index 764ceff7..e3502b93 100644
 --- a/auth2-hostbased.c
 +++ b/auth2-hostbased.c
-@@ -85,6 +85,9 @@ userauth_hostbased(Authctxt *authctxt)
- 	buffer_dump(&b);
- 	buffer_free(&b);
- #endif
+@@ -80,6 +80,9 @@ userauth_hostbased(struct ssh *ssh)
+ #ifdef DEBUG_PK
+ 	debug("signature:");
+ 	sshbuf_dump_data(sig, slen, stderr);
++#endif
 +#ifdef HAVE_PAM_AUSER
 +	authctxt->auser = NULL;
-+#endif
- 	pktype = key_type_from_name(pkalg);
+ #endif
+ 	pktype = sshkey_type_from_name(pkalg);
  	if (pktype == KEY_UNSPEC) {
- 		/* this is perfectly legal */
-@@ -142,6 +145,13 @@ userauth_hostbased(Authctxt *authctxt)
- 			buffer_len(&b))) == 1)
+@@ -152,6 +155,13 @@ userauth_hostbased(struct ssh *ssh)
+ 	    sshbuf_ptr(b), sshbuf_len(b), pkalg, ssh->compat)) == 0)
  		authenticated = 1;
  
 +#ifdef HAVE_PAM_AUSER
@@ -91,14 +91,14 @@ index 1b3c3b20..2c51bd2b 100644
 +	}
 +#endif
 +
- 	buffer_free(&b);
+ 	auth2_record_key(authctxt, authenticated, key);
+ 	sshbuf_free(b);
  done:
- 	debug2("userauth_hostbased: authenticated %d", authenticated);
 diff --git a/auth2.c b/auth2.c
-index 6a9f936b..e68aa6d3 100644
+index 15ba3da2..e9bfd241 100644
 --- a/auth2.c
 +++ b/auth2.c
-@@ -339,6 +339,14 @@ userauth_finish(Authctxt *authctxt, int authenticated, const char *method,
+@@ -393,6 +393,14 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *method,
  #endif
  	}
  
@@ -114,10 +114,10 @@ index 6a9f936b..e68aa6d3 100644
  
  #if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
 diff --git a/monitor.c b/monitor.c
-index b0c9b4f4..d2ad5425 100644
+index 426a5736..0190d034 100644
 --- a/monitor.c
 +++ b/monitor.c
-@@ -404,6 +404,12 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
+@@ -402,6 +402,12 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
  		}
  	}
  
@@ -130,7 +130,7 @@ index b0c9b4f4..d2ad5425 100644
  	if (!authctxt->valid)
  		fatal("%s: authenticated invalid user", __func__);
  	if (strcmp(auth_method, "unknown") == 0)
-@@ -603,12 +609,14 @@ monitor_reset_key_state(void)
+@@ -612,7 +618,10 @@ monitor_reset_key_state(void)
  {
  	/* reset state */
  	free(key_blob);
@@ -139,14 +139,9 @@ index b0c9b4f4..d2ad5425 100644
 +	hostbased_cuser = NULL;
 +#endif
  	free(hostbased_chost);
+ 	sshauthopt_free(key_opts);
  	key_blob = NULL;
- 	key_bloblen = 0;
- 	key_blobtype = MM_NOKEY;
--	hostbased_cuser = NULL;
- 	hostbased_chost = NULL;
- }
- 
-@@ -1066,6 +1074,11 @@ mm_answer_pam_account(int sock, Buffer *m)
+@@ -1064,6 +1073,11 @@ mm_answer_pam_account(int sock, struct sshbuf *m)
  	if (!options.use_pam)
  		fatal("%s: PAM not enabled", __func__);
  
@@ -157,7 +152,7 @@ index b0c9b4f4..d2ad5425 100644
 +
  	ret = do_pam_account();
  
- 	buffer_put_int(m, ret);
+ 	if ((r = sshbuf_put_u32(m, ret)) != 0 ||
 -- 
-2.11.0
+2.20.1
 

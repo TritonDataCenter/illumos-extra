@@ -1,4 +1,4 @@
-From f1b0f2c40b09b0a280b097b6ce39a5767e6f6edd Mon Sep 17 00:00:00 2001
+From c73038ed9429a7703b9a7d95334893d1d1fa6a78 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:31:53 -0700
 Subject: [PATCH 01/34] Skip config check
@@ -15,10 +15,10 @@ Subject: [PATCH 01/34] Skip config check
  1 file changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index e10f3742..4bbfb736 100644
+index 126b2c74..b89d638f 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -302,7 +302,16 @@ install-nokeys: $(CONFIGFILES) $(MANPAGES) $(TARGETS) install-files install-sysc
+@@ -324,7 +324,16 @@ install-nokeys: $(CONFIGFILES) $(MANPAGES) $(TARGETS) install-files install-sysc
  install-nosysconf: $(CONFIGFILES) $(MANPAGES) $(TARGETS) install-files
  
  check-config:
@@ -35,7 +35,7 @@ index e10f3742..4bbfb736 100644
 +	@echo 'Oracle Solaris: skipping check-config'
  
  install-files:
- 	$(srcdir)/mkinstalldirs $(DESTDIR)$(bindir)
+ 	$(MKDIR_P) $(DESTDIR)$(bindir)
 -- 
-2.11.0
+2.20.1
 

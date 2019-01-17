@@ -1,21 +1,21 @@
-From 3c7978e563bb39fa62d9a252b4968bacc5e9dc7b Mon Sep 17 00:00:00 2001
+From 9650f9c45018654a86011193c3f51414e3d69d58 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 12:19:47 -0700
 Subject: [PATCH 22/34] Add SMF manifest and method, and install them
 
 ---
  Makefile.in      |   6 ++
- smf/manifest.xml | 169 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- smf/method.sh    | 121 +++++++++++++++++++++++++++++++++++++++
+ smf/manifest.xml | 169 +++++++++++++++++++++++++++++++++++++++++++++++
+ smf/method.sh    | 121 +++++++++++++++++++++++++++++++++
  3 files changed, 296 insertions(+)
  create mode 100644 smf/manifest.xml
  create mode 100644 smf/method.sh
 
 diff --git a/Makefile.in b/Makefile.in
-index 47dbceff..1ab8bc90 100644
+index a73ef0f1..08890c53 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -27,6 +27,8 @@ SFTP_SERVER=$(libexecdir)/sftp-server
+@@ -25,6 +25,8 @@ SFTP_SERVER=$(libexecdir)/sftp-server
  SSH_KEYSIGN=$(libexecdir)/ssh-keysign
  SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
  ROOTDLIBDIR64=$(DESTDIR)/usr/lib/dtrace/64
@@ -24,7 +24,7 @@ index 47dbceff..1ab8bc90 100644
  PRIVSEP_PATH=@PRIVSEP_PATH@
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
-@@ -364,6 +366,10 @@ install-files:
+@@ -386,6 +388,10 @@ install-files:
  	$(INSTALL) -m 644 ssh-keysign.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-keysign.1m
  	$(INSTALL) -m 644 ssh-pkcs11-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-pkcs11-helper.1m
  	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d
@@ -34,7 +34,7 @@ index 47dbceff..1ab8bc90 100644
 +	$(INSTALL) -m 444 smf/manifest.xml $(SMFNETMANIDIR)/ssh.xml
  
  install-sysconf:
- 	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then \
+ 	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
 diff --git a/smf/manifest.xml b/smf/manifest.xml
 new file mode 100644
 index 00000000..50452966
@@ -340,5 +340,5 @@ index 00000000..e91ed553
 +exit $?
 \ No newline at end of file
 -- 
-2.11.0
+2.20.1
 

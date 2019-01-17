@@ -1,4 +1,4 @@
-From 1e9262a6ff5a256ef884dcb6cb4c188f33721c7c Mon Sep 17 00:00:00 2001
+From 556dde99419ae10f0ceb60723ccaa90d5b4ebb5f Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 3 Aug 2015 16:27:44 -0700
 Subject: [PATCH 19/34] PubKeyPlugin support
@@ -7,13 +7,13 @@ This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called
 into to check public keys for authentication.
 ---
- auth2-pubkey.c | 139 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- servconf.c     |  15 +++++++
- servconf.h     |   1 +
- 3 files changed, 155 insertions(+)
+ auth2-pubkey.c | 142 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ servconf.c     |  15 ++++++
+ servconf.h     |   2 +
+ 3 files changed, 158 insertions(+), 1 deletion(-)
 
 diff --git a/auth2-pubkey.c b/auth2-pubkey.c
-index 20f3309e..01daef4a 100644
+index 2fb5950e..4ca0a0b7 100644
 --- a/auth2-pubkey.c
 +++ b/auth2-pubkey.c
 @@ -22,6 +22,11 @@
@@ -28,7 +28,7 @@ index 20f3309e..01daef4a 100644
  
  #include "includes.h"
  
-@@ -42,11 +47,13 @@
+@@ -41,12 +46,14 @@
  #include <time.h>
  #include <unistd.h>
  #include <limits.h>
@@ -38,11 +38,12 @@ index 20f3309e..01daef4a 100644
  #include "ssh.h"
  #include "ssh2.h"
  #include "packet.h"
+ #include "sshbuf.h"
 +#include "digest.h"
- #include "buffer.h"
  #include "log.h"
  #include "misc.h"
-@@ -74,6 +81,15 @@ extern ServerOptions options;
+ #include "servconf.h"
+@@ -73,6 +80,15 @@ extern ServerOptions options;
  extern u_char *session_id2;
  extern u_int session_id2_len;
  
@@ -55,10 +56,10 @@ index 20f3309e..01daef4a 100644
 +typedef int (*UNIV_SYM)(struct passwd *, const char *,
 +    const u_char *, size_t);
 +
- static int
- userauth_pubkey(Authctxt *authctxt)
+ static char *
+ format_key(const struct sshkey *key)
  {
-@@ -1071,6 +1087,125 @@ user_key_command_allowed2(struct passwd *user_pw, Key *key)
+@@ -991,6 +1007,127 @@ user_key_command_allowed2(struct ssh *ssh, struct passwd *user_pw,
  	return found_key;
  }
  
@@ -76,7 +77,8 @@ index 20f3309e..01daef4a 100644
 + * it keeps this code minimally invasive.
 + */
 +static int
-+user_key_allowed_from_plugin(struct passwd *pw, Key *key)
++user_key_allowed_from_plugin(struct passwd *pw, struct sshkey *key,
++    struct sshauthopt **authoptsp)
 +{
 +	RSA_SYM rsa_sym = NULL;
 +	ECDSA_SYM ecdsa_sym = NULL;
@@ -87,8 +89,8 @@ index 20f3309e..01daef4a 100644
 +	int success = 0;
 +
 +	if (options.pubkey_plugin == NULL || pw == NULL || key == NULL ||
-+	    (key->type != KEY_RSA && key->type != KEY_RSA1 &&
-+	    key->type != KEY_DSA && key->type != KEY_ECDSA))
++	    (key->type != KEY_RSA && key->type != KEY_DSA &&
++	    key->type != KEY_ECDSA))
 +		return success;
 +
 +	handle = dlopen(options.pubkey_plugin, RTLD_NOW);
@@ -132,7 +134,6 @@ index 20f3309e..01daef4a 100644
 +	argfp = fp + 4;
 +
 +	switch (key->type) {
-+	case KEY_RSA1:
 +	case KEY_RSA:
 +		rsa_sym = (RSA_SYM)dlsym(handle, RSA_SYM_NAME);
 +		if (rsa_sym == NULL) {
@@ -170,8 +171,10 @@ index 20f3309e..01daef4a 100644
 +		handle = NULL;
 +	}
 +
-+	if (success)
-+		verbose("Found matching %s key: %s", key_type(key), fp);
++	if (success) {
++		verbose("Found matching %s key: %s", sshkey_type(key), fp);
++		*authoptsp = sshauthopt_new_with_keys_defaults();
++	}
 +
 +	if (fp != NULL) {
 +		free(fp);
@@ -184,22 +187,30 @@ index 20f3309e..01daef4a 100644
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -1089,6 +1224,10 @@ user_key_allowed(struct passwd *pw, Key *key, int auth_attempt)
- 	if (success)
- 		return success;
+@@ -1015,6 +1152,9 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
+ 	sshauthopt_free(opts);
+ 	opts = NULL;
  
-+	success = user_key_allowed_from_plugin(pw, key);
-+	if (success > 0)
-+		return success;
++	if ((success = user_key_allowed_from_plugin(pw, key, &opts)) != 0)
++		goto out;
 +
- 	success = user_key_command_allowed2(pw, key);
- 	if (success > 0)
- 		return success;
+ 	if ((success = user_key_command_allowed2(ssh, pw, key, &opts)) != 0)
+ 		goto out;
+ 	sshauthopt_free(opts);
+@@ -1029,7 +1169,7 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
+ 		free(file);
+ 	}
+ 
+- out:
++out:
+ 	if (success && authoptsp != NULL) {
+ 		*authoptsp = opts;
+ 		opts = NULL;
 diff --git a/servconf.c b/servconf.c
-index 881edd95..b492f32b 100644
+index 15567f88..c61923c1 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -178,6 +178,7 @@ initialize_server_options(ServerOptions *options)
+@@ -194,6 +194,7 @@ initialize_server_options(ServerOptions *options)
  	 */
  	options->pam_service_per_authmethod = 1;
  #endif
@@ -207,23 +218,23 @@ index 881edd95..b492f32b 100644
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -459,6 +460,7 @@ typedef enum {
- 	sAuthenticationMethods, sHostKeyAgent, sPermitUserRC,
+@@ -538,6 +539,7 @@ typedef enum {
  	sStreamLocalBindMask, sStreamLocalBindUnlink,
  	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
+ 	sExposeAuthInfo, sRDomain,
 +	sPubKeyPlugin,
  	sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
-@@ -641,6 +643,7 @@ static struct {
- 	{ "allowstreamlocalforwarding", sAllowStreamLocalForwarding, SSHCFG_ALL },
- 	{ "fingerprinthash", sFingerprintHash, SSHCFG_GLOBAL },
- 	{ "disableforwarding", sDisableForwarding, SSHCFG_ALL },
+@@ -725,6 +727,7 @@ static struct {
+ 	{ "exposeauthinfo", sExposeAuthInfo, SSHCFG_ALL },
+ 	{ "rdomain", sRDomain, SSHCFG_ALL },
+ 	{ "casignaturealgorithms", sCASignatureAlgorithms, SSHCFG_ALL },
 +	{ "pubkeyplugin", sPubKeyPlugin, SSHCFG_ALL },
  	{ NULL, sBadOption, 0 }
  };
  
-@@ -1964,6 +1967,18 @@ process_server_config_line(ServerOptions *options, char *line,
+@@ -2277,6 +2280,18 @@ process_server_config_line(ServerOptions *options, char *line,
  		}
  		break;
  
@@ -243,17 +254,18 @@ index 881edd95..b492f32b 100644
  	case sIgnore:
  	case sUnsupported:
 diff --git a/servconf.h b/servconf.h
-index 729819e7..4197ffde 100644
+index 77743737..72f0c42b 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -201,6 +201,7 @@ typedef struct {
- #endif
- 
+@@ -222,6 +222,8 @@ typedef struct {
  	int	fingerprint_hash;
+ 	int	expose_userauth_info;
+ 	u_int64_t timing_secret;
++
 +	char   *pubkey_plugin;
  }       ServerOptions;
  
  /* Information about the incoming connection as used by Match */
 -- 
-2.11.0
+2.20.1
 

@@ -1,26 +1,26 @@
-From ed82a32f2970ccafe09d94de469de246ac8b795f Mon Sep 17 00:00:00 2001
+From b3b2132fc89d826365c93715c5dd7d5e902a789d Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:19 -0700
 Subject: [PATCH 10/34] PAM enhancements for Solaris
 
 ---
- auth-pam.c     | 119 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- auth.h         |   3 ++
- auth2.c        |  61 ++++++++++++++++++++++++++++-
- monitor.c      |  65 +++++++++++++++++++++++++++++++
+ auth-pam.c     | 113 +++++++++++++++++++++++++++++++++++++++++++++++++
+ auth.h         |   4 ++
+ auth2.c        |  72 +++++++++++++++++++++++++++++--
+ monitor.c      |  66 +++++++++++++++++++++++++++++
  monitor.h      |   3 ++
- monitor_wrap.c |  18 +++++++++
- servconf.c     |  56 +++++++++++++++++++++++++++
+ monitor_wrap.c |  18 ++++++++
+ servconf.c     |  56 ++++++++++++++++++++++++
  servconf.h     |  10 +++++
- sshd.1m        |  27 +++++++++++++
- sshd_config.4  |  18 ++++++++-
- 10 files changed, 376 insertions(+), 4 deletions(-)
+ sshd.1m        |  27 ++++++++++++
+ sshd_config.4  |  18 +++++++-
+ 10 files changed, 382 insertions(+), 5 deletions(-)
 
 diff --git a/auth-pam.c b/auth-pam.c
-index ee09b804..70a25c19 100644
+index b0c3d2d3..01f62036 100644
 --- a/auth-pam.c
 +++ b/auth-pam.c
-@@ -617,6 +617,72 @@ sshpam_cleanup(void)
+@@ -668,6 +668,66 @@ sshpam_cleanup(void)
  	sshpam_handle = NULL;
  }
  
@@ -39,52 +39,46 @@ index ee09b804..70a25c19 100644
 +		return (svcname);
 +	}
 +
-+	if (compat20) {
-+		char *method_name = authctxt->authmethod_name;
++	char *method_name = authctxt->authmethod_name;
 +
-+		if (!method_name)
-+			fatal("Userauth method unknown while starting PAM");
++	if (!method_name)
++		fatal("Userauth method unknown while starting PAM");
 +
-+		/*
-+		 * For SSHv2 we use "sshd-<userauth name>
-+		 * The "sshd" prefix can be changed via the PAMServicePrefix
-+		 * sshd_config option.
++	/*
++	 * For SSHv2 we use "sshd-<userauth name>
++	 * The "sshd" prefix can be changed via the PAMServicePrefix
++	 * sshd_config option.
++	 */
++	if (strcmp(method_name, "none") == 0) {
++		snprintf(svcname, BUFSIZ, "%s-none",
++		    options.pam_service_prefix);
++	}
++	if (strcmp(method_name, "password") == 0) {
++		snprintf(svcname, BUFSIZ, "%s-password",
++		    options.pam_service_prefix);
++	}
++	if (strcmp(method_name, "keyboard-interactive") == 0) {
++		/* "keyboard-interactive" is too long, shorten it */
++		snprintf(svcname, BUFSIZ, "%s-kbdint",
++		    options.pam_service_prefix);
++	}
++	if (strcmp(method_name, "publickey") == 0) {
++		/* "publickey" is too long, shorten it */
++		snprintf(svcname, BUFSIZ, "%s-pubkey",
++		    options.pam_service_prefix);
++	}
++	if (strcmp(method_name, "hostbased") == 0) {
++		snprintf(svcname, BUFSIZ, "%s-hostbased",
++		    options.pam_service_prefix);
++	}
++	if (strncmp(method_name, "gssapi-", 7) == 0) {
++	        /*
++		 * Although OpenSSH only supports "gssapi-with-mic"
++		 * for now. We will still map any userauth method
++                 * prefixed with "gssapi-" to the gssapi PAM service.
 +		 */
-+		if (strcmp(method_name, "none") == 0) {
-+			snprintf(svcname, BUFSIZ, "%s-none",
-+			    options.pam_service_prefix);
-+		}
-+		if (strcmp(method_name, "password") == 0) {
-+			snprintf(svcname, BUFSIZ, "%s-password",
-+			    options.pam_service_prefix);
-+		}
-+		if (strcmp(method_name, "keyboard-interactive") == 0) {
-+			/* "keyboard-interactive" is too long, shorten it */
-+			snprintf(svcname, BUFSIZ, "%s-kbdint",
-+			    options.pam_service_prefix);
-+		}
-+		if (strcmp(method_name, "publickey") == 0) {
-+			/* "publickey" is too long, shorten it */
-+			snprintf(svcname, BUFSIZ, "%s-pubkey",
-+			    options.pam_service_prefix);
-+		}
-+		if (strcmp(method_name, "hostbased") == 0) {
-+			snprintf(svcname, BUFSIZ, "%s-hostbased",
-+			    options.pam_service_prefix);
-+		}
-+		if (strncmp(method_name, "gssapi-", 7) == 0) {
-+		        /*
-+			 * Although OpenSSH only supports "gssapi-with-mic"
-+			 * for now. We will still map any userauth method
-+                         * prefixed with "gssapi-" to the gssapi PAM service.
-+			 */
-+			snprintf(svcname, BUFSIZ, "%s-gssapi",
-+			    options.pam_service_prefix);
-+		}
-+		return svcname;
-+	} else {
-+		/* SSHv1 doesn't get to be so cool */
-+		snprintf(svcname, BUFSIZ, "sshd-v1");
++		snprintf(svcname, BUFSIZ, "%s-gssapi",
++		    options.pam_service_prefix);
 +	}
 +	return svcname;
 +}
@@ -93,7 +87,7 @@ index ee09b804..70a25c19 100644
  static int
  sshpam_init(Authctxt *authctxt)
  {
-@@ -624,18 +690,71 @@ sshpam_init(Authctxt *authctxt)
+@@ -675,18 +735,71 @@ sshpam_init(Authctxt *authctxt)
  	const char **ptr_pam_user = &pam_user;
  	struct ssh *ssh = active_state; /* XXX */
  
@@ -166,24 +160,36 @@ index ee09b804..70a25c19 100644
  
  	if (sshpam_err != PAM_SUCCESS) {
 diff --git a/auth.h b/auth.h
-index 338a62da..4a7f2c1f 100644
+index 977562f0..34e69270 100644
 --- a/auth.h
 +++ b/auth.h
-@@ -81,6 +81,9 @@ struct Authctxt {
+@@ -95,6 +95,10 @@ struct Authctxt {
  
- 	struct sshkey	**prev_userkeys;
- 	u_int		 nprev_userkeys;
+ 	/* Information exposed to session */
+ 	struct sshbuf	*session_info;	/* Auth info for environment */
++
 +#ifdef PAM_ENHANCEMENT
 +	char		*authmethod_name;
 +#endif
  };
+ 
  /*
-  * Every authentication method has to handle authentication requests for
 diff --git a/auth2.c b/auth2.c
-index 9108b861..4623ae02 100644
+index 4d19957a..31f6ffbf 100644
 --- a/auth2.c
 +++ b/auth2.c
-@@ -243,10 +243,21 @@ input_userauth_request(int type, u_int32_t seq, void *ctxt)
+@@ -249,6 +249,10 @@ ensure_minimum_time_since(double start, double seconds)
+ 	nanosleep(&ts, NULL);
+ }
+ 
++#ifdef PAM_ENHANCEMENT
++void mm_inform_authmethod(char *authmethod);
++#endif
++
+ /*ARGSUSED*/
+ static int
+ input_userauth_request(int type, u_int32_t seq, struct ssh *ssh)
+@@ -286,9 +290,20 @@ input_userauth_request(int type, u_int32_t seq, struct ssh *ssh)
  			PRIVSEP(audit_event(SSH_INVALID_USER));
  #endif
  		}
@@ -200,12 +206,11 @@ index 9108b861..4623ae02 100644
 +#else
  		if (options.use_pam)
  			PRIVSEP(start_pam(authctxt));
- #endif
 +#endif
- 		setproctitle("%s%s", authctxt->valid ? user : "unknown",
- 		    use_privsep ? " [net]" : "");
- 		authctxt->service = xstrdup(service);
-@@ -277,6 +288,18 @@ input_userauth_request(int type, u_int32_t seq, void *ctxt)
+ #endif
+ 		ssh_packet_set_log_preamble(ssh, "%suser %s",
+ 		    authctxt->valid ? "authenticating " : "invalid ", user);
+@@ -323,6 +338,18 @@ input_userauth_request(int type, u_int32_t seq, struct ssh *ssh)
  	/* try to authenticate user */
  	m = authmethod_lookup(authctxt, method);
  	if (m != NULL && authctxt->failures < options.max_authtries) {
@@ -222,87 +227,101 @@ index 9108b861..4623ae02 100644
 +		}
 +#endif
  		debug2("input_userauth_request: try method %s", method);
- 		authenticated =	m->userauth(authctxt);
+ 		authenticated =	m->userauth(ssh);
  	}
-@@ -295,6 +318,10 @@ userauth_finish(Authctxt *authctxt, int authenticated, const char *method,
+@@ -345,6 +372,10 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *method,
  	char *methods;
  	int partial = 0;
  
 +#ifdef  PAM_ENHANCEMENT
-+        debug3("%s: entering", __func__);
++	debug3("%s: entering", __func__);
 +#endif
 +
  	if (!authctxt->valid && authenticated)
  		fatal("INTERNAL ERROR: authenticated invalid user %s",
  		    authctxt->user);
-@@ -311,6 +338,25 @@ userauth_finish(Authctxt *authctxt, int authenticated, const char *method,
+@@ -361,6 +392,29 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *method,
  	}
  
  	if (authenticated && options.num_auth_methods != 0) {
 +
 +#if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
-+                /*
-+                 * If each userauth has its own PAM service, then PAM needs to
-+                 * perform the account check for this service.
-+                 */
-+                if (options.use_pam && options.pam_service_per_authmethod &&
-+                    !PRIVSEP(do_pam_account())) {
-+                        /* if PAM returned a message, send it to the user */
-+                        if (buffer_len(&loginmsg) > 0) {
-+                                buffer_append(&loginmsg, "\0", 1);
-+                                userauth_send_banner(buffer_ptr(&loginmsg));
-+                                packet_write_wait();
-+                        }
++		/*
++		 * If each userauth has its own PAM service, then PAM needs to
++		 * perform the account check for this service.
++		 */
++		if (options.use_pam && options.pam_service_per_authmethod &&
++		    !PRIVSEP(do_pam_account())) {
++			int r;
++			/* if PAM returned a message, send it to the user */
++			if (sshbuf_len(loginmsg) > 0) {
++				if ((r = sshbuf_put_u8(loginmsg, 0))) {
++					fatal("%s: buffer error: %d",
++					    __func__, r);
++				}
++				userauth_send_banner(sshbuf_ptr(loginmsg));
++				packet_write_wait();
++			}
 +
-+                        fatal("Access denied for user %s by PAM account "
-+                            "configuration", authctxt->user);
-+                }
++			fatal("Access denied for user %s by PAM account "
++			    "configuration", authctxt->user);
++		}
 +#endif
  		if (!auth2_update_methods_lists(authctxt, method, submethod)) {
  			authenticated = 0;
  			partial = 1;
-@@ -324,7 +370,20 @@ userauth_finish(Authctxt *authctxt, int authenticated, const char *method,
+@@ -378,13 +432,25 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *method,
  		return;
  
  #ifdef USE_PAM
 +
 +#ifdef PAM_ENHANCEMENT
-+        /*
-+         * PAM needs to perform account checks after auth. However, if each
-+         * userauth has its own PAM service and options.num_auth_methods != 0,
-+         * then no need to perform account checking, because it was done
-+         * already.
-+         */
++	/*
++	 * PAM needs to perform account checks after auth. However, if each
++	 * userauth has its own PAM service and options.num_auth_methods != 0,
++	 * then no need to perform account checking, because it was done
++	 * already.
++	 */
 +	if (options.use_pam && authenticated &&
 +	    !(options.num_auth_methods != 0 &&
 +	    options.pam_service_per_authmethod)) {
 +#else
  	if (options.use_pam && authenticated) {
 +#endif
+ 		int r;
+-
  		if (!PRIVSEP(do_pam_account())) {
  			/* if PAM returned a message, send it to the user */
- 			if (buffer_len(&loginmsg) > 0) {
-@@ -615,5 +674,3 @@ auth2_update_methods_lists(Authctxt *authctxt, const char *method,
- 		fatal("%s: method not in AuthenticationMethods", __func__);
- 	return 0;
- }
--
--
+ 			if (sshbuf_len(loginmsg) > 0) {
+-				if ((r = sshbuf_put(loginmsg, "\0", 1)) != 0)
++				if ((r = sshbuf_put_u8(loginmsg, 0)) != 0)
+ 					fatal("%s: buffer error: %s",
+ 					    __func__, ssh_err(r));
+ 				userauth_send_banner(sshbuf_ptr(loginmsg));
+@@ -681,7 +747,7 @@ void
+ auth2_record_info(Authctxt *authctxt, const char *fmt, ...)
+ {
+ 	va_list ap;
+-        int i;
++	int i;
+ 
+ 	free(authctxt->auth_method_info);
+ 	authctxt->auth_method_info = NULL;
 diff --git a/monitor.c b/monitor.c
-index 43f48470..8f044f4e 100644
+index 531b2993..7b62e683 100644
 --- a/monitor.c
 +++ b/monitor.c
-@@ -127,6 +127,9 @@ int mm_answer_sign(int, Buffer *);
- int mm_answer_pwnamallow(int, Buffer *);
- int mm_answer_auth2_read_banner(int, Buffer *);
- int mm_answer_authserv(int, Buffer *);
+@@ -117,6 +117,9 @@ int mm_answer_sign(int, struct sshbuf *);
+ int mm_answer_pwnamallow(int, struct sshbuf *);
+ int mm_answer_auth2_read_banner(int, struct sshbuf *);
+ int mm_answer_authserv(int, struct sshbuf *);
 +#ifdef PAM_ENHANCEMENT
-+int mm_answer_authmethod(int, Buffer *);
++int mm_answer_authmethod(int, struct sshbuf *);
 +#endif
- int mm_answer_authpassword(int, Buffer *);
- int mm_answer_bsdauthquery(int, Buffer *);
- int mm_answer_bsdauthrespond(int, Buffer *);
-@@ -202,10 +205,17 @@ struct mon_table mon_dispatch_proto20[] = {
+ int mm_answer_authpassword(int, struct sshbuf *);
+ int mm_answer_bsdauthquery(int, struct sshbuf *);
+ int mm_answer_bsdauthrespond(int, struct sshbuf *);
+@@ -191,10 +194,17 @@ struct mon_table mon_dispatch_proto20[] = {
      {MONITOR_REQ_SIGN, MON_ONCE, mm_answer_sign},
      {MONITOR_REQ_PWNAM, MON_ONCE, mm_answer_pwnamallow},
      {MONITOR_REQ_AUTHSERV, MON_ONCE, mm_answer_authserv},
@@ -320,7 +339,7 @@ index 43f48470..8f044f4e 100644
      {MONITOR_REQ_PAM_ACCOUNT, 0, mm_answer_pam_account},
      {MONITOR_REQ_PAM_INIT_CTX, MON_ONCE, mm_answer_pam_init_ctx},
      {MONITOR_REQ_PAM_QUERY, 0, mm_answer_pam_query},
-@@ -311,6 +321,25 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
+@@ -301,6 +311,26 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
  
  		/* Special handling for multiple required authentications */
  		if (options.num_auth_methods != 0) {
@@ -332,22 +351,23 @@ index 43f48470..8f044f4e 100644
 +			 */
 +			if (options.use_pam && authenticated &&
 +			    options.pam_service_per_authmethod) {
-+				Buffer m;
++				struct sshbuf *m;
 +
-+				buffer_init(&m);
++				if ((m = sshbuf_new()) == NULL)
++					fatal("%s: sshbuf_new failed", __func__);
 +				mm_request_receive_expect(pmonitor->m_sendfd,
-+				    MONITOR_REQ_PAM_ACCOUNT, &m);
++				    MONITOR_REQ_PAM_ACCOUNT, m);
 +				authenticated = mm_answer_pam_account(
-+				    pmonitor->m_sendfd, &m);
-+				buffer_free(&m);
++				    pmonitor->m_sendfd, m);
++				sshbuf_free(m);
 +			}
 +#endif
 +
  			if (authenticated &&
  			    !auth2_update_methods_lists(authctxt,
  			    auth_method, auth_submethod)) {
-@@ -329,8 +358,21 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
- 			    !auth_root_allowed(auth_method))
+@@ -319,8 +349,21 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
+ 			    !auth_root_allowed(ssh, auth_method))
  				authenticated = 0;
  #ifdef USE_PAM
 +#ifdef PAM_ENHANCEMENT
@@ -365,10 +385,10 @@ index 43f48470..8f044f4e 100644
  			/* PAM needs to perform account checks after auth */
  			if (options.use_pam && authenticated) {
 +#endif
- 				Buffer m;
+ 				struct sshbuf *m;
  
- 				buffer_init(&m);
-@@ -771,6 +813,11 @@ mm_answer_pwnamallow(int sock, Buffer *m)
+ 				if ((m = sshbuf_new()) == NULL)
+@@ -802,6 +845,11 @@ mm_answer_pwnamallow(int sock, struct sshbuf *m)
  	monitor_permit(mon_dispatch, MONITOR_REQ_AUTHSERV, 1);
  	monitor_permit(mon_dispatch, MONITOR_REQ_AUTH2_READ_BANNER, 1);
  
@@ -380,13 +400,13 @@ index 43f48470..8f044f4e 100644
  #ifdef USE_PAM
  	if (options.use_pam)
  		monitor_permit(mon_dispatch, MONITOR_REQ_PAM_START, 1);
-@@ -810,6 +857,24 @@ mm_answer_authserv(int sock, Buffer *m)
+@@ -846,6 +894,24 @@ mm_answer_authserv(int sock, struct sshbuf *m)
  	return (0);
  }
  
 +#ifdef PAM_ENHANCEMENT
 +int
-+mm_answer_authmethod(int sock, Buffer *m)
++mm_answer_authmethod(int sock, struct sshbuf *m)
 +{
 +	monitor_permit_authentications(1);
 +
@@ -403,13 +423,13 @@ index 43f48470..8f044f4e 100644
 +#endif
 +
  int
- mm_answer_authpassword(int sock, Buffer *m)
+ mm_answer_authpassword(int sock, struct sshbuf *m)
  {
 diff --git a/monitor.h b/monitor.h
-index d68f6745..36e73f79 100644
+index 16047299..b6f658e1 100644
 --- a/monitor.h
 +++ b/monitor.h
-@@ -65,6 +65,9 @@ enum monitor_reqtype {
+@@ -63,6 +63,9 @@ enum monitor_reqtype {
  	MONITOR_REQ_PAM_FREE_CTX = 110, MONITOR_ANS_PAM_FREE_CTX = 111,
  	MONITOR_REQ_AUDIT_EVENT = 112, MONITOR_REQ_AUDIT_COMMAND = 113,
  
@@ -420,11 +440,11 @@ index d68f6745..36e73f79 100644
  
  struct monitor {
 diff --git a/monitor_wrap.c b/monitor_wrap.c
-index 64ff9288..bc6382f3 100644
+index 732fb347..b7ff09e3 100644
 --- a/monitor_wrap.c
 +++ b/monitor_wrap.c
-@@ -345,6 +345,24 @@ mm_inform_authserv(char *service, char *style)
- 	buffer_free(&m);
+@@ -390,6 +390,24 @@ mm_inform_authserv(char *service, char *style)
+ 	sshbuf_free(m);
  }
  
 +#ifdef PAM_ENHANCEMENT
@@ -447,15 +467,15 @@ index 64ff9288..bc6382f3 100644
 +
  /* Do the password authentication */
  int
- mm_auth_password(Authctxt *authctxt, char *password)
+ mm_auth_password(struct ssh *ssh, char *password)
 diff --git a/servconf.c b/servconf.c
-index e98c6500..36eb9057 100644
+index 66f39bc5..827f3aab 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -164,6 +164,18 @@ initialize_server_options(ServerOptions *options)
- 	options->version_addendum = NULL;
+@@ -180,6 +180,18 @@ initialize_server_options(ServerOptions *options)
  	options->fingerprint_hash = -1;
  	options->disable_forwarding = -1;
+ 	options->expose_userauth_info = -1;
 +#ifdef PAM_ENHANCEMENT
 +	options->pam_service_name = NULL;
 +	options->pam_service_prefix = NULL;
@@ -471,8 +491,8 @@ index e98c6500..36eb9057 100644
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -330,6 +342,12 @@ fill_default_server_options(ServerOptions *options)
- 		options->ip_qos_bulk = IPTOS_THROUGHPUT;
+@@ -406,6 +418,12 @@ fill_default_server_options(ServerOptions *options)
+ 		options->ip_qos_bulk = IPTOS_DSCP_CS1;
  	if (options->version_addendum == NULL)
  		options->version_addendum = xstrdup("");
 +
@@ -484,8 +504,8 @@ index e98c6500..36eb9057 100644
  	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
  		options->fwd_opts.streamlocal_bind_mask = 0177;
  	if (options->fwd_opts.streamlocal_bind_unlink == -1)
-@@ -416,6 +434,9 @@ typedef enum {
- 	sMatch, sPermitOpen, sForceCommand, sChrootDirectory,
+@@ -494,6 +512,9 @@ typedef enum {
+ 	sMatch, sPermitOpen, sPermitListen, sForceCommand, sChrootDirectory,
  	sUsePrivilegeSeparation, sAllowAgentForwarding,
  	sHostCertificate,
 +#ifdef PAM_ENHANCEMENT
@@ -493,8 +513,8 @@ index e98c6500..36eb9057 100644
 +#endif
  	sRevokedKeys, sTrustedUserCAKeys, sAuthorizedPrincipalsFile,
  	sAuthorizedPrincipalsCommand, sAuthorizedPrincipalsCommandUser,
- 	sKexAlgorithms, sIPQoS, sVersionAddendum,
-@@ -554,6 +575,10 @@ static struct {
+ 	sKexAlgorithms, sCASignatureAlgorithms, sIPQoS, sVersionAddendum,
+@@ -635,6 +656,10 @@ static struct {
  	{ "forcecommand", sForceCommand, SSHCFG_ALL },
  	{ "chrootdirectory", sChrootDirectory, SSHCFG_ALL },
  	{ "hostcertificate", sHostCertificate, SSHCFG_GLOBAL },
@@ -505,8 +525,8 @@ index e98c6500..36eb9057 100644
  	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
  	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },
  	{ "authorizedprincipalsfile", sAuthorizedPrincipalsFile, SSHCFG_ALL },
-@@ -1854,6 +1879,37 @@ process_server_config_line(ServerOptions *options, char *line,
- 			options->fingerprint_hash = value;
+@@ -2167,6 +2192,37 @@ process_server_config_line(ServerOptions *options, char *line,
+ 			*charptr = xstrdup(arg);
  		break;
  
 +	case sPAMServicePrefix:
@@ -544,12 +564,12 @@ index e98c6500..36eb9057 100644
  	case sIgnore:
  	case sUnsupported:
 diff --git a/servconf.h b/servconf.h
-index 5853a974..104852f7 100644
+index 0175e00e..e757d683 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -54,6 +54,10 @@
- /* Magic name for internal sftp-server */
- #define INTERNAL_SFTP_NAME	"internal-sftp"
+@@ -62,6 +62,10 @@ struct listenaddr {
+ 	struct addrinfo *addrs;
+ };
  
 +#ifdef PAM_ENHANCEMENT
 +#define _SSH_PAM_SERVICE_PREFIX "sshd"
@@ -558,9 +578,9 @@ index 5853a974..104852f7 100644
  typedef struct {
  	u_int	num_ports;
  	u_int	ports_from_cmdline;
-@@ -188,6 +192,12 @@ typedef struct {
+@@ -207,6 +211,12 @@ typedef struct {
  	u_int	num_auth_methods;
- 	char   *auth_methods[MAX_AUTH_METHODS];
+ 	char   **auth_methods;
  
 +#ifdef PAM_ENHANCEMENT
 +	char   *pam_service_prefix;
@@ -569,13 +589,13 @@ index 5853a974..104852f7 100644
 +#endif
 +
  	int	fingerprint_hash;
- }       ServerOptions;
- 
+ 	int	expose_userauth_info;
+ 	u_int64_t timing_secret;
 diff --git a/sshd.1m b/sshd.1m
-index b767cc7a..387ea69e 100644
+index c65a688b..1ca36c60 100644
 --- a/sshd.1m
 +++ b/sshd.1m
-@@ -920,6 +920,33 @@ concurrently for different ports, this contains the process ID of the one
+@@ -966,6 +966,33 @@ concurrently for different ports, this contains the process ID of the one
  started last).
  The content of this file is not sensitive; it can be world-readable.
  .El
@@ -610,10 +630,10 @@ index b767cc7a..387ea69e 100644
  .Xr scp 1 ,
  .Xr sftp 1 ,
 diff --git a/sshd_config.4 b/sshd_config.4
-index efb10c97..7e4a376b 100644
+index 8b5d40a5..6eac9806 100644
 --- a/sshd_config.4
 +++ b/sshd_config.4
-@@ -1117,6 +1117,21 @@ will refuse connection attempts with a probability of rate/100 (30%)
+@@ -1191,6 +1191,21 @@ will refuse connection attempts with a probability of rate/100 (30%)
  if there are currently start (10) unauthenticated connections.
  The probability increases linearly and all connection attempts
  are refused if the number of unauthenticated connections reaches full (60).
@@ -635,16 +655,16 @@ index efb10c97..7e4a376b 100644
  .It Cm PasswordAuthentication
  Specifies whether password authentication is allowed.
  The default is
-@@ -1472,8 +1487,7 @@ If
+@@ -1622,8 +1637,7 @@ If
  is enabled, you will not be able to run
  .Xr sshd 1M
  as a non-root user.
 -The default is
 -.Cm no .
 +On Solaris, the option is always enabled.
- .It Cm UsePrivilegeSeparation
- Specifies whether
- .Xr sshd 1M
+ .It Cm VersionAddendum
+ Optionally specifies additional text to append to the SSH protocol banner
+ sent by the server upon connection.
 -- 
-2.11.0
+2.20.1
 

@@ -1,4 +1,4 @@
-From 2e157a62ac6bb1ab68f65fe8cc62c125fa485edc Mon Sep 17 00:00:00 2001
+From 4948042cfd14e37fbed3a9cc225f4ec2d44c9d47 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 19 Aug 2015 11:35:32 -0700
 Subject: [PATCH 25/34] Re-enable DSA keys for pk auth
@@ -10,12 +10,12 @@ Subject: [PATCH 25/34] Re-enable DSA keys for pk auth
  3 files changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/myproposal.h b/myproposal.h
-index 072e36ec..f6322a73 100644
+index 27b4a15a..0df91f5b 100644
 --- a/myproposal.h
 +++ b/myproposal.h
-@@ -108,11 +108,13 @@
- 	HOSTKEY_ECDSA_CERT_METHODS \
- 	"ssh-ed25519-cert-v01@openssh.com," \
+@@ -110,11 +110,13 @@
+ 	"rsa-sha2-512-cert-v01@openssh.com," \
+ 	"rsa-sha2-256-cert-v01@openssh.com," \
  	"ssh-rsa-cert-v01@openssh.com," \
 +	"ssh-dss-cert-v01@openssh.com," \
  	HOSTKEY_ECDSA_METHODS \
@@ -29,35 +29,35 @@ index 072e36ec..f6322a73 100644
  /* the actual algorithms */
  
 diff --git a/ssh_config.4 b/ssh_config.4
-index 4492ecaf..dadd092a 100644
+index 22cde6d3..62e407d7 100644
 --- a/ssh_config.4
 +++ b/ssh_config.4
-@@ -1314,8 +1314,9 @@ ecdsa-sha2-nistp384-cert-v01@openssh.com,
- ecdsa-sha2-nistp521-cert-v01@openssh.com,
+@@ -1315,8 +1315,9 @@ ecdsa-sha2-nistp521-cert-v01@openssh.com,
  ssh-ed25519-cert-v01@openssh.com,
+ rsa-sha2-512-cert-v01@openssh.com,rsa-sha2-256-cert-v01@openssh.com,
  ssh-rsa-cert-v01@openssh.com,
 +ssh-dss-cert-v01@openssh.com,
  ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
--ssh-ed25519,ssh-rsa
+-ssh-ed25519,rsa-sha2-512,rsa-sha2-256,ssh-rsa
 +ssh-ed25519,rsa-sha2-512,rsa-sha2-256,ssh-rsa,ssh-dss
  .Ed
  .Pp
  The list of available key types may also be obtained using
 diff --git a/sshd_config.4 b/sshd_config.4
-index de03ac5e..6a6f940b 100644
+index dce30d07..3dc39cca 100644
 --- a/sshd_config.4
 +++ b/sshd_config.4
-@@ -1312,8 +1312,9 @@ ecdsa-sha2-nistp384-cert-v01@openssh.com,
- ecdsa-sha2-nistp521-cert-v01@openssh.com,
+@@ -1438,8 +1438,9 @@ ecdsa-sha2-nistp521-cert-v01@openssh.com,
  ssh-ed25519-cert-v01@openssh.com,
+ rsa-sha2-512-cert-v01@openssh.com,rsa-sha2-256-cert-v01@openssh.com,
  ssh-rsa-cert-v01@openssh.com,
 +ssh-dss-cert-v01@openssh.com,
  ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
--ssh-ed25519,ssh-rsa
+-ssh-ed25519,rsa-sha2-512,rsa-sha2-256,ssh-rsa
 +ssh-ed25519,rsa-sha2-512,rsa-sha2-256,ssh-rsa,ssh-dss
  .Ed
  .Pp
  The list of available key types may also be obtained using
 -- 
-2.11.0
+2.20.1
 

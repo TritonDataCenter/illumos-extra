@@ -1,4 +1,4 @@
-From 1881e2dc1ef484c877e60a40c820f4d2df980a48 Mon Sep 17 00:00:00 2001
+From c03a29b1e7cbe6c40b4d32c2c9ca704e6e43a00c Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:38:41 -0700
 Subject: [PATCH 17/34] Don't call do_pam_setcred twice
@@ -30,10 +30,10 @@ Subject: [PATCH 17/34] Don't call do_pam_setcred twice
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/platform.c b/platform.c
-index 973a63e4..fc9c079e 100644
+index 41acc937..f5f3ce37 100644
 --- a/platform.c
 +++ b/platform.c
-@@ -145,7 +145,7 @@ platform_setusercontext(struct passwd *pw)
+@@ -144,7 +144,7 @@ platform_setusercontext(struct passwd *pw)
  void
  platform_setusercontext_post_groups(struct passwd *pw)
  {
@@ -43,5 +43,5 @@ index 973a63e4..fc9c079e 100644
  	 * PAM credentials may take the form of supplementary groups.
  	 * These will have been wiped by the above initgroups() call.
 -- 
-2.11.0
+2.20.1
 

@@ -1,4 +1,4 @@
-From 099bbc48c48f25dc657a6c2b4c1521ba9023f380 Mon Sep 17 00:00:00 2001
+From d8c9de9b7443dcd97469c16c9cd78925915bb99d Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:33 -0700
 Subject: [PATCH 12/34] Deprecate SunSSH compatible server options
@@ -23,13 +23,14 @@ Subject: [PATCH 12/34] Deprecate SunSSH compatible server options
  1 file changed, 23 insertions(+)
 
 diff --git a/servconf.c b/servconf.c
-index 6f11010a..c0aba508 100644
+index 5e870e82..93761629 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -587,6 +587,29 @@ static struct {
+@@ -667,6 +667,29 @@ static struct {
+ #ifdef PAM_ENHANCEMENT
  	{ "pamserviceprefix", sPAMServicePrefix, SSHCFG_GLOBAL },
  	{ "pamservicename", sPAMServiceName, SSHCFG_GLOBAL },
- #endif
++#endif
 +#ifdef DEPRECATE_SUNSSH_OPT
 +	/*
 +	 * On Solaris, to make the transition from SunSSH to OpenSSH as smooth
@@ -52,10 +53,9 @@ index 6f11010a..c0aba508 100644
 +	{ "useunsupportedsshv1", sDeprecated, SSHCFG_GLOBAL },
 +	{ "usefips140", sDeprecated, SSHCFG_ALL},
 +	{ "gssapistoredelegatedcredentials", sDeprecated, SSHCFG_ALL },
-+#endif
+ #endif
  	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
  	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },
- 	{ "authorizedprincipalsfile", sAuthorizedPrincipalsFile, SSHCFG_ALL },
 -- 
-2.11.0
+2.20.1
 
