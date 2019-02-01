@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright (c) 2018, Joyent, Inc.
+# Copyright (c) 2019, Joyent, Inc.
 #
 
 #
@@ -176,6 +176,7 @@ $(SUBDIRS): $(DESTDIR)/usr/gcc/$(PRIMARY_COMPILER_VER)/bin/gcc
 	    $(MAKE) DESTDIR=$(DESTDIR) install)
 
 $(STRAPFIX_SUBDIRS): $(SUBDIRS)
+	@echo "========== strapfix building $@ =========="
 	(cd $$(basename $@ .strapfix) && \
 	    PKG_CONFIG_LIBDIR="" \
 	    STRAP=$(STRAP) \

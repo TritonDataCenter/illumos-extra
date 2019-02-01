@@ -8,7 +8,7 @@
 # source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
-# Copyright (c) 2018, Joyent, Inc.
+# Copyright (c) 2019, Joyent, Inc.
 
 #
 # Shared makefile for building GCC versions. For the most part, the build is the
@@ -139,6 +139,7 @@ $(VER.32)/mpc: $(MPC_TARBALL) | $(VER.32)
 	chmod 755 $@/configure
 	touch $@/configure
 
+LIBTARDIR=$(STRAPPROTO)/gcclibs/
 LIBTAR=$(STRAPPROTO)/gcclibs.tar.gz
 
 ifeq ($(STRAP),strap)
@@ -150,7 +151,7 @@ ifeq ($(STRAP),strap)
 # (Currently, this is only relevant for libstdc++.)
 #
 # Before we do so, however, we'll keep copies for the non-strap build to pick
-# up.
+# up, making sure we don't inadvertently pick up the modified RUNPATH.
 #
 # We should also remove the "fixed" includes: they are just bad copies of the
 # potentially old system headers.
@@ -159,7 +160,9 @@ ifeq ($(STRAP),strap)
 # proto.strap/usr/gcc/X. For the primary compiler, we symlink into
 # proto.strap/usr/bin/gcc etc.
 #
-FIXLIBS = libgcc_s.so libstdc++.so libssp.so
+FIXLIBS = libgcc_s,libstdc++,libssp
+FIXLIBGLOB = {$(FIXLIBS)}.so*
+FIXLIBGLOB64 = 64/{$(FIXLIBS)}.so*
 LIBDIR=$(DESTDIR)/$(PREFIX)/lib
 
 .PHONY: strapfix
@@ -170,20 +173,22 @@ ifeq ($(PRIMARY_COMPILER),gcc$(GCC_VER))
 	for f in gcc g++ cpp; do \
 		ln -sf $(DESTDIR)/$(PREFIX)/bin/$$f $(DESTDIR)/usr/bin/$$f; \
 	done
-	rm -f $(LIBTAR)
-	for lib in $(FIXLIBS); do \
-		(cd $(LIBDIR)/.. && gtar uvf $(LIBTAR) \
-		    lib/$$lib.* lib/64/$$lib.*) ; \
+	mkdir -p $(LIBTARDIR)
+	cd $(LIBDIR) && gtar -cf - $(FIXLIBGLOB) $(FIXLIBGLOB64) | \
+	    gtar -C $(LIBTARDIR) -xvf -
+	for lib in $(LIBTARDIR)/$(FIXLIBGLOB) $(LIBTARDIR)/$(FIXLIBGLOB64); do \
+		/usr/bin/elfedit -e 'dyn:delete RUNPATH' $$lib ; \
 	done
+	gtar -C $(LIBTARDIR) -czvf $(LIBTAR) .
+	rm -rf $(LIBTARDIR)
 endif
 	find $(LIBDIR) -name include-fixed | xargs rm -rf
-	for lib in $(FIXLIBS); do \
-		/usr/bin/elfedit -e 'dyn:runpath $(LIBDIR)' $(LIBDIR)/$$lib ; \
-		/usr/bin/elfedit -e 'dyn:runpath $(LIBDIR)/64' \
-		    $(LIBDIR)/64/$$lib ; \
+	for lib in $(LIBDIR)/$(FIXLIBGLOB); do \
+		/usr/bin/elfedit -e 'dyn:runpath $(LIBDIR)' $$lib ; \
 	done
-
-
+	for lib in $(LIBDIR)/$(FIXLIBGLOB64); do \
+		/usr/bin/elfedit -e 'dyn:runpath $(LIBDIR)/64' $$lib ; \
+	done
 else
 
 #
@@ -192,6 +197,6 @@ else
 #
 .PHONY: fixup
 fixup:
-	cd $(DESTDIR)/usr && gtar xvf $(LIBTAR)
+	cd $(DESTDIR)/usr/lib && gtar xvf $(LIBTAR)
 
 endif
