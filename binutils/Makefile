@@ -34,6 +34,8 @@ CFLAGS += $(CPPFLAGS)
 TARBALL =		$(VER).tar.bz2
 TARBALL_COMPRESS =	-j
 AUTOCONF_OPTS = \
+	--build=i386-pc-solaris2.11 \
+	--host=i386-pc-solaris2.11 \
 	--prefix=/usr/gnu \
 	--enable-64-bit-bfd \
 	--program-prefix=g

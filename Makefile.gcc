@@ -27,7 +27,13 @@ PREFIX = /usr/gcc/$(GCC_VER)
 
 AUTOCONF_PREFIX = $(PREFIX)
 
+#
+# We set --enable-bootstrap to allow the build to mismatch the host
+#
 AUTOCONF_OPTS += \
+	--enable-bootstrap \
+	--build=i386-pc-solaris2.11 \
+	--host=i386-pc-solaris2.11 \
 	--with-ld=/usr/bin/ld \
 	--without-gnu-ld \
 	--with-gnu-as \

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2018 Joyent, Inc.
+# Copyright 2019 Joyent, Inc.
 #
 
 MAJOR_VER =	0.10
@@ -33,7 +33,7 @@ VERSIONJS =	$(NODE_ROOT)/node_modules/platform_node_version.js
 # ../deps/v8/src/objects.h:5188:44: error: left operand of shift expression
 # '(-1 << 3)' is negative
 #
-CXXFLAGS +=	-fpermissive
+CXXFLAGS += -fpermissive
 
 #
 # https://github.com/nodejs/node/issues/6272
@@ -81,6 +81,7 @@ AUTOCONF_OPTS += \
 AUTOCONF_CFLAGS =	CFLAGS="$(CPPFLAGS) $(CFLAGS)"
 AUTOCONF_LIBS =
 AUTOCONF_ENV +=		CXXFLAGS="$(CPPFLAGS) $(CFLAGS) $(CXXFLAGS)"
+AUTOCONF_ENV +=		CXXFLAGS.host="$(CPPFLAGS) $(CFLAGS) $(CXXFLAGS)"
 
 #
 # Jump through hoops to get the locally-run build tools to build with the
