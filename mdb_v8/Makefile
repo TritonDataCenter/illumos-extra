@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright (c) 2018, Joyent, Inc.
+# Copyright (c) 2019, Joyent, Inc.
 #
 
 #
@@ -55,10 +55,10 @@ all: $(VER)/GNUMakefile
 
 install: all
 	rm -f $(DESTDIR)/usr/lib/mdb/proc/v8.so
-	$(ALTCTFCONVERT) -l $(VER) -o $(DESTDIR)/usr/lib/mdb/proc/v8.so \
+	$(CTFCONVERT) -l $(VER) -o $(DESTDIR)/usr/lib/mdb/proc/v8.so \
 	    $(VER)/build/ia32/mdb_v8.so
 	rm -f $(DESTDIR)/usr/lib/mdb/proc/amd64/v8.so
-	$(ALTCTFCONVERT) -l $(VER) -o $(DESTDIR)/usr/lib/mdb/proc/amd64/v8.so \
+	$(CTFCONVERT) -l $(VER) -o $(DESTDIR)/usr/lib/mdb/proc/amd64/v8.so \
 	    $(VER)/build/amd64/mdb_v8.so
 
 $(VER)/GNUMakefile: $(VER).tar.gz

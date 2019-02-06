@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright (c) 2018, Joyent, Inc.
+# Copyright (c) 2019, Joyent, Inc.
 #
 
 VER =			wget-1.18
@@ -24,9 +24,7 @@ AUTOCONF_ENV += \
 			PERL=/opt/local/bin/perl \
 			POD2MAN=/opt/local/bin/pod2man \
 			DESTDIR="$(DESTDIR)" \
-			CTFMERGE="$(CTFMERGE)" \
-			CTFCONVERT="$(CTFCONVERT)" \
-			ALTCTFCONVERT="$(ALTCTFCONVERT)"
+			CTFCONVERT="$(CTFCONVERT)"
 
 AUTOCONF_OPTS += \
 			--sysconfdir=/etc \

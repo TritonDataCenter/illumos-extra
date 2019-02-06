@@ -19,7 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2016 Joyent, Inc.
+# Copyright 2019 Joyent, Inc.
 #
 
 VER =	ntp-4.2.8p8
@@ -59,9 +59,7 @@ CFLAGS += \
 AUTOCONF_ENV += \
 	LD_OPTIONS="$(LDFLAGS)" \
 	DESTDIR="$(DESTDIR)" \
-	CTFMERGE="$(CTFMERGE)" \
-	CTFCONVERT="$(CTFCONVERT)" \
-	ALTCTFCONVERT="$(ALTCTFCONVERT)"
+	CTFCONVERT="$(CTFCONVERT)"
 
 PATCHSTRIP =	0
 PATCHES =	Patches/*

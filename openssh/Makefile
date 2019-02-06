@@ -19,7 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2015 Joyent, Inc.
+# Copyright 2019 Joyent, Inc.
 #
 
 VER =	openssh-portable-7.4p1
@@ -53,9 +53,7 @@ AUTOCONF_OPTS += \
 
 AUTOCONF_ENV += \
 	DESTDIR="$(DESTDIR)" \
-	CTFMERGE="$(CTFMERGE)" \
-	CTFCONVERT="$(CTFCONVERT)" \
-	ALTCTFCONVERT="$(ALTCTFCONVERT)"
+	CTFCONVERT="$(CTFCONVERT)"
 
 CFLAGS += \
 	-O2 -gdwarf-2 \
