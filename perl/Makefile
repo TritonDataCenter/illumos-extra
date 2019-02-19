@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 Joyent, Inc.
+# Copyright (c) 2019, Joyent, Inc.
 #
 
 
@@ -55,7 +55,8 @@ NATIVE_SHARED_LDFLAGS = \
 
 PATCHES += \
 	dtrace.patch \
-	native.patch
+	native.patch \
+	fix-gcc-errno.patch
 
 #
 # This is where things get really gross.  There is stuff in ON that is going
