@@ -21,12 +21,9 @@
 # Copyright 2007 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2019, Joyent, Inc.
 #
 
 CPPFLAGS = -D_FILE_OFFSET_BITS=64
-CFLAGS = -m32
-LDFLAGS = -m32
-PROG_LDFLAGS = -m32
 
 include ../../Makefile.com

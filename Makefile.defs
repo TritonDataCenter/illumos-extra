@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright (c) 2018, Joyent, Inc.
+# Copyright (c) 2019, Joyent, Inc.
 #
 
 BASE =		$(PWD)
@@ -64,6 +64,17 @@ BUILD64 =
 SEPARATE_BUILD =
 
 CPPFLAGS =	$(SYSINCDIRS:%=-isystem $(DESTDIR)/%)
+
+#
+# As we ship some rather downrev software, there's a good chance it might fall
+# foul of newer GCC's undefined-behavior optimizations; skip those. As it's in
+# general painful to ensure that $(CFLAGS) gets passed down correctly, we'll
+# just set it directly as the compiler...
+#
+ifneq ($(PRIMARY_COMPILER_VER),4)
+GCC += -fno-aggressive-loop-optimizations
+GXX += -fno-aggressive-loop-optimizations
+endif
 
 #
 # We ship platform-private perl modules (e.g. from ntp) in this directory,

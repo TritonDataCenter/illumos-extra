@@ -56,10 +56,6 @@ $(VER)/Makefile.dist: $(BVER).tar.gz
 	(cd $(VER); gpatch -p1 < ../bzip2.patch)
 	cp $(VER)/Makefile $(VER)/Makefile.dist
 
-$(VER)/i386/Makefile: $(VER)/Makefile.dist makefile.build
-	mkdir -p $(VER)/i386
-	cp makefile.build $(VER)/i386/Makefile
-
-$(VER)/amd64/Makefile: $(VER)/Makefile.dist makefile.build.64
-	mkdir -p $(VER)/amd64
-	cp makefile.build.64 $(VER)/amd64/Makefile
+$(VER)/i386/Makefile $(VER)/amd64/Makefile: $(VER)/Makefile.dist makefile.build
+	mkdir -p $(@D)
+	cp makefile.build $@

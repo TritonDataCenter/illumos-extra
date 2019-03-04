@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2018 Joyent, Inc.
+# Copyright (c) 2019, Joyent, Inc.
 #
 
 
@@ -28,8 +28,7 @@ MAKE_ARGS+=	AS=$(STRAPPROTO)/usr/gnu/bin/gas \
 		AR=$(STRAPPROTO)/usr/gnu/bin/gar \
 		LD=$(STRAPPROTO)/usr/gnu/bin/gld \
 		OBJCOPY=$(STRAPPROTO)/usr/gnu/bin/gobjcopy \
-		CC=$(STRAPPROTO)/usr/bin/gcc \
-		CXX=$(STRAPPROTO)/usr/bin/g++
+		CC="$(CC)" CXX="$(CXX)"
 
 ARCH=		X64
 UEFI_TARGET=	RELEASE

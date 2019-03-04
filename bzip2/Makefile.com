@@ -21,7 +21,7 @@
 # Copyright 2007 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
-# Copyright (c) 2012 Joyent Inc.
+# Copyright (c) 2019, Joyent, Inc.
 #
 
 LIBRARY = libbz2.a
@@ -51,7 +51,7 @@ endif
 LDLIBS += -lc
 
 PROGS = bzip2 bzip2recover
-PROG_LDFLAGS += -Wl,-Bdirect -L. 
+PROG_LDFLAGS += -Wl,-Bdirect -L.
 ifneq ($(STRAP),strap)
 	PROG_LDFLAGS += $(GENLDFLAGS)
 endif
@@ -59,9 +59,8 @@ bzip2_LDLIBS += -lbz2
 
 # --- Generic ---
 
-CC = gcc
 CPPFLAGS += -I..
-CFLAGS += -fPIC
+CFLAGS += -fPIC -O2
 DYNLIB = $(LIBRARY:.a=.so)$(VERS)
 LIBLINKS = $(LIBRARY:.a=.so)
 
@@ -87,19 +86,3 @@ bzip2: $(LIBLINKS) $(DYNLIB) $(bzip2_OBJECTS)
 
 bzip2recover: $(bzip2recover_OBJECTS)
 	$(LINK.prog)
-
-test: $(PROGS)
-	@cat ../words1
-	env LD_LIBRARY_PATH=`pwd` ./bzip2 -1  < ../sample1.ref > sample1.rb2
-	env LD_LIBRARY_PATH=`pwd` ./bzip2 -2  < ../sample2.ref > sample2.rb2
-	env LD_LIBRARY_PATH=`pwd` ./bzip2 -3  < ../sample3.ref > sample3.rb2
-	env LD_LIBRARY_PATH=`pwd` ./bzip2 -d  < ../sample1.bz2 > sample1.tst
-	env LD_LIBRARY_PATH=`pwd` ./bzip2 -d  < ../sample2.bz2 > sample2.tst
-	env LD_LIBRARY_PATH=`pwd` ./bzip2 -ds < ../sample3.bz2 > sample3.tst
-	cmp ../sample1.bz2 sample1.rb2 
-	cmp ../sample2.bz2 sample2.rb2
-	cmp ../sample3.bz2 sample3.rb2
-	cmp sample1.tst ../sample1.ref
-	cmp sample2.tst ../sample2.ref
-	cmp sample3.tst ../sample3.ref
-	@cat ../words3

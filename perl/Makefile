@@ -149,7 +149,7 @@ $(CONFIG_PL): $(CONFIG_PL).in Makefile
 
 $(VER.32)/cflags: $(VER.32)/config.over $(VER.32)/Configure
 	(cd $(VER.32) && \
-	    ./Configure -des -Dcc=$(GCC) -Duse64bitint)
+	    ./Configure -des -Dcc="$(GCC)" -Duse64bitint)
 
 $(VER.32)/perldtrace.h: $(VER.32)/cflags
 	(cd $(VER.32) && \
