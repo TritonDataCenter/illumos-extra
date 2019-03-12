@@ -63,7 +63,7 @@ for program in ${PROGRAMS}; do
 	program_path="${DESTDIR}${program}"
 	printf "  CTFCONV %s\n" "${program_path}" >&2
 	chmod u+w "${program_path}"
-	${CTFCONVERT} -l "${CONTAINER_VERSION}" \
+	${CTFCONVERT} ${CTFCONVERTFLAGS} -l "${CONTAINER_VERSION}" \
 	    -o "${program_path}" "${program_path}"
 	if [[ -z $NO_STRIP_SOURCE_DEBUG ]]; then
 		printf "  STRIP      %s\n" "${program_path}" >&2

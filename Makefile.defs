@@ -174,7 +174,7 @@ APPLY_PATCHES.64 = \
 	    $(GPATCH) -d .unpack64/$(VER) -p$(PATCHSTRIP) < "$$p" || exit 1; \
 	    done
 
-MAKE_CTF =		$(BASE)/../tools/make-ctf
+MAKE_CTF =		CTFCONVERTFLAGS=$(CTFCONVERTFLAGS) $(BASE)/../tools/make-ctf
 MAKE_CTF.32 =		$(MAKE_CTF) $(OBJ.32) $(CTF.32) $(VER)
 MAKE_CTF.64 =		$(MAKE_CTF) $(OBJ.64) $(CTF.64) $(VER)
 

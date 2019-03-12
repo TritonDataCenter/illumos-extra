@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Joyent, Inc.  All rights reserved.
+# Copyright (c) 2019, Joyent, Inc.  All rights reserved.
 #
 
 VER =	openlldp-0.4alpha
@@ -40,6 +40,11 @@ CTF_PROGRAMS_USR_SBIN = \
 	lldpneighbors
 
 CTF_PROGRAMS = $(CTF_PROGRAMS_USR_SBIN:%=/usr/sbin/%)
+
+#
+# The upstream source has empty C files that we don't want to mess with.
+#
+CTFCONVERTFLAGS += -m
 
 all: all_autoconf
 

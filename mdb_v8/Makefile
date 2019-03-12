@@ -36,7 +36,8 @@ CTF_LIBS = $(VER)/build/ia32/mdb_v8.so \
 #
 # Required for CTF generation
 #
-CFLAGS += -g
+CFLAGS += -gdwarf-2
+CFLAGS_ARCH += -gdwarf-2
 
 #
 # To avoid "error: left shift of negative value"
@@ -51,7 +52,8 @@ CFLAGS += -Wno-shift-negative-value
 #
 all: $(VER)/GNUMakefile
 	cd $(VER) && \
-	    env - $(AUTOCONF_ENV) PATH=$(PATH) $(MAKE) $(OVERRIDES) release
+	    env - $(AUTOCONF_ENV) CFLAGS_ARCH=$(CFLAGS_ARCH) \
+	    PATH=$(PATH) $(MAKE) $(OVERRIDES) release
 
 install: all
 	rm -f $(DESTDIR)/usr/lib/mdb/proc/v8.so
