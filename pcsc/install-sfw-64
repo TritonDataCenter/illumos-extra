@@ -1,0 +1,46 @@
+#! /usr/bin/ksh93
+#
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2019, Joyent, Inc.
+#
+
+set -o errexit
+
+VERS=${1}
+
+PREFIX=${DESTDIR}/usr
+BINDIR=${PREFIX}/bin
+SBINDIR=${DESTDIR}/usr/sbin
+LIBDIR=${PREFIX}/lib/amd64
+INCDIR=${PREFIX}/include/PCSC
+
+HDRS="debuglog.h ifdhandler.h pcsclite.h reader.h winscard.h wintypes.h"
+
+source ../install.subr
+
+mkdir -p $PREFIX $LIBDIR $INCDIR
+
+cd ${VERS}
+
+_install D src/.libs/libpcsclite.so.1.0.0 ${LIBDIR}/libpcsclite.so.1.0.0 0555
+_install L libpcsclite.so.1.0.0 ${LIBDIR}/libpcsclite.so
+
+_install E src/pcscd ${SBINDIR}/pcscd 0555
+_install N src/spy/pcsc-spy ${BINDIR}/pcsc-spy 0555
+_install N ../pcscd.xml ${DESTDIR}/lib/svc/manifest/system/pcscd.xml 0444
+_install N ../system-pcscd ${DESTDIR}/lib/svc/method/system-pcscd 0555
+
+for hdr in $HDRS; do
+    _install H src/PCSC/$hdr ${INCDIR}/$hdr
+done

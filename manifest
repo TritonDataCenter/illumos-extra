@@ -75,6 +75,14 @@ f usr/share/man/man1/bzmore.1 0444 root bin
 d usr/include 0755 root bin
 f usr/lib/amd64/libbz2.so.1 0755 root bin
 f usr/lib/libbz2.so.1 0755 root bin
+# ccid
+d usr/lib/amd64/pcsc 0755 root bin
+d usr/lib/amd64/pcsc/drivers 0755 root bin
+d usr/lib/amd64/pcsc/drivers/ifd-ccid.bundle 0755 root bin
+d usr/lib/amd64/pcsc/drivers/ifd-ccid.bundle/Contents 0755 root bin
+f usr/lib/amd64/pcsc/drivers/ifd-ccid.bundle/Contents/Info.plist 0444 root bin
+d usr/lib/amd64/pcsc/drivers/ifd-ccid.bundle/Contents/Solaris 0755 root bin
+f usr/lib/amd64/pcsc/drivers/ifd-ccid.bundle/Contents/Solaris/libccid.so 0555 root bin
 # coreutils
 f usr/bin/readlink 0755 root bin
 f usr/bin/seq 0755 root bin
@@ -169,6 +177,8 @@ s usr/lib/libidn.so.11=libidn.so.11.5.40
 # libidn2
 f usr/lib/libjoy_idn2.so.0.0.11 0755 root bin
 s usr/lib/libjoy_idn2.so.0=libjoy_idn2.so.0.0.11
+# libusb
+f usr/lib/amd64/libusb-1.0.so.0 0555 root bin
 # libxml
 s usr/lib/amd64/libxml2.so.2=../../../lib/amd64/libxml2.so.2
 f lib/amd64/libxml2.so.2 0555 root bin
@@ -498,6 +508,12 @@ f usr/share/lib/ssh/moduli 0644 root bin
 # pbzip2
 f usr/bin/pbzip2 0555 root bin
 f usr/share/man/man1/pbzip2.1 0444 root bin
+# pcsc
+f lib/svc/manifest/system/pcscd.xml 0444 root root
+f lib/svc/method/system-pcscd 0555 root bin
+f usr/bin/pcsc-spy 0555 root bin
+f usr/lib/amd64/libpcsclite.so.1.0.0 0555 root bin
+f usr/sbin/pcscd 0555 root bin
 # perl
 d usr/perl5 0755 root bin
 d usr/perl5/5.12 0755 root bin

@@ -1,0 +1,12 @@
+diff -u libusb-1.0.22/configure libusb-1.0.22-64/configure
+--- libusb-1.0.22/configure	Sun Mar 25 01:20:03 2018
++++ libusb-1.0.22-64/configure	Thu Apr 18 22:03:05 2019
+@@ -16556,7 +16556,7 @@
+ 
+ 
+ 	THREAD_CFLAGS="-pthread"
+-	LIBS="-pthread -ldevinfo"
++	LIBS="-pthread -ldevinfo -lcmdutils"
+ 	for ac_header in poll.h
+ do :
+   ac_fn_c_check_header_mongrel "$LINENO" "poll.h" "ac_cv_header_poll_h" "$ac_includes_default"

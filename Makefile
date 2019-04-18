@@ -60,6 +60,7 @@ SUBDIRS = \
 	bash \
 	bind \
 	bzip2 \
+	ccid \
 	coreutils \
 	cpp \
 	curl \
@@ -72,6 +73,7 @@ SUBDIRS = \
 	libexpat \
 	libidn \
 	libidn2 \
+	libusb \
 	libxml \
 	libz \
 	mdb_v8 \
@@ -85,6 +87,7 @@ SUBDIRS = \
 	openssl1x \
 	openssh \
 	pbzip2 \
+	pcsc \
 	perl \
 	rsync \
 	rsyslog \
@@ -133,6 +136,7 @@ wget: openssl1x libidn
 openldap: openssl1x
 ntp: perl openssl1x
 openssh: openssl1x
+ccid: libusb pcsc
 
 #
 # pkg-config may be installed. This will actually only hurt us rather than help

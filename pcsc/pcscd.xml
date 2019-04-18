@@ -1,0 +1,22 @@
+<?xml version='1.0'?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<service_bundle type='manifest' name='export'>
+  <service name='system/pcscd' type='service' version='0'>
+    <create_default_instance enabled='true'/>
+    <single_instance/>
+    <dependency name='dep0' grouping='require_all' restart_on='error' type='service'>
+      <service_fmri value='svc:/system/filesystem/minimal'/>
+    </dependency>
+    <exec_method name='start' type='method' exec='/lib/svc/method/system-pcscd' timeout_seconds='600'>
+      <method_context working_directory='/tmp'/>
+    </exec_method>
+    <exec_method name='stop' type='method' exec=':kill' timeout_seconds='60'>
+      <method_context working_directory='/tmp'/>
+    </exec_method>
+    <template>
+      <common_name>
+        <loctext xml:lang='C'>PCSC daemon</loctext>
+      </common_name>
+    </template>
+  </service>
+</service_bundle>
