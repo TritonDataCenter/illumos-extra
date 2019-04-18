@@ -24,7 +24,7 @@
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
-# Copyright (c) 2010 Joyent Inc.
+# Copyright (c) 2019 Joyent Inc.
 #
 
 set -o errexit
@@ -66,5 +66,9 @@ _install L ../../../lib/amd64/libsunw_crypto.so \
 _install L ../../../lib/amd64/libsunw_ssl.so.${LIBVER} \
     ${USRLIBDIR}/libsunw_ssl.so.${LIBVER}
 _install L ../../../lib/amd64/libsunw_ssl.so ${USRLIBDIR}/libsunw_ssl.so
+
+# This isn't delivered in the PI image, only installed
+# into the proto area so kbmd can statically link against it
+_install D libcrypto.a ${LIBDIR}/libsunw_crypto.a 0755
 
 exit 0
