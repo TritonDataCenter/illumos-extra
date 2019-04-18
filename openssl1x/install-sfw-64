@@ -24,7 +24,7 @@
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
-# Copyright (c) 2010 Joyent Inc.
+# Copyright 2019 Joyent, Inc.
 #
 
 set -o errexit
@@ -66,5 +66,14 @@ _install L ../../../lib/amd64/libsunw_crypto.so \
 _install L ../../../lib/amd64/libsunw_ssl.so.${LIBVER} \
     ${USRLIBDIR}/libsunw_ssl.so.${LIBVER}
 _install L ../../../lib/amd64/libsunw_ssl.so ${USRLIBDIR}/libsunw_ssl.so
+
+# The pivy tools as well as kbmd deliberately statically
+# link against libsunw_crypto.a to prevent sharing of code pages
+# to mitigate against certain timing attacks.  We install the .a
+# into the proto area in a location that won't be seen (and
+# unintentionally used) by other software, but do not
+# deliver the static library in the platform image.
+mkdir -p ${DESTDIR}/.build
+_install D libcrypto.a ${DESTDIR}/.build/libsunw_crypto.a 0755
 
 exit 0
