@@ -29,6 +29,7 @@ mkdir -p $PREFIX $LIBDIR $INCDIR
 
 cd ${VERS}
 
-_install D libusb/.libs/libusb-1.0.so.0 ${LIBDIR}/libusb-1.0.so.0 555
+#_install D libusb/.libs/libusb-1.0.so.0 ${LIBDIR}/libusb-1.0.so.0 555
+_install D ../libusb-1.0.so.0.1.0 ${LIBDIR}/libusb-1.0.so.0 0555
 _install L libusb-1.0.so.0 ${LIBDIR}/libusb-1.0.so
 _install H libusb/libusb.h ${INCDIR}/libusb.h

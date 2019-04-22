@@ -29,4 +29,5 @@ mkdir -p $PREFIX $LIBDIR $LIBDIR/Solaris
 cd ${VERS}
 
 _install N src/Info.plist $LIBDIR/Info.plist 644
-_install D src/.libs/libccid.so $LIBDIR/Solaris/libccid.so 555
+#_install D src/.libs/libccid.so $LIBDIR/Solaris/libccid.so 555
+_install D ../libccid.so $LIBDIR/Solaris/libccid.so 555

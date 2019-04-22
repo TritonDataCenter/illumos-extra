@@ -33,7 +33,7 @@ AUTOCONF_OPTS =	\
 # Annoyingly, the configure script for libusb does not allow you to
 # specify additional libraries (LIBS is completely ignored for SunOS), so we
 # force it in the configure script instead
-PATCHES = configure.patch
+#PATCHES = configure.patch new.patch
 
 include ../Makefile.targ
 

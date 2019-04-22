@@ -33,11 +33,15 @@ mkdir -p $PREFIX $LIBDIR $INCDIR
 
 cd ${VERS}
 
-_install D src/.libs/libpcsclite.so.1.0.0 ${LIBDIR}/libpcsclite.so.1.0.0 0555
+#_install D src/.libs/libpcsclite.so.1.0.0 ${LIBDIR}/libpcsclite.so.1.0.0 0555
+_install D ../libpcsclite.so.1.0.0 ${LIBDIR}/libpcsclite.so.1.0.0 0555
 _install L libpcsclite.so.1.0.0 ${LIBDIR}/libpcsclite.so
+_install L libpcsclite.so.1.0.0 ${LIBDIR}/libpcsclite.so.1.0
+_install L libpcsclite.so.1.0.0 ${LIBDIR}/libpcsclite.so.1
 
-_install E src/pcscd ${SBINDIR}/pcscd 0555
-_install N src/spy/pcsc-spy ${BINDIR}/pcsc-spy 0555
+#_install E src/pcscd ${SBINDIR}/pcscd 0555
+_install N ../pcscd ${SBINDIR}/pcscd 0555
+#_install N src/spy/pcsc-spy ${BINDIR}/pcsc-spy 0555
 _install N ../pcscd.xml ${DESTDIR}/lib/svc/manifest/system/pcscd.xml 0444
 _install N ../system-pcscd ${DESTDIR}/lib/svc/method/system-pcscd 0555
 
