@@ -513,6 +513,8 @@ f lib/svc/manifest/system/pcscd.xml 0444 root root
 f lib/svc/method/system-pcscd 0555 root bin
 f usr/bin/pcsc-spy 0555 root bin
 f usr/lib/amd64/libpcsclite.so.1.0.0 0555 root bin
+s usr/lib/amd64/libpcsclite.so.1.0=libpcsclite.so.1.0.0
+s usr/lib/amd64/libpcsclite.so.1=libpcsclite.so.1.0.0
 f usr/sbin/pcscd 0555 root bin
 # perl
 d usr/perl5 0755 root bin
