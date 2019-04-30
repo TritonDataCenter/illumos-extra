@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright (c) 2019, Joyent, Inc.
+# Copyright 2019 Joyent, Inc.
 #
 
 BASE =		$(PWD)
@@ -47,10 +47,17 @@ MAKE_VERBOSE =	V=1
 GCC.64 =	$(GCC) -m64
 GXX.64 =	$(GXX) -m64
 
-GCC.host =	/opt/local/bin/gcc
-GXX.host =	/opt/local/bin/g++
+# The version of gcc in /opt/local/bin varies depending on the pkgsrc release
+GCC.host_prefix ?= /opt/local/bin
+GCC.host =	$(GCC.host_prefix)/gcc
+GXX.host =	$(GCC.host_prefix)/g++
 GCC.host.64 =	$(GCC.host) -m64
 GXX.host.64 =	$(GXX.host) -m64
+
+# We need gcc 4.x in order to build our copy of gcc 4.4. This is set by
+# 'configure' in smartos-live.
+GCC4.host =	$(HOST_GCC4_PREFIX)/gcc
+GXX4.host =	$(HOST_GCC4_PREFIX)/g++
 
 LEX = 		/opt/local/bin/lex
 YACC = 		/opt/local/bin/yacc

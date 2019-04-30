@@ -20,7 +20,7 @@
 #
 # Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
-# Copyright (c) 2018, Joyent, Inc.  All rights reserved.
+# Copyright 2019 Joyent, Inc.  All rights reserved.
 #
 
 include ../Makefile.defs
@@ -32,5 +32,13 @@ MPFR_TARBALL = $(MPFR_VER).tar.gz
 GMP_VER = gmp-5.1.1
 GXX = /bin/false
 CFLAGS = -nostdinc -isystem /usr/include -g -O2
+# Override these so that Makefile.gcc doesn't set them and
+# so that ../../Makefile.defs doesn't set CC.
+GCC =
+GCC.host = $(GCC4.host)
+GXX.host = $(GXX4.host)
 
 include ../Makefile.gcc
+
+# We specifically need GCC 4.x in order to build gcc4
+AUTOCONF_ENV += CC=$(GCC4.host) CXX=$(GXX4.host)
