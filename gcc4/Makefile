@@ -20,7 +20,7 @@
 #
 # Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
-# Copyright (c) 2018, Joyent, Inc.  All rights reserved.
+# Copyright 2019 Joyent, Inc.  All rights reserved.
 #
 
 include ../Makefile.defs
@@ -34,3 +34,6 @@ GXX = /bin/false
 CFLAGS = -nostdinc -isystem /usr/include -g -O2
 
 include ../Makefile.gcc
+
+# We specifically need GCC 4.x in order to build gcc4
+AUTOCONF_ENV += CC=$(GCC4.host) CXX=$(GXX4.host)
