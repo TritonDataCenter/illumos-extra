@@ -21,9 +21,11 @@
 #
 SEPARATE_BUILD = yes
 
-GCC ?= /opt/local/bin/gcc
 CFLAGS = -g -O2
 PREFIX = /usr/gcc/$(GCC_VER)
+
+GCC = $(GCC.host)
+GXX = $(GXX.host)
 
 AUTOCONF_PREFIX = $(PREFIX)
 
@@ -44,9 +46,7 @@ AUTOCONF_OPTS += \
 
 AUTOCONF_ENV += \
 	DESTDIR=$(DESTDIR) \
-	MAKE=$(MAKE) \
-	GCC=$(GCC.host) \
-	GXX=$(GXX.host)
+	MAKE=$(MAKE)
 
 OVERRIDES += \
 	$(AUTOCONF_CFLAGS) \
@@ -208,3 +208,6 @@ fixup:
 	cd $(DESTDIR)/usr/lib && gtar xvf $(LIBTAR)
 
 endif
+
+print-%:
+	@echo '$*=$($*)'
