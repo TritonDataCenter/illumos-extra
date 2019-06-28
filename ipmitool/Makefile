@@ -21,7 +21,7 @@
 # Copyright (c) 2012 Joyent Inc., All rights reserved.
 #
 
-VER =	ipmitool-1.8.14
+VER =	ipmitool-1.8.18
 
 include ../Makefile.defs
 
