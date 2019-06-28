@@ -18,10 +18,10 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc., All rights reserved.
+# Copyright 2020 Joyent, Inc.
 #
 
-VER =	ipmitool-1.8.14
+VER =	ipmitool-1.8.18
 
 include ../Makefile.defs
 
