@@ -1,7 +1,7 @@
 From 74f1ea24ef32d76b13a51e80db87531631218299 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 5 Aug 2015 12:25:15 -0700
-Subject: [PATCH 21/34] Try to create privsep chroot dir if it doesn't exist
+Subject: [PATCH 21/35] Try to create privsep chroot dir if it doesn't exist
  yet
 
 ---
@@ -47,5 +47,5 @@ index 994b7c9e..e09f3934 100644
  #ifdef HAVE_CYGWIN
  		if (check_ntsec(_PATH_PRIVSEP_CHROOT_DIR) &&
 -- 
-2.20.1
+2.22.0
 

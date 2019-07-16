@@ -1,7 +1,7 @@
 From b3b2132fc89d826365c93715c5dd7d5e902a789d Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:19 -0700
-Subject: [PATCH 10/34] PAM enhancements for Solaris
+Subject: [PATCH 10/35] PAM enhancements for Solaris
 
 ---
  auth-pam.c     | 113 +++++++++++++++++++++++++++++++++++++++++++++++++
@@ -666,5 +666,5 @@ index 8b5d40a5..6eac9806 100644
  Optionally specifies additional text to append to the SSH protocol banner
  sent by the server upon connection.
 -- 
-2.20.1
+2.22.0
 

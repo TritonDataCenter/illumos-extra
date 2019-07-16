@@ -1,7 +1,7 @@
 From 1f49e55db1b8bfc158d95368c39216bf39981d38 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 24 Aug 2015 18:57:27 -0700
-Subject: [PATCH 27/34] Set default sshd options based on /etc/default/login
+Subject: [PATCH 27/35] Set default sshd options based on /etc/default/login
 
 ---
  pathnames.h   |  1 +
@@ -141,5 +141,5 @@ index 3dc39cca..c652f116 100644
  Specifies the addresses/ports on which a remote TCP port forwarding may listen.
  The listen specification must be one of the following forms:
 -- 
-2.20.1
+2.22.0
 

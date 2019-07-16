@@ -1,7 +1,7 @@
 From 89b96ba5c87db219f18a1640e6c1004430885e01 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:00 -0700
-Subject: [PATCH 08/34] Add DisableBanner option
+Subject: [PATCH 08/35] Add DisableBanner option
 
 ---
  readconf.c    | 31 +++++++++++++++++++++++++++++++
@@ -188,5 +188,5 @@ index 1675f393..ebdbeabf 100644
  	return 0;
  }
 -- 
-2.20.1
+2.22.0
 

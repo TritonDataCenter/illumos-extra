@@ -1,7 +1,7 @@
-From c3198d9a3813b341d12cceb477fe6228c51edf0e Mon Sep 17 00:00:00 2001
+From 407a9de12a752ba1b38c92445620e655828f2bf2 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Tue, 22 Dec 2015 14:31:25 -0800
-Subject: [PATCH 34/34] SmartOS local: use sunw_ssl lib from platform
+Subject: [PATCH 35/35] SmartOS local: use sunw_ssl lib from platform
 
 ---
  configure.ac                    | 98 ++++++++++++++++-----------------
@@ -388,5 +388,5 @@ index c6e6c97a..313848f0 100644
  # endif
  #else
 -- 
-2.20.1
+2.22.0
 

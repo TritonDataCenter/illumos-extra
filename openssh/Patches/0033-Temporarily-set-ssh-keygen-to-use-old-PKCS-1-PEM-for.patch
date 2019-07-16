@@ -1,0 +1,143 @@
+From b0852fdcb9ecd2a0518f6e6af5996f86cacbc96d Mon Sep 17 00:00:00 2001
+From: Alex Wilson <alex.wilson@joyent.com>
+Date: Tue, 16 Jul 2019 13:43:14 -0700
+Subject: [PATCH 33/35] Temporarily set ssh-keygen to use old PKCS#1 PEM format
+
+SDC and its users have a lot of scripts and tools which expect
+ssh-keygen to produce the old private key format.
+
+We want to balance this against the fact that the new format
+vastly improves security for passphrase protected keys, so if
+we are generating a key with a passphrase, we will default
+to the new format, otherwise old.
+---
+ ssh-keygen.1 | 20 ++++++++++++++------
+ ssh-keygen.c | 25 +++++++++++++++++++++++--
+ 2 files changed, 37 insertions(+), 8 deletions(-)
+
+diff --git a/ssh-keygen.1 b/ssh-keygen.1
+index 4aa3586b..9226c361 100644
+--- a/ssh-keygen.1
++++ b/ssh-keygen.1
+@@ -231,8 +231,10 @@ This is used by
+ .Pa /lib/svc/method/sshd
+ to generate new host keys.
+ .It Fl a Ar rounds
+-When saving a private key this option specifies the number of KDF
+-(key derivation function) rounds used.
++When saving a new-format private key (i.e. an ed25519 key or when the
++.Fl o
++flag is set), this option specifies the number of KDF (key derivation function)
++rounds used.
+ Higher numbers result in slower passphrase verification and increased
+ resistance to brute-force password cracking (should the keys be stolen).
+ .Pp
+@@ -260,6 +262,8 @@ flag will be ignored.
+ Provides a new comment.
+ .It Fl c
+ Requests changing the comment in the private and public key files.
++This operation is only supported for keys stored in the
++newer OpenSSH format.
+ The program will prompt for the file containing the private keys, for
+ the passphrase if the key has one, and for the new comment.
+ .It Fl D Ar pkcs11
+@@ -404,10 +408,6 @@ or
+ (PEM public key).
+ The default conversion format is
+ .Dq RFC4716 .
+-Setting a format of
+-.Dq PEM
+-when generating or updating a supported private key type will cause the
+-key to be stored in the legacy PEM private key format.
+ .It Fl N Ar new_passphrase
+ Provides the new passphrase.
+ .It Fl n Ar principals
+@@ -502,6 +502,14 @@ The
+ is a comma-separated list of one or more address/netmask pairs in CIDR
+ format.
+ .El
++.It Fl o
++Causes
++.Nm
++to save private keys using the new OpenSSH format rather than
++the more compatible PEM format.
++The new format has increased resistance to brute-force password cracking
++but is not supported by versions of OpenSSH prior to 6.5.
++Ed25519 keys always use the new private key format.
+ .It Fl P Ar passphrase
+ Provides the (old) passphrase.
+ .It Fl p
+diff --git a/ssh-keygen.c b/ssh-keygen.c
+index 61760745..03880aaf 100644
+--- a/ssh-keygen.c
++++ b/ssh-keygen.c
+@@ -181,7 +181,7 @@ char *key_type_name = NULL;
+ char *pkcs11provider = NULL;
+ 
+ /* Use new OpenSSH private key format when writing SSH2 keys instead of PEM */
+-int use_new_format = 1;
++int use_new_format = -1;
+ 
+ /* Cipher for new-format private keys */
+ char *new_format_cipher = NULL;
+@@ -1035,6 +1035,9 @@ do_gen_all_hostkeys(struct passwd *pw)
+ 	int i, type, fd, r;
+ 	FILE *f;
+ 
++	if (use_new_format == -1)
++		use_new_format = 0;
++
+ 	for (i = 0; key_types[i].key_type; i++) {
+ 		public = private = NULL;
+ 		prv_tmp = pub_tmp = prv_file = pub_file = NULL;
+@@ -1421,6 +1424,12 @@ do_change_passphrase(struct passwd *pw)
+ 		free(passphrase2);
+ 	}
+ 
++	if (strlen(passphrase1) > 0 && use_new_format == -1) {
++		use_new_format = 1;
++	} else if (use_new_format == -1) {
++		use_new_format = 0;
++	}
++
+ 	/* Save the file using the new passphrase. */
+ 	if ((r = sshkey_save_private(private, identity_file, passphrase1,
+ 	    comment, use_new_format, new_format_cipher, rounds)) != 0) {
+@@ -1510,6 +1519,12 @@ do_change_comment(struct passwd *pw)
+ 		}
+ 	}
+ 
++	if (strlen(passphrase) > 0 && use_new_format == -1) {
++		use_new_format = 1;
++	} else if (use_new_format == -1) {
++		use_new_format = 0;
++	}
++
+ 	if (private->type != KEY_ED25519 && private->type != KEY_XMSS &&
+ 	    !use_new_format) {
+ 		error("Comments are only supported for keys stored in "
+@@ -2546,7 +2561,7 @@ main(int argc, char **argv)
+ 			cert_principals = optarg;
+ 			break;
+ 		case 'o':
+-			/* no-op; new format is already the default */
++			use_new_format = 1;
+ 			break;
+ 		case 'p':
+ 			change_passphrase = 1;
+@@ -2906,6 +2921,12 @@ passphrase_again:
+ 		snprintf(comment, sizeof comment, "%s@%s", pw->pw_name, hostname);
+ 	}
+ 
++	if (strlen(passphrase1) > 0 && use_new_format == -1) {
++		use_new_format = 1;
++	} else if (use_new_format == -1) {
++		use_new_format = 0;
++	}
++
+ 	/* Save the key with the given passphrase and comment. */
+ 	if ((r = sshkey_save_private(private, identity_file, passphrase1,
+ 	    comment, use_new_format, new_format_cipher, rounds)) != 0) {
+-- 
+2.22.0
+

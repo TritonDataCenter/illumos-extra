@@ -1,7 +1,7 @@
-From cb181c987c723fd7d298cd8a71e51e0f34353f24 Mon Sep 17 00:00:00 2001
+From 0c05cd15579c81db3ad8160d12d8b50558bd7293 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Tue, 22 Dec 2015 14:30:19 -0800
-Subject: [PATCH 33/34] SmartOS local: make dtrace lib 32-bit
+Subject: [PATCH 34/35] SmartOS local: make dtrace lib 32-bit
 
 ---
  Makefile.in | 6 +++---
@@ -39,5 +39,5 @@ index 91442e0f..066382ad 100644
  	$(srcdir)/mkinstalldirs $(SMFNETMANIDIR)
  	$(INSTALL) -m 555 smf/method.sh $(SMFMETHODDIR)/sshd
 -- 
-2.20.1
+2.22.0
 

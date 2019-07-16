@@ -1,7 +1,7 @@
 From 82ea71c2e1ba3fd966a677e0a081794e2d8a3e0f Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Thu, 15 Oct 2015 16:02:37 -0700
-Subject: [PATCH 32/34] Let us put a fallback copy of DH moduli in a system
+Subject: [PATCH 32/35] Let us put a fallback copy of DH moduli in a system
  path
 
 Live distributions like SmartOS can't keep and update default
@@ -107,5 +107,5 @@ index 657b32da..94bede77 100644
  		    _PATH_DH_MODULI, strerror(errno));
  		return (dh_new_group_fallback(max));
 -- 
-2.20.1
+2.22.0
 
