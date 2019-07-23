@@ -1,7 +1,7 @@
-From d8c9de9b7443dcd97469c16c9cd78925915bb99d Mon Sep 17 00:00:00 2001
+From d87f4d1de4322c31267ba612c0c5163cf09aed49 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:33 -0700
-Subject: [PATCH 12/35] Deprecate SunSSH compatible server options
+Subject: [PATCH 12/34] Deprecate SunSSH compatible server options
 
 #
 # Originally we planned to only deprecate client config (ssh_config) options

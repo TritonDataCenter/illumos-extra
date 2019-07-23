@@ -1,7 +1,7 @@
-From 7bef9919e295caced9cc2c9b73c03516dbff54b2 Mon Sep 17 00:00:00 2001
+From 72a865b4583ba7aefe0efd272b9a79c4a6ba35c7 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 3 Aug 2015 17:27:41 -0700
-Subject: [PATCH 20/35] Compatibility fix for "ListenAddress ::"
+Subject: [PATCH 20/34] Compatibility fix for "ListenAddress ::"
 
 In SunSSH, a config that specifies only "ListenAddress ::" in
 fact will listen on both IPv4 and IPv6.

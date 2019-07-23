@@ -1,7 +1,7 @@
-From b06c3bd0eb76b40b9b2329bc08b4a04c5721fa8a Mon Sep 17 00:00:00 2001
+From f83213a51710e711b0e446da98691fd680a185ad Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:41 -0700
-Subject: [PATCH 03/35] lastlogin
+Subject: [PATCH 03/34] lastlogin
 
 *** old/servconf.c Wed Sep 17 02:54:26 2014
 ---

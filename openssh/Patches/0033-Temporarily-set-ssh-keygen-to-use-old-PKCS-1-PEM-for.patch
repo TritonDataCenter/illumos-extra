@@ -1,7 +1,7 @@
-From b0852fdcb9ecd2a0518f6e6af5996f86cacbc96d Mon Sep 17 00:00:00 2001
+From 47dd771062115fec61de7223d7a97cf1311a98d2 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Tue, 16 Jul 2019 13:43:14 -0700
-Subject: [PATCH 33/35] Temporarily set ssh-keygen to use old PKCS#1 PEM format
+Subject: [PATCH 33/34] Temporarily set ssh-keygen to use old PKCS#1 PEM format
 
 SDC and its users have a lot of scripts and tools which expect
 ssh-keygen to produce the old private key format.

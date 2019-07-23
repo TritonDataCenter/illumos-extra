@@ -1,7 +1,7 @@
-From 556dde99419ae10f0ceb60723ccaa90d5b4ebb5f Mon Sep 17 00:00:00 2001
+From db2c39a07d28535cc01fa6071f3b252cf5f402fc Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 3 Aug 2015 16:27:44 -0700
-Subject: [PATCH 19/35] PubKeyPlugin support
+Subject: [PATCH 19/34] PubKeyPlugin support
 
 This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called

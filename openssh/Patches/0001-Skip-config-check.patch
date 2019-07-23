@@ -1,7 +1,7 @@
-From c73038ed9429a7703b9a7d95334893d1d1fa6a78 Mon Sep 17 00:00:00 2001
+From 0c54c2356c41ac1961ac2f4372761d3b7b00c889 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:31:53 -0700
-Subject: [PATCH 01/35] Skip config check
+Subject: [PATCH 01/34] Skip config check
 
 #
 # This change is to remove some misleading error messages when running

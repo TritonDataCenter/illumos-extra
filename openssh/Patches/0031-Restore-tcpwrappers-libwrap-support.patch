@@ -1,7 +1,7 @@
-From 7c9d6785b45d7f436f8f5e209cf20ecbd8c34fba Mon Sep 17 00:00:00 2001
+From 149d9b26b85289e6a705048376879a7fedb88f68 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 16 Sep 2015 10:54:13 -0700
-Subject: [PATCH 31/35] Restore tcpwrappers/libwrap support
+Subject: [PATCH 31/34] Restore tcpwrappers/libwrap support
 
 This reverts commit f9696566fb41320820f3b257ab564fa321bb3751
 and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.

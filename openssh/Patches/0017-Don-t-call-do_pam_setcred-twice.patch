@@ -1,7 +1,7 @@
-From c03a29b1e7cbe6c40b4d32c2c9ca704e6e43a00c Mon Sep 17 00:00:00 2001
+From daa8872ac4f48ec3baa4e959b86198de42d93c94 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:38:41 -0700
-Subject: [PATCH 17/35] Don't call do_pam_setcred twice
+Subject: [PATCH 17/34] Don't call do_pam_setcred twice
 
 # This issue has been raised with the upstream OpenSSH community:
 #

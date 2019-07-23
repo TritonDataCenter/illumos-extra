@@ -1,7 +1,7 @@
-From 14e01e463b4fd9d7aa89c26d56c8bd697b6ff6af Mon Sep 17 00:00:00 2001
+From 2f80767f63392b047d2f724a22717f7006a76839 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:22 -0700
-Subject: [PATCH 11/35] SunSSH compat default config values
+Subject: [PATCH 11/34] SunSSH compat default config values
 
 Some options in OpenSSH have different default values from those in SunSSH.
 To make the transition smoother from SunSSH to OpenSSH, we change default

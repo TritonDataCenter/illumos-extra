@@ -1,7 +1,7 @@
-From 4948042cfd14e37fbed3a9cc225f4ec2d44c9d47 Mon Sep 17 00:00:00 2001
+From 6e51ec2fd1f980a56f1c22f1535b3b2b480f3c37 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 19 Aug 2015 11:35:32 -0700
-Subject: [PATCH 25/35] Re-enable DSA keys for pk auth
+Subject: [PATCH 25/34] Re-enable DSA keys for pk auth
 
 ---
  myproposal.h  | 4 +++-

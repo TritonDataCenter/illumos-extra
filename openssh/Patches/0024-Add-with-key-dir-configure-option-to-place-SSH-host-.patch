@@ -1,7 +1,7 @@
-From b6173767c53e34b6bfddb2a08954f89f097833fb Mon Sep 17 00:00:00 2001
+From 0e2394b75cc0f520e60f9c451dded673f3583bdf Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 13:32:53 -0700
-Subject: [PATCH 24/35] Add --with-key-dir configure option to place SSH host
+Subject: [PATCH 24/34] Add --with-key-dir configure option to place SSH host
  keys
 
 ---

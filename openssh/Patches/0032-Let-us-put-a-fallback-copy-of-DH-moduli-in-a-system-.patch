@@ -1,7 +1,7 @@
-From 82ea71c2e1ba3fd966a677e0a081794e2d8a3e0f Mon Sep 17 00:00:00 2001
+From 261e07bafc360097ea72684d4672d3a1caa005af Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Thu, 15 Oct 2015 16:02:37 -0700
-Subject: [PATCH 32/35] Let us put a fallback copy of DH moduli in a system
+Subject: [PATCH 32/34] Let us put a fallback copy of DH moduli in a system
  path
 
 Live distributions like SmartOS can't keep and update default

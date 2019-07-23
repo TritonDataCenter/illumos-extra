@@ -1,7 +1,7 @@
-From b3b2132fc89d826365c93715c5dd7d5e902a789d Mon Sep 17 00:00:00 2001
+From 73c958a25fef38dc4958b1a7150c5540c1b92f78 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:19 -0700
-Subject: [PATCH 10/35] PAM enhancements for Solaris
+Subject: [PATCH 10/34] PAM enhancements for Solaris
 
 ---
  auth-pam.c     | 113 +++++++++++++++++++++++++++++++++++++++++++++++++

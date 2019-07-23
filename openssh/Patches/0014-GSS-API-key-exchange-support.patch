@@ -1,7 +1,7 @@
-From 5ad94de91adf64484b2538f8b23f1c2a462e76b1 Mon Sep 17 00:00:00 2001
+From 6866e919760f137e1784df0e4d7cffd2fbed8824 Mon Sep 17 00:00:00 2001
 From: Simon Wilkinson <simon@sxw.org.uk>
 Date: Fri, 27 Jan 2017 16:46:31 -0800
-Subject: [PATCH 14/35] GSS-API key exchange support
+Subject: [PATCH 14/34] GSS-API key exchange support
 
 ---
  ChangeLog.gssapi | 113 ++++++++++++++++

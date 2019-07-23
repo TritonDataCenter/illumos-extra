@@ -1,7 +1,7 @@
-From e55139013a14a4855eee7185c2626816d97e9ca3 Mon Sep 17 00:00:00 2001
+From ccc4bebb5d854e5f597c93d699edc62c0aec6dae Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 21 Aug 2015 18:47:46 -0700
-Subject: [PATCH 26/35] Don't use krb5-config to check for GSSAPI on Illumos
+Subject: [PATCH 26/34] Don't use krb5-config to check for GSSAPI on Illumos
 
 ---
  configure.ac | 7 ++++++-

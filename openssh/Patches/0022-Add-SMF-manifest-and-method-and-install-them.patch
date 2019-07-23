@@ -1,7 +1,7 @@
-From 9650f9c45018654a86011193c3f51414e3d69d58 Mon Sep 17 00:00:00 2001
+From a0fe65f2b8ff8656e7446d5d54619cc7ece72bbd Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 12:19:47 -0700
-Subject: [PATCH 22/35] Add SMF manifest and method, and install them
+Subject: [PATCH 22/34] Add SMF manifest and method, and install them
 
 ---
  Makefile.in      |   6 ++
