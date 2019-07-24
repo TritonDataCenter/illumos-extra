@@ -211,6 +211,9 @@ index 00000000..50452966
 +
 +</service_bundle>
 \ No newline at end of file
+diff --git a/smf/method.sh b/smf/method.sh
+new file mode 100644
+index 00000000..e91ed553
 --- /dev/null
 +++ b/smf/method.sh
 @@ -0,0 +1,132 @@
