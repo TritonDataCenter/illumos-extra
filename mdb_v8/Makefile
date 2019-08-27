@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright (c) 2019, Joyent, Inc.
+# Copyright 2019 Joyent, Inc.
 #
 
 #
@@ -23,7 +23,7 @@
 # 3. From one directory up, run tar cvzf mdb_v8-<ver>.tar.gz mdb_v8-<ver>
 #
 
-VER =	mdb_v8-1.3.0
+VER =	mdb_v8-1.4.1
 
 include ../Makefile.defs
 include ../Makefile.targ
@@ -38,11 +38,6 @@ CTF_LIBS = $(VER)/build/ia32/mdb_v8.so \
 #
 CFLAGS += -gdwarf-2
 CFLAGS_ARCH += -gdwarf-2
-
-#
-# To avoid "error: left shift of negative value"
-#
-CFLAGS += -Wno-shift-negative-value
 
 #
 # There are a couple of bugs in the currently released version of mdb_v8
