@@ -25,9 +25,7 @@ VER = tun-1.3
 
 include ../Makefile.defs
 
-ifneq ($(PRIMARY_COMPILER_VER),4)
-CFLAGS.64 += -fno-shrink-wrap
-endif
+PATCHES = Patches/configure.diff
 
 BUILD32 =
 BUILD64 = yes
