@@ -12,7 +12,7 @@
 -	           -a "$MINOR_VERSION" -ge 5 ; then
 -                    KCFLAGS="$KCFLAGS -m64 -mcmodel=large -mno-red-zone"
 -                else      
-+                if test "$GCC_MAJOR_VERSION" -ge 4; then
++                if test "$GCC_MAJOR_VERSION" -gt 4; then
 +			KCFLAGS="$KCFLAGS -ffreestanding -mcmodel=kernel"
 +			KCFLAGS="$KCFLAGS -mno-mmx -mno-sse -mno-red-zone"
 +			KCFLAGS="$KCFLAGS -fno-shrink-wrap"
@@ -2540,7 +2540,7 @@
 -                if test "$GCC_MAJOR_VERSION" -ge 4 \
 -	           -a "$MINOR_VERSION" -ge 5 ; then
 -                    KCFLAGS="$KCFLAGS -m64 -mcmodel=large -mno-red-zone"
-+                if test "$GCC_MAJOR_VERSION" -ge 4; then
++                if test "$GCC_MAJOR_VERSION" -gt 4; then
 +			KCFLAGS="$KCFLAGS -ffreestanding -mcmodel=kernel"
 +			KCFLAGS="$KCFLAGS -mno-mmx -mno-sse -mno-red-zone"
 +			KCFLAGS="$KCFLAGS -fno-shrink-wrap"
