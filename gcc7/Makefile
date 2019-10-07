@@ -14,19 +14,17 @@
 #
 
 #
-# The GCC tarball is the gcc-7.3.0-il-3 release tag of the
+# The tarball is from a specific tagged release of
 # https://github.com/illumos/gcc repository.  This includes all of the
-# illumos-specific modifications we need.  We could probably do a git
-# clone instead, but the tarball method is easier given these Makefiles.
-# The reason that there are two gcc entiries below is because the first
-# is used by github to indicate the repository and the second is part of
-# the tag.
+# illumos-specific modifications we need.  We could probably do a git clone
+# instead, but the tarball method is easier given these Makefiles.  The odd
+# prefix of "gcc-gcc-..." is due to github's <repo>-<tag> naming.
 #
 
 include ../Makefile.defs
 
 GCC_VER = 7
-VER = gcc-gcc-7.3.0-il-3
+VER = gcc-gcc-7.4.0-il-1
 MPFR_VER = mpfr-3.1.6
 GMP_VER = gmp-6.1.2
 MPC_VER = mpc-1.0.3
