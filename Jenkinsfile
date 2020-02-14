@@ -32,12 +32,13 @@ pipeline {
                 }
             }
             steps {
+                sh('env')
                 build(job:'joyent-org/smartos-live/prr-OS-8046',
                     wait: false,
                     parameters: [
                         text(name: 'CONFIGURE_PROJECTS',
                             value:
-                            'illumos-extra: ${env.BRANCH}: origin\n' +
+                            'illumos-extra: ' + ${env.BRANCH} + ': origin\n' +
                             'illumos: master: origin\n' +
                             'local/kvm-cmd: master: origin\n' +
                             'local/kvm: master: origin\n' +
