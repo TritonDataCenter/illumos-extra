@@ -32,7 +32,6 @@ pipeline {
                 }
             }
             steps {
-                sh('env')
                 build(job:'joyent-org/smartos-live/prr-OS-8046',
                     wait: false,
                     parameters: [
@@ -43,7 +42,8 @@ pipeline {
                             'local/kvm-cmd: master: origin\n' +
                             'local/kvm: master: origin\n' +
                             'local/mdata-client: master: origin\n' +
-                            'local/ur-agent: master: origin')
+                            'local/ur-agent: master: origin'),
+                        booleanParam(name: 'BUILD_STRAP' value: 'true')
                     ])
             }
         }
