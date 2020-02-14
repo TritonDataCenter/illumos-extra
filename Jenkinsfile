@@ -38,7 +38,7 @@ pipeline {
                     parameters: [
                         text(name: 'CONFIGURE_PROJECTS',
                             value:
-                            'illumos-extra: ${BRANCH}: origin\n' +
+                            "illumos-extra: $BRANCH: origin\n" +
                             'illumos: master: origin\n' +
                             'local/kvm-cmd: master: origin\n' +
                             'local/kvm: master: origin\n' +
