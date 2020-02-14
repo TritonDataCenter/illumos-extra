@@ -43,7 +43,7 @@ pipeline {
                             'local/kvm: master: origin\n' +
                             'local/mdata-client: master: origin\n' +
                             'local/ur-agent: master: origin'),
-                        booleanParam(name: 'BUILD_STRAP' value: 'true')
+                        booleanParam(name: 'BUILD_STRAP', value: true)
                     ])
             }
         }
