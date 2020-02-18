@@ -30,9 +30,15 @@ pipeline {
                     branch 'master'
                     triggeredBy cause: 'UserIdCause'
                 }
+                // Release builds should only be done on smartos-live.git
+                // so that our build(..) statement below does not trigger
+                // the 'master' branch of smartos-live.
+                not {
+                    branch pattern: 'release-\\d+', comparator: 'REGEXP'
+                }
             }
             steps {
-                build(job:'joyent-org/smartos-live/prr-OS-8046',
+                build(job:'joyent-org/smartos-live/master',
                     wait: false,
                     parameters: [
                         text(name: 'CONFIGURE_PROJECTS',
