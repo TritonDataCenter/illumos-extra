@@ -45,6 +45,7 @@ pipeline {
                             value:
                             "illumos-extra: $BRANCH_NAME: origin\n" +
                             'illumos: master: origin\n' +
+                            'local/kbmd: master: origin\n' +
                             'local/kvm-cmd: master: origin\n' +
                             'local/kvm: master: origin\n' +
                             'local/mdata-client: master: origin\n' +
