@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2019 Joyent, Inc.
+# Copyright 2020 Joyent, Inc.
 #
 
 #
@@ -24,7 +24,7 @@
 include ../Makefile.defs
 
 GCC_VER = 7
-VER = gcc-gcc-7.4.0-il-1
+VER = gcc-gcc-7.5.0-il-1
 MPFR_VER = mpfr-3.1.6
 GMP_VER = gmp-6.1.2
 MPC_VER = mpc-1.0.3
