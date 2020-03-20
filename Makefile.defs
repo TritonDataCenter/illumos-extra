@@ -44,6 +44,8 @@ MAKE =		gmake
 MAX_JOBS =	128
 PARALLEL =	-j$(MAX_JOBS)
 MAKE_VERBOSE =	V=1
+# GCC.32 =	$(GCC) -m32
+# GXX.32 =	$(GXX) -m32
 GCC.64 =	$(GCC) -m64
 GXX.64 =	$(GXX) -m64
 

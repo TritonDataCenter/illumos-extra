@@ -24,7 +24,8 @@ AUTOCONF_ENV += \
 			PERL=/opt/local/bin/perl \
 			POD2MAN=/opt/local/bin/pod2man \
 			DESTDIR="$(DESTDIR)" \
-			CTFCONVERT="$(CTFCONVERT)"
+			CTFCONVERT="$(CTFCONVERT)" \
+			PKG_CONFIG=/dev/null
 
 AUTOCONF_OPTS += \
 			--sysconfdir=/etc \

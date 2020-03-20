@@ -28,6 +28,7 @@ include ../Makefile.defs
 TARBALL =		$(VER).tar.bz2
 TARBALL_COMPRESS =	-j
 
+AUTOCONF_ENV += PKGCONFIG=/dev/null
 AUTOCONF_OPTS +=	--with-ssl=$(DESTDIR)/usr
 
 PATCHES =	Patches/*

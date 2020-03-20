@@ -25,11 +25,11 @@ all_autoconf: $(BUILD32:yes=all_autoconf_32) $(BUILD64:yes=all_autoconf_64)
 
 all_autoconf_32: $(AUTOCONF_OUT.32)
 	(cd $(OBJ.32); \
-	    env - PATH=$(PATH) $(MAKE) $(PARALLEL) $(OVERRIDES) $(ALL_TGT))
+	    env - PATH=$(COMPONENT_SPECIFIC_PATH):$(PATH) $(MAKE) $(PARALLEL) $(OVERRIDES) $(ALL_TGT))
 
 all_autoconf_64: $(AUTOCONF_OUT.64)
 	(cd $(OBJ.64); \
-	    env - PATH=$(PATH) $(MAKE) $(PARALLEL) $(OVERRIDES.64) $(ALL_TGT))
+	    env - PATH=$(COMPONENT_SPECIFIC_PATH):$(PATH) $(MAKE) $(PARALLEL) $(OVERRIDES.64) $(ALL_TGT))
 
 install_autoconf: $(BUILD32:yes=install_autoconf_32) \
     $(BUILD64:yes=install_autoconf_64)
@@ -37,24 +37,24 @@ install_autoconf: $(BUILD32:yes=install_autoconf_32) \
 install_autoconf_32: all
 	mkdir -p $(DESTDIR)
 	(cd $(OBJ.32); \
-	    env - PATH=$(PATH) \
+	    env - PATH=$(COMPONENT_SPECIFIC_PATH):$(PATH) \
 	    $(MAKE) $(install_PARALLEL) $(OVERRIDES) DESTDIR=$(DESTDIR) install)
 
 install_autoconf_64: all
 	mkdir -p $(DESTDIR)
 	(cd $(OBJ.64); \
-	    env - PATH=$(PATH) \
+	    env - PATH=$(COMPONENT_SPECIFIC_PATH):$(PATH) \
 	    $(MAKE) $(install_PARALLEL) $(OVERRIDES.64) DESTDIR=$(DESTDIR) \
 	    install)
 
 $(AUTOCONF_OUT.32): $(VER.32)/configure | $(OBJ.32)
 	(cd $(OBJ.32); \
-	    env - PATH=$(PATH) $(AUTOCONF_ENV) \
+	    env - PATH=$(COMPONENT_SPECIFIC_PATH):$(PATH) $(AUTOCONF_ENV) \
 	    $(SEPARATE_BUILD:yes=../$(VER.32)/)./configure $(AUTOCONF_OPTS.32))
 
 $(AUTOCONF_OUT.64): $(VER.64)/configure | $(OBJ.64)
 	(cd $(VER.64); \
-	    env - PATH=$(PATH) $(AUTOCONF_ENV.64) \
+	    env - PATH=$(COMPONENT_SPECIFIC_PATH):$(PATH) $(AUTOCONF_ENV.64) \
 	    $(SEPARATE_BUILD:yes=../$(VER.64)/)./configure $(AUTOCONF_OPTS.64))
 
 $(VER.32)/$(UNPACK_SENTINEL): $(TARBALL)
