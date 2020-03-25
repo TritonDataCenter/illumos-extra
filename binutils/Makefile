@@ -42,6 +42,13 @@ AUTOCONF_OPTS = \
 
 PATCHES =	patches/*
 
+#
+# The build tries to incorrectly rebuild the docs; as we don't install gtexinfo,
+# skip this.
+#
+OVERRIDES += \
+	MAKEINFO=true
+
 AUTOCONF_ENV += \
 	CC=gcc \
 	CXX=g++ \
