@@ -1,0 +1,34 @@
+From e088186b9a0818c4887fecad25d74cce887db1e2 Mon Sep 17 00:00:00 2001
+From: Robert Mustacchi <rm@joyent.com>
+Date: Tue, 26 Sep 2017 14:17:59 +0000
+Subject: [PATCH] Add support for building the EFI related vectors into bfd
+
+Note, this can be removed when we update to binutils 2.26 or later as
+that will include support for this by default.
+---
+ bfd/config.bfd | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/bfd/config.bfd b/bfd/config.bfd
+index 7bcb92a..1fd5403 100644
+--- a/bfd/config.bfd
++++ b/bfd/config.bfd
+@@ -526,13 +526,13 @@ case "${targ}" in
+   i[3-7]86-*-solaris2*)
+     targ_defvec=i386_elf32_sol2_vec
+     targ_selvecs="i386_coff_vec"
+-    targ64_selvecs="x86_64_elf64_sol2_vec l1om_elf64_vec k1om_elf64_vec"
++    targ64_selvecs="x86_64_elf64_sol2_vec l1om_elf64_vec k1om_elf64_vec i386_pe_vec x86_64_pe_vec x86_64_pei_vec i386_pei_vec"
+     want64=true
+     ;;
+ #ifdef BFD64
+   x86_64-*-solaris2*)
+     targ_defvec=i386_elf32_sol2_vec
+-    targ_selvecs="x86_64_elf64_sol2_vec l1om_elf64_vec k1om_elf64_vec i386_coff_vec"
++    targ_selvecs="x86_64_elf64_sol2_vec l1om_elf64_vec k1om_elf64_vec i386_coff_vec i386_pe_vec x86_64_pe_vec x86_64_pei_vec i386_pei_vec"
+     want64=true
+     ;;
+ #endif
+-- 
+2.2.1
+

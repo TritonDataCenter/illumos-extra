@@ -18,10 +18,10 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2018, Joyent, Inc.
+# Copyright 2020, Joyent, Inc.
 #
 
-VER =	binutils-2.25.1
+VER =	binutils-2.34
 
 include ../Makefile.defs
 
