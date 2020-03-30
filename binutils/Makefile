@@ -18,10 +18,10 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2018, Joyent, Inc.
+# Copyright 2020, Joyent, Inc.
 #
 
-VER =	binutils-2.25.1
+VER =	binutils-2.34
 
 include ../Makefile.defs
 
@@ -41,6 +41,13 @@ AUTOCONF_OPTS = \
 	--program-prefix=g
 
 PATCHES =	patches/*
+
+#
+# The build tries to incorrectly rebuild the docs; as we don't install gtexinfo,
+# skip this.
+#
+OVERRIDES += \
+	MAKEINFO=true
 
 AUTOCONF_ENV += \
 	CC=gcc \
