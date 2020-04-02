@@ -27,7 +27,7 @@ pipeline {
         stage('trigger smartos-live') {
             when {
                 anyOf {
-                    branch 'master'
+                    branch 'prr-OS-8153'
                     triggeredBy cause: 'UserIdCause'
                 }
                 // Release builds should only be done on smartos-live.git
