@@ -18,14 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012 Joyent Inc., All rights reserved.
+# Copyright 2020 Joyent, Inc.
 #
 
-VER =	ipmitool-1.8.14
+VER =	ipmitool-1.8.18
 
 include ../Makefile.defs
 
 CPPFLAGS +=	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+# need INT8_MIN and much other stuff
+CPPFLAGS += -D__EXTENSIONS__
 CFLAGS +=	-g
 
 AUTOCONF_ENV += \
