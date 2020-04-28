@@ -32,7 +32,7 @@ MPFR_TARBALL = $(MPFR_VER).tar.gz
 GMP_VER = gmp-5.1.1
 GXX = /bin/false
 CFLAGS = -nostdinc -isystem /usr/include -g -O2
-GCC.host = $(GCC4.host)
-GXX.host = /bin/false
+GCC.host.32 = $(GCC4.host)
+GXX.host.32 = /bin/false
 
 include ../Makefile.gcc

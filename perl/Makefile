@@ -110,7 +110,7 @@ ROOTCONFIG_PL =	$(ROOTBASE)/lib/i86pc-solaris-64int/Config_heavy.pl
 CLEANFILES +=	$(CONFIG_PL)
 
 XFORM.sh = \
-	sed -e 's;@@CC@@;$(GCC);g' \
+	sed -e 's;@@CC@@;$(GCC.32);g' \
 	    -e 's;@@CPPFLAGS@@;$(CPPFLAGS);g' \
 	    -e 's;@@CFLAGS@@;$(CFLAGS);g' \
 	    -e 's;@@NATIVE_CPPFLAGS@@;$(NATIVE_CPPFLAGS);g' \
@@ -149,7 +149,7 @@ $(CONFIG_PL): $(CONFIG_PL).in Makefile
 
 $(VER.32)/cflags: $(VER.32)/config.over $(VER.32)/Configure
 	(cd $(VER.32) && \
-	    ./Configure -des -Dcc="$(GCC)" -Duse64bitint)
+	    ./Configure -des -Dcc="$(GCC.32)" -Duse64bitint)
 
 $(VER.32)/perldtrace.h: $(VER.32)/cflags
 	(cd $(VER.32) && \

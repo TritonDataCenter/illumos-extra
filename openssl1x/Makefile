@@ -68,16 +68,22 @@ CPPFLAGS += \
 	-DNO_WINDOWS_BRAINDEATH \
 	-include openssl/sunw_prefix.h
 
+	# FIXME: gcc9 only? 
+
 CFLAGS += \
 	-O3 \
 	-march=pentium \
 	-Wall \
+	-Wno-stringop-truncation \
+	-Wno-stringop-overflow \
 	-Werror \
 	-DPK11_LIB_LOCATION=\\"/usr/lib/libpkcs11.so.1\\"
 
 CFLAGS.64 += \
 	-O3 \
 	-Wall \
+	-Wno-stringop-truncation \
+	-Wno-stringop-overflow \
 	-Werror \
 	-DPK11_LIB_LOCATION=\\"/usr/lib/64/libpkcs11.so.1\\"
 
@@ -133,7 +139,7 @@ $(VER.64)/%: %
 
 $(VER.32)/configure: $(VER.32)/Configure Makefile $(PKCS11.32) \
     $(VER.32)/sunw_prefix.h
-	sed -e 's#@@CC@@#$(GCC)#g' \
+	sed -e 's#@@CC@@#$(GCC.32)#g' \
 	    -e 's#@@CPPFLAGS@@#$(CPPFLAGS)#g' \
 	    -e 's#@@CFLAGS@@#$(CFLAGS)#g' \
 	    -e 's#@@MT_CPPFLAGS@@#$(MT_CPPFLAGS)#g' \

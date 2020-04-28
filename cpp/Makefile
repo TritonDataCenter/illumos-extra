@@ -34,9 +34,9 @@ CLEANFILES += \
 	y.tab.c$(STRAP)
 
 CFLAGS +=	-O2
-LD =		$(GCC)
+LD =		$(GCC.32)
 
-COMPILE.c =	$(GCC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+COMPILE.c =	$(GCC.32) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 LINK.prog =	$(LD) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 PROTOFILES =	$(DESTDIR)$(PROGDIR)/$(PROG)
 

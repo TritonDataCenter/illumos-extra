@@ -26,7 +26,7 @@
 # openssl has a painfully baroque build system (read Configure if you doubt it).
 # Configure allows us to add -D options, but there's no way to over-ride
 # compiler flags. We want to point to the proto headers, though, so we are
-# forced to hack this in by claiming our compiler is "$(GCC) $(CPPFLAGS)".
+# forced to hack this in by claiming our compiler is "$(GCC.32) $(CPPFLAGS)".
 # I'm sorry.
 #
 
@@ -57,14 +57,14 @@ all64: $(VER.64)/$(CONFIG_STATUS)
 
 # opensslconf.h is patched to ensure suitability for both 64bit and 32bit
 $(VER.32)/$(CONFIG_STATUS): $(VER.32)/configure
-	cd $(VER.32); env - PATH=$(PATH) CC="$(GCC) $(CPPFLAGS)" \
+	cd $(VER.32); env - PATH=$(PATH) CC="$(GCC.32) $(CPPFLAGS)" \
 	PERL=$(PERL) ksh93 ./Configure $(CONFIGURE_OPTIONS)
 	gpatch -p1 $(VER.32)/crypto/opensslconf.h opensslconf.patch
 	cd $(VER.32); gmake  depend
 	touch $@
 
 $(VER.64)/$(CONFIG_STATUS): $(VER.64)/configure
-	cd $(VER.64); env - PATH=$(PATH) CC="$(GCC) $(CPPFLAGS)" \
+	cd $(VER.64); env - PATH=$(PATH) CC="$(GCC.64) $(CPPFLAGS)" \
 	PERL=$(PERL) ksh93 ./Configure $(CONFIGURE_OPTIONS64)
 	cd $(VER.64); gmake  depend
 	touch $@
