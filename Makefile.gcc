@@ -45,7 +45,6 @@ endif
 
 #GCCFLAGS += CPPFLAGS="$(CPPFLAGS)"
 
-	#--with-system-zlib \
 #
 # We set --enable-bootstrap to allow the build to mismatch the host
 #

@@ -73,7 +73,7 @@ LIBS64=$(cd $LIBDIR && ls amd64/lib{ssp,gcc_s,stdc++}.so*)
 if [[ "$PRIMARY_COMPILER" = "gcc$GCC_VER" ]]; then
 	v mkdir -p $DESTDIR/usr/bin
 	for f in gcc g++ cpp; do
-		v ln -sf $DESTDIR/$PREFIX/bin/$$f $DESTDIR/usr/bin/$$f
+		v ln -sf $DESTDIR/$PREFIX/bin/$f $DESTDIR/usr/bin/$f
 	done
 
 	(cd $LIBDIR && v gtar -cf $LIBTAR $LIBS32 $LIBS64)

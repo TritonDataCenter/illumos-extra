@@ -44,6 +44,11 @@ CXXFLAGS += -fpermissive
 CXXFLAGS += -fno-delete-null-pointer-checks
 
 #
+# gcc9 doesn't like the NODE_MODULE() function cast.
+#
+CXXFLAGS += -Wno-cast-function-type
+
+#
 # Node's build system is super broken.  If we pass it LIBS at configure time,
 # it ignores it.  If we pass it LIBS at make time, it completely replaces all
 # libraries, including those the build system itself would normally add.

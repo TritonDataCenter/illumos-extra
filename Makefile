@@ -41,6 +41,7 @@ SUBDIRS = \
 	libexpat \
 	libidn \
 	libxml \
+	libz \
 	node.js \
 	nss-nspr \
 	openssl1x \
@@ -118,7 +119,7 @@ TARBALL =	$(NAME)-$(BRANCH)-$(TIMESTAMP)-$(GITDESCRIBE).tgz
 LIBSTDCXXVER_4 = 6.0.13
 LIBSTDCXXVER_6 = 6.0.22
 LIBSTDCXXVER_7 = 6.0.24
-LIBSTDCXXVER_9 = 6.0.24
+LIBSTDCXXVER_9 = 6.0.28
 
 all: $(SUBDIRS)
 
@@ -126,7 +127,7 @@ strap: $(SUBDIRS)
 
 curl: libz openssl1x libidn2
 gzip: libz
-node.js: openssl1x
+node.js: libz openssl1x
 dialog: ncurses
 socat: openssl1x
 wget: openssl1x libidn
@@ -182,7 +183,7 @@ $(STRAPFIX_SUBDIRS): $(SUBDIRS)
 
 fixup_strap: $(STRAPFIX_SUBDIRS)
 
-install_strap: binutils libz $(PRIMARY_COMPILER) $(SUBDIRS) fixup_strap
+install_strap: binutils $(PRIMARY_COMPILER) $(SUBDIRS) fixup_strap
 
 else
 
