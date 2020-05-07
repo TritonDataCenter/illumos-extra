@@ -22,9 +22,6 @@
 # Before we do so, however, we'll keep copies for the non-strap build to pick
 # up, making sure we don't inadvertently pick up the modified RUNPATH.
 #
-# We should also remove the "fixed" includes: they are just bad copies of the
-# potentially old system headers.
-#
 # During a strap build, all compiler versions are built under
 # proto.strap/usr/gcc/X. For the primary compiler, we symlink into
 # proto.strap/usr/bin/gcc etc.

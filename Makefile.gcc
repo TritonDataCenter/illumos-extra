@@ -23,6 +23,7 @@ SEPARATE_BUILD = yes
 
 CFLAGS = -g -O2
 CFLAGS.64 = -g -O2
+
 #
 # Note this presumes only one of 32/64 bit builds.
 #
@@ -32,18 +33,13 @@ TRIPLET = x86_64-pc-solaris2.11
 SUFFIX = 64
 GCC.64 = $(GCC.host.64)
 GXX.64 = $(GXX.host.64)
-#GCCFLAGS = LDFLAGS="$(LDFLAGS.64)"
-#GCCFLAGS += LDFLAGS_FOR_BUILD="$(LDFLAGS.64)"
 else
 TRIPLET = i386-pc-solaris2.11
 SUFFIX = 32
 GCC.32 = $(GCC.host.32)
 GXX.32 = $(GXX.host.32)
-#GCCFLAGS = LDFLAGS="$(LDFLAGS)"
-#GCCFLAGS += LDFLAGS_FOR_BUILD="$(LDFLAGS)"
 endif
 
-#GCCFLAGS += CPPFLAGS="$(CPPFLAGS)"
 
 #
 # We set --enable-bootstrap to allow the build to mismatch the host
@@ -62,7 +58,6 @@ AUTOCONF_OPTS += \
 
 AUTOCONF_PREFIX = /usr/gcc/$(GCC_VER)
 
-#GCC_FLAGS = CPPFLAGS="$(CPPFLAGS)"
 AUTOCONF_CPPFLAGS =
 AUTOCONF_LIBS =
 AUTOCONF_LIBS.64 =
@@ -73,17 +68,6 @@ GENLDFLAGS =
 AUTOCONF_ENV += \
 	DESTDIR=$(DESTDIR) \
 	MAKE=$(MAKE)
-
-#OVERRIDES += \
-#   $(AUTOCONF_CFLAGS) \
-#   STAGE1_CFLAGS="$(CFLAGS)" \
-#   CFLAGS_FOR_TARGET="$(CFLAGS)"
-
-#OVERRIDES.64 += \
-#   $(AUTOCONF_CFLAGS.64) \
-#   STAGE1_CFLAGS="$(CFLAGS.64)" \
-#   CFLAGS_FOR_TARGET="$(CFLAGS.64)"
-
 
 PATCHES = Patches/*
 ALL_TGT = bootstrap
