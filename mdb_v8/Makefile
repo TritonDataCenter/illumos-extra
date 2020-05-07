@@ -23,7 +23,7 @@
 # 3. From one directory up, run tar cvzf mdb_v8-<ver>.tar.gz mdb_v8-<ver>
 #
 
-VER =	mdb_v8-1.4.1
+VER =	mdb_v8-1.4.2
 
 include ../Makefile.defs
 include ../Makefile.targ
@@ -38,8 +38,6 @@ CTF_LIBS = $(VER)/build/ia32/mdb_v8.so \
 #
 CFLAGS += -gdwarf-2
 CFLAGS_ARCH += -gdwarf-2
-# FIXME: remove when 1.4.2
-CFLAGS += -Wno-format-truncation
 
 # mdb_v8 builds both 32 and 64 bit itself.
 AUTOCONF_CC="CC=$(GCCBIN)"
