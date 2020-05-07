@@ -38,7 +38,7 @@ pipeline {
                 }
             }
             steps {
-                build(job:'joyent-org/smartos-live/master',
+                build(job:'joyent-org/smartos-live/prr-OS-8164',
                     wait: false,
                     parameters: [
                         text(name: 'CONFIGURE_PROJECTS',
