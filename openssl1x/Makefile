@@ -68,14 +68,10 @@ CPPFLAGS += \
 	-DNO_WINDOWS_BRAINDEATH \
 	-include openssl/sunw_prefix.h
 
-	# FIXME: gcc9 only? 
-
 CFLAGS += \
 	-O3 \
 	-march=pentium \
 	-Wall \
-	-Wno-stringop-truncation \
-	-Wno-stringop-overflow \
 	-Werror \
 	-DPK11_LIB_LOCATION=\\"/usr/lib/libpkcs11.so.1\\"
 
@@ -86,6 +82,11 @@ CFLAGS.64 += \
 	-Wno-stringop-overflow \
 	-Werror \
 	-DPK11_LIB_LOCATION=\\"/usr/lib/64/libpkcs11.so.1\\"
+
+ifeq ($(PRIMARY_COMPILER_VER),9)
+CFLAGS += -Wno-stringop-truncation -Wno-stringop-overflow
+CFLAGS.64 += -Wno-stringop-truncation -Wno-stringop-overflow
+endif
 
 LIBS +=	-lsocket -lnsl
 

@@ -20,8 +20,10 @@ include ../Makefile.defs
 NSPRVER =	nspr-4.12
 TARBALL =	$(VER)-with-$(NSPRVER).tar.gz
 
-# FIXME: gcc9
-XCFLAGS = -Wno-unused -Wno-int-in-bool-context -Wno-stringop-truncation
+XCFLAGS = -Wno-unused -Wno-int-in-bool-context
+ifeq ($(PRIMARY_COMPILER_VER),9)
+XCFLAGS += -Wno-stringop-truncation
+endif
 
 
 AUTOCONF_CPPFLAGS =
