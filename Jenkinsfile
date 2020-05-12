@@ -38,7 +38,7 @@ pipeline {
                 }
             }
             steps {
-                build(job:'joyent-org/smartos-live/change-requests/PR-931',
+                build(job:'joyent-org/smartos-live/PR-931',
                     wait: false,
                     parameters: [
                         text(name: 'CONFIGURE_PROJECTS',
