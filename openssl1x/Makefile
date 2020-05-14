@@ -78,8 +78,6 @@ CFLAGS += \
 CFLAGS.64 += \
 	-O3 \
 	-Wall \
-	-Wno-stringop-truncation \
-	-Wno-stringop-overflow \
 	-Werror \
 	-DPK11_LIB_LOCATION=\\"/usr/lib/64/libpkcs11.so.1\\"
 

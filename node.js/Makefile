@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2019 Joyent, Inc.
+# Copyright 2020 Joyent, Inc.
 #
 
 MAJOR_VER =	0.10
@@ -46,7 +46,9 @@ CXXFLAGS += -fno-delete-null-pointer-checks
 #
 # gcc9 doesn't like the NODE_MODULE() function cast.
 #
+ifeq ($(PRIMARY_COMPILER_VER),9)
 CXXFLAGS += -Wno-cast-function-type
+endif
 
 #
 # Node's build system is super broken.  If we pass it LIBS at configure time,
