@@ -19,7 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2017, Joyent, Inc.
+# Copyright 2020 Joyent, Inc.
 #
 
 VER = openssl-1.0.2n
@@ -81,10 +81,8 @@ CFLAGS.64 += \
 	-Werror \
 	-DPK11_LIB_LOCATION=\\"/usr/lib/64/libpkcs11.so.1\\"
 
-ifeq ($(PRIMARY_COMPILER_VER),9)
 CFLAGS += -Wno-stringop-truncation -Wno-stringop-overflow
 CFLAGS.64 += -Wno-stringop-truncation -Wno-stringop-overflow
-endif
 
 LIBS +=	-lsocket -lnsl
 
