@@ -44,3 +44,8 @@ TARBALL_COMPRESS =	-j
 
 include ../Makefile.targ
 include ../Makefile.targ.autoconf
+
+install: install_vimrc
+
+install_vimrc: vimrc
+	cp $< $(DESTDIR)/usr/share/vim/vimrc
