@@ -76,6 +76,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <stdarg.h>
+#include <ctype.h>
 
 #include "cpp.h"
 
@@ -207,10 +208,6 @@ static	int maclvl;	/* # calls since last decrease in nesting level */
 static	char *macforw;	/* ptr which must be exceeded to decrease nesting lvl */
 static	int macdam;	/* offset to macforw due to buffer shifting */
 
-#if tgp
-int tgpscan;	/* flag for dump(); */
-#endif
-
 static	int	inctop[MAXINC];
 static	char	*fnames[MAXINC];
 static	char	*dirnams[MAXINC];	/* actual directory of #include files */
@@ -252,7 +249,7 @@ static	char		*unfill(char *);
 static	char		*doincl(char *);
 static	int		equfrm(char *, char *, char *);
 static	char		*dodef(char *);
-static	char		*control(char *);
+void			control(char *);
 static	struct symtab	*stsym(char *);
 static	struct symtab	*ppsym(char *);
 void		pperror(char *fmt, ...);
@@ -268,7 +265,7 @@ int		yywrap(void);
 int		main(int argc, char **argav);
 
 
-#define symsiz 4000
+#define symsiz 16000
 static	struct symtab stab[symsiz];
 
 static	struct symtab *defloc;
@@ -366,44 +363,9 @@ sayline(what)
 
 static void
 dump() {
-/*
- * write part of buffer which lies between  outp  and  inp .
- * this should be a direct call to 'write', but the system slows to a crawl
- * if it has to do an unaligned copy.  thus we buffer.  this silly loop
- * is 15% of the total time, thus even the 'putc' macro is too slow.
- */
 	register char *p1;
-#if tgp
-	register char *p2;
-#endif
-	register FILE *f;
 	if ((p1=outp)==inp || flslvl!=0) return;
-#if tgp
-#define MAXOUT 80
-	if (!tgpscan) {
-		/* scan again to insure <= MAXOUT chars between linefeeds */
-		register char c,*pblank; char savc,stopc,brk;
-		tgpscan=1; brk=stopc=pblank=0; p2=inp; savc= *p2; *p2='\0';
-		while (c= *p1++) {
-			if (c=='\\') c= *p1++;
-			if (stopc==c) stopc=0;
-			else if (c=='"' || c=='\'') stopc=c;
-			if (p1-outp>MAXOUT && pblank!=0) {
-				*pblank++='\n';
-				inp=pblank;
-				dump();
-				brk=1;
-				pblank=0;
-			}
-			if (c==' ' && stopc==0) pblank=p1-1;
-		}
-		if (brk) sayline(NOINCLUDE);
-		*p2=savc; inp=p2; p1=outp; tgpscan=0;
-	}
-#endif
-	f=fout;
-	while (p1<inp)
-		putc(*p1++,f);
+	fwrite(p1, inp - p1, 1, fout);
 	outp=p1;
 }
 
@@ -437,7 +399,7 @@ refill(p) register char *p; {
 			}
 			/* end of #include file */
 			if (ifno==0) {/* end of input */
-				if (plvl!=0) {
+				if (plvl > 0) {
 					int n=plvl,tlin=lineno[ifno];
 					char *tfil=fnames[ifno];
 					lineno[ifno]=maclin;
@@ -675,6 +637,11 @@ prevlf:
 } /* end of infinite loop */
 }
 
+/*
+ * XXX: This unconditionally consumes one token (presuming it's blank? that we
+ * already consumed it?).  That's pretty terrible, but it's also very fragile,
+ * and I don't want to change it.
+ */
 char *
 skipbl(p) register char *p; {/* get next non-blank token */
 	do {
@@ -821,6 +788,9 @@ dodef(p) char *p; {/* process '#define' */
 		return(p);
 	}
 	np=slookup(pin,p,1);
+	if (getenv("CPP_DEBUG_DEFINITIONS") != NULL)
+		fprintf(stderr, "*** defining %s at %s:%d\n",
+		    np->name, fnames[ifno], lineno[ifno]);
 	if ((oldval=np->value) != NULL)
 		savch=oldsavch;	/* was previously defined */
 	b=1; cf=pin;
@@ -938,7 +908,7 @@ dodef(p) char *p; {/* process '#define' */
 #define fasscan() ptrtab=fastab+COFF
 #define sloscan() ptrtab=slotab+COFF
 
-static char *
+void
 control(p) register char *p; {/* find and handle preprocessor control lines */
 	register struct symtab *np;
 for (;;) {
@@ -1008,14 +978,9 @@ for (;;) {
 			++flslvl; p=skipbl(p); slookup(inp,p,DROP); --flslvl;
 		}
 	} else if (np==ifloc) {/* if */
-#if tgp
-		pperror(" IF not implemented, true assumed", 0);
-		if (flslvl==0) ++trulvl; else ++flslvl;
-#else
 		newp=p;
 		if (flslvl==0 && yyparse()) ++trulvl; else ++flslvl;
 		p=newp;
-#endif
 	} else if (np == idtloc) {		/* ident */
 		if (pflag == 0)
 			while (*inp != '\n')	/* pass text */
@@ -1023,8 +988,8 @@ for (;;) {
 	} else if (np == pragmaloc) {		/* pragma */
 		while (*inp != '\n')		/* pass text */
 			p = cotoken(p);
+#ifdef EXIT_ON_ERROR
 	} else if (np == errorloc) {		/* error */
-#ifdef	EXIT_ON_ERROR
 		if (trulvl > 0) {
 			char ebuf[BUFFERSIZ];
 
@@ -1043,9 +1008,6 @@ for (;;) {
 			pperror(ebuf);
 			exit(exfail);
 		}
-#else
-		while (*inp != '\n')		/* pass text */
-			p = cotoken(p);
 #endif
 	} else if (np==lneloc) {/* line */
 		if (flslvl==0 && pflag==0) {
@@ -1111,7 +1073,7 @@ pperror(char *fmt, ...)
 	verror(fmt, args);
 	va_end(args);
 
-	++exfail;
+	exfail = 1;
 }
 
 /* VARARGS1 */
@@ -1131,7 +1093,6 @@ ppwarn(char *fmt, ...)
 {
 	va_list	args;
 	int fail = exfail;
-	exfail = -1;
 
 	va_start(args, fmt);
 	verror(fmt, args);
@@ -1202,12 +1163,19 @@ slookup(p1,p2,enterf) register char *p1,*p2; int enterf;{
 	return(np);
 }
 
+/*
+ * When a macro substitution must happen, arrange the input stack based on the
+ * macro definition and any parameters such that the expanded macro is what is
+ * next read by the preprocessor as if it were input
+ */
 static char *
 subst(p,sp) register char *p; struct symtab *sp; {
-	static char match[]="%s: argument mismatch";
 	register char *ca,*vp; int params;
 	char *actual[MAXFRM]; /* actual[n] is text of nth actual */
 	char acttxt[BUFFERSIZ]; /* space for actuals */
+	/* State while pasting, TRAIL is trailing space, INTRA is in the body */
+	enum { TRAIL, INTRA } state = TRAIL;
+	int pasted = 0;		/* # of character pasted */
 
 	if (0==(vp=sp->value)) return(p);
 	if ((p-macforw)<=macdam) {
@@ -1220,6 +1188,7 @@ subst(p,sp) register char *p; struct symtab *sp; {
 	}
 	macforw=p; macdam=0;	/* new target for decrease in level */
 	macnam=sp->name;
+	/* flush all buffered output prior to the expansion */
 	dump();
 	if (sp==ulnloc) {
 		vp=acttxt; *vp++='\0';
@@ -1230,13 +1199,26 @@ subst(p,sp) register char *p; struct symtab *sp; {
 	}
 	if (0!=(params= *--vp&0xFF)) {/* definition calls for params */
 		register char **pa;
+		char *savp, *savinp, *savoutp;
 		ca=acttxt; pa=actual;
 		if (params==0xFF)
 			params=1;	/* #define foo() ... */
 		sloscan();
 		++flslvl; /* no expansion during search for actuals */
 		plvl= -1;
-		do p=skipbl(p); while (*inp=='\n');	/* skip \n too */
+		/*
+		 * Skip any blanks (including \n), until we hit the macro
+		 * arguments.
+		 *
+		 * save our state so we can roll back if none are called.
+		 */
+		savp = p;
+		savinp = inp;
+		savoutp = outp;
+		do {
+			p=skipbl(p);
+		} while (*inp=='\n');	/* skip \n too */
+
 		if (*inp=='(') {
 			maclin=lineno[ifno]; macfil=fnames[ifno];
 			for (plvl=1; plvl!=0; ) {
@@ -1262,6 +1244,20 @@ subst(p,sp) register char *p; struct symtab *sp; {
 						 * Keep escaped newlines, they
 						 * are assumed to be inside a
 						 * string.
+						 * 
+						 * XXX: The above is actually
+						 * false in a couple of ways.
+						 *
+						 * 1) Sun cpp turns newlines
+						 * into spaces, but inserts an
+						 * equal number of newlines
+						 * prior to pasting the body.
+						 *
+						 * 2) Sun does _not_ preserved
+						 * escaped newlines, the \ is
+						 * removed, and the newline
+						 * otherwise treated
+						 * identically to in #1.
 						 */
 						if (*inp == '\n' &&
 						    inp[-1] != '\\')
@@ -1273,29 +1269,79 @@ subst(p,sp) register char *p; struct symtab *sp; {
 						    sp->name);
 				}
 				if (pa>= &actual[MAXFRM])
-					ppwarn(match,sp->name);
+					ppwarn("%s: argument mismatch" ,
+					    sp->name);
 				else
 					*pa++=ca;
 			}
+		} else {
+			/*
+			 * Didn't find any parameters, rollback our state so
+			 * we don't chew more output than necessary
+			 */
+			p = savp;
+			inp = savinp;
+			outp = savoutp;
 		}
 		if (params!=0)
-			ppwarn(match,sp->name);
+			ppwarn("%s: argument mismatch", sp->name);
 		while (--params>=0)
 			*pa++=""+1;	/* null string for missing actuals */
 		--flslvl; fasscan();
 	}
+
 	for (;;) {/* push definition onto front of input stack */
+		/*
+		 * Loop until we hit the end of the macro, or a parameter
+		 * placement.  Note that we expand the macro into the input
+		 * backwards (so it replays forwards.)
+		 */
 		while (!iswarn(*--vp)) {
 			if (bob(p)) {outp=inp=p; p=unfill(p);}
+				
+			/* Unless we are mid-paste, swallow all spaces */
+			if (state == TRAIL) {
+				while (isspace(*vp) && !iswarn(*vp))
+					vp--;
+			} else {
+				/*
+				 * If we're mid-paste, compress spaces to a
+				 * single space
+				 */
+				while (isspace(*vp)) {
+					if (!isspace(vp[1])) {
+						*vp = ' ';
+						break;
+					} else {
+						vp--;
+					}
+				}
+			}
+			state = INTRA; /* Hit a non-space */
+			
+			if (iswarn(*vp))
+				break;
 			*--p= *vp;
+			pasted++;
 		}
 		if (*vp==warnc) {/* insert actual param */
+			state = INTRA;
 			ca=actual[*--vp-1];
 			while (*--ca) {
 				if (bob(p)) {outp=inp=p; p=unfill(p);}
 				*--p= *ca;
+				pasted++;
 			}
-		} else break;
+		} else {
+			/*
+			 * Trim leading spaces, but only those from our pasting
+			 */
+			while (isspace(*p) && pasted > 0) {
+				p++;
+				pasted--;
+			}
+			break;
+		}
 	}
 	outp=inp=p;
 	return(p);
@@ -1518,9 +1564,8 @@ main(argc,argv)
 		macbit[i]=0;
 
 	if (! nopredef) {
-# if unix
 	ysysloc=stsym("unix");
-# endif
+	ysysloc=stsym("sun");
 # if __sparc__
 	varloc=stsym ("sparc");
 # endif

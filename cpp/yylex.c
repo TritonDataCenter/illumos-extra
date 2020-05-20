@@ -80,7 +80,7 @@
 #define COFF 0
 #endif
 
-static	int	tobinary(char *, int);
+static	long	tobinary(char *, int);
 
 int
 yylex(void)
@@ -135,31 +135,18 @@ ret:
 }
 }
 
-static int
-tobinary(st, b)
-	char	*st;
-	int	b;
+static long
+tobinary(char *st, int b)
 {
-	int n, c, t;
-	char *s;
-	n=0;
-	s=st;
-	while ((c = *s++) != '\0') {
-	switch(c) {
-		case '0': case '1': case '2': case '3': case '4': 
-		case '5': case '6': case '7': case '8': case '9': 
-			t = c-'0'; break;
-		case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': 
-			t = c-'a'; if (b>10) break;
-		case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': 
-			t = c - 'A'; if (b>10) break;
-		default:
-			t = -1;
-			if ( c=='l' || c=='L') if (*s=='\0') break;
-			pperror("Illegal number %s", st);
+	char *tmp;
+	int n;
+	n = strtoul(st, &tmp, b);
+	if (*tmp != '\0') {
+		if ((strcasecmp(tmp, "L") != 0) &&
+		    (strcasecmp(tmp, "LL") != 0) &&
+		    (strcasecmp(tmp, "UL") != 0) &&
+		    (strcasecmp(tmp, "ULL") != 0))
+			pperror("illegal number: %s", st);
 	}
-	if (t<0) break;
-	n = n*b+t;
-	}
-return(n);
+	return(n);
 }
