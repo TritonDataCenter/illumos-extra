@@ -1,5 +1,5 @@
 --- vim82-64/runtime/defaults.vim	2019-10-27 17:41:21.000000000 +0000
-+++ vim82-64.new/runtime/defaults.vim	2020-05-20 10:51:16.552043288 +0000
++++ vim82-64/runtime/defaults.vim	2020-05-20 10:51:16.552043288 +0000
 @@ -77,13 +77,17 @@ inoremap <C-U> <C-G>u<C-U>
  " can position the cursor, Visually select and scroll with the mouse.
  " Only xterm can grab the mouse events when using the shift key, for other
