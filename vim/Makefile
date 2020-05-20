@@ -27,6 +27,8 @@ VER =	vim82
 
 include ../Makefile.defs
 
+PATCHES = Patches/defaults.vim
+
 BUILD32 =
 BUILD64 = yes
 
