@@ -17,8 +17,7 @@
 # The tarball is from a specific tagged release of
 # https://github.com/illumos/gcc repository.  This includes all of the
 # illumos-specific modifications we need.  We could probably do a git clone
-# instead, but the tarball method is easier given these Makefiles.  The odd
-# prefix of "gcc-gcc-..." is due to github's <repo>-<tag> naming.
+# instead, but the tarball method is easier given these Makefiles.
 #
 
 include ../Makefile.defs
@@ -27,7 +26,7 @@ BUILD64=yes
 BUILD32=
 
 GCC_VER = 9
-VER = gcc-gcc-9.3.0-pre
+VER = gcc-9.3.0-il-1
 MPFR_VER = mpfr-4.0.2
 GMP_VER = gmp-6.2.0
 MPC_VER = mpc-1.1.0
