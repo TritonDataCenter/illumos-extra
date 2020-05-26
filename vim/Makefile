@@ -20,12 +20,17 @@
 #
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2020 Joyent, Inc.
 #
 
-VER =	vim73
+VER =	vim82
 
 include ../Makefile.defs
+
+PATCHES = Patches/defaults.vim
+
+BUILD32 =
+BUILD64 = yes
 
 AUTOCONF_OUT =	src/auto/config.status
 AUTOCONF_ENV += \
@@ -36,7 +41,7 @@ AUTOCONF_OPTS += \
 	--with-features=huge \
 	--without-x
 
-TARBALL =		$(VER).tar.bz2
+TARBALL =		vim-8.2.tar.bz2
 TARBALL_COMPRESS =	-j
 
 include ../Makefile.targ

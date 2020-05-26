@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2018, Joyent, Inc.  All rights reserved.
+# Copyright 2020 Joyent, Inc.
 #
 
 VER =	screen-4.4.0
@@ -31,8 +31,15 @@ PATCHES =	Patches/*
 # We set _XOPEN_SOURCE=700 so that screen can access additional fields in
 # struct msghdr. pkgsrc also does this.
 #
+# Screen always tries to use libutempter when it sees the libutemtper
+# header file. The current version of autoconf in screen also tries to link
+# the tests it runs against libutempter which can fail if the build system
+# doesn't have libutempter. We add the proto /usr/lib to work around this
+# while running configure (OS-8171).
+#
 AUTOCONF_ENV += \
-	CFLAGS="-std=c99 -D_XOPEN_SOURCE=700"
+	CFLAGS="-std=c99 -D_XOPEN_SOURCE=700" \
+	LD_LIBRARY_PATH=$(DESTDIR)/usr/lib
 
 #
 # It is important to make sure that screen has a prefix of /usr. When screen
