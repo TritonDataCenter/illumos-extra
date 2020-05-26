@@ -27,7 +27,7 @@ VER = $(BVER)$(STRAP)
 
 include ../Makefile.defs
 
-OVERRIDES +=	CC="$(GCC)"
+OVERRIDES +=	CC="$(GCC.32)"
 OVERRIDES.64 +=	CC="$(GCC.64)"
 
 CLEANFILES +=	bzgrep.tmp $(VER)strap

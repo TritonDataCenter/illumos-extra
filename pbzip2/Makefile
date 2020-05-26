@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2020 Joyent, Inc.
 #
 
 VER =	pbzip2-1.1.6
@@ -30,8 +30,8 @@ FROB_SENTINEL.32 =	/bin/true
 FROB_SENTINEL.64 =	/bin/true
 
 OVERRIDES = \
-	CC="$(GCC)" \
-	CXX="$(GXX)" \
+	CC="$(GCC.32)" \
+	CXX="$(GXX.32)" \
 	CPPFLAGS="$(CPPFLAGS)" \
 	LDFLAGS="$(LDFLAGS)"
 

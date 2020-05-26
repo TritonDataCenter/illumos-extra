@@ -53,7 +53,7 @@ $(AUTOCONF_OUT.32): $(VER.32)/configure | $(OBJ.32)
 	    $(SEPARATE_BUILD:yes=../$(VER.32)/)./configure $(AUTOCONF_OPTS.32))
 
 $(AUTOCONF_OUT.64): $(VER.64)/configure | $(OBJ.64)
-	(cd $(VER.64); \
+	(cd $(OBJ.64); \
 	    env - PATH=$(PATH) $(AUTOCONF_ENV.64) \
 	    $(SEPARATE_BUILD:yes=../$(VER.64)/)./configure $(AUTOCONF_OPTS.64))
 

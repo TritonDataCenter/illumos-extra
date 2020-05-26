@@ -1,0 +1,89 @@
+#!/bin/bash
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+# Copyright 2020 Joyent, Inc.
+
+#
+# Perform a few manual fix ups on the primary strap compiler.
+#
+# The GCC runtime libraries that we build into proto.strap should be made to
+# search for their dependencies there as well, so that programs built to run on
+# the build machine (from proto.strap) find the correct copies of these
+# libraries.  (Currently, this is only relevant for libstdc++.)
+#
+# Before we do so, however, we'll keep copies for the non-strap build to pick
+# up, making sure we don't inadvertently pick up the modified RUNPATH.
+#
+# During a strap build, all compiler versions are built under
+# proto.strap/usr/gcc/X. For the primary compiler, we symlink into
+# proto.strap/usr/bin/gcc etc.
+#
+
+set -e -o pipefail
+
+function v()
+{
+	echo "$@"
+	"$@"
+}
+
+cmd=$0
+
+while getopts d:p:v: arg
+do
+	case $arg in
+		d) DESTDIR=$OPTARG;;
+		p) PRIMARY_COMPILER=$OPTARG;;
+		v) GCC_VER=$OPTARG;;
+		?) echo "$cmd: invalid arguments"; exit 2;;
+	esac
+done
+
+shift $(expr $OPTIND - 1)
+
+if [[ -n "$1" ]] || [[ -z "$DESTDIR" ]] || \
+    [[ -z "$PRIMARY_COMPILER" ]] || [[ -z "$GCC_VER" ]]; then
+	echo "$cmd: invalid arguments"
+	exit 2
+fi
+
+PREFIX=/usr/gcc/$GCC_VER
+LIBDIR=$DESTDIR/$PREFIX/lib
+LIBTAR=$DESTDIR/gcclibs.tar.gz
+
+# remove these nuisances
+v find $LIBDIR -name "libstdc++.so*-gdb.py" -delete
+
+LIBS32=$(cd $LIBDIR && ls lib{ssp,gcc_s,stdc++}.so*)
+LIBS64=$(cd $LIBDIR && ls amd64/lib{ssp,gcc_s,stdc++}.so*)
+
+[[ -h $LIBDIR/64 ]] || v ln -s amd64 $LIBDIR/64
+
+if [[ "$PRIMARY_COMPILER" = "gcc$GCC_VER" ]]; then
+	v mkdir -p $DESTDIR/usr/bin
+	for f in gcc g++ cpp; do
+		v ln -sf $DESTDIR/$PREFIX/bin/$f $DESTDIR/usr/bin/$f
+	done
+
+	(cd $LIBDIR && v gtar -cf $LIBTAR $LIBS32 $LIBS64)
+
+	for lib in $LIBS32 $LIBS64; do
+		v /usr/bin/elfedit -e 'dyn:delete RUNPATH' $LIBDIR/$lib
+	done
+fi
+
+for lib in $LIBS32; do \
+	v /usr/bin/elfedit -e "dyn:runpath $LIBDIR" $LIBDIR/$lib
+done
+
+for lib in $LIBS64; do \
+	v /usr/bin/elfedit -e "dyn:runpath $LIBDIR/64" $LIBDIR/$lib
+done

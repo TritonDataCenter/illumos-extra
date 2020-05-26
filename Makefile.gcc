@@ -8,7 +8,7 @@
 # source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
-# Copyright 2019 Joyent, Inc.
+# Copyright 2020 Joyent, Inc.
 
 #
 # Shared makefile for building GCC versions. For the most part, the build is the
@@ -22,20 +22,32 @@
 SEPARATE_BUILD = yes
 
 CFLAGS = -g -O2
-PREFIX = /usr/gcc/$(GCC_VER)
+CFLAGS.64 = -g -O2
 
-GCC = $(GCC.host)
-GXX = $(GXX.host)
+#
+# Note this presumes only one of 32/64 bit builds.
+#
+ifeq ($(BUILD64),yes)
+CFLAGS += -m64
+TRIPLET = x86_64-pc-solaris2.11
+SUFFIX = 64
+GCC.64 = $(GCC.host.64)
+GXX.64 = $(GXX.host.64)
+else
+TRIPLET = i386-pc-solaris2.11
+SUFFIX = 32
+GCC.32 = $(GCC.host.32)
+GXX.32 = $(GXX.host.32)
+endif
 
-AUTOCONF_PREFIX = $(PREFIX)
 
 #
 # We set --enable-bootstrap to allow the build to mismatch the host
 #
 AUTOCONF_OPTS += \
 	--enable-bootstrap \
-	--build=i386-pc-solaris2.11 \
-	--host=i386-pc-solaris2.11 \
+	--build=$(TRIPLET) \
+	--host=$(TRIPLET) \
 	--with-ld=/usr/bin/ld \
 	--without-gnu-ld \
 	--with-gnu-as \
@@ -44,32 +56,18 @@ AUTOCONF_OPTS += \
 	--enable-shared \
 	--disable-nls
 
+AUTOCONF_PREFIX = /usr/gcc/$(GCC_VER)
+
+AUTOCONF_CPPFLAGS =
+AUTOCONF_LIBS =
+AUTOCONF_LIBS.64 =
+AUTOCONF_LDFLAGS =
+AUTOCONF_LDFLAGS.64 =
+GENLDFLAGS =
+
 AUTOCONF_ENV += \
 	DESTDIR=$(DESTDIR) \
 	MAKE=$(MAKE)
-
-OVERRIDES += \
-	$(AUTOCONF_CFLAGS) \
-	STAGE1_CFLAGS="$(CFLAGS)" \
-	CFLAGS_FOR_TARGET="$(CFLAGS)"
-
-#
-# Because we use a different build directory, we need to make sure we
-# catch that when cleaning.
-#
-CLEANFILES += $(VER)-32.build $(VER)-32strap.build
-
-#
-# Unlike everything else, gcc is built to be a cross-compiler, really.  It
-# never runs on the target system, only the build system.  So it should not
-# be using the proto area's headers or libraries.  Its own libraries will be
-# built by the new compiler, and generally aren't using system headers anyway.
-# This is not really completely true; for example, libstdc++.  This will
-# need more work to be really right.  We only deliver the libraries.
-#
-AUTOCONF_CPPFLAGS =
-AUTOCONF_LIBS =
-GENLDFLAGS =
 
 PATCHES = Patches/*
 ALL_TGT = bootstrap
@@ -115,96 +113,49 @@ $(TARBALL) $(MPFR_TARBALL) $(GMP_TARBALL) $(MPC_TARBALL):
 # Instead we build these libraries directly ourselves.
 #
 ifeq ($(GCC_VER),4)
-$(AUTOCONF_OUT.32): | $(VER.32)/mpfr $(VER.32)/gmp
+$(AUTOCONF_OUT.$(SUFFIX)): | $(VER.$(SUFFIX))/mpfr $(VER.$(SUFFIX))/gmp
 else
-$(AUTOCONF_OUT.32): | $(VER.32)/mpfr $(VER.32)/gmp $(VER.32)/mpc
+$(AUTOCONF_OUT.$(SUFFIX)): | $(VER.$(SUFFIX))/mpfr $(VER.$(SUFFIX))/gmp $(VER.$(SUFFIX))/mpc
 endif
 
-$(VER.32)/mpfr: $(MPFR_TARBALL) | $(VER.32)
+$(VER.$(SUFFIX))/mpfr: $(MPFR_TARBALL) | $(VER.$(SUFFIX))
 	-rm -rf $@
-	mkdir -p .unpack32
-	gtar x -C .unpack32 --no-same-owner -f $(MPFR_TARBALL)
-	mv -f .unpack32/$(MPFR_VER) ./$@
-	-rmdir .unpack32
+	mkdir -p .unpack
+	gtar x -C .unpack --no-same-owner -f $(MPFR_TARBALL)
+	mv -f .unpack/$(MPFR_VER) ./$@
+	-rmdir .unpack
 	chmod 755 $@/configure
 	touch $@/configure
 
-$(VER.32)/gmp: $(GMP_TARBALL) | $(VER.32)
+$(VER.$(SUFFIX))/gmp: $(GMP_TARBALL) | $(VER.$(SUFFIX))
 	-rm -rf $@
-	mkdir -p .unpack32
-	gtar x -C .unpack32 --no-same-owner -f $(GMP_TARBALL)
-	mv -f .unpack32/$(GMP_VER) ./$@
-	-rmdir .unpack32
+	mkdir -p .unpack
+	gtar x -C .unpack --no-same-owner -f $(GMP_TARBALL)
+	mv -f .unpack/$(GMP_VER) ./$@
+	-rmdir .unpack
 	chmod 755 $@/configure
 	touch $@/configure
 
-$(VER.32)/mpc: $(MPC_TARBALL) | $(VER.32)
+$(VER.$(SUFFIX))/mpc: $(MPC_TARBALL) | $(VER.$(SUFFIX))
 	-rm -rf $@
-	mkdir -p .unpack32
-	gtar x -C .unpack32 --no-same-owner -f $(MPC_TARBALL)
-	mv -f .unpack32/$(MPC_VER) ./$@
-	-rmdir .unpack32
+	mkdir -p .unpack
+	gtar x -C .unpack --no-same-owner -f $(MPC_TARBALL)
+	mv -f .unpack/$(MPC_VER) ./$@
+	-rmdir .unpack
 	chmod 755 $@/configure
 	touch $@/configure
-
-LIBTARDIR=$(STRAPPROTO)/gcclibs/
-LIBTAR=$(STRAPPROTO)/gcclibs.tar.gz
 
 ifeq ($(STRAP),strap)
-
-#
-# The runtime libraries that we build into proto.strap should be made to search
-# for their dependencies there as well, so that programs built to run on the
-# build machine (from proto.strap) find the correct copies of these libraries.
-# (Currently, this is only relevant for libstdc++.)
-#
-# Before we do so, however, we'll keep copies for the non-strap build to pick
-# up, making sure we don't inadvertently pick up the modified RUNPATH.
-#
-# We should also remove the "fixed" includes: they are just bad copies of the
-# potentially old system headers.
-#
-# During a strap build, all compiler versions are built under
-# proto.strap/usr/gcc/X. For the primary compiler, we symlink into
-# proto.strap/usr/bin/gcc etc.
-#
-FIXLIBS = libgcc_s,libstdc++,libssp
-FIXLIBGLOB = {$(FIXLIBS)}.so*
-FIXLIBGLOB64 = 64/{$(FIXLIBS)}.so*
-LIBDIR=$(DESTDIR)/$(PREFIX)/lib
-
 .PHONY: strapfix
 strapfix:
-	[[ -h $(LIBDIR)/64 ]] || ln -s amd64 $(LIBDIR)/64
-ifeq ($(PRIMARY_COMPILER),gcc$(GCC_VER))
-	mkdir -p $(DESTDIR)/usr/bin
-	for f in gcc g++ cpp; do \
-		ln -sf $(DESTDIR)/$(PREFIX)/bin/$$f $(DESTDIR)/usr/bin/$$f; \
-	done
-	mkdir -p $(LIBTARDIR)
-	cd $(LIBDIR) && gtar -cf - $(FIXLIBGLOB) $(FIXLIBGLOB64) | \
-	    gtar -C $(LIBTARDIR) -xvf -
-	for lib in $(LIBTARDIR)/$(FIXLIBGLOB) $(LIBTARDIR)/$(FIXLIBGLOB64); do \
-		/usr/bin/elfedit -e 'dyn:delete RUNPATH' $$lib ; \
-	done
-	gtar -C $(LIBTARDIR) -czvf $(LIBTAR) .
-	rm -rf $(LIBTARDIR)
-endif
-	find $(LIBDIR) -name include-fixed | xargs rm -rf
-	for lib in $(LIBDIR)/$(FIXLIBGLOB); do \
-		/usr/bin/elfedit -e 'dyn:runpath $(LIBDIR)' $$lib ; \
-	done
-	for lib in $(LIBDIR)/$(FIXLIBGLOB64); do \
-		/usr/bin/elfedit -e 'dyn:runpath $(LIBDIR)/64' $$lib ; \
-	done
+	$(BASE)/../tools/gcc-strapfix -d $(DESTDIR) -v $(GCC_VER) \
+	    -p $(PRIMARY_COMPILER)
 else
-
 #
-# A non-strap build: do not install anything other than our saved copy of the
-# runtime libraries. This should only happen for the primary compiler.
+# A non-strap build: do not install anything other than our runtime libraries
+# saved by gcc-strapfix.  This should only happen for the primary compiler.
 #
 .PHONY: fixup
 fixup:
-	cd $(DESTDIR)/usr/lib && gtar xvf $(LIBTAR)
-
+	cd $(DESTDIR)/usr/lib && gtar xvf $(STRAPPROTO)/gcclibs.tar.gz
 endif

@@ -126,7 +126,7 @@ strap: $(SUBDIRS)
 
 curl: libz openssl1x libidn2
 gzip: libz
-node.js: openssl1x
+node.js: libz openssl1x
 dialog: ncurses
 socat: openssl1x
 wget: openssl1x libidn

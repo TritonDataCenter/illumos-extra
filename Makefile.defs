@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2019 Joyent, Inc.
+# Copyright 2020 Joyent, Inc.
 #
 
 BASE =		$(PWD)
@@ -29,14 +29,42 @@ FETCH_BASE =	https://us-east.manta.joyent.com/Joyent_Dev/public/illumos-extra
 
 ifeq ($(STRAP),strap)
 STRAPPROTO =	$(DESTDIR)
-GCC =		$(DESTDIR)/usr/gcc/$(PRIMARY_COMPILER_VER)/bin/gcc
-GXX =		$(DESTDIR)/usr/gcc/$(PRIMARY_COMPILER_VER)/bin/g++
+GCCBIN =	$(DESTDIR)/usr/gcc/$(PRIMARY_COMPILER_VER)/bin/gcc
+GXXBIN =	$(DESTDIR)/usr/gcc/$(PRIMARY_COMPILER_VER)/bin/g++
 LIBSTDCXX_RUNPATH = usr/gcc/$(PRIMARY_COMPILER_VER)/lib
 else
 STRAPPROTO =	$(DESTDIR:proto=proto.strap)
-GCC =		$(STRAPPROTO)/usr/bin/gcc
-GXX =		$(STRAPPROTO)/usr/bin/g++
+GCCBIN =	$(STRAPPROTO)/usr/bin/gcc
+GXXBIN =	$(STRAPPROTO)/usr/bin/g++
 endif
+
+#
+# As we ship some rather downrev software, there's a good chance it might fall
+# foul of newer GCC's undefined-behavior optimizations; skip those. As it's in
+# general painful to ensure that $(CFLAGS) gets passed down correctly, we'll
+# just set it directly as the compiler...
+#
+ifneq ($(PRIMARY_COMPILER_VER),4)
+GCCBIN += -fno-aggressive-loop-optimizations
+GXXBIN += -fno-aggressive-loop-optimizations
+endif
+
+GCC.32 =	$(GCCBIN) -m32
+GXX.32 =	$(GXXBIN) -m32
+GCC.64 =	$(GCCBIN) -m64
+GXX.64 =	$(GXXBIN) -m64
+
+# The version of gcc in /opt/local/bin varies depending on the pkgsrc release
+GCC.host_prefix ?= /opt/local/bin
+GCC.host.32 =	$(GCC.host_prefix)/gcc -m32
+GXX.host.32 =	$(GCC.host_prefix)/g++ -m32
+GCC.host.64 =	$(GCC.host_prefix)/gcc -m64
+GXX.host.64 =	$(GCC.host_prefix)/g++ -m64
+
+# We need gcc 4.x in order to build our copy of gcc 4.4. This is set by
+# 'configure' in smartos-live. This must be -m32 (as used by gcc4/Makefile).
+GCC4.host =	$(HOST_GCC4_PREFIX)/gcc -m32
+GXX4.host =	$(HOST_GCC4_PREFIX)/g++ -m32
 
 PATH =		$(STRAPPROTO)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
 
@@ -44,20 +72,6 @@ MAKE =		gmake
 MAX_JOBS =	128
 PARALLEL =	-j$(MAX_JOBS)
 MAKE_VERBOSE =	V=1
-GCC.64 =	$(GCC) -m64
-GXX.64 =	$(GXX) -m64
-
-# The version of gcc in /opt/local/bin varies depending on the pkgsrc release
-GCC.host_prefix ?= /opt/local/bin
-GCC.host =	$(GCC.host_prefix)/gcc
-GXX.host =	$(GCC.host_prefix)/g++
-GCC.host.64 =	$(GCC.host) -m64
-GXX.host.64 =	$(GXX.host) -m64
-
-# We need gcc 4.x in order to build our copy of gcc 4.4. This is set by
-# 'configure' in smartos-live.
-GCC4.host =	$(HOST_GCC4_PREFIX)/gcc
-GXX4.host =	$(HOST_GCC4_PREFIX)/g++
 
 LEX = 		/opt/local/bin/lex
 YACC = 		/opt/local/bin/yacc
@@ -71,17 +85,6 @@ BUILD64 =
 SEPARATE_BUILD =
 
 CPPFLAGS =	$(SYSINCDIRS:%=-isystem $(DESTDIR)/%)
-
-#
-# As we ship some rather downrev software, there's a good chance it might fall
-# foul of newer GCC's undefined-behavior optimizations; skip those. As it's in
-# general painful to ensure that $(CFLAGS) gets passed down correctly, we'll
-# just set it directly as the compiler...
-#
-ifneq ($(PRIMARY_COMPILER_VER),4)
-GCC += -fno-aggressive-loop-optimizations
-GXX += -fno-aggressive-loop-optimizations
-endif
 
 #
 # We ship platform-private perl modules (e.g. from ntp) in this directory,
@@ -112,8 +115,8 @@ T64_LDFLAGS =	$(SYSLIBDIRS:%=-L$(DESTDIR)/%/64)
 LDFLAGS =	$(T32_LDFLAGS) $(GENLDFLAGS)
 LDFLAGS.64 =	$(T64_LDFLAGS) $(GENLDFLAGS)
 
-AUTOCONF_CC =		CC="$(GCC)"
-AUTOCONF_CXX =		CXX="$(GXX)"
+AUTOCONF_CC =		CC="$(GCC.32)"
+AUTOCONF_CXX =		CXX="$(GXX.32)"
 AUTOCONF_CC.64 =	CC="$(GCC.64)"
 AUTOCONF_CXX.64 =	CXX="$(GXX.64)"
 AUTOCONF_CPPFLAGS =	CPPFLAGS="$(CPPFLAGS)"
