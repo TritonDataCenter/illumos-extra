@@ -40,7 +40,7 @@ NATIVE_CPPFLAGS += \
 	-DPERL_USE_SAFE_PUTENV
 
 LDFLAGS += \
-	-fstack-protector
+	-lssp -fstack-protector
 
 NATIVE_LDFLAGS += \
 	-fstack-protector
