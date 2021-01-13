@@ -1,5 +1,6 @@
---- lib/isc/random.c_orig	2020-12-15 09:40:25.156129286 +0000
-+++ lib/isc/random.c	2020-12-15 09:42:27.787821312 +0000
+diff -ur lib/isc/random.c lib/isc/random.c
+--- lib/isc/random.c	2014-12-19 11:56:53.000000000 +0000
++++ lib/isc/random.c	2015-04-08 21:02:23.301311839 +0000
 @@ -41,17 +41,6 @@
  static void
  initialize_rand(void)
@@ -56,8 +57,9 @@
  }
  
  isc_uint32_t
---- sntp/libevent/arc4random.c_orig	2020-12-15 09:45:13.648770558 +0000
-+++ sntp/libevent/arc4random.c	2020-12-15 09:46:37.956921662 +0000
+diff -ur sntp/libevent/arc4random.c sntp/libevent/arc4random.c
+--- sntp/libevent/arc4random.c	2014-12-19 11:56:53.000000000 +0000
++++ sntp/libevent/arc4random.c	2015-04-08 20:59:41.424274901 +0000
 @@ -1,556 +0,0 @@
 -/* Portable arc4random.c based on arc4random.c from OpenBSD.
 - * Portable version by Chris Davis, adapted for Libevent by Nick Mathewson
@@ -615,8 +617,9 @@
 -	return r % upper_bound;
 -}
 -#endif
---- sntp/libevent/evutil_rand.c_orig	2020-12-15 09:47:45.644374432 +0000
-+++ sntp/libevent/evutil_rand.c	2020-12-15 09:53:16.489751822 +0000
+diff -ur sntp/libevent/evutil_rand.c sntp/libevent/evutil_rand.c
+--- sntp/libevent/evutil_rand.c	2014-12-19 11:56:52.000000000 +0000
++++ sntp/libevent/evutil_rand.c	2015-04-08 21:07:25.994990893 +0000
 @@ -40,104 +40,26 @@
  #include "util-internal.h"
  #include "evthread-internal.h"
@@ -724,7 +727,7 @@
  	return 0;
  }
  #endif
-@@ -145,58 +67,17 @@
+@@ -145,62 +67,21 @@
  static void
  evutil_free_secure_rng_globals_locks(void)
  {
@@ -784,3 +787,8 @@
  }
  
  void
+ evutil_free_secure_rng_globals_(void)
+ {
+-    evutil_free_secure_rng_globals_locks();
++	evutil_free_secure_rng_globals_locks();
+ }
