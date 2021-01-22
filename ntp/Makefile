@@ -22,7 +22,7 @@
 # Copyright 2019 Joyent, Inc.
 #
 
-VER =	ntp-4.2.8p8
+VER =	ntp-4.2.8p15
 
 include ../Makefile.defs
 
