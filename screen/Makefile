@@ -18,10 +18,10 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2020 Joyent, Inc.
+# Copyright 2021 Joyent, Inc.
 #
 
-VER =	screen-4.4.0
+VER =	screen-4.8.0
 
 include ../Makefile.defs
 
