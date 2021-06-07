@@ -1,7 +1,7 @@
-From 587e5e335de79d83365264cbb82a1130bbd991c9 Mon Sep 17 00:00:00 2001
+From 7eee460690bdeee20cf792e369c91297df28945f Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:38:26 -0700
-Subject: [PATCH 16/35] PAM setcred failures
+Subject: [PATCH 16/34] PAM setcred failures
 
 #
 # This patch contains bug fixes to the PAM credential and session operations.
@@ -20,10 +20,10 @@ Subject: [PATCH 16/35] PAM setcred failures
  1 file changed, 13 insertions(+)
 
 diff --git a/auth-pam.c b/auth-pam.c
-index cf692526..962b51a0 100644
+index c8018aa4..56c71746 100644
 --- a/auth-pam.c
 +++ b/auth-pam.c
-@@ -1182,12 +1182,19 @@ do_pam_setcred(int init)
+@@ -1233,12 +1233,19 @@ do_pam_setcred(int init)
  		sshpam_cred_established = 1;
  		return;
  	}
@@ -43,7 +43,7 @@ index cf692526..962b51a0 100644
  }
  
  static int
-@@ -1283,10 +1290,16 @@ do_pam_session(struct ssh *ssh)
+@@ -1334,10 +1341,16 @@ do_pam_session(struct ssh *ssh)
  	if (sshpam_err == PAM_SUCCESS)
  		sshpam_session_open = 1;
  	else {
@@ -61,5 +61,5 @@ index cf692526..962b51a0 100644
  
  }
 -- 
-2.22.0
+2.31.1
 

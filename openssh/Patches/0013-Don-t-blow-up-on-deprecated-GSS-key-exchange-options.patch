@@ -1,0 +1,29 @@
+From c5385cbaeca9dcf4f7d0745b44905d8d78a4d47d Mon Sep 17 00:00:00 2001
+From: Alex Wilson <alex@uq.edu.au>
+Date: Tue, 8 Jun 2021 15:37:04 +1000
+Subject: [PATCH 13/34] Don't blow up on deprecated GSS key exchange options
+
+---
+ servconf.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/servconf.c b/servconf.c
+index 09847be6..9da37110 100644
+--- a/servconf.c
++++ b/servconf.c
+@@ -724,6 +724,12 @@ static struct {
+ 	{ "useunsupportedsshv1", sDeprecated, SSHCFG_GLOBAL },
+ 	{ "usefips140", sDeprecated, SSHCFG_ALL},
+ 	{ "gssapistoredelegatedcredentials", sDeprecated, SSHCFG_ALL },
++	/* The GSSAPIKeyExchange related options are now deprecated too. */
++	{ "gssapikeyexchange", sDeprecated, SSHCFG_GLOBAL },
++	{ "gssapicleanupcreds", sDeprecated, SSHCFG_GLOBAL },
++	{ "gssapistorecredentialsonrekey", sDeprecated, SSHCFG_GLOBAL },
++	{ "gssusesessionccache", sUnsupported, SSHCFG_GLOBAL },
++	{ "gssapiusesessioncredcache", sUnsupported, SSHCFG_GLOBAL },
+ #endif
+ 	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
+ 	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },
+-- 
+2.31.1
+

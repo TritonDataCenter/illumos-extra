@@ -1,31 +1,31 @@
-From 851736f485d533b7df18d91eab609d769d79a868 Mon Sep 17 00:00:00 2001
+From 94f35e5fc9cfb7cbf396f69583627864d87c20ae Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 4 Sep 2015 11:04:30 -0700
-Subject: [PATCH 29/35] Accept and send LANG and LC_* environment variables by
+Subject: [PATCH 28/34] Accept and send LANG and LC_* environment variables by
  default
 
 This preserves most of the old SunSSH locale negotiation
 behaviour (at least the parts that are most commonly used).
 ---
- readconf.c    | 17 +++++++++++++++
- readconf.h    |  1 +
+ readconf.c    | 19 +++++++++++++++++
+ readconf.h    |  3 ++-
  servconf.c    | 59 +++++++++++++++++++++++++++++++++++++++++++++++++++
  session.c     | 25 ++++++++++++++++++++--
- ssh.c         |  2 ++
+ ssh.c         |  3 +++
  sshd.c        |  2 ++
  sshd_config   |  4 ++++
  sshd_config.4 | 15 ++++++++++++-
- 8 files changed, 122 insertions(+), 3 deletions(-)
+ 8 files changed, 126 insertions(+), 4 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
-index 9421e434..ee6ed916 100644
+index 7ad22d76..ed0713b2 100644
 --- a/readconf.c
 +++ b/readconf.c
-@@ -2024,6 +2024,23 @@ fill_default_options_for_canonicalization(Options *options)
+@@ -2337,6 +2337,25 @@ fill_default_options_for_canonicalization(Options *options)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
  }
  
-+void
++int
 +fill_early_default_options(Options *options)
 +{
 +	options->send_env = xrecallocarray(
@@ -40,33 +40,37 @@ index 9421e434..ee6ed916 100644
 +	options->send_env[options->num_send_env++] = xstrdup("LC_NUMERIC");
 +	options->send_env[options->num_send_env++] = xstrdup("LC_MONETARY");
 +	options->send_env[options->num_send_env++] = xstrdup("LC_MESSAGES");
++
++	return (0);
 +}
 +
  /*
   * Called after processing other sources of option data, this fills those
   * options for which no value has been specified with their default values.
 diff --git a/readconf.h b/readconf.h
-index 8abfc09c..e94e1477 100644
+index fc66f6ae..872961a7 100644
 --- a/readconf.h
 +++ b/readconf.h
-@@ -213,6 +213,7 @@ typedef struct {
+@@ -221,7 +221,8 @@ char	*ssh_connection_hash(const char *thishost, const char *host,
+ #endif
  
  void     initialize_options(Options *);
- void     fill_default_options(Options *);
-+void	 fill_early_default_options(Options *);
+-int      fill_default_options(Options *);
++int		 fill_default_options(Options *);
++int		 fill_early_default_options(Options *);
  void	 fill_default_options_for_canonicalization(Options *);
+ void	 free_options(Options *o);
  int	 process_config_line(Options *, struct passwd *, const char *,
-     const char *, char *, const char *, int, int *, int);
 diff --git a/servconf.c b/servconf.c
-index 41f10df7..c21bef1b 100644
+index 4995bac6..23edd73e 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -307,6 +307,22 @@ array_append(const char *file, const int line, const char *directive,
- 	(*lp)++;
+@@ -320,6 +320,22 @@ assemble_algorithms(ServerOptions *o)
+ 	free(def_sig);
  }
  
 +static void
-+array_delete(const char *file, const int line, const char *directive,
++opt_array_delete(const char *file, const int line, const char *directive,
 +    char ***array, u_int *lp, const char *s)
 +{
 +	u_int i, j;
@@ -83,8 +87,8 @@ index 41f10df7..c21bef1b 100644
 +
  void
  servconf_add_hostkey(const char *file, const int line,
-     ServerOptions *options, const char *path)
-@@ -329,6 +345,36 @@ servconf_add_hostcert(const char *file, const int line,
+     ServerOptions *options, const char *path, int userprovided)
+@@ -343,6 +359,36 @@ servconf_add_hostcert(const char *file, const int line,
  	free(apath);
  }
  
@@ -92,28 +96,28 @@ index 41f10df7..c21bef1b 100644
 +fill_early_default_server_options(ServerOptions *options)
 +{
 +	options->num_accept_env = 0;
-+	array_append("[default]", 0, "AcceptEnv",
++	opt_array_append("[default]", 0, "AcceptEnv",
 +	    &options->accept_env, &options->num_accept_env,
 +	    "LANG");
-+	array_append("[default]", 0, "AcceptEnv",
++	opt_array_append("[default]", 0, "AcceptEnv",
 +	    &options->accept_env, &options->num_accept_env,
 +	    "LC_ALL");
-+	array_append("[default]", 0, "AcceptEnv",
++	opt_array_append("[default]", 0, "AcceptEnv",
 +	    &options->accept_env, &options->num_accept_env,
 +	    "LC_CTYPE");
-+	array_append("[default]", 0, "AcceptEnv",
++	opt_array_append("[default]", 0, "AcceptEnv",
 +	    &options->accept_env, &options->num_accept_env,
 +	    "LC_COLLATE");
-+	array_append("[default]", 0, "AcceptEnv",
++	opt_array_append("[default]", 0, "AcceptEnv",
 +	    &options->accept_env, &options->num_accept_env,
 +	    "LC_TIME");
-+	array_append("[default]", 0, "AcceptEnv",
++	opt_array_append("[default]", 0, "AcceptEnv",
 +	    &options->accept_env, &options->num_accept_env,
 +	    "LC_NUMERIC");
-+	array_append("[default]", 0, "AcceptEnv",
++	opt_array_append("[default]", 0, "AcceptEnv",
 +	    &options->accept_env, &options->num_accept_env,
 +	    "LC_MONETARY");
-+	array_append("[default]", 0, "AcceptEnv",
++	opt_array_append("[default]", 0, "AcceptEnv",
 +	    &options->accept_env, &options->num_accept_env,
 +	    "LC_MESSAGES");
 +}
@@ -121,12 +125,12 @@ index 41f10df7..c21bef1b 100644
  void
  fill_default_server_options(ServerOptions *options)
  {
-@@ -2018,6 +2064,19 @@ process_server_config_line(ServerOptions *options, char *line,
+@@ -2139,6 +2185,19 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  				    filename, linenum);
  			if (!*activep)
  				continue;
 +			if (arg[0] == '-') {
-+				array_delete(filename, linenum, "AcceptEnv",
++				opt_array_delete(filename, linenum, "AcceptEnv",
 +				    &options->accept_env,
 +				    &options->num_accept_env,
 +				    &arg[1]);
@@ -138,14 +142,14 @@ index 41f10df7..c21bef1b 100644
 +					free(options->accept_env[j]);
 +				options->num_accept_env = 0;
 +			}
- 			array_append(filename, linenum, "AcceptEnv",
+ 			opt_array_append(filename, linenum, "AcceptEnv",
  			    &options->accept_env, &options->num_accept_env,
  			    arg);
 diff --git a/session.c b/session.c
-index 4003d91c..ad2aeea6 100644
+index 44339e99..5c977fd1 100644
 --- a/session.c
 +++ b/session.c
-@@ -877,6 +877,18 @@ check_quietlogin(Session *s, const char *command)
+@@ -843,6 +843,18 @@ check_quietlogin(Session *s, const char *command)
  	return 0;
  }
  
@@ -164,7 +168,7 @@ index 4003d91c..ad2aeea6 100644
  /*
   * Reads environment variables from the given file and adds/overrides them
   * into the environment.  If the file does not exist, this does nothing.
-@@ -1057,6 +1069,16 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
+@@ -1027,6 +1039,16 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
  	ssh_gssapi_do_child(&env, &envsize);
  #endif
  
@@ -181,7 +185,7 @@ index 4003d91c..ad2aeea6 100644
  	/* Set basic environment. */
  	for (i = 0; i < s->num_env; i++)
  		child_set_env(&env, &envsize, s->env[i].name, s->env[i].val);
-@@ -1097,8 +1119,7 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
+@@ -1070,8 +1092,7 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
  	/* Normal systems set SHELL by default. */
  	child_set_env(&env, &envsize, "SHELL", shell);
  
@@ -192,33 +196,34 @@ index 4003d91c..ad2aeea6 100644
  #ifdef PER_SESSION_XAUTHFILE
          if (s->auth_file != NULL)
 diff --git a/ssh.c b/ssh.c
-index 0777c31e..47e20065 100644
+index 35b6b517..afa99f66 100644
 --- a/ssh.c
 +++ b/ssh.c
-@@ -1091,6 +1091,8 @@ main(int ac, char **av)
- #endif
- 		);
+@@ -1152,6 +1152,9 @@ main(int ac, char **av)
+ 	if (debug_flag)
+ 		logit("%s, %s", SSH_RELEASE, SSH_OPENSSL_VERSION);
  
-+	fill_early_default_options(&options);
++	if (fill_early_default_options(&options) != 0)
++		cleanup_exit(255);
 +
  	/* Parse the configuration files */
- 	process_config_files(host_arg, pw, 0);
- 
+ 	process_config_files(host_arg, pw, 0, &want_final_pass);
+ 	if (want_final_pass)
 diff --git a/sshd.c b/sshd.c
-index e09f3934..9654b041 100644
+index 6238f6ab..ca3acf77 100644
 --- a/sshd.c
 +++ b/sshd.c
-@@ -1679,6 +1679,8 @@ main(int ac, char **av)
- 	else if (strcasecmp(config_file_name, "none") != 0)
+@@ -1722,6 +1722,8 @@ main(int ac, char **av)
+ 	} else if (strcasecmp(config_file_name, "none") != 0)
  		load_server_config(config_file_name, cfg);
  
 +	fill_early_default_server_options(&options);
 +
  	parse_server_config(&options, rexeced_flag ? "rexec" : config_file_name,
- 	    cfg, NULL);
+ 	    cfg, &includes, NULL);
  
 diff --git a/sshd_config b/sshd_config
-index d8e5e74b..6184ab75 100644
+index 657c4415..b2336447 100644
 --- a/sshd_config
 +++ b/sshd_config
 @@ -26,6 +26,10 @@ Port 22
@@ -233,7 +238,7 @@ index d8e5e74b..6184ab75 100644
  
  #LoginGraceTime 2m
 diff --git a/sshd_config.4 b/sshd_config.4
-index c652f116..0fcf9368 100644
+index e3969af1..bc08fbef 100644
 --- a/sshd_config.4
 +++ b/sshd_config.4
 @@ -86,7 +86,20 @@ directives.
@@ -259,5 +264,5 @@ index c652f116..0fcf9368 100644
  Specifies which address family should be used by
  .Xr sshd 1M .
 -- 
-2.22.0
+2.31.1
 

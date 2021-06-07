@@ -1,7 +1,7 @@
-From 82ea71c2e1ba3fd966a677e0a081794e2d8a3e0f Mon Sep 17 00:00:00 2001
+From 9a13359c234eea6422541f2616c2edcb4d5b39ee Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Thu, 15 Oct 2015 16:02:37 -0700
-Subject: [PATCH 32/35] Let us put a fallback copy of DH moduli in a system
+Subject: [PATCH 31/34] Let us put a fallback copy of DH moduli in a system
  path
 
 Live distributions like SmartOS can't keep and update default
@@ -11,22 +11,22 @@ that if we can't find one in the SSHKEYDIR.
 ---
  Makefile.in  | 17 +++++------------
  configure.ac | 15 +++++++++++++++
- dh.c         |  6 +++++-
- 3 files changed, 25 insertions(+), 13 deletions(-)
+ dh.c         | 15 ++++++++++++++-
+ 3 files changed, 34 insertions(+), 13 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 98e0e124..91442e0f 100644
+index 7bde90b9..c1d2d848 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -17,6 +17,7 @@ piddir=@piddir@
- srcdir=@srcdir@
+@@ -18,6 +18,7 @@ srcdir=@srcdir@
  top_srcdir=@top_srcdir@
+ abs_top_srcdir=@abs_top_srcdir@
  keydir=@keydir@
 +modulidir=@modulidir@
  
  DESTDIR=
  VPATH=@srcdir@
-@@ -145,8 +146,8 @@ PATHSUBS	= \
+@@ -175,8 +176,8 @@ PATHSUBS	= \
  	-e 's|/etc/ssh/ssh_host_rsa_key|$(keydir)/ssh_host_rsa_key|g' \
  	-e 's|/etc/ssh/ssh_host_ed25519_key|$(keydir)/ssh_host_ed25519_key|g' \
  	-e 's|/var/run/sshd.pid|$(piddir)/sshd.pid|g' \
@@ -37,7 +37,7 @@ index 98e0e124..91442e0f 100644
  	-e 's|/etc/ssh/sshrc|$(sysconfdir)/sshrc|g' \
  	-e 's|/usr/X11R6/bin/xauth|$(XAUTH_PATH)|g' \
  	-e 's|/var/empty|$(PRIVSEP_PATH)|g' \
-@@ -394,6 +395,8 @@ install-files:
+@@ -451,6 +452,8 @@ install-files:
  	$(INSTALL) -m 555 smf/method.sh $(SMFMETHODDIR)/sshd
  	$(INSTALL) -m 444 smf/manifest.xml $(SMFNETMANIDIR)/ssh.xml
  	mkdir -p $(DESTDIR)$(keydir)
@@ -46,7 +46,7 @@ index 98e0e124..91442e0f 100644
  
  install-sysconf:
  	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
-@@ -407,16 +410,6 @@ install-sysconf:
+@@ -464,16 +467,6 @@ install-sysconf:
  	else \
  		echo "$(DESTDIR)$(sysconfdir)/sshd_config already exists, install will not overwrite"; \
  	fi
@@ -64,10 +64,10 @@ index 98e0e124..91442e0f 100644
  host-key: ssh-keygen$(EXEEXT)
  	@if [ -z "$(DESTDIR)" ] ; then \
 diff --git a/configure.ac b/configure.ac
-index 02e563c5..adc373bc 100644
+index 2105b252..04865532 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -5077,6 +5077,21 @@ AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
+@@ -5242,6 +5242,21 @@ AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
  	[Specify location of SSH host keys])
  AC_SUBST([keydir])
  
@@ -90,22 +90,38 @@ index 02e563c5..adc373bc 100644
  AC_ARG_ENABLE([lastlog],
  	[  --disable-lastlog       disable use of lastlog even if detected [no]],
 diff --git a/dh.c b/dh.c
-index 657b32da..94bede77 100644
+index ce2eb472..0b157d64 100644
 --- a/dh.c
 +++ b/dh.c
-@@ -152,7 +152,11 @@ choose_dh(int min, int wantbits, int max)
- 	int best, bestcount, which, linenum;
- 	struct dhgroup dhg;
+@@ -33,6 +33,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <limits.h>
++#include <unistd.h>
  
--	if ((f = fopen(_PATH_DH_MODULI, "r")) == NULL) {
-+	if ((f = fopen(_PATH_DH_MODULI, "r")) == NULL &&
+ #include <openssl/bn.h>
+ #include <openssl/dh.h>
+@@ -54,7 +55,19 @@ void dh_set_moduli_file(const char *filename)
+ 
+ static const char * get_moduli_filename(void)
+ {
+-	return moduli_filename ? moduli_filename : _PATH_DH_MODULI;
++	if (moduli_filename)
++		return (moduli_filename);
++	if (access(_PATH_DH_MODULI, F_OK) == 0)
++		return (_PATH_DH_MODULI);
 +#if defined(_PATH_SYS_MODULI)
-+	    (f = fopen(_PATH_SYS_MODULI, "r")) == NULL &&
++	if (access(_PATH_SYS_MODULI, F_OK) == 0)
++		return (_PATH_SYS_MODULI);
 +#endif
-+	    (f = fopen(_PATH_DH_PRIMES, "r")) == NULL) {
- 		logit("WARNING: could not open %s (%s), using fixed modulus",
- 		    _PATH_DH_MODULI, strerror(errno));
- 		return (dh_new_group_fallback(max));
++#if defined(_PATH_DH_PRIMES)
++	if (access(_PATH_DH_PRIMES, F_OK) == 0)
++		return (_PATH_DH_PRIMES);
++#endif
++	return (_PATH_DH_MODULI);
+ }
+ 
+ static int
 -- 
-2.22.0
+2.31.1
 

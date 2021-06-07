@@ -1,24 +1,28 @@
-From c31040ba0ca7c7cf14b8e5f9d1c0f5eed011b909 Mon Sep 17 00:00:00 2001
+From 07ab1ee7313fe9b0df1e7bc940bf41d75acb9158 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:37:01 -0700
-Subject: [PATCH 13/35] Solaris Auditing support
+Subject: [PATCH 14/34] Solaris Auditing support
 
 ---
  INSTALL         |  15 +-
  Makefile.in     |   2 +-
  README.platform |   7 +-
- audit-solaris.c | 574 ++++++++++++++++++++++++++++++++++++++++++++++++
+ audit-bsm.c     |   2 +-
+ audit-linux.c   |   2 +-
+ audit-solaris.c | 576 ++++++++++++++++++++++++++++++++++++++++++++++++
+ audit.c         |   2 +-
+ audit.h         |   2 +-
  configure.ac    |   9 +-
  defines.h       |   5 +
- sshd.c          |   6 +
- 7 files changed, 609 insertions(+), 9 deletions(-)
+ sshd.c          |   8 +-
+ 11 files changed, 615 insertions(+), 15 deletions(-)
  create mode 100644 audit-solaris.c
 
 diff --git a/INSTALL b/INSTALL
-index 3fd265db..3fedbc4a 100644
+index d97946fe..51b725de 100644
 --- a/INSTALL
 +++ b/INSTALL
-@@ -92,9 +92,13 @@ http://www.gnu.org/software/autoconf/
+@@ -106,9 +106,13 @@ http://www.gnu.org/software/automake/
  
  Basic Security Module (BSM):
  
@@ -35,7 +39,7 @@ index 3fd265db..3fedbc4a 100644
  
  makedepend:
  
-@@ -154,8 +158,9 @@ name).
+@@ -174,8 +178,9 @@ name).
  There are a few other options to the configure script:
  
  --with-audit=[module] enable additional auditing via the specified module.
@@ -48,11 +52,11 @@ index 3fd265db..3fedbc4a 100644
  --with-pam enables PAM support. If PAM support is compiled in, it must
  also be enabled in sshd_config (refer to the UsePAM directive).
 diff --git a/Makefile.in b/Makefile.in
-index cc6f5348..7dbc9680 100644
+index b85545c7..bfa56fee 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -108,7 +108,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o sshtty.o \
- 	sshconnect.o sshconnect2.o mux.o
+@@ -119,7 +119,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o sshtty.o \
+ 	sshconnect.o sshconnect2.o mux.o $(SKOBJS)
  
  SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o \
 -	audit.o audit-bsm.o audit-linux.o platform.o \
@@ -61,7 +65,7 @@ index cc6f5348..7dbc9680 100644
  	auth.o auth2.o auth-options.o session.o \
  	auth2-chall.o groupaccess.o \
 diff --git a/README.platform b/README.platform
-index 9210e07c..379d9ccc 100644
+index 7b754ba4..27a80cc3 100644
 --- a/README.platform
 +++ b/README.platform
 @@ -71,8 +71,8 @@ zlib-devel and pam-devel, on Debian based distros these may be
@@ -85,12 +89,38 @@ index 9210e07c..379d9ccc 100644
  
  Platforms using PAM
  -------------------
+diff --git a/audit-bsm.c b/audit-bsm.c
+index ccfcf6f7..42cbc127 100644
+--- a/audit-bsm.c
++++ b/audit-bsm.c
+@@ -348,7 +348,7 @@ bsm_audit_bad_login(const char *what)
+ /* Below is the sshd audit API code */
+ 
+ void
+-audit_connection_from(const char *host, int port)
++audit_connection_from(struct ssh *ssh, const char *host, int port)
+ {
+ 	AuditInfoTermID *tid = &ssh_bsm_tid;
+ 	char buf[1024];
+diff --git a/audit-linux.c b/audit-linux.c
+index 3fcbe5c5..3c12bc91 100644
+--- a/audit-linux.c
++++ b/audit-linux.c
+@@ -71,7 +71,7 @@ linux_audit_record_event(int uid, const char *username, const char *hostname,
+ /* Below is the sshd audit API code */
+ 
+ void
+-audit_connection_from(const char *host, int port)
++audit_connection_from(struct ssh *ssh, const char *host, int port)
+ {
+ 	/* not implemented */
+ }
 diff --git a/audit-solaris.c b/audit-solaris.c
 new file mode 100644
-index 00000000..87426814
+index 00000000..981efe79
 --- /dev/null
 +++ b/audit-solaris.c
-@@ -0,0 +1,574 @@
+@@ -0,0 +1,576 @@
 +/*
 + * CDDL HEADER START
 + *
@@ -162,6 +192,8 @@ index 00000000..87426814
 +extern void adt_get_termid(const adt_session_data_t *, au_tid_addr_t *);
 +
 +extern void __auditd_debug(char *, ...);
++
++extern Authctxt *the_authctxt;
 +
 +void
 +__audit_pidinfo(void)
@@ -264,9 +296,9 @@ index 00000000..87426814
 + */
 +/* ARGSUSED */
 +void
-+audit_connection_from(const char *host, int port)
++audit_connection_from(struct ssh *ssh, const char *host, int port)
 +{
-+	int peer = packet_get_connection_in();
++	int peer = ssh_packet_get_connection_in(ssh);
 +	adt_session_data_t	*ah = NULL;
 +
 +	if (adt_load_termid(peer, &tid) != 0) {
@@ -314,7 +346,7 @@ index 00000000..87426814
 + *	Entry	the_authcntxt
 + */
 +void
-+audit_event(ssh_audit_event_t event)
++audit_event(struct ssh *ssh, ssh_audit_event_t event)
 +{
 +	static boolean_t logged_in = B_FALSE;	/* if user did login */
 +	int fail = PAM_IGNORE;		/* default unset */
@@ -665,11 +697,37 @@ index 00000000..87426814
 +	(void) adt_end_session(ah);
 +}
 +#endif	/* USE_SOLARIS_AUDIT */
+diff --git a/audit.c b/audit.c
+index dd2f0355..2452f2e0 100644
+--- a/audit.c
++++ b/audit.c
+@@ -120,7 +120,7 @@ audit_event_lookup(ssh_audit_event_t ev)
+  * has been attempted.
+  */
+ void
+-audit_connection_from(const char *host, int port)
++audit_connection_from(struct ssh *ssh, const char *host, int port)
+ {
+ 	debug("audit connection from %s port %d euid %d", host, port,
+ 	    (int)geteuid());
+diff --git a/audit.h b/audit.h
+index 38cb5ad3..dd6f6d0a 100644
+--- a/audit.h
++++ b/audit.h
+@@ -47,7 +47,7 @@ enum ssh_audit_event_type {
+ };
+ typedef enum ssh_audit_event_type ssh_audit_event_t;
+ 
+-void	audit_connection_from(const char *, int);
++void	audit_connection_from(struct ssh *, const char *, int);
+ void	audit_event(struct ssh *, ssh_audit_event_t);
+ void	audit_session_open(struct logininfo *);
+ void	audit_session_close(struct logininfo *);
 diff --git a/configure.ac b/configure.ac
-index 505884b2..50bee3cf 100644
+index b5945dc3..96782b49 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1599,7 +1599,7 @@ AC_ARG_WITH([libedit],
+@@ -1675,7 +1675,7 @@ AC_ARG_WITH([libedit],
  
  AUDIT_MODULE=none
  AC_ARG_WITH([audit],
@@ -678,7 +736,7 @@ index 505884b2..50bee3cf 100644
  	[
  	  AC_MSG_CHECKING([for supported audit module])
  	  case "$withval" in
-@@ -1636,6 +1636,13 @@ AC_ARG_WITH([audit],
+@@ -1712,6 +1712,13 @@ AC_ARG_WITH([audit],
  		SSHDLIBS="$SSHDLIBS -laudit"
  		AC_DEFINE([USE_LINUX_AUDIT], [1], [Use Linux audit module])
  		;;
@@ -693,10 +751,10 @@ index 505884b2..50bee3cf 100644
  		AUDIT_MODULE=debug
  		AC_MSG_RESULT([debug])
 diff --git a/defines.h b/defines.h
-index 8f421306..42e984af 100644
+index d6a1d014..a42ad99d 100644
 --- a/defines.h
 +++ b/defines.h
-@@ -650,6 +650,11 @@ struct winsize {
+@@ -674,6 +674,11 @@ struct winsize {
  # define CUSTOM_SSH_AUDIT_EVENTS
  #endif
  
@@ -709,30 +767,38 @@ index 8f421306..42e984af 100644
  #  define __func__ __FUNCTION__
  #elif !defined(HAVE___func__)
 diff --git a/sshd.c b/sshd.c
-index 2e6cf143..866f7df9 100644
+index 12879c49..dded9190 100644
 --- a/sshd.c
 +++ b/sshd.c
-@@ -2175,7 +2175,9 @@ main(int ac, char **av)
- 	}
+@@ -2160,7 +2160,7 @@ main(int ac, char **av)
+ 	remote_ip = ssh_remote_ipaddr(ssh);
  
  #ifdef SSH_AUDIT_EVENTS
-+#ifndef	USE_SOLARIS_AUDIT
- 	audit_event(SSH_AUTH_SUCCESS);
-+#endif	/* !USE_SOLARIS_AUDIT */
+-	audit_connection_from(remote_ip, remote_port);
++	audit_connection_from(ssh, remote_ip, remote_port);
  #endif
  
- #ifdef GSSAPI
-@@ -2205,6 +2207,10 @@ main(int ac, char **av)
+ 	rdomain = ssh_packet_rdomain_in(ssh);
+@@ -2248,7 +2248,7 @@ main(int ac, char **av)
+ 		startup_pipe = -1;
+ 	}
+ 
+-#ifdef SSH_AUDIT_EVENTS
++#if defined(SSH_AUDIT_EVENTS) && !defined(USE_SOLARIS_AUDIT)
+ 	audit_event(ssh, SSH_AUTH_SUCCESS);
+ #endif
+ 
+@@ -2279,6 +2279,10 @@ main(int ac, char **av)
  		do_pam_session(ssh);
  	}
  #endif
 +#ifdef	USE_SOLARIS_AUDIT
 +	/* Audit should take place after all successful pam */
-+	audit_event(SSH_AUTH_SUCCESS);
++	audit_event(ssh, SSH_AUTH_SUCCESS);
 +#endif	/* USE_SOLARIS_AUDIT */
  
  	/*
  	 * In privilege separation, we fork another child and prepare
 -- 
-2.22.0
+2.31.1
 

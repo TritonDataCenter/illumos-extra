@@ -1,51 +1,53 @@
-From 77ecfcdc322fb88737ba1311d5fe0ef424de2cc0 Mon Sep 17 00:00:00 2001
+From db22e27dd6522a7ae8fc5a8dccf7f4afe8f21592 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:55 -0700
-Subject: [PATCH 04/35] Reorganise man pages into Illumos numbering, adjust
+Subject: [PATCH 04/34] Reorganise man pages into Illumos numbering, adjust
  text
 
 ---
- Makefile.in                                 | 23 ++---
- contrib/ssh-copy-id.1                       |  4 +-
- moduli.5 => moduli.4                        | 14 +--
- scp.1                                       |  8 +-
- sftp-server.8 => sftp-server.1m             | 12 +--
- sftp.1                                      | 28 ++++--
- ssh-add.1                                   |  4 +-
- ssh-agent.1                                 |  8 +-
- ssh-keygen.1                                | 22 +++--
- ssh-keyscan.1                               |  2 +-
- ssh-keysign.8 => ssh-keysign.1m             |  8 +-
- ssh-pkcs11-helper.8 => ssh-pkcs11-helper.1m |  2 +-
- ssh.1                                       | 64 ++++++++------
- ssh_config.5 => ssh_config.4                | 22 ++---
- sshd.8 => sshd.1m                           | 30 +++----
- sshd_config.5 => sshd_config.4              | 94 ++++++++++-----------
- 16 files changed, 185 insertions(+), 160 deletions(-)
+ Makefile.in                                 |  25 ++---
+ contrib/ssh-copy-id.1                       |   4 +-
+ moduli.5 => moduli.4                        |  14 +--
+ scp.1                                       |   8 +-
+ sftp-server.8 => sftp-server.1m             |  12 +--
+ sftp.1                                      |  30 ++++--
+ ssh-add.1                                   |   4 +-
+ ssh-agent.1                                 |  10 +-
+ ssh-keygen.1                                |  28 +++---
+ ssh-keyscan.1                               |   8 +-
+ ssh-keysign.8 => ssh-keysign.1m             |   8 +-
+ ssh-pkcs11-helper.8 => ssh-pkcs11-helper.1m |   2 +-
+ ssh-sk-helper.8 => ssh-sk-helper.1m         |   2 +-
+ ssh.1                                       |  72 ++++++++------
+ ssh_config.5 => ssh_config.4                |  24 ++---
+ sshd.8 => sshd.1m                           |  32 +++---
+ sshd_config.5 => sshd_config.4              | 104 ++++++++++----------
+ 17 files changed, 206 insertions(+), 181 deletions(-)
  rename moduli.5 => moduli.4 (97%)
  rename sftp-server.8 => sftp-server.1m (98%)
  rename ssh-keysign.8 => ssh-keysign.1m (97%)
  rename ssh-pkcs11-helper.8 => ssh-pkcs11-helper.1m (98%)
+ rename ssh-sk-helper.8 => ssh-sk-helper.1m (98%)
  rename ssh_config.5 => ssh_config.4 (99%)
  rename sshd.8 => sshd.1m (99%)
  rename sshd_config.5 => sshd_config.4 (98%)
 
 diff --git a/Makefile.in b/Makefile.in
-index b89d638f..7681283b 100644
+index 61b9dffe..4453d5aa 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -120,8 +120,8 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o \
- 	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-pledge.o \
- 	sandbox-solaris.o uidswap.o
+@@ -151,8 +151,8 @@ SFTPSERVER_OBJS=sftp-common.o sftp-server.o sftp-server-main.o
  
--MANPAGES	= moduli.5.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-keysign.8.out ssh-pkcs11-helper.8.out sshd_config.5.out ssh_config.5.out
--MANPAGES_IN	= moduli.5 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-keysign.8 ssh-pkcs11-helper.8 sshd_config.5 ssh_config.5
-+MANPAGES	= moduli.4.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.1m.out sftp-server.1m.out sftp.1.out ssh-keysign.1m.out ssh-pkcs11-helper.1m.out sshd_config.4.out ssh_config.4.out
+ SFTP_OBJS=	sftp.o sftp-client.o sftp-common.o sftp-glob.o progressmeter.o
+ 
+-MANPAGES	= moduli.5.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-keysign.8.out ssh-pkcs11-helper.8.out ssh-sk-helper.8.out sshd_config.5.out ssh_config.5.out
+-MANPAGES_IN	= moduli.5 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-keysign.8 ssh-pkcs11-helper.8 ssh-sk-helper.8 sshd_config.5 ssh_config.5
++MANPAGES	= moduli.4.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.1m.out sftp-server.1m.out sftp.1.out ssh-keysign.1m.out ssh-pkcs11-helper.1m.out ssh-sk-helper.1m.out sshd_config.4.out ssh_config.4.out
 +MANPAGES_IN	= moduli.4 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.1m sftp-server.1m sftp.1 ssh-keysign.1m ssh-pkcs11-helper.1m sshd_config.4 ssh_config.4
  MANTYPE		= @MANTYPE@
  
  CONFIGFILES=sshd_config.out ssh_config.out moduli.out
-@@ -338,9 +338,10 @@ check-config:
+@@ -394,9 +394,10 @@ check-config:
  install-files:
  	$(MKDIR_P) $(DESTDIR)$(bindir)
  	$(MKDIR_P) $(DESTDIR)$(sbindir)
@@ -58,7 +60,7 @@ index b89d638f..7681283b 100644
  	$(MKDIR_P) $(DESTDIR)$(libexecdir)
  	$(MKDIR_P) -m 0755 $(DESTDIR)$(PRIVSEP_PATH)
  	$(INSTALL) -m 0755 $(STRIP_OPT) ssh$(EXEEXT) $(DESTDIR)$(bindir)/ssh$(EXEEXT)
-@@ -360,14 +361,14 @@ install-files:
+@@ -417,15 +418,15 @@ install-files:
  	$(INSTALL) -m 644 ssh-agent.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-agent.1
  	$(INSTALL) -m 644 ssh-keygen.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-keygen.1
  	$(INSTALL) -m 644 ssh-keyscan.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-keyscan.1
@@ -74,17 +76,19 @@ index b89d638f..7681283b 100644
 -	$(INSTALL) -m 644 sftp-server.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/sftp-server.8
 -	$(INSTALL) -m 644 ssh-keysign.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
 -	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
+-	$(INSTALL) -m 644 ssh-sk-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8
 +	$(INSTALL) -m 644 sftp-server.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/sftp-server.1m
 +	$(INSTALL) -m 644 ssh-keysign.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-keysign.1m
 +	$(INSTALL) -m 644 ssh-pkcs11-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-pkcs11-helper.1m
++	$(INSTALL) -m 644 ssh-sk-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-sk-helper.1m
  
  install-sysconf:
  	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
 diff --git a/contrib/ssh-copy-id.1 b/contrib/ssh-copy-id.1
-index 8850cced..270e13ef 100644
+index c141a296..0306c032 100644
 --- a/contrib/ssh-copy-id.1
 +++ b/contrib/ssh-copy-id.1
-@@ -95,7 +95,7 @@ options, respectively.
+@@ -102,7 +102,7 @@ options, respectively.
  Rather than specifying these as command line options, it is often better to use (per-host) settings in
  .Xr ssh 1 Ns 's
  configuration file:
@@ -93,7 +97,7 @@ index 8850cced..270e13ef 100644
  .El
  .Pp
  Default behaviour without
-@@ -188,4 +188,4 @@ option, rather than
+@@ -195,4 +195,4 @@ option, rather than
  .Sh "SEE ALSO"
  .Xr ssh 1 ,
  .Xr ssh-agent 1 ,
@@ -163,10 +167,10 @@ index ef0de085..f87556be 100644
  .Rs
  .%A M. Friedl
 diff --git a/scp.1 b/scp.1
-index 0e5cc1b2..8e20ab1e 100644
+index 5471ea31..e2dbf9a3 100644
 --- a/scp.1
 +++ b/scp.1
-@@ -112,13 +112,13 @@ Limits the used bandwidth, specified in Kbit/s.
+@@ -138,13 +138,13 @@ Limits the used bandwidth, specified in Kbit/s.
  Can be used to pass options to
  .Nm ssh
  in the format used in
@@ -182,7 +186,7 @@ index 0e5cc1b2..8e20ab1e 100644
  .Pp
  .Bl -tag -width Ds -offset indent -compact
  .It AddressFamily
-@@ -226,8 +226,8 @@ debugging connection, authentication, and configuration problems.
+@@ -263,8 +263,8 @@ debugging connection, authentication, and configuration problems.
  .Xr ssh-add 1 ,
  .Xr ssh-agent 1 ,
  .Xr ssh-keygen 1 ,
@@ -197,13 +201,13 @@ diff --git a/sftp-server.8 b/sftp-server.1m
 similarity index 98%
 rename from sftp-server.8
 rename to sftp-server.1m
-index c117398e..42354c27 100644
+index f057da3b..4b44a898 100644
 --- a/sftp-server.8
 +++ b/sftp-server.1m
 @@ -23,7 +23,7 @@
  .\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  .\"
- .Dd $Mdocdate: December 11 2014 $
+ .Dd $Mdocdate: June 22 2020 $
 -.Dt SFTP-SERVER 8
 +.Dt SFTP-SERVER 1M
  .Os
@@ -248,10 +252,10 @@ index c117398e..42354c27 100644
  .%A T. Ylonen
  .%A S. Lehtinen
 diff --git a/sftp.1 b/sftp.1
-index 0fd54cae..c6ebc891 100644
+index a1a63730..9606fb44 100644
 --- a/sftp.1
 +++ b/sftp.1
-@@ -89,6 +89,16 @@ An optional trailing slash can be used to force the
+@@ -90,6 +90,16 @@ An optional trailing slash can be used to force the
  .Ar path
  to be interpreted as a directory.
  .Pp
@@ -268,7 +272,16 @@ index 0fd54cae..c6ebc891 100644
  Since the destination formats use colon characters to delimit host
  names from path names or port numbers, IPv6 addresses must be
  enclosed in square brackets to avoid ambiguity.
-@@ -180,7 +190,7 @@ Limits the used bandwidth, specified in Kbit/s.
+@@ -129,7 +139,7 @@ instead of
+ Since it lacks user interaction it should be used in conjunction with
+ non-interactive authentication to obviate the need to enter a password
+ at connection time (see
+-.Xr sshd 8
++.Xr sshd 1M
+ and
+ .Xr ssh-keygen 1
+ for details).
+@@ -210,7 +220,7 @@ flag.
  Can be used to pass options to
  .Nm ssh
  in the format used in
@@ -277,7 +290,7 @@ index 0fd54cae..c6ebc891 100644
  This is useful for specifying options
  for which there is no separate
  .Nm sftp
-@@ -188,7 +198,7 @@ command-line flag.
+@@ -218,7 +228,7 @@ command-line flag.
  For example, to specify an alternate port use:
  .Ic sftp -oPort=24 .
  For full details of the options listed below, and their possible values, see
@@ -286,7 +299,7 @@ index 0fd54cae..c6ebc891 100644
  .Pp
  .Bl -tag -width Ds -offset indent -compact
  .It AddressFamily
-@@ -281,8 +291,10 @@ options.
+@@ -312,8 +322,10 @@ options.
  .It Fl s Ar subsystem | sftp_server
  Specifies the SSH2 subsystem or the path for an sftp server
  on the remote host.
@@ -299,7 +312,7 @@ index 0fd54cae..c6ebc891 100644
  does not have an sftp subsystem configured.
  .It Fl v
  Raise logging level.
-@@ -617,10 +629,10 @@ Synonym for help.
+@@ -686,10 +698,10 @@ Synonym for help.
  .Xr ssh 1 ,
  .Xr ssh-add 1 ,
  .Xr ssh-keygen 1 ,
@@ -315,19 +328,19 @@ index 0fd54cae..c6ebc891 100644
  .%A T. Ylonen
  .%A S. Lehtinen
 diff --git a/ssh-add.1 b/ssh-add.1
-index d5da9279..03299bb7 100644
+index 2786df51..7eec1053 100644
 --- a/ssh-add.1
 +++ b/ssh-add.1
-@@ -135,7 +135,7 @@ Add keys provided by the PKCS#11 shared library
+@@ -156,7 +156,7 @@ files are usable by performing sign and verify operations on each.
  Set a maximum lifetime when adding identities to an agent.
  The lifetime may be specified in seconds or in a time format
  specified in
 -.Xr sshd_config 5 .
 +.Xr sshd_config 4 .
- .It Fl X
- Unlock the agent.
- .It Fl x
-@@ -199,7 +199,7 @@ is unable to contact the authentication agent.
+ .It Fl v
+ Verbose mode.
+ Causes
+@@ -250,7 +250,7 @@ is unable to contact the authentication agent.
  .Xr ssh-agent 1 ,
  .Xr ssh-askpass 1 ,
  .Xr ssh-keygen 1 ,
@@ -337,28 +350,19 @@ index d5da9279..03299bb7 100644
  OpenSSH is a derivative of the original and free
  ssh 1.2.12 release by Tatu Ylonen.
 diff --git a/ssh-agent.1 b/ssh-agent.1
-index 83b2b41c..d2cad7e8 100644
+index 2cf46160..6a5b99e4 100644
 --- a/ssh-agent.1
 +++ b/ssh-agent.1
-@@ -71,7 +71,7 @@ Keys are added using
- (see
- .Cm AddKeysToAgent
- in
--.Xr ssh_config 5
-+.Xr ssh_config 4
- for details)
- or
+@@ -112,7 +112,7 @@ options to
  .Xr ssh-add 1 .
-@@ -132,7 +132,7 @@ The default is to allow loading PKCS#11 libraries from
- .Dq /usr/lib/*,/usr/local/lib/* .
- PKCS#11 libraries that do not match the whitelist will be refused.
+ Libraries that do not match the pattern list will be refused.
  See PATTERNS in
 -.Xr ssh_config 5
 +.Xr ssh_config 4
  for a description of pattern-list syntax.
- .It Fl s
- Generate Bourne shell commands on
-@@ -143,7 +143,7 @@ does not look like it's a csh style of shell.
+ The default list is
+ .Dq /usr/lib/*,/usr/local/lib/* .
+@@ -125,7 +125,7 @@ does not look like it's a csh style of shell.
  .It Fl t Ar life
  Set a default value for the maximum lifetime of identities added to the agent.
  The lifetime may be specified in seconds or in a time format specified in
@@ -367,21 +371,32 @@ index 83b2b41c..d2cad7e8 100644
  A lifetime specified for an identity with
  .Xr ssh-add 1
  overrides this value.
-@@ -218,7 +218,7 @@ The sockets should get automatically removed when the agent exits.
+@@ -167,7 +167,7 @@ or by
+ when
+ .Cm AddKeysToAgent
+ is set in
+-.Xr ssh_config 5 .
++.Xr ssh_config 4 .
+ Multiple identities may be stored in
+ .Nm
+ concurrently and
+@@ -218,8 +218,8 @@ The sockets should get automatically removed when the agent exits.
  .Xr ssh 1 ,
  .Xr ssh-add 1 ,
  .Xr ssh-keygen 1 ,
+-.Xr ssh_config 5 ,
 -.Xr sshd 8
++.Xr ssh_config 4 ,
 +.Xr sshd 1M
  .Sh AUTHORS
  .An -nosplit
  OpenSSH is a derivative of the original and free ssh 1.2.12 release by
 diff --git a/ssh-keygen.1 b/ssh-keygen.1
-index bfa2eb5f..4aa3586b 100644
+index 43c8aa2f..2dc1d4a8 100644
 --- a/ssh-keygen.1
 +++ b/ssh-keygen.1
-@@ -176,9 +176,7 @@ key in
- .Pa ~/.ssh/id_ed25519
+@@ -204,9 +204,7 @@ key in
+ .Pa ~/.ssh/id_ed25519_sk
  or
  .Pa ~/.ssh/id_rsa .
 -Additionally, the system administrator may use this to generate host keys,
@@ -391,7 +406,7 @@ index bfa2eb5f..4aa3586b 100644
  .Pp
  Normally this program generates the key and asks for a file in which
  to store the private key.
-@@ -230,7 +228,7 @@ If
+@@ -272,7 +270,7 @@ If
  has also been specified, its argument is used as a prefix to the
  default path for the resulting host key files.
  This is used by
@@ -399,29 +414,17 @@ index bfa2eb5f..4aa3586b 100644
 +.Pa /lib/svc/method/sshd
  to generate new host keys.
  .It Fl a Ar rounds
- When saving a private key this option specifies the number of KDF
-@@ -471,7 +469,7 @@ Disable PTY allocation (permitted by default).
- Disable execution of
- .Pa ~/.ssh/rc
- by
+ When saving a private key, this option specifies the number of KDF
+@@ -503,7 +501,7 @@ device to use, rather than letting the token middleware select one.
+ Indicate that the generated private key should not require touch
+ events (user presence) when making signatures.
+ Note that
 -.Xr sshd 8
 +.Xr sshd 1M
- (permitted by default).
- .Pp
- .It Ic no-x11-forwarding
-@@ -492,9 +490,9 @@ Allows PTY allocation.
- Allows execution of
- .Pa ~/.ssh/rc
- by
--.Xr sshd 8 .
-+.Xr sshd 1M .
- .Pp
--.It Ic permit-X11-forwarding
-+.It Ic permit-x11-forwarding
- Allows X11 forwarding.
- .Pp
- .It Ic source-address Ns = Ns Ar address_list
-@@ -584,7 +582,7 @@ a date in YYYYMMDD format, a time in YYYYMMDDHHMM[SS] format,
+ will refuse such signatures by default, unless overridden via
+ an authorized_keys option.
+ .It Cm resident
+@@ -623,7 +621,7 @@ a date in YYYYMMDD format, a time in YYYYMMDDHHMM[SS] format,
  a relative time (to the current time) consisting of a minus sign followed by
  an interval in the format described in the
  TIME FORMATS section of
@@ -430,7 +433,25 @@ index bfa2eb5f..4aa3586b 100644
  .Pp
  The end time may be specified as a YYYYMMDD date, a YYYYMMDDHHMM[SS] time,
  a relative time starting with a plus character or the string
-@@ -763,7 +761,7 @@ Epoch to the distant future.
+@@ -954,7 +952,7 @@ Disable PTY allocation (permitted by default).
+ Disable execution of
+ .Pa ~/.ssh/rc
+ by
+-.Xr sshd 8
++.Xr sshd 1M
+ (permitted by default).
+ .Pp
+ .It Ic no-x11-forwarding
+@@ -975,7 +973,7 @@ Allows PTY allocation.
+ Allows execution of
+ .Pa ~/.ssh/rc
+ by
+-.Xr sshd 8 .
++.Xr sshd 1M .
+ .Pp
+ .It Ic permit-X11-forwarding
+ Allows X11 forwarding.
+@@ -1020,7 +1018,7 @@ Epoch to the distant future.
  .Pp
  For certificates to be used for user or host authentication, the CA
  public key must be trusted by
@@ -439,7 +460,34 @@ index bfa2eb5f..4aa3586b 100644
  or
  .Xr ssh 1 .
  Please refer to those manual pages for details.
-@@ -880,14 +878,14 @@ There is no need to keep the contents of this file secret.
+@@ -1078,7 +1076,7 @@ KRLs that revoke keys by SHA256 hash are not supported by OpenSSH versions
+ prior to 7.9.
+ .It Cm hash : Ar fingerprint
+ Revokes a key using a fingerprint hash, as obtained from a
+-.Xr sshd 8
++.Xr sshd 1M
+ authentication log message or the
+ .Nm
+ .Fl l
+@@ -1111,7 +1109,7 @@ uses a simple list of identities and keys to determine whether a signature
+ comes from an authorized source.
+ This "allowed signers" file uses a format patterned after the
+ AUTHORIZED_KEYS FILE FORMAT described in
+-.Xr sshd 8 .
++.Xr sshd 1M .
+ Each line of the file contains the following space-separated fields:
+ principals, options, keytype, base64-encoded key.
+ Empty lines and lines starting with a
+@@ -1119,7 +1117,7 @@ Empty lines and lines starting with a
+ are ignored as comments.
+ .Pp
+ The principals field is a pattern-list (see PATTERNS in
+-.Xr ssh_config 5 )
++.Xr ssh_config 4 )
+ consisting of one or more comma-separated USER@DOMAIN identity patterns
+ that are accepted for signing.
+ When verifying, the identity presented via the
+@@ -1199,14 +1197,14 @@ There is no need to keep the contents of this file secret.
  .It Pa /etc/moduli
  Contains Diffie-Hellman groups used for DH-GEX.
  The file format is described in
@@ -458,15 +506,42 @@ index bfa2eb5f..4aa3586b 100644
  .%R RFC 4716
  .%T "The Secure Shell (SSH) Public Key File Format"
 diff --git a/ssh-keyscan.1 b/ssh-keyscan.1
-index f3d7a407..01a3dc9a 100644
+index f9df75d4..05ad81af 100644
 --- a/ssh-keyscan.1
 +++ b/ssh-keyscan.1
+@@ -28,7 +28,7 @@ It was designed to aid in building and verifying
+ .Pa ssh_known_hosts
+ files,
+ the format of which is documented in
+-.Xr sshd 8 .
++.Xr sshd 1M .
+ .Nm
+ provides a minimal interface suitable for use by shell and perl
+ scripts.
+@@ -39,7 +39,7 @@ parallel, so it is very efficient.
+ The keys from a domain of 1,000
+ hosts can be collected in tens of seconds, even when some of those
+ hosts are down or do not run
+-.Xr sshd 8 .
++.Xr sshd 1M .
+ For scanning, one does not need
+ login access to the machines that are being scanned, nor does the
+ scanning process involve any encryption.
+@@ -82,7 +82,7 @@ Hash all hostnames and addresses in the output.
+ Hashed names may be used normally by
+ .Xr ssh 1
+ and
+-.Xr sshd 8 ,
++.Xr sshd 1M ,
+ but they do not reveal identifying information should the file's contents
+ be disclosed.
+ .It Fl p Ar port
 @@ -144,7 +144,7 @@ $ ssh-keyscan -t rsa,dsa,ecdsa,ed25519 -f ssh_hosts | \e
  .Ed
  .Sh SEE ALSO
  .Xr ssh 1 ,
 -.Xr sshd 8
-+.Xr sshd 1m
++.Xr sshd 1M
  .Rs
  .%D 2006
  .%R RFC 4255
@@ -474,13 +549,13 @@ diff --git a/ssh-keysign.8 b/ssh-keysign.1m
 similarity index 97%
 rename from ssh-keysign.8
 rename to ssh-keysign.1m
-index 19b0dbc5..9ce1e619 100644
+index 73b62397..cb9baaa1 100644
 --- a/ssh-keysign.8
 +++ b/ssh-keysign.1m
 @@ -23,7 +23,7 @@
  .\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  .\"
- .Dd $Mdocdate: February 17 2016 $
+ .Dd $Mdocdate: November 30 2019 $
 -.Dt SSH-KEYSIGN 8
 +.Dt SSH-KEYSIGN 1M
  .Os
@@ -510,23 +585,39 @@ diff --git a/ssh-pkcs11-helper.8 b/ssh-pkcs11-helper.1m
 similarity index 98%
 rename from ssh-pkcs11-helper.8
 rename to ssh-pkcs11-helper.1m
-index 3728c4e4..646b1fab 100644
+index 6a592b1f..bf6a52e0 100644
 --- a/ssh-pkcs11-helper.8
 +++ b/ssh-pkcs11-helper.1m
 @@ -15,7 +15,7 @@
  .\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  .\"
- .Dd $Mdocdate: July 16 2013 $
+ .Dd $Mdocdate: November 30 2019 $
 -.Dt SSH-PKCS11-HELPER 8
 +.Dt SSH-PKCS11-HELPER 1M
  .Os
  .Sh NAME
  .Nm ssh-pkcs11-helper
+diff --git a/ssh-sk-helper.8 b/ssh-sk-helper.1m
+similarity index 98%
+rename from ssh-sk-helper.8
+rename to ssh-sk-helper.1m
+index 3c53da1e..8d820a2f 100644
+--- a/ssh-sk-helper.8
++++ b/ssh-sk-helper.1m
+@@ -15,7 +15,7 @@
+ .\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ .\"
+ .Dd $Mdocdate: December 21 2019 $
+-.Dt SSH-SK-HELPER 8
++.Dt SSH-SK-HELPER 1m
+ .Os
+ .Sh NAME
+ .Nm ssh-sk-helper
 diff --git a/ssh.1 b/ssh.1
-index 7760c307..365cfb8d 100644
+index 0a01767e..1a292283 100644
 --- a/ssh.1
 +++ b/ssh.1
-@@ -160,7 +160,7 @@ listed in order of preference.
+@@ -164,7 +164,7 @@ listed in order of preference.
  See the
  .Cm Ciphers
  keyword in
@@ -535,7 +626,7 @@ index 7760c307..365cfb8d 100644
  for more information.
  .Pp
  .It Fl D Xo
-@@ -398,7 +398,7 @@ before each operation that changes the multiplexing state
+@@ -412,7 +412,7 @@ before each operation that changes the multiplexing state
  Refer to the description of
  .Cm ControlMaster
  in
@@ -544,7 +635,7 @@ index 7760c307..365cfb8d 100644
  for details.
  .Pp
  .It Fl m Ar mac_spec
-@@ -457,7 +457,7 @@ Can be used to give options in the format used in the configuration file.
+@@ -471,7 +471,7 @@ Can be used to give options in the format used in the configuration file.
  This is useful for specifying options for which there is no separate
  command-line flag.
  For full details of the options listed below, and their possible values, see
@@ -553,7 +644,19 @@ index 7760c307..365cfb8d 100644
  .Pp
  .Bl -tag -width Ds -offset indent -compact
  .It AddKeysToAgent
-@@ -649,7 +649,7 @@ Specifying a remote
+@@ -597,9 +597,9 @@ flag),
+ .Ar sig
+ (supported signature algorithms).
+ Alternatively, any keyword from
+-.Xr ssh_config 5
++.Xr ssh_config 4
+ or
+-.Xr sshd_config 5
++.Xr sshd_config 4
+ that takes an algorithm list may be used as an alias for the corresponding
+ query_option.
+ .Pp
+@@ -673,7 +673,7 @@ Specifying a remote
  will only succeed if the server's
  .Cm GatewayPorts
  option is enabled (see
@@ -562,7 +665,7 @@ index 7760c307..365cfb8d 100644
  .Pp
  If the
  .Ar port
-@@ -671,7 +671,7 @@ Refer to the description of
+@@ -695,7 +695,7 @@ Refer to the description of
  and
  .Cm ControlMaster
  in
@@ -571,7 +674,7 @@ index 7760c307..365cfb8d 100644
  for details.
  .Pp
  .It Fl s
-@@ -750,7 +750,7 @@ See also the
+@@ -774,7 +774,7 @@ See also the
  and
  .Cm TunnelDevice
  directives in
@@ -580,7 +683,7 @@ index 7760c307..365cfb8d 100644
  .Pp
  If the
  .Cm Tunnel
-@@ -779,7 +779,7 @@ Please refer to the
+@@ -803,7 +803,7 @@ Please refer to the
  option and the
  .Cm ForwardX11Trusted
  directive in
@@ -589,7 +692,7 @@ index 7760c307..365cfb8d 100644
  for more information.
  .Pp
  .It Fl x
-@@ -801,9 +801,23 @@ By default this information is sent to stderr.
+@@ -825,9 +825,23 @@ By default this information is sent to stderr.
  may additionally obtain configuration data from
  a per-user configuration file and a system-wide configuration file.
  The file format and configuration options are described in
@@ -615,7 +718,7 @@ index 7760c307..365cfb8d 100644
  .Pp
  The methods available for authentication are:
  GSSAPI-based authentication,
-@@ -936,7 +950,7 @@ See
+@@ -968,7 +982,7 @@ See
  and (optionally) the
  .Cm AddKeysToAgent
  directive in
@@ -624,7 +727,7 @@ index 7760c307..365cfb8d 100644
  for more information.
  .Pp
  Challenge-response authentication works as follows:
-@@ -1068,7 +1082,7 @@ for dynamic port-forwardings.
+@@ -1100,7 +1114,7 @@ for dynamic port-forwardings.
  allows the user to execute a local command if the
  .Ic PermitLocalCommand
  option is enabled in
@@ -633,7 +736,7 @@ index 7760c307..365cfb8d 100644
  Basic help is available, using the
  .Fl h
  option.
-@@ -1270,7 +1284,7 @@ Are you sure you want to continue connecting (yes/no)?
+@@ -1288,7 +1302,7 @@ Are you sure you want to continue connecting (yes/no)?
  See the
  .Cm VerifyHostKeyDNS
  option in
@@ -642,7 +745,7 @@ index 7760c307..365cfb8d 100644
  for more information.
  .Sh SSH-BASED VIRTUAL PRIVATE NETWORKS
  .Nm
-@@ -1280,7 +1294,7 @@ using the
+@@ -1298,7 +1312,7 @@ using the
  network pseudo-device,
  allowing two networks to be joined securely.
  The
@@ -651,7 +754,22 @@ index 7760c307..365cfb8d 100644
  configuration option
  .Cm PermitTunnel
  controls whether the server supports this,
-@@ -1441,7 +1455,7 @@ change their environment.
+@@ -1450,12 +1464,12 @@ If the current session has no tty,
+ this variable is not set.
+ .It Ev SSH_TUNNEL
+ Optionally set by
+-.Xr sshd 8
++.Xr sshd 1M
+ to contain the interface names assigned if tunnel forwarding was
+ requested by the client.
+ .It Ev SSH_USER_AUTH
+ Optionally set by
+-.Xr sshd 8 ,
++.Xr sshd 1M ,
+ this variable may contain a pathname to a file that lists the authentication
+ methods successfully used when the session was established, including any
+ public keys that were used.
+@@ -1478,7 +1492,7 @@ change their environment.
  For more information, see the
  .Cm PermitUserEnvironment
  option in
@@ -660,7 +778,7 @@ index 7760c307..365cfb8d 100644
  .Sh FILES
  .Bl -tag -width Ds -compact
  .It Pa ~/.rhosts
-@@ -1449,7 +1463,7 @@ This file is used for host-based authentication (see above).
+@@ -1486,7 +1500,7 @@ This file is used for host-based authentication (see above).
  On some machines this file may need to be
  world-readable if the user's home directory is on an NFS partition,
  because
@@ -669,7 +787,7 @@ index 7760c307..365cfb8d 100644
  reads it as root.
  Additionally, this file must be owned by the user,
  and must not have write permissions for anyone else.
-@@ -1474,7 +1488,7 @@ and not accessible by others.
+@@ -1511,7 +1525,7 @@ and not accessible by others.
  Lists the public keys (DSA, ECDSA, Ed25519, RSA)
  that can be used for logging in as this user.
  The format of this file is described in the
@@ -678,7 +796,7 @@ index 7760c307..365cfb8d 100644
  manual page.
  This file is not highly sensitive, but the recommended
  permissions are read/write for the user, and not accessible by others.
-@@ -1482,7 +1496,7 @@ permissions are read/write for the user, and not accessible by others.
+@@ -1519,7 +1533,7 @@ permissions are read/write for the user, and not accessible by others.
  .It Pa ~/.ssh/config
  This is the per-user configuration file.
  The file format and configuration options are described in
@@ -687,7 +805,7 @@ index 7760c307..365cfb8d 100644
  Because of the potential for abuse, this file must have strict permissions:
  read/write for the user, and not writable by others.
  .Pp
-@@ -1517,7 +1531,7 @@ sensitive and can (but need not) be readable by anyone.
+@@ -1558,7 +1572,7 @@ sensitive and can (but need not) be readable by anyone.
  Contains a list of host keys for all hosts the user has logged into
  that are not already in the systemwide list of known host keys.
  See
@@ -696,7 +814,7 @@ index 7760c307..365cfb8d 100644
  for further details of the format of this file.
  .Pp
  .It Pa ~/.ssh/rc
-@@ -1526,7 +1540,7 @@ Commands in this file are executed by
+@@ -1567,7 +1581,7 @@ Commands in this file are executed by
  when the user logs in, just before the user's shell (or command) is
  started.
  See the
@@ -705,7 +823,7 @@ index 7760c307..365cfb8d 100644
  manual page for more information.
  .Pp
  .It Pa /etc/hosts.equiv
-@@ -1542,7 +1556,7 @@ rlogin/rsh.
+@@ -1583,7 +1597,7 @@ rlogin/rsh.
  .It Pa /etc/ssh/ssh_config
  Systemwide configuration file.
  The file format and configuration options are described in
@@ -714,7 +832,7 @@ index 7760c307..365cfb8d 100644
  .Pp
  .It Pa /etc/ssh/ssh_host_key
  .It Pa /etc/ssh/ssh_host_dsa_key
-@@ -1559,7 +1573,7 @@ system administrator to contain the public host keys of all machines in the
+@@ -1600,7 +1614,7 @@ system administrator to contain the public host keys of all machines in the
  organization.
  It should be world-readable.
  See
@@ -723,7 +841,7 @@ index 7760c307..365cfb8d 100644
  for further details of the format of this file.
  .Pp
  .It Pa /etc/ssh/sshrc
-@@ -1567,7 +1581,7 @@ Commands in this file are executed by
+@@ -1608,7 +1622,7 @@ Commands in this file are executed by
  .Nm
  when the user logs in, just before the user's shell (or command) is started.
  See the
@@ -732,7 +850,7 @@ index 7760c307..365cfb8d 100644
  manual page for more information.
  .El
  .Sh EXIT STATUS
-@@ -1582,9 +1596,9 @@ if an error occurred.
+@@ -1623,9 +1637,9 @@ if an error occurred.
  .Xr ssh-keygen 1 ,
  .Xr ssh-keyscan 1 ,
  .Xr tun 4 ,
@@ -749,19 +867,28 @@ diff --git a/ssh_config.5 b/ssh_config.4
 similarity index 99%
 rename from ssh_config.5
 rename to ssh_config.4
-index 4d5b01d3..d9e46862 100644
+index 37a55e23..1563aae3 100644
 --- a/ssh_config.5
 +++ b/ssh_config.4
 @@ -35,7 +35,7 @@
  .\"
- .\" $OpenBSD: ssh_config.5,v 1.286 2018/10/03 06:38:35 djm Exp $
- .Dd $Mdocdate: October 3 2018 $
+ .\" $OpenBSD: ssh_config.5,v 1.353 2021/04/04 11:36:56 jmc Exp $
+ .Dd $Mdocdate: April 4 2021 $
 -.Dt SSH_CONFIG 5
 +.Dt SSH_CONFIG 4
  .Os
  .Sh NAME
  .Nm ssh_config
-@@ -552,7 +552,7 @@ then the master connection will remain in the background indefinitely
+@@ -249,7 +249,7 @@ Alternately, this option may be specified as a time interval
+ using the format described in the
+ .Sx TIME FORMATS
+ section of
+-.Xr sshd_config 5
++.Xr sshd_config 4
+ to specify the key's lifetime in
+ .Xr ssh-agent 1 ,
+ after which it will automatically be removed.
+@@ -593,7 +593,7 @@ then the master connection will remain in the background indefinitely
  (until killed or closed via a mechanism such as the
  .Qq ssh -O exit ) .
  If set to a time in seconds, or a time in any of the formats documented in
@@ -770,7 +897,7 @@ index 4d5b01d3..d9e46862 100644
  then the backgrounded master connection will automatically terminate
  after it has remained idle (with no client connections) for the
  specified time.
-@@ -594,7 +594,7 @@ Setting this option to
+@@ -635,7 +635,7 @@ Setting this option to
  in the global client configuration file
  .Pa /etc/ssh/ssh_config
  enables the use of the helper program
@@ -779,7 +906,7 @@ index 4d5b01d3..d9e46862 100644
  during
  .Cm HostbasedAuthentication .
  The argument must be
-@@ -604,7 +604,7 @@ or
+@@ -645,7 +645,7 @@ or
  (the default).
  This option should be placed in the non-hostspecific section.
  See
@@ -788,7 +915,7 @@ index 4d5b01d3..d9e46862 100644
  for more information.
  .It Cm EscapeChar
  Sets the escape character (default:
-@@ -682,7 +682,7 @@ Specify a timeout for untrusted X11 forwarding
+@@ -726,7 +726,7 @@ Specify a timeout for untrusted X11 forwarding
  using the format described in the
  .Sx TIME FORMATS
  section of
@@ -797,16 +924,16 @@ index 4d5b01d3..d9e46862 100644
  X11 connections received by
  .Xr ssh 1
  after this time will be refused.
-@@ -748,7 +748,7 @@ should hash host names and addresses when they are added to
+@@ -792,7 +792,7 @@ should hash host names and addresses when they are added to
  These hashed names may be used normally by
  .Xr ssh 1
  and
 -.Xr sshd 8 ,
 +.Xr sshd 1M ,
- but they do not reveal identifying information should the file's contents
- be disclosed.
+ but they do not visually reveal identifying information if the
+ file's contents are disclosed.
  The default is
-@@ -1198,7 +1198,7 @@ section.
+@@ -1365,7 +1365,7 @@ section.
  The command can be basically anything,
  and should read from its standard input and write to its standard output.
  It should eventually connect an
@@ -815,16 +942,16 @@ index 4d5b01d3..d9e46862 100644
  server running on some machine, or execute
  .Ic sshd -i
  somewhere.
-@@ -1304,7 +1304,7 @@ The optional second value is specified in seconds and may use any of the
- units documented in the
- .Sx TIME FORMATS
- section of
+@@ -1488,7 +1488,7 @@ and
+ depending on the cipher.
+ The optional second value is specified in seconds and may use any of the
+ units documented in the TIME FORMATS section of
 -.Xr sshd_config 5 .
 +.Xr sshd_config 4 .
  The default value for
  .Cm RekeyLimit
  is
-@@ -1362,7 +1362,7 @@ Specifying a remote
+@@ -1556,7 +1556,7 @@ Specifying a remote
  will only succeed if the server's
  .Cm GatewayPorts
  option is enabled (see
@@ -833,7 +960,7 @@ index 4d5b01d3..d9e46862 100644
  .It Cm RequestTTY
  Specifies whether to request a pseudo-tty for the session.
  The argument may be one of:
-@@ -1403,7 +1403,7 @@ pseudo-terminal is requested as it is required by the protocol.
+@@ -1606,7 +1606,7 @@ pseudo-terminal is requested as it is required by the protocol.
  Refer to
  .Cm AcceptEnv
  in
@@ -842,7 +969,7 @@ index 4d5b01d3..d9e46862 100644
  for how to configure the server.
  Variables are specified by name, which may contain wildcard characters.
  Multiple environment variables may be separated by whitespace or spread
-@@ -1612,7 +1612,7 @@ Confirmation is currently incompatible with
+@@ -1832,7 +1832,7 @@ Confirmation is currently incompatible with
  and will be disabled if it is enabled.
  .Pp
  Presently, only
@@ -855,15 +982,15 @@ diff --git a/sshd.8 b/sshd.1m
 similarity index 99%
 rename from sshd.8
 rename to sshd.1m
-index fb133c14..c65a688b 100644
+index 1aa56ba7..824562d0 100644
 --- a/sshd.8
 +++ b/sshd.1m
 @@ -35,7 +35,7 @@
  .\"
- .\" $OpenBSD: sshd.8,v 1.304 2018/07/22 12:16:59 dtucker Exp $
- .Dd $Mdocdate: July 22 2018 $
+ .\" $OpenBSD: sshd.8,v 1.314 2021/04/03 05:46:41 djm Exp $
+ .Dd $Mdocdate: April 3 2021 $
 -.Dt SSHD 8
-+.Dt SSHD 1m
++.Dt SSHD 1M
  .Os
  .Sh NAME
  .Nm sshd
@@ -896,7 +1023,7 @@ index fb133c14..c65a688b 100644
  .It Fl p Ar port
  Specifies the port on which the server listens for connections
  (default 22).
-@@ -346,14 +346,14 @@ if it exists, and users are allowed to change their environment.
+@@ -343,14 +343,14 @@ if it exists, and users are allowed to change their environment.
  See the
  .Cm PermitUserEnvironment
  option in
@@ -913,7 +1040,7 @@ index fb133c14..c65a688b 100644
  .Cm PermitUserRC
  option is set, runs it; else if
  .Pa /etc/ssh/sshrc
-@@ -496,7 +496,7 @@ The command originally supplied by the client is available in the
+@@ -507,7 +507,7 @@ The command originally supplied by the client is available in the
  environment variable.
  Note that this option applies to shell, command or subsystem execution.
  Also note that this command may be superseded by a
@@ -922,7 +1049,7 @@ index fb133c14..c65a688b 100644
  .Cm ForceCommand
  directive.
  .Pp
-@@ -522,7 +522,7 @@ Specifies that in addition to public key authentication, either the canonical
+@@ -533,7 +533,7 @@ Specifies that in addition to public key authentication, either the canonical
  name of the remote host or its IP address must be present in the
  comma-separated list of patterns.
  See PATTERNS in
@@ -931,7 +1058,16 @@ index fb133c14..c65a688b 100644
  for more information on patterns.
  .Pp
  In addition to the wildcard matching that may be applied to hostnames or
-@@ -882,7 +882,7 @@ It should only be writable by root.
+@@ -575,7 +575,7 @@ Multiple
+ .Cm permitlisten
+ options may be applied separated by commas.
+ Hostnames may include wildcards as described in the PATTERNS section in
+-.Xr ssh_config 5 .
++.Xr ssh_config 4 .
+ A port specification of
+ .Cm *
+ matches any port.
+@@ -909,7 +909,7 @@ It should only be writable by root.
  Contains Diffie-Hellman groups used for the "Diffie-Hellman Group Exchange"
  key exchange method.
  The file format is described in
@@ -940,7 +1076,7 @@ index fb133c14..c65a688b 100644
  If no usable groups are found in this file then fixed internal groups will
  be used.
  .Pp
-@@ -941,7 +941,7 @@ should be world-readable.
+@@ -968,7 +968,7 @@ should be world-readable.
  Contains configuration data for
  .Nm sshd .
  The file format and configuration options are described in
@@ -949,7 +1085,7 @@ index fb133c14..c65a688b 100644
  .Pp
  .It Pa /etc/ssh/sshrc
  Similar to
-@@ -976,10 +976,10 @@ The content of this file is not sensitive; it can be world-readable.
+@@ -1003,10 +1003,10 @@ The content of this file is not sensitive; it can be world-readable.
  .Xr ssh-keyscan 1 ,
  .Xr chroot 2 ,
  .Xr login.conf 5 ,
@@ -968,19 +1104,19 @@ diff --git a/sshd_config.5 b/sshd_config.4
 similarity index 98%
 rename from sshd_config.5
 rename to sshd_config.4
-index 6050adda..8b5d40a5 100644
+index 01df6a67..ffbb527f 100644
 --- a/sshd_config.5
 +++ b/sshd_config.4
 @@ -35,13 +35,13 @@
  .\"
- .\" $OpenBSD: sshd_config.5,v 1.282 2018/09/20 03:28:06 djm Exp $
- .Dd $Mdocdate: September 20 2018 $
+ .\" $OpenBSD: sshd_config.5,v 1.331 2021/04/04 11:36:56 jmc Exp $
+ .Dd $Mdocdate: April 4 2021 $
 -.Dt SSHD_CONFIG 5
 +.Dt SSHD_CONFIG 4
  .Os
  .Sh NAME
  .Nm sshd_config
- .Nd OpenSSH SSH daemon configuration file
+ .Nd OpenSSH daemon configuration file
  .Sh DESCRIPTION
 -.Xr sshd 8
 +.Xr sshd 1M
@@ -1005,7 +1141,7 @@ index 6050adda..8b5d40a5 100644
  Valid arguments are
  .Cm any
  (the default),
-@@ -121,7 +121,7 @@ and finally
+@@ -118,7 +118,7 @@ The allow/deny groups directives are processed in the following order:
  .Cm AllowGroups .
  .Pp
  See PATTERNS in
@@ -1014,8 +1150,8 @@ index 6050adda..8b5d40a5 100644
  for more information on patterns.
  .It Cm AllowStreamLocalForwarding
  Specifies whether StreamLocal (Unix-domain socket) forwarding is permitted.
-@@ -181,7 +181,7 @@ and finally
- .Cm AllowGroups .
+@@ -175,7 +175,7 @@ The allow/deny users directives are processed in the following order:
+ .Cm AllowUsers .
  .Pp
  See PATTERNS in
 -.Xr ssh_config 5
@@ -1023,7 +1159,7 @@ index 6050adda..8b5d40a5 100644
  for more information on patterns.
  .It Cm AuthenticationMethods
  Specifies the authentication methods that must be successfully completed
-@@ -216,7 +216,7 @@ would restrict keyboard interactive authentication to the
+@@ -210,7 +210,7 @@ would restrict keyboard interactive authentication to the
  device.
  .Pp
  If the publickey method is listed more than once,
@@ -1032,16 +1168,16 @@ index 6050adda..8b5d40a5 100644
  verifies that keys that have been used successfully are not reused for
  subsequent authentications.
  For example,
-@@ -252,7 +252,7 @@ The program should produce on standard output zero or
+@@ -246,7 +246,7 @@ The program should produce on standard output zero or
  more lines of authorized_keys output (see
  .Sx AUTHORIZED_KEYS
  in
 -.Xr sshd 8 ) .
 +.Xr sshd 1M ) .
- If a key supplied by
  .Cm AuthorizedKeysCommand
- does not successfully authenticate
-@@ -273,14 +273,14 @@ If
+ is tried after the usual
+ .Cm AuthorizedKeysFile
+@@ -265,12 +265,12 @@ If
  is specified but
  .Cm AuthorizedKeysCommandUser
  is not, then
@@ -1050,15 +1186,13 @@ index 6050adda..8b5d40a5 100644
  will refuse to start.
  .It Cm AuthorizedKeysFile
  Specifies the file that contains the public keys used for user authentication.
- The format is described in the
- .Sx AUTHORIZED_KEYS FILE FORMAT
- section of
+ The format is described in the AUTHORIZED_KEYS FILE FORMAT section of
 -.Xr sshd 8 .
 +.Xr sshd 1M .
  Arguments to
  .Cm AuthorizedKeysFile
  accept the tokens described in the
-@@ -333,7 +333,7 @@ If
+@@ -323,7 +323,7 @@ If
  is specified but
  .Cm AuthorizedPrincipalsCommandUser
  is not, then
@@ -1067,7 +1201,7 @@ index 6050adda..8b5d40a5 100644
  will refuse to start.
  .It Cm AuthorizedPrincipalsFile
  Specifies a file that lists principal names that are accepted for
-@@ -345,7 +345,7 @@ to be accepted for authentication.
+@@ -335,7 +335,7 @@ to be accepted for authentication.
  Names are listed one per line preceded by key options (as described in
  .Sx AUTHORIZED_KEYS FILE FORMAT
  in
@@ -1076,7 +1210,7 @@ index 6050adda..8b5d40a5 100644
  Empty lines and comments starting with
  .Ql #
  are ignored.
-@@ -373,7 +373,7 @@ and is not consulted for certification authorities trusted via
+@@ -363,7 +363,7 @@ and is not consulted for certification authorities trusted via
  though the
  .Cm principals=
  key option offers a similar facility (see
@@ -1085,7 +1219,7 @@ index 6050adda..8b5d40a5 100644
  for details).
  .It Cm Banner
  The contents of the specified file are sent to the remote user before
-@@ -404,11 +404,11 @@ Specifies the pathname of a directory to
+@@ -395,11 +395,11 @@ Specifies the pathname of a directory to
  .Xr chroot 2
  to after authentication.
  At session startup
@@ -1099,7 +1233,7 @@ index 6050adda..8b5d40a5 100644
  changes the working directory to the user's home directory.
  Arguments to
  .Cm ChrootDirectory
-@@ -439,14 +439,14 @@ sftp-server is used,
+@@ -430,14 +430,14 @@ sftp-server is used,
  though sessions which use logging may require
  .Pa /dev/log
  inside the chroot directory on some operating systems (see
@@ -1116,7 +1250,7 @@ index 6050adda..8b5d40a5 100644
  cannot detect.
  .Pp
  The default is
-@@ -501,7 +501,7 @@ The list of available ciphers may also be obtained using
+@@ -496,7 +496,7 @@ The list of available ciphers may also be obtained using
  .Qq ssh -Q cipher .
  .It Cm ClientAliveCountMax
  Sets the number of client alive messages which may be sent without
@@ -1125,7 +1259,7 @@ index 6050adda..8b5d40a5 100644
  receiving any messages back from the client.
  If this threshold is reached while client alive messages are being sent,
  sshd will disconnect the client, terminating the session.
-@@ -526,7 +526,7 @@ will be disconnected after approximately 45 seconds.
+@@ -524,7 +524,7 @@ disables connection termination.
  .It Cm ClientAliveInterval
  Sets a timeout interval in seconds after which if no data has been received
  from the client,
@@ -1134,7 +1268,7 @@ index 6050adda..8b5d40a5 100644
  will send a message through the encrypted
  channel to request a response from the client.
  The default
-@@ -558,7 +558,7 @@ and finally
+@@ -553,7 +553,7 @@ The allow/deny groups directives are processed in the following order:
  .Cm AllowGroups .
  .Pp
  See PATTERNS in
@@ -1143,8 +1277,8 @@ index 6050adda..8b5d40a5 100644
  for more information on patterns.
  .It Cm DenyUsers
  This keyword can be followed by a list of user name patterns, separated
-@@ -579,7 +579,7 @@ and finally
- .Cm AllowGroups .
+@@ -571,7 +571,7 @@ The allow/deny users directives are processed in the following order:
+ .Cm AllowUsers .
  .Pp
  See PATTERNS in
 -.Xr ssh_config 5
@@ -1152,7 +1286,7 @@ index 6050adda..8b5d40a5 100644
  for more information on patterns.
  .It Cm DisableForwarding
  Disables all forwarding features, including X11,
-@@ -628,7 +628,7 @@ The default is
+@@ -620,7 +620,7 @@ The default is
  Specifies whether remote hosts are allowed to connect to ports
  forwarded for the client.
  By default,
@@ -1161,7 +1295,7 @@ index 6050adda..8b5d40a5 100644
  binds remote port forwardings to the loopback address.
  This prevents other remote hosts from connecting to forwarded ports.
  .Cm GatewayPorts
-@@ -710,7 +710,7 @@ files during
+@@ -713,7 +713,7 @@ files during
  A setting of
  .Cm yes
  means that
@@ -1170,7 +1304,7 @@ index 6050adda..8b5d40a5 100644
  uses the name supplied by the client rather than
  attempting to resolve the name from the TCP connection itself.
  The default is
-@@ -721,7 +721,7 @@ The certificate's public key must match a private host key already specified
+@@ -724,7 +724,7 @@ The certificate's public key must match a private host key already specified
  by
  .Cm HostKey .
  The default behaviour of
@@ -1179,7 +1313,7 @@ index 6050adda..8b5d40a5 100644
  is not to load any certificates.
  .It Cm HostKey
  Specifies a file containing a private host key
-@@ -733,12 +733,12 @@ and
+@@ -736,12 +736,12 @@ and
  .Pa /etc/ssh/ssh_host_rsa_key .
  .Pp
  Note that
@@ -1194,8 +1328,8 @@ index 6050adda..8b5d40a5 100644
  .Pp
  It is possible to have multiple host key files.
  It is also possible to specify public host key files instead.
-@@ -786,7 +786,7 @@ The default is
- .Cm yes .
+@@ -808,7 +808,7 @@ and
+ .Pa rhosts .
  .It Cm IgnoreUserKnownHosts
  Specifies whether
 -.Xr sshd 8
@@ -1203,8 +1337,8 @@ index 6050adda..8b5d40a5 100644
  should ignore the user's
  .Pa ~/.ssh/known_hosts
  during
-@@ -925,7 +925,7 @@ The list of available key exchange algorithms may also be obtained using
- .Qq ssh -Q kex .
+@@ -967,7 +967,7 @@ The list of available key exchange algorithms may also be obtained using
+ .Qq ssh -Q KexAlgorithms .
  .It Cm ListenAddress
  Specifies the local addresses
 -.Xr sshd 8
@@ -1212,7 +1346,16 @@ index 6050adda..8b5d40a5 100644
  should listen on.
  The following forms may be used:
  .Pp
-@@ -981,7 +981,7 @@ If the value is 0, there is no time limit.
+@@ -1001,7 +1001,7 @@ The following forms may be used:
+ The optional
+ .Cm rdomain
+ qualifier requests
+-.Xr sshd 8
++.Xr sshd 1M
+ listen in an explicit routing domain.
+ If
+ .Ar port
+@@ -1023,7 +1023,7 @@ If the value is 0, there is no time limit.
  The default is 120 seconds.
  .It Cm LogLevel
  Gives the verbosity level that is used when logging messages from
@@ -1221,7 +1364,7 @@ index 6050adda..8b5d40a5 100644
  The possible values are:
  QUIET, FATAL, ERROR, INFO, VERBOSE, DEBUG, DEBUG1, DEBUG2, and DEBUG3.
  The default is INFO.
-@@ -1090,7 +1090,7 @@ The match patterns may consist of single entries or comma-separated
+@@ -1153,7 +1153,7 @@ The match patterns may consist of single entries or comma-separated
  lists and may use the wildcard and negation operators described in the
  .Sx PATTERNS
  section of
@@ -1230,7 +1373,7 @@ index 6050adda..8b5d40a5 100644
  .Pp
  The patterns in an
  .Cm Address
-@@ -1186,7 +1186,7 @@ The default is 10:30:100.
+@@ -1252,14 +1252,14 @@ The default is 10:30:100.
  Alternatively, random early drop can be enabled by specifying
  the three colon separated values
  start:rate:full (e.g. "10:30:60").
@@ -1239,7 +1382,24 @@ index 6050adda..8b5d40a5 100644
  will refuse connection attempts with a probability of rate/100 (30%)
  if there are currently start (10) unauthenticated connections.
  The probability increases linearly and all connection attempts
-@@ -1343,7 +1343,7 @@ and
+ are refused if the number of unauthenticated connections reaches full (60).
+ .It Cm ModuliFile
+ Specifies the
+-.Xr moduli 5
++.Xr moduli 4
+ file that contains the Diffie-Hellman groups used for the
+ .Dq diffie-hellman-group-exchange-sha1
+ and
+@@ -1301,7 +1301,7 @@ An argument of
+ .Cm none
+ can be used to prohibit all listen requests.
+ The host name may contain wildcards as described in the PATTERNS section in
+-.Xr ssh_config 5 .
++.Xr ssh_config 4 .
+ The wildcard
+ .Sq *
+ can also be used in place of a port number to allow all ports.
+@@ -1421,7 +1421,7 @@ and
  options in
  .Pa ~/.ssh/authorized_keys
  are processed by
@@ -1248,7 +1408,7 @@ index 6050adda..8b5d40a5 100644
  Valid options are
  .Cm yes ,
  .Cm no
-@@ -1370,7 +1370,7 @@ The default is
+@@ -1465,7 +1465,7 @@ The default is
  .Pa /var/run/sshd.pid .
  .It Cm Port
  Specifies the port number that
@@ -1257,7 +1417,7 @@ index 6050adda..8b5d40a5 100644
  listens on.
  The default is 22.
  Multiple options of this type are permitted.
-@@ -1378,14 +1378,14 @@ See also
+@@ -1473,14 +1473,14 @@ See also
  .Cm ListenAddress .
  .It Cm PrintLastLog
  Specifies whether
@@ -1274,7 +1434,25 @@ index 6050adda..8b5d40a5 100644
  should print
  .Pa /etc/motd
  when a user logs in interactively.
-@@ -1513,7 +1513,7 @@ The default is
+@@ -1543,7 +1543,7 @@ or
+ to always require the signature to attest that a physically present user
+ explicitly confirmed the authentication (usually by touching the authenticator).
+ By default,
+-.Xr sshd 8
++.Xr sshd 1M
+ requires user presence unless overridden with an authorized_keys option.
+ The
+ .Cm touch-required
+@@ -1616,7 +1616,7 @@ the built-in USB HID support.
+ .It Cm SetEnv
+ Specifies one or more environment variables to set in child sessions started
+ by
+-.Xr sshd 8
++.Xr sshd 1M
+ as
+ .Dq NAME=VALUE .
+ The environment value may be quoted (e.g. if it contains whitespace
+@@ -1657,7 +1657,7 @@ The default is
  .Cm no .
  .It Cm StrictModes
  Specifies whether
@@ -1283,7 +1461,7 @@ index 6050adda..8b5d40a5 100644
  should check file modes and ownership of the
  user's files and home directory before accepting login.
  This is normally desirable because novices sometimes accidentally leave their
-@@ -1542,7 +1542,7 @@ to force a different filesystem root on clients.
+@@ -1686,7 +1686,7 @@ to force a different filesystem root on clients.
  By default no subsystems are defined.
  .It Cm SyslogFacility
  Gives the facility code that is used when logging messages from
@@ -1292,7 +1470,7 @@ index 6050adda..8b5d40a5 100644
  The possible values are: DAEMON, USER, AUTH, LOCAL0, LOCAL1, LOCAL2,
  LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7.
  The default is AUTH.
-@@ -1585,7 +1585,7 @@ For more details on certificates, see the CERTIFICATES section in
+@@ -1729,7 +1729,7 @@ For more details on certificates, see the CERTIFICATES section in
  .Xr ssh-keygen 1 .
  .It Cm UseDNS
  Specifies whether
@@ -1301,7 +1479,7 @@ index 6050adda..8b5d40a5 100644
  should look up the remote host name, and to check that
  the resolved host name for the remote IP address maps back to the
  very same IP address.
-@@ -1620,7 +1620,7 @@ or
+@@ -1764,7 +1764,7 @@ or
  If
  .Cm UsePAM
  is enabled, you will not be able to run
@@ -1310,7 +1488,7 @@ index 6050adda..8b5d40a5 100644
  as a non-root user.
  The default is
  .Cm no .
-@@ -1631,7 +1631,7 @@ The default is
+@@ -1775,7 +1775,7 @@ The default is
  .Cm none .
  .It Cm X11DisplayOffset
  Specifies the first display number available for
@@ -1319,7 +1497,7 @@ index 6050adda..8b5d40a5 100644
  X11 forwarding.
  This prevents sshd from interfering with real X11 servers.
  The default is 10.
-@@ -1646,7 +1646,7 @@ The default is
+@@ -1790,7 +1790,7 @@ The default is
  .Pp
  When X11 forwarding is enabled, there may be additional exposure to
  the server and to client displays if the
@@ -1328,7 +1506,7 @@ index 6050adda..8b5d40a5 100644
  proxy display is configured to listen on the wildcard address (see
  .Cm X11UseLocalhost ) ,
  though this is not the default.
-@@ -1657,7 +1657,7 @@ display server may be exposed to attack when the SSH client requests
+@@ -1801,7 +1801,7 @@ display server may be exposed to attack when the SSH client requests
  forwarding (see the warnings for
  .Cm ForwardX11
  in
@@ -1337,7 +1515,7 @@ index 6050adda..8b5d40a5 100644
  A system administrator may have a stance in which they want to
  protect clients that may expose themselves to attack by unwittingly
  requesting X11 forwarding, which can warrant a
-@@ -1668,7 +1668,7 @@ Note that disabling X11 forwarding does not prevent users from
+@@ -1812,7 +1812,7 @@ Note that disabling X11 forwarding does not prevent users from
  forwarding X11 traffic, as users can always install their own forwarders.
  .It Cm X11UseLocalhost
  Specifies whether
@@ -1346,7 +1524,7 @@ index 6050adda..8b5d40a5 100644
  should bind the X11 forwarding server to the loopback address or to
  the wildcard address.
  By default,
-@@ -1701,7 +1701,7 @@ The default is
+@@ -1845,7 +1845,7 @@ The default is
  .Pa /usr/X11R6/bin/xauth .
  .El
  .Sh TIME FORMATS
@@ -1355,7 +1533,7 @@ index 6050adda..8b5d40a5 100644
  command-line arguments and configuration file options that specify time
  may be expressed using a sequence of the form:
  .Sm off
-@@ -1796,13 +1796,13 @@ accepts the token %D.
+@@ -1940,13 +1940,13 @@ accepts the token %D.
  .Bl -tag -width Ds
  .It Pa /etc/ssh/sshd_config
  Contains configuration data for
@@ -1373,5 +1551,5 @@ index 6050adda..8b5d40a5 100644
  .Sh AUTHORS
  .An -nosplit
 -- 
-2.22.0
+2.31.1
 

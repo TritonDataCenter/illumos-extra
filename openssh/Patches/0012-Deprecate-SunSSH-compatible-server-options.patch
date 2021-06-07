@@ -1,7 +1,7 @@
-From d8c9de9b7443dcd97469c16c9cd78925915bb99d Mon Sep 17 00:00:00 2001
+From 9a8db267a1e9ee1aa6757ec65ae051f93772c2ba Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:33 -0700
-Subject: [PATCH 12/35] Deprecate SunSSH compatible server options
+Subject: [PATCH 12/34] Deprecate SunSSH compatible server options
 
 #
 # Originally we planned to only deprecate client config (ssh_config) options
@@ -23,10 +23,10 @@ Subject: [PATCH 12/35] Deprecate SunSSH compatible server options
  1 file changed, 23 insertions(+)
 
 diff --git a/servconf.c b/servconf.c
-index 5e870e82..93761629 100644
+index af0d6e0c..09847be6 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -667,6 +667,29 @@ static struct {
+@@ -701,6 +701,29 @@ static struct {
  #ifdef PAM_ENHANCEMENT
  	{ "pamserviceprefix", sPAMServicePrefix, SSHCFG_GLOBAL },
  	{ "pamservicename", sPAMServiceName, SSHCFG_GLOBAL },
@@ -57,5 +57,5 @@ index 5e870e82..93761629 100644
  	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
  	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },
 -- 
-2.22.0
+2.31.1
 

@@ -1,60 +1,58 @@
-From 321b94d7b0b66c76535c1977e7fa66176c5f3ad1 Mon Sep 17 00:00:00 2001
+From 6a338da33b57198deacf30f3649e9fcf1f03e704 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:43 -0700
-Subject: [PATCH 07/35] DTrace support for SFTP
+Subject: [PATCH 07/34] DTrace support for SFTP
 
 ---
- Makefile.in          | 24 ++++++++++++---
+ Makefile.in          | 22 +++++++++++--
  sftp-server.c        | 25 +++++++++++++--
  sftp64.d             | 56 +++++++++++++++++++++++++++++++++
  sftp_provider.d      | 61 ++++++++++++++++++++++++++++++++++++
  sftp_provider_impl.h | 73 ++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 233 insertions(+), 6 deletions(-)
+ 5 files changed, 232 insertions(+), 5 deletions(-)
  create mode 100644 sftp64.d
  create mode 100644 sftp_provider.d
  create mode 100644 sftp_provider_impl.h
 
 diff --git a/Makefile.in b/Makefile.in
-index 7681283b..cc6f5348 100644
+index 4453d5aa..b85545c7 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -24,6 +24,7 @@ ASKPASS_PROGRAM=$(libexecdir)/ssh-askpass
- SFTP_SERVER=$(libexecdir)/sftp-server
+@@ -26,6 +26,7 @@ SFTP_SERVER=$(libexecdir)/sftp-server
  SSH_KEYSIGN=$(libexecdir)/ssh-keysign
  SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
+ SSH_SK_HELPER=$(libexecdir)/ssh-sk-helper
 +ROOTDLIBDIR64=$(DESTDIR)/usr/lib/dtrace/64
  PRIVSEP_PATH=@PRIVSEP_PATH@
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
-@@ -93,6 +94,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
- 	atomicio.o dispatch.o mac.o uuencode.o misc.o utf8.o \
- 	monitor_fdpass.o rijndael.o ssh-dss.o ssh-ecdsa.o ssh-rsa.o dh.o \
+@@ -101,6 +102,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
+ 	monitor_fdpass.o rijndael.o ssh-dss.o ssh-ecdsa.o ssh-ecdsa-sk.o \
+ 	ssh-ed25519-sk.o ssh-rsa.o dh.o \
  	msg.o progressmeter.o dns.o entropy.o gss-genr.o umac.o umac128.o \
 +	sftp_provider.o \
  	ssh-pkcs11.o smult_curve25519_ref.o \
- 	poly1305.o chacha.o cipher-chachapoly.o \
- 	ssh-ed25519.o digest-openssl.o digest-libc.o hmac.o \
-@@ -118,7 +120,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o \
- 	sftp-server.o sftp-common.o \
+ 	poly1305.o chacha.o cipher-chachapoly.o cipher-chachapoly-libcrypto.o \
+ 	ssh-ed25519.o digest-openssl.o digest-libc.o \
+@@ -129,7 +131,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o \
+ 	srclimit.o sftp-server.o sftp-common.o \
  	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
  	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-pledge.o \
--	sandbox-solaris.o uidswap.o
-+	sandbox-solaris.o uidswap.o sftp_provider.o
+-	sandbox-solaris.o uidswap.o $(SKOBJS)
++	sandbox-solaris.o uidswap.o sftp_provider.o $(SKOBJS)
  
- MANPAGES	= moduli.4.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.1m.out sftp-server.1m.out sftp.1.out ssh-keysign.1m.out ssh-pkcs11-helper.1m.out sshd_config.4.out ssh_config.4.out
- MANPAGES_IN	= moduli.4 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.1m sftp-server.1m sftp.1 ssh-keysign.1m ssh-pkcs11-helper.1m sshd_config.4 ssh_config.4
-@@ -195,8 +197,8 @@ ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-pkcs11-helper.o ssh-pkcs11
- ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-keyscan.o
- 	$(LD) -o $@ ssh-keyscan.o $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
+ SCP_OBJS=	scp.o progressmeter.o
  
--sftp-server$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-common.o sftp-server.o sftp-server-main.o
--	$(LD) -o $@ sftp-server.o sftp-common.o sftp-server-main.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
-+sftp-server$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-common.o sftp-server.o sftp-server-main.o sftp_provider.o
-+	$(LD) -o $@ sftp-server.o sftp-common.o sftp-server-main.o sftp_provider.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
+@@ -147,7 +149,7 @@ SKHELPER_OBJS=	ssh-sk-helper.o ssh-sk.o sk-usbhid.o
  
- sftp$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-client.o sftp-common.o sftp-glob.o progressmeter.o
- 	$(LD) -o $@ progressmeter.o sftp.o sftp-client.o sftp-common.o sftp-glob.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) $(LIBEDIT)
-@@ -226,9 +228,22 @@ $(CONFIGFILES): $(CONFIGFILES_IN)
+ SSHKEYSCAN_OBJS=ssh-keyscan.o $(SKOBJS)
+ 
+-SFTPSERVER_OBJS=sftp-common.o sftp-server.o sftp-server-main.o
++SFTPSERVER_OBJS=sftp-common.o sftp-server.o sftp-server-main.o sftp_provider.o
+ 
+ SFTP_OBJS=	sftp.o sftp-client.o sftp-common.o sftp-glob.o progressmeter.o
+ 
+@@ -265,9 +267,22 @@ $(CONFIGFILES): $(CONFIGFILES_IN)
  moduli:
  	echo
  
@@ -72,25 +70,25 @@ index 7681283b..cc6f5348 100644
 +	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $(srcdir)/sftp-server.c
 +
  clean:	regressclean
- 	rm -f *.o *.a $(TARGETS) logintest config.cache config.log
+ 	rm -f *.o *.lo *.a $(TARGETS) logintest config.cache config.log
 -	rm -f *.out core survey
 +	rm -f *.out core survey sftp_provider.h
  	rm -f regress/check-perm$(EXEEXT)
  	rm -f regress/mkdtemp$(EXEEXT)
  	rm -f regress/unittests/test_helper/*.a
-@@ -369,6 +384,7 @@ install-files:
- 	$(INSTALL) -m 644 sftp-server.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/sftp-server.1m
+@@ -427,6 +442,7 @@ install-files:
  	$(INSTALL) -m 644 ssh-keysign.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-keysign.1m
  	$(INSTALL) -m 644 ssh-pkcs11-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-pkcs11-helper.1m
+ 	$(INSTALL) -m 644 ssh-sk-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-sk-helper.1m
 +	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d
  
  install-sysconf:
  	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
 diff --git a/sftp-server.c b/sftp-server.c
-index ab1b063f..5ea04ca0 100644
+index 838f0488..dd472b14 100644
 --- a/sftp-server.c
 +++ b/sftp-server.c
-@@ -50,6 +50,9 @@
+@@ -51,6 +51,9 @@
  
  #include "sftp.h"
  #include "sftp-common.h"
@@ -98,9 +96,9 @@ index ab1b063f..5ea04ca0 100644
 +#include "sftp_provider_impl.h"
 +#endif
  
- /* Our verbosity */
- static LogLevel log_level = SYSLOG_LEVEL_ERROR;
-@@ -736,14 +739,17 @@ process_read(u_int32_t id)
+ char *sftp_realpath(const char *, char *); /* sftp-realpath.c */
+ 
+@@ -776,6 +779,7 @@ process_read(u_int32_t id)
  	u_int32_t len;
  	int r, handle, fd, ret, status = SSH2_FX_FAILURE;
  	u_int64_t off;
@@ -108,32 +106,25 @@ index ab1b063f..5ea04ca0 100644
  
  	if ((r = get_handle(iqueue, &handle)) != 0 ||
  	    (r = sshbuf_get_u64(iqueue, &off)) != 0 ||
- 	    (r = sshbuf_get_u32(iqueue, &len)) != 0)
- 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
- 
-+	fpath = handle_to_name(handle);
-+
- 	debug("request %u: read \"%s\" (handle %d) off %llu len %d",
--	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
-+	    id, fpath, handle, (unsigned long long)off, len);
- 	if (len > sizeof buf) {
- 		len = sizeof buf;
- 		debug2("read change len %d", len);
-@@ -754,7 +760,13 @@ process_read(u_int32_t id)
- 			error("process_read: seek failed");
- 			status = errno_to_portable(errno);
- 		} else {
+@@ -805,7 +809,16 @@ process_read(u_int32_t id)
+ 	if (len == 0) {
+ 		/* weird, but not strictly disallowed */
+ 		ret = 0;
+-	} else if ((ret = read(fd, buf, len)) == -1) {
++	} else {
 +#ifdef DTRACE_SFTP
-+			SFTP_TRANSFER_START_OP("read", fd, fpath, len);
++		SFTP_TRANSFER_START_OP("read", fd, fpath, len);
 +#endif
- 			ret = read(fd, buf, len);
++		ret = read(fd, buf, len);
 +#ifdef DTRACE_SFTP
-+			SFTP_TRANSFER_DONE_OP("read", fd, fpath, ret);
++		SFTP_TRANSFER_DONE_OP("read", fd, fpath, ret);
 +#endif
- 			if (ret < 0) {
- 				status = errno_to_portable(errno);
- 			} else if (ret == 0) {
-@@ -777,14 +789,16 @@ process_write(u_int32_t id)
++	}
++	if (ret == -1) {
+ 		status = errno_to_portable(errno);
+ 		error_f("read \"%.100s\": %s", handle_to_name(handle),
+ 		    strerror(errno));
+@@ -830,14 +843,16 @@ process_write(u_int32_t id)
  	size_t len;
  	int r, handle, fd, ret, status;
  	u_char *data;
@@ -142,7 +133,7 @@ index ab1b063f..5ea04ca0 100644
  	if ((r = get_handle(iqueue, &handle)) != 0 ||
  	    (r = sshbuf_get_u64(iqueue, &off)) != 0 ||
  	    (r = sshbuf_get_string(iqueue, &data, &len)) != 0)
- 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
+ 		fatal_fr(r, "parse");
  
 +	fpath = handle_to_name(handle);
  	debug("request %u: write \"%s\" (handle %d) off %llu len %zu",
@@ -151,8 +142,8 @@ index ab1b063f..5ea04ca0 100644
  	fd = handle_to_fd(handle);
  
  	if (fd < 0)
-@@ -796,7 +810,14 @@ process_write(u_int32_t id)
- 			error("process_write: seek failed");
+@@ -850,7 +865,13 @@ process_write(u_int32_t id)
+ 			    strerror(errno));
  		} else {
  /* XXX ATOMICIO ? */
 +#ifdef DTRACE_SFTP
@@ -162,10 +153,9 @@ index ab1b063f..5ea04ca0 100644
 +#ifdef DTRACE_SFTP
 +			SFTP_TRANSFER_DONE_OP("write", fd, fpath, ret);
 +#endif
-+
- 			if (ret < 0) {
- 				error("process_write: write failed");
+ 			if (ret == -1) {
  				status = errno_to_portable(errno);
+ 				error_f("write \"%.100s\": %s",
 diff --git a/sftp64.d b/sftp64.d
 new file mode 100644
 index 00000000..8305d0af
@@ -375,5 +365,5 @@ index 00000000..4b18e6ec
 +
 +#endif /* _SFTP_PROVIDER_IMPL_H */
 -- 
-2.22.0
+2.31.1
 

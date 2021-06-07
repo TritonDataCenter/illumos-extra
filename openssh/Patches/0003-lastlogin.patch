@@ -1,7 +1,7 @@
-From b06c3bd0eb76b40b9b2329bc08b4a04c5721fa8a Mon Sep 17 00:00:00 2001
+From 30964c803fb76014e75c560aed98cf2f9f336ad8 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:41 -0700
-Subject: [PATCH 03/35] lastlogin
+Subject: [PATCH 03/34] lastlogin
 
 *** old/servconf.c Wed Sep 17 02:54:26 2014
 ---
@@ -9,10 +9,10 @@ Subject: [PATCH 03/35] lastlogin
  1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/sshd_config.5 b/sshd_config.5
-index c6484370..6050adda 100644
+index 3b339aaf..01df6a67 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
-@@ -1381,8 +1381,8 @@ Specifies whether
+@@ -1476,8 +1476,8 @@ Specifies whether
  .Xr sshd 8
  should print the date and time of the last user login when a user logs
  in interactively.
@@ -23,7 +23,7 @@ index c6484370..6050adda 100644
  .It Cm PrintMotd
  Specifies whether
  .Xr sshd 8
-@@ -1802,7 +1802,8 @@ This file should be writable by root only, but it is recommended
+@@ -1946,7 +1946,8 @@ This file should be writable by root only, but it is recommended
  .El
  .Sh SEE ALSO
  .Xr sftp-server 8 ,
@@ -34,5 +34,5 @@ index c6484370..6050adda 100644
  .An -nosplit
  OpenSSH is a derivative of the original and free
 -- 
-2.22.0
+2.31.1
 

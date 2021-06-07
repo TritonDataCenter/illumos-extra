@@ -1,32 +1,32 @@
-From 9650f9c45018654a86011193c3f51414e3d69d58 Mon Sep 17 00:00:00 2001
+From bd7d396480b4c9da251f428ae2734cea122059df Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 12:19:47 -0700
-Subject: [PATCH 22/35] Add SMF manifest and method, and install them
+Subject: [PATCH 22/34] Add SMF manifest and method, and install them
 
 ---
  Makefile.in      |   6 ++
  smf/manifest.xml | 169 +++++++++++++++++++++++++++++++++++++++++++++++
- smf/method.sh    | 121 +++++++++++++++++++++++++++++++++
- 3 files changed, 296 insertions(+)
+ smf/method.sh    | 132 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 307 insertions(+)
  create mode 100644 smf/manifest.xml
  create mode 100644 smf/method.sh
 
 diff --git a/Makefile.in b/Makefile.in
-index a73ef0f1..08890c53 100644
+index bfa56fee..da7123e0 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -25,6 +25,8 @@ SFTP_SERVER=$(libexecdir)/sftp-server
- SSH_KEYSIGN=$(libexecdir)/ssh-keysign
+@@ -27,6 +27,8 @@ SSH_KEYSIGN=$(libexecdir)/ssh-keysign
  SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
+ SSH_SK_HELPER=$(libexecdir)/ssh-sk-helper
  ROOTDLIBDIR64=$(DESTDIR)/usr/lib/dtrace/64
 +SMFMETHODDIR=$(DESTDIR)/lib/svc/method
 +SMFNETMANIDIR=$(DESTDIR)/lib/svc/manifest/network
  PRIVSEP_PATH=@PRIVSEP_PATH@
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
-@@ -386,6 +388,10 @@ install-files:
- 	$(INSTALL) -m 644 ssh-keysign.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-keysign.1m
+@@ -443,6 +445,10 @@ install-files:
  	$(INSTALL) -m 644 ssh-pkcs11-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-pkcs11-helper.1m
+ 	$(INSTALL) -m 644 ssh-sk-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-sk-helper.1m
  	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d
 +	$(srcdir)/mkinstalldirs $(SMFMETHODDIR)
 +	$(srcdir)/mkinstalldirs $(SMFNETMANIDIR)
@@ -213,7 +213,7 @@ index 00000000..50452966
 \ No newline at end of file
 diff --git a/smf/method.sh b/smf/method.sh
 new file mode 100644
-index 00000000..e91ed553
+index 00000000..bd43e7da
 --- /dev/null
 +++ b/smf/method.sh
 @@ -0,0 +1,132 @@
@@ -349,3 +349,6 @@ index 00000000..e91ed553
 +esac
 +
 +exit $?
+-- 
+2.31.1
+

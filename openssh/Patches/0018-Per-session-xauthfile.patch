@@ -1,7 +1,7 @@
-From 231cc12ac06a3dce54a48548caefa7badc4e0925 Mon Sep 17 00:00:00 2001
+From 0541b8b2102128dc08f0d7c64157fbc3b662a336 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Tue, 22 Dec 2015 17:12:50 -0800
-Subject: [PATCH 18/35] Per-session xauthfile
+Subject: [PATCH 18/34] Per-session xauthfile
 
 This patch is to fix a X11 connection failure when a user's home directory
 is read-only.
@@ -16,7 +16,7 @@ will remove this patch when we upgrade to that release.
  2 files changed, 138 insertions(+), 4 deletions(-)
 
 diff --git a/session.c b/session.c
-index 2d0958d1..4003d91c 100644
+index c02f7d25..44339e99 100644
 --- a/session.c
 +++ b/session.c
 @@ -63,6 +63,10 @@
@@ -30,7 +30,7 @@ index 2d0958d1..4003d91c 100644
  #include "openbsd-compat/sys-queue.h"
  #include "xmalloc.h"
  #include "ssh.h"
-@@ -133,6 +137,11 @@ static void do_authenticated2(struct ssh *, Authctxt *);
+@@ -130,6 +134,11 @@ static void do_authenticated2(struct ssh *, Authctxt *);
  
  static int session_pty_req(struct ssh *, Session *);
  
@@ -42,7 +42,7 @@ index 2d0958d1..4003d91c 100644
  /* import */
  extern ServerOptions options;
  extern char *__progname;
-@@ -1090,6 +1099,12 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
+@@ -1063,6 +1072,12 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
  
  	if (getenv("TZ"))
  		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
@@ -55,9 +55,9 @@ index 2d0958d1..4003d91c 100644
  	if (s->term)
  		child_set_env(&env, &envsize, "TERM", s->term);
  	if (s->display)
-@@ -2010,6 +2025,11 @@ session_x11_req(struct ssh *ssh, Session *s)
- {
- 	int success;
+@@ -1998,6 +2013,11 @@ session_x11_req(struct ssh *ssh, Session *s)
+ 	int r, success;
+ 	u_char single_connection = 0;
  
 +#ifdef PER_SESSION_XAUTHFILE
 +	int fd;
@@ -67,9 +67,9 @@ index 2d0958d1..4003d91c 100644
  	if (s->auth_proto != NULL || s->auth_data != NULL) {
  		error("session_x11_req: session %d: "
  		    "x11 forwarding already active", s->self);
-@@ -2021,19 +2041,78 @@ session_x11_req(struct ssh *ssh, Session *s)
- 	s->screen = packet_get_int();
- 	packet_check_eom();
+@@ -2012,19 +2032,78 @@ session_x11_req(struct ssh *ssh, Session *s)
+ 
+ 	s->single_connection = single_connection;
  
 -	if (xauth_valid_string(s->auth_proto) &&
 -	    xauth_valid_string(s->auth_data))
@@ -80,7 +80,7 @@ index 2d0958d1..4003d91c 100644
  		success = 0;
  		error("Invalid X11 forwarding data");
 +		goto out;
- 	}
++	}
 +
 +#ifdef PER_SESSION_XAUTHFILE
 +	/*
@@ -130,7 +130,7 @@ index 2d0958d1..4003d91c 100644
 +		error("failed to create a directory for the temporary X "
 +		    "authority file: %.100s; will use the default xauth file",
 +		    strerror(errno));
-+	}
+ 	}
 +#endif
 +
 +	success = session_setup_x11fwd(ssh, s);
@@ -150,7 +150,7 @@ index 2d0958d1..4003d91c 100644
  	return success;
  }
  
-@@ -2297,6 +2376,51 @@ session_pty_cleanup(Session *s)
+@@ -2299,6 +2378,51 @@ session_pty_cleanup(Session *s)
  	PRIVSEP(session_pty_cleanup2(s));
  }
  
@@ -202,7 +202,7 @@ index 2d0958d1..4003d91c 100644
  static char *
  sig2name(int sig)
  {
-@@ -2436,6 +2560,9 @@ session_close(struct ssh *ssh, Session *s)
+@@ -2439,6 +2563,9 @@ session_close(struct ssh *ssh, Session *s)
  	free(s->auth_display);
  	free(s->auth_data);
  	free(s->auth_proto);
@@ -212,7 +212,7 @@ index 2d0958d1..4003d91c 100644
  	free(s->subsys);
  	if (s->env != NULL) {
  		for (i = 0; i < s->num_env; i++) {
-@@ -2681,6 +2808,10 @@ do_cleanup(struct ssh *ssh, Authctxt *authctxt)
+@@ -2683,6 +2810,10 @@ do_cleanup(struct ssh *ssh, Authctxt *authctxt)
  	/* remove agent socket */
  	auth_sock_cleanup_proc(authctxt->pw);
  
@@ -238,5 +238,5 @@ index ce59dabd..1f078799 100644
  
  	int	chanid;
 -- 
-2.22.0
+2.31.1
 
