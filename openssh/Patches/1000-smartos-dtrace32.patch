@@ -1,26 +1,25 @@
-From 0c05cd15579c81db3ad8160d12d8b50558bd7293 Mon Sep 17 00:00:00 2001
+From ad54bbee75237a820bfae6790d1a9abe0db0e46e Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Tue, 22 Dec 2015 14:30:19 -0800
-Subject: [PATCH 34/35] SmartOS local: make dtrace lib 32-bit
+Subject: [PATCH 33/34] SmartOS local: make dtrace lib 32-bit
 
 ---
- Makefile.in | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Makefile.in | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 91442e0f..066382ad 100644
+index c1d2d848..80adc98f 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -26,7 +26,7 @@ ASKPASS_PROGRAM=$(libexecdir)/ssh-askpass
- SFTP_SERVER=$(libexecdir)/sftp-server
- SSH_KEYSIGN=$(libexecdir)/ssh-keysign
+@@ -29,6 +29,7 @@ SSH_KEYSIGN=$(libexecdir)/ssh-keysign
  SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
--ROOTDLIBDIR64=$(DESTDIR)/usr/lib/dtrace/64
+ SSH_SK_HELPER=$(libexecdir)/ssh-sk-helper
+ ROOTDLIBDIR64=$(DESTDIR)/usr/lib/dtrace/64
 +ROOTDLIBDIR=$(DESTDIR)/usr/lib/dtrace
  SMFMETHODDIR=$(DESTDIR)/lib/svc/method
  SMFNETMANIDIR=$(DESTDIR)/lib/svc/manifest/network
  PRIVSEP_PATH=@PRIVSEP_PATH@
-@@ -239,7 +239,7 @@ sftp_provider.h: $(srcdir)/sftp_provider.d
+@@ -277,7 +278,7 @@ sftp_provider.h: $(srcdir)/sftp_provider.d
  	    -o $(srcdir)/sftp_provider.h
  
  sftp_provider.o: sftp_provider.d sftp_provider.h sftp-server.o
@@ -29,15 +28,15 @@ index 91442e0f..066382ad 100644
  	    sftp-server.o -o sftp_provider.o
  
  # special case for sftp-server.o, it includes sftp_provider.h
-@@ -389,7 +389,7 @@ install-files:
- 	$(INSTALL) -m 644 sftp-server.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/sftp-server.1m
+@@ -446,7 +447,7 @@ install-files:
  	$(INSTALL) -m 644 ssh-keysign.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-keysign.1m
  	$(INSTALL) -m 644 ssh-pkcs11-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-pkcs11-helper.1m
+ 	$(INSTALL) -m 644 ssh-sk-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-sk-helper.1m
 -	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d
 +	mkdir -p $(ROOTDLIBDIR) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR)/sftp.d
  	$(srcdir)/mkinstalldirs $(SMFMETHODDIR)
  	$(srcdir)/mkinstalldirs $(SMFNETMANIDIR)
  	$(INSTALL) -m 555 smf/method.sh $(SMFMETHODDIR)/sshd
 -- 
-2.22.0
+2.31.1
 

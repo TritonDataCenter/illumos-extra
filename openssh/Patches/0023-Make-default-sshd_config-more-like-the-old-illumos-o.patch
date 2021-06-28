@@ -1,14 +1,14 @@
-From 21d32a4b36f94c6eae6e2f9310243a5404cbac81 Mon Sep 17 00:00:00 2001
+From e9c2bdcbe69ed3fec44a324c3b2795f3a3436bd5 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 13:24:58 -0700
-Subject: [PATCH 23/35] Make default sshd_config more like the old illumos one
+Subject: [PATCH 23/34] Make default sshd_config more like the old illumos one
 
 ---
  sshd_config | 44 +++++++++++++++++++++++---------------------
  1 file changed, 23 insertions(+), 21 deletions(-)
 
 diff --git a/sshd_config b/sshd_config
-index 2c48105f..d8e5e74b 100644
+index 19b7c91a..657c4415 100644
 --- a/sshd_config
 +++ b/sshd_config
 @@ -10,7 +10,7 @@
@@ -48,9 +48,9 @@ index 2c48105f..d8e5e74b 100644
  
  # Change to no to disable s/key passwords
  #ChallengeResponseAuthentication yes
-@@ -72,26 +72,28 @@ AuthorizedKeysFile	.ssh/authorized_keys
- #GSSAPIStrictAcceptorCheck yes
- #GSSAPIKeyExchange no
+@@ -70,26 +70,28 @@ AuthorizedKeysFile	.ssh/authorized_keys
+ #GSSAPIAuthentication no
+ #GSSAPICleanupCredentials yes
  
 -# Set this to 'yes' to enable PAM authentication, account processing,
 -# and session processing. If this is enabled, PAM authentication will
@@ -93,5 +93,5 @@ index 2c48105f..d8e5e74b 100644
  #PermitUserEnvironment no
  #Compression delayed
 -- 
-2.22.0
+2.31.1
 

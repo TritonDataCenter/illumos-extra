@@ -1,19 +1,19 @@
-From 556dde99419ae10f0ceb60723ccaa90d5b4ebb5f Mon Sep 17 00:00:00 2001
+From 2277df9ecfeb8102085e73f534fb0d90b7a6b901 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 3 Aug 2015 16:27:44 -0700
-Subject: [PATCH 19/35] PubKeyPlugin support
+Subject: [PATCH 19/34] PubKeyPlugin support
 
 This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called
 into to check public keys for authentication.
 ---
- auth2-pubkey.c | 142 ++++++++++++++++++++++++++++++++++++++++++++++++-
- servconf.c     |  15 ++++++
+ auth2-pubkey.c | 145 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ servconf.c     |  15 +++++
  servconf.h     |   2 +
- 3 files changed, 158 insertions(+), 1 deletion(-)
+ 3 files changed, 161 insertions(+), 1 deletion(-)
 
 diff --git a/auth2-pubkey.c b/auth2-pubkey.c
-index 2fb5950e..4ca0a0b7 100644
+index 721c1d9b..8b1e3883 100644
 --- a/auth2-pubkey.c
 +++ b/auth2-pubkey.c
 @@ -22,6 +22,11 @@
@@ -28,7 +28,7 @@ index 2fb5950e..4ca0a0b7 100644
  
  #include "includes.h"
  
-@@ -41,12 +46,14 @@
+@@ -42,6 +47,7 @@
  #include <time.h>
  #include <unistd.h>
  #include <limits.h>
@@ -36,16 +36,17 @@ index 2fb5950e..4ca0a0b7 100644
  
  #include "xmalloc.h"
  #include "ssh.h"
- #include "ssh2.h"
+@@ -49,6 +55,7 @@
  #include "packet.h"
+ #include "kex.h"
  #include "sshbuf.h"
 +#include "digest.h"
  #include "log.h"
  #include "misc.h"
  #include "servconf.h"
-@@ -73,6 +80,15 @@ extern ServerOptions options;
- extern u_char *session_id2;
- extern u_int session_id2_len;
+@@ -74,6 +81,15 @@
+ /* import */
+ extern ServerOptions options;
  
 +static const char *RSA_SYM_NAME = "sshd_user_rsa_key_allowed";
 +static const char *ECDSA_SYM_NAME = "sshd_user_ecdsa_key_allowed";
@@ -59,7 +60,7 @@ index 2fb5950e..4ca0a0b7 100644
  static char *
  format_key(const struct sshkey *key)
  {
-@@ -991,6 +1007,127 @@ user_key_command_allowed2(struct ssh *ssh, struct passwd *user_pw,
+@@ -1005,6 +1021,127 @@ user_key_command_allowed2(struct ssh *ssh, struct passwd *user_pw,
  	return found_key;
  }
  
@@ -187,30 +188,31 @@ index 2fb5950e..4ca0a0b7 100644
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -1015,6 +1152,9 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
+@@ -1045,12 +1182,18 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
  	sshauthopt_free(opts);
  	opts = NULL;
  
 +	if ((success = user_key_allowed_from_plugin(pw, key, &opts)) != 0)
 +		goto out;
++	sshauthopt_free(opts);
++	opts = NULL;
 +
  	if ((success = user_key_command_allowed2(ssh, pw, key, &opts)) != 0)
  		goto out;
  	sshauthopt_free(opts);
-@@ -1029,7 +1169,7 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
- 		free(file);
- 	}
+ 	opts = NULL;
  
 - out:
++
 +out:
  	if (success && authoptsp != NULL) {
  		*authoptsp = opts;
  		opts = NULL;
 diff --git a/servconf.c b/servconf.c
-index 15567f88..c61923c1 100644
+index 9da37110..36a73e49 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -194,6 +194,7 @@ initialize_server_options(ServerOptions *options)
+@@ -208,6 +208,7 @@ initialize_server_options(ServerOptions *options)
  	 */
  	options->pam_service_per_authmethod = 1;
  #endif
@@ -218,23 +220,23 @@ index 15567f88..c61923c1 100644
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -538,6 +539,7 @@ typedef enum {
+@@ -556,6 +557,7 @@ typedef enum {
  	sStreamLocalBindMask, sStreamLocalBindUnlink,
  	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
- 	sExposeAuthInfo, sRDomain,
+ 	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
 +	sPubKeyPlugin,
  	sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
-@@ -725,6 +727,7 @@ static struct {
- 	{ "exposeauthinfo", sExposeAuthInfo, SSHCFG_ALL },
+@@ -752,6 +754,7 @@ static struct {
  	{ "rdomain", sRDomain, SSHCFG_ALL },
  	{ "casignaturealgorithms", sCASignatureAlgorithms, SSHCFG_ALL },
+ 	{ "securitykeyprovider", sSecurityKeyProvider, SSHCFG_GLOBAL },
 +	{ "pubkeyplugin", sPubKeyPlugin, SSHCFG_ALL },
  	{ NULL, sBadOption, 0 }
  };
  
-@@ -2277,6 +2280,18 @@ process_server_config_line(ServerOptions *options, char *line,
+@@ -2513,6 +2516,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  		}
  		break;
  
@@ -254,18 +256,18 @@ index 15567f88..c61923c1 100644
  	case sIgnore:
  	case sUnsupported:
 diff --git a/servconf.h b/servconf.h
-index 77743737..72f0c42b 100644
+index c65acda3..a3159c1f 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -222,6 +222,8 @@ typedef struct {
- 	int	fingerprint_hash;
+@@ -240,6 +240,8 @@ typedef struct {
  	int	expose_userauth_info;
  	u_int64_t timing_secret;
-+
+ 	char   *sk_provider;
 +	char   *pubkey_plugin;
++
  }       ServerOptions;
  
  /* Information about the incoming connection as used by Match */
 -- 
-2.22.0
+2.31.1
 
