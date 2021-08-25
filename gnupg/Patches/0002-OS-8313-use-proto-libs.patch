@@ -3,9 +3,25 @@ symbol to libc or friends that gnupg's `configure` picks up.
 
 diff -ru gnupg-1.4.11/checks/Makefile.in gnupg-1.4.11-OS-8313-2/checks/Makefile.in
 --- gnupg-1.4.11/checks/Makefile.in	Mon Oct 18 05:53:57 2010
-+++ gnupg-1.4.11-OS-8313-2/checks/Makefile.in	Wed Aug 25 01:41:34 2021
-@@ -543,6 +543,8 @@
++++ gnupg-1.4.11-OS-8313-2/checks/Makefile.in	Wed Aug 25 02:18:10 2021
+@@ -537,12 +537,22 @@
+ 	$(srcdir)/mkdemodirs --clean
  
+ prepared.stamp: ./pubring.gpg ./secring.gpg ./plain-1 ./plain-2 ./plain-3 \
+-		./pubring.pkr ./secring.skr ./gpg_dearmor $(DATA_FILES)
+-	 $(GPG_IMPORT) $(srcdir)/pubdemo.asc	 
++		./pubring.pkr ./secring.skr ./gpg_dearmor ./gpg_import \
++		$(DATA_FILES)
++	 ./gpg_import $(srcdir)/pubdemo.asc	 
+ 	 echo timestamp >./prepared.stamp
+ 
++./gpg_import:
++	echo '#!/bin/sh' >./gpg_import
++	echo 'LD_LIBRARY_PATH=`pwd`/../../../../../proto/usr/lib' >>./gpg_import
++	echo 'export LD_LIBRARY_PATH' >>./gpg_import
++	echo $(GPG_IMPORT) '$1' >>./gpg_import
++	chmod 755 ./gpg_import
++
  ./gpg_dearmor:
  	echo '#!/bin/sh' >./gpg_dearmor
 +	echo 'LD_LIBRARY_PATH=`pwd`/../../../../../proto/usr/lib' >>./gpg_dearmor
