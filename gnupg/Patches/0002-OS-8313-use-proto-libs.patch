@@ -4,7 +4,7 @@ symbol to libc or friends that gnupg's `configure` picks up.
 diff -ru gnupg-1.4.11/checks/Makefile.in gnupg-1.4.11-OS-8313-2/checks/Makefile.in
 --- gnupg-1.4.11/checks/Makefile.in	Mon Oct 18 05:53:57 2010
 +++ gnupg-1.4.11-OS-8313-2/checks/Makefile.in	Wed Aug 25 01:41:34 2021
-@@ -543,6 +543,7 @@
+@@ -543,6 +543,8 @@
  
  ./gpg_dearmor:
  	echo '#!/bin/sh' >./gpg_dearmor
