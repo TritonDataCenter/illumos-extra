@@ -19,7 +19,7 @@ diff -ru gnupg-1.4.11/checks/Makefile.in gnupg-1.4.11-OS-8313-2/checks/Makefile.
 +	echo '#!/bin/sh' >./gpg_import
 +	echo 'LD_LIBRARY_PATH=`pwd`/../../../../../proto/usr/lib' >>./gpg_import
 +	echo 'export LD_LIBRARY_PATH' >>./gpg_import
-+	echo $(GPG_IMPORT) "\$1" >>./gpg_import
++	echo '$(GPG_IMPORT) $$1' >>./gpg_import
 +	chmod 755 ./gpg_import
 +
  ./gpg_dearmor:
