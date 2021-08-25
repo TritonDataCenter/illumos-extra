@@ -2,19 +2,19 @@ For these checks, use the libraries in the proto area, in case we add a new
 symbol to libc or friends that gnupg's `configure` picks up.
 
 diff -ru gnupg-1.4.11/checks/Makefile.in gnupg-1.4.11-OS-8313-2/checks/Makefile.in
---- gnupg-1.4.11/checks/Makefile.in     Mon Oct 18 05:53:57 2010
-+++ gnupg-1.4.11-OS-8313-2/checks/Makefile.in   Wed Aug 25 01:41:34 2021
+--- gnupg-1.4.11/checks/Makefile.in	Mon Oct 18 05:53:57 2010
++++ gnupg-1.4.11-OS-8313-2/checks/Makefile.in	Wed Aug 25 01:41:34 2021
 @@ -543,6 +543,7 @@
  
  ./gpg_dearmor:
-        echo '#!/bin/sh' >./gpg_dearmor
-+       echo 'LD_LIBRARY_PATH=`pwd`/../../../../../usr/lib' >>./gpg_dearmor
-        echo "../g10/gpg --no-options --no-greeting \
+ 	echo '#!/bin/sh' >./gpg_dearmor
++	echo 'LD_LIBRARY_PATH=`pwd`/../../../../../usr/lib' >>./gpg_dearmor
+ 	echo "../g10/gpg --no-options --no-greeting \
               --no-secmem-warning --batch --dearmor" >>./gpg_dearmor
-        chmod 755 ./gpg_dearmor
+ 	chmod 755 ./gpg_dearmor
 diff -ru gnupg-1.4.11/checks/defs.inc gnupg-1.4.11-OS-8313-2/checks/defs.inc
---- gnupg-1.4.11/checks/defs.inc        Thu Aug 13 03:29:18 2009
-+++ gnupg-1.4.11-OS-8313-2/checks/defs.inc      Wed Aug 25 01:06:48 2021
+--- gnupg-1.4.11/checks/defs.inc	Thu Aug 13 03:29:18 2009
++++ gnupg-1.4.11-OS-8313-2/checks/defs.inc	Wed Aug 25 01:06:48 2021
 @@ -31,6 +31,10 @@
  LC_ALL=
  LC_MESSAGES=
