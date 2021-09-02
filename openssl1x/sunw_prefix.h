@@ -4798,6 +4798,7 @@
 #pragma redefine_extname	X509V3_add_value_bool_nf sunw_X509V3_add_value_bool_nf
 #pragma redefine_extname	X509V3_add_value_int sunw_X509V3_add_value_int
 #pragma redefine_extname	X509V3_add_value_uchar sunw_X509V3_add_value_uchar
+#pragma redefine_extname	x509v3_add_len_value_uchar sunw_x509v3_add_len_value_uchar
 #pragma redefine_extname	X509V3_add1_i2d sunw_X509V3_add1_i2d
 #pragma redefine_extname	X509V3_conf_free sunw_X509V3_conf_free
 #pragma redefine_extname	X509v3_delete_ext sunw_X509v3_delete_ext
