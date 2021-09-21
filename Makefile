@@ -81,7 +81,6 @@ SUBDIRS = \
 	ntp \
 	openldap \
 	openlldp \
-	openssl \
 	openssl1x \
 	openssh \
 	pbzip2 \
