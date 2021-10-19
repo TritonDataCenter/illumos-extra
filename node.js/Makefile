@@ -76,8 +76,8 @@ AUTOCONF_OPTS += \
 	--without-snapshot \
 	--openssl-use-sys \
 	--openssl-libpath=$(DESTDIR)/lib \
-	--openssl-includes=$(DESTDIR)/usr/include \
-	--shared-openssl-libname=sunw_crypto,sunw_ssl \
+	--openssl-includes=$(DESTDIR)/usr/include/1x \
+	--shared-openssl-libname=sunw1x_crypto,sunw1x_ssl \
 	--shared-zlib \
 	--shared-zlib-libpath=$(DESTDIR)/lib \
 	--shared-zlib-includes=$(DESTDIR)/usr/include \

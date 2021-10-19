@@ -51,15 +51,15 @@ cd $VERDIR
 # Install libraries
 _install D libsunw_crypto.so.${LIBVER} \
     ${LIBDIR}/libsunw_crypto.so.${LIBVER} 0755
-_install L libsunw_crypto.so.${LIBVER} ${LIBDIR}/libsunw_crypto.so
+_install L libsunw_crypto.so.${LIBVER} ${LIBDIR}/libsunw1x_crypto.so
 _install D libsunw_ssl.so.${LIBVER} ${LIBDIR}/libsunw_ssl.so.${LIBVER} 0755
-_install L libsunw_ssl.so.${LIBVER} ${LIBDIR}/libsunw_ssl.so
+_install L libsunw_ssl.so.${LIBVER} ${LIBDIR}/libsunw1x_ssl.so
 _install L ../../lib/libsunw_crypto.so.${LIBVER} \
     ${USRLIBDIR}/libsunw_crypto.so.${LIBVER}
-_install L ../../lib/libsunw_crypto.so ${USRLIBDIR}/libsunw_crypto.so
+_install L ../../lib/libsunw_crypto.so ${USRLIBDIR}/libsunw1x_crypto.so
 _install L ../../lib/libsunw_ssl.so.${LIBVER} \
     ${USRLIBDIR}/libsunw_ssl.so.${LIBVER}
-_install L ../../lib/libsunw_ssl.so ${USRLIBDIR}/libsunw_ssl.so
+_install L ../../lib/libsunw_ssl.so ${USRLIBDIR}/libsunw1x_ssl.so
 
 # Install commands
 _install P apps/CA.pl ${BINDIR}/CA.pl 0555
@@ -77,10 +77,10 @@ _install N apps/openssl.cnf ${DESTDIR}/etc/openssl/openssl.cnf 0644
 _install L ../openssl ${DESTDIR}/etc/sfw/openssl
 
 # Install header files
-mkdir -p ${INCDIR}/openssl
+mkdir -p ${INCDIR}/1x/openssl
 cd include/openssl
 for header in !(fips*|idea*|pq_compat.h|tmdiff.h); do
-	_install N ${header} ${INCDIR}/openssl/${header} 0444
+	_install N ${header} ${INCDIR}/1x/openssl/${header} 0444
 done
 
 exit 0
