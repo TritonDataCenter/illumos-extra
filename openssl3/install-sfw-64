@@ -48,11 +48,6 @@ source ../install.subr
 
 cd ${VERDIR}
 
-# Install commands
-## XXX KEBE ASKS, put 64-bit version in plain bin/openssl ?
-_install E apps/openssl ${BINDIR}/openssl 0555
-_install L ../../../bin/amd64/openssl ${SFWBINDIR}/openssl
-
 # Install libraries
 _install D libcrypto-smartos.so.${LIBVER} \
     ${LIBDIR}/libcrypto-smartos.so.${LIBVER} 0755
@@ -73,6 +68,16 @@ _install L ../../../lib/amd64/libssl-smartos.so.${LIBVER} \
     ${USRLIBDIR}/libssl-smartos.so.${LIBVER}
 _install L ../../../lib/amd64/libssl-smartos.so ${USRLIBDIR}/libssl-smartos.so
 _install L ../../../lib/amd64/libssl-smartos.so ${USRLIBDIR}/libsunw_ssl.so
+
+# Install commands
+_install E apps/openssl ${BINDIR}/openssl 0555
+_install L ../../../bin/amd64/openssl ${SFWBINDIR}/openssl
+## XXX KEBE ASKS, put 64-bit version in plain bin/openssl ? (for now no)
+#_install P apps/CA.pl ${BINDIR}/../CA.pl 0555
+#_install L amd64/openssl ${BINDIR}/../openssl
+#_install L ../../bin/openssl ${DESTDIR}/usr/sfw/bin/openssl
+#_install L ../../bin/openssl ${SFWBINDIR}/../openssl
+
 
 # The pivy tools as well as kbmd deliberately statically
 # link against libsunw_crypto.a to prevent sharing of code pages

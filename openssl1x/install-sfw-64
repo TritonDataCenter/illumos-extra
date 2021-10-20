@@ -55,17 +55,17 @@ _install L ../../../bin/amd64/openssl ${SFWBINDIR}/openssl
 # Install libraries
 _install D libsunw_crypto.so.${LIBVER} \
     ${LIBDIR}/libsunw_crypto.so.${LIBVER} 0755
-_install L libsunw_crypto.so.${LIBVER} ${LIBDIR}/libsunw_crypto.so
+_install L libsunw_crypto.so.${LIBVER} ${LIBDIR}/libsunw1x_crypto.so
 _install D libsunw_ssl.so.${LIBVER} ${LIBDIR}/libsunw_ssl.so.${LIBVER} 0755
-_install L libsunw_ssl.so.${LIBVER} ${LIBDIR}/libsunw_ssl.so
+_install L libsunw_ssl.so.${LIBVER} ${LIBDIR}/libsunw1x_ssl.so
 _install L amd64 ${DESTDIR}/lib/64
 _install L ../../../lib/amd64/libsunw_crypto.so.${LIBVER} \
     ${USRLIBDIR}/libsunw_crypto.so.${LIBVER}
 _install L ../../../lib/amd64/libsunw_crypto.so \
-    ${USRLIBDIR}/libsunw_crypto.so
+    ${USRLIBDIR}/libsunw1x_crypto.so
 _install L ../../../lib/amd64/libsunw_ssl.so.${LIBVER} \
     ${USRLIBDIR}/libsunw_ssl.so.${LIBVER}
-_install L ../../../lib/amd64/libsunw_ssl.so ${USRLIBDIR}/libsunw_ssl.so
+_install L ../../../lib/amd64/libsunw_ssl.so ${USRLIBDIR}/libsunw1x_ssl.so
 
 # The pivy tools as well as kbmd deliberately statically
 # link against libsunw_crypto.a to prevent sharing of code pages
@@ -73,7 +73,7 @@ _install L ../../../lib/amd64/libsunw_ssl.so ${USRLIBDIR}/libsunw_ssl.so
 # into the proto area in a location that won't be seen (and
 # unintentionally used) by other software, but do not
 # deliver the static library in the platform image.
-mkdir -p ${DESTDIR}/.build
-_install D libcrypto.a ${DESTDIR}/.build/libsunw_crypto.a 0755
+#mkdir -p ${DESTDIR}/.build
+#_install D libcrypto.a ${DESTDIR}/.build/libsunw_crypto.a 0755
 
 exit 0

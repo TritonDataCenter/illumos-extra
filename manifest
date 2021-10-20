@@ -428,13 +428,21 @@ f usr/sbin/lldpneighbors 0555 root bin
 # openssl
 f usr/bin/amd64/openssl 0555 root bin
 s usr/sfw/bin/amd64/openssl=../../../bin/amd64/openssl
+f lib/amd64/libcrypto-smartos.so.3 0755 root bin
 f lib/amd64/libsunw_crypto.so.1.0.0 0755 root bin
+s usr/lib/amd64/libcrypto-smartos.so.3=../../../lib/amd64/libcrypto-smartos.so.3
 s usr/lib/amd64/libsunw_crypto.so.1.0.0=../../../lib/amd64/libsunw_crypto.so.1.0.0
+f lib/amd64/libssl-smartos.so.3 0755 root bin
 f lib/amd64/libsunw_ssl.so.1.0.0 0755 root bin
+s usr/lib/amd64/libssl-smartos.so.3=../../../lib/amd64/libssl-smartos.so.3
 s usr/lib/amd64/libsunw_ssl.so.1.0.0=../../../lib/amd64/libsunw_ssl.so.1.0.0
+f lib/libcrypto-smartos.so.3 0755 root bin
 f lib/libsunw_crypto.so.1.0.0 0755 root bin
+s usr/lib/libcrypto-smartos.so.3=../../lib/libcrypto-smartos.so.3
 s usr/lib/libsunw_crypto.so.1.0.0=../../lib/libsunw_crypto.so.1.0.0
+f lib/libssl-smartos.so.3 0755 root bin
 f lib/libsunw_ssl.so.1.0.0 0755 root bin
+s usr/lib/libssl-smartos.so.3=../../lib/libssl-smartos.so.3
 s usr/lib/libsunw_ssl.so.1.0.0=../../lib/libsunw_ssl.so.1.0.0
 f usr/bin/openssl 0555 root bin
 s usr/sfw/bin/openssl=../../bin/openssl

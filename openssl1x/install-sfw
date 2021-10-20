@@ -62,7 +62,7 @@ _install L ../../lib/libsunw_ssl.so.${LIBVER} \
 _install L ../../lib/libsunw_ssl.so ${USRLIBDIR}/libsunw1x_ssl.so
 
 # Install commands
-# XXX KEBE SAYS Do not for 1.0.x, instead use 3.0's versions.
+# Do not use 1.0.x's apps, instead use 3.0's versions.
 #_install P apps/CA.pl ${BINDIR}/CA.pl 0555
 #_install E apps/openssl ${BINDIR}/openssl 0555
 #mkdir -p ${DESTDIR}/usr/sfw/bin
@@ -74,7 +74,8 @@ mkdir -p ${DESTDIR}/etc/openssl/certs
 mkdir -p ${DESTDIR}/etc/openssl/private
 mkdir -p ${DESTDIR}/etc/sfw
 chmod 0700 ${DESTDIR}/etc/openssl/private
-_install N apps/openssl.cnf ${DESTDIR}/etc/openssl/openssl.cnf 0644
+# Do not use 1.0.x's apps, instead use 3.0's versions.
+#_install N apps/openssl.cnf ${DESTDIR}/etc/openssl/openssl.cnf 0644
 _install L ../openssl ${DESTDIR}/etc/sfw/openssl
 
 # Install header files
