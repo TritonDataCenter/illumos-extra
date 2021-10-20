@@ -96,6 +96,7 @@ PATCHES =	Patches/*
 
 AUTOCONF_ENV =
 AUTOCONF_OPTS += \
+	--api=1.1.1 \
 	--openssldir=/etc/openssl \
 	no-rc5 \
 	no-mdc2 \
