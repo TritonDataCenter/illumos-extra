@@ -31,9 +31,10 @@ VERSIONJS =	$(NODE_ROOT)/node_modules/platform_node_version.js
 
 #
 # Because we're stuck with OpenSSL 1.0.x, and the shared-openssl-includes below
-# appear to be blown-off by Node's autoconf, be a little more forceful.
+# appear to be blown-off by Node's autoconf, be a little more forceful, and
+# a little more immediate.
 #
-CFLAGS += -I$(DESTDIR)/opt/1x
+CPPFLAGS += -I$(DESTDIR)/opt/1x
 
 #
 # ../deps/v8/src/objects.h:5188:44: error: left operand of shift expression
