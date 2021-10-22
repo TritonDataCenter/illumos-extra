@@ -56,10 +56,11 @@ _install D libsunw_ssl.so.${LIBVER} ${LIBDIR}/libsunw_ssl.so.${LIBVER} 0755
 _install L libsunw_ssl.so.${LIBVER} ${LIBDIR}/libsunw1x_ssl.so
 _install L ../../lib/libsunw_crypto.so.${LIBVER} \
     ${USRLIBDIR}/libsunw_crypto.so.${LIBVER}
-_install L ../../lib/libsunw_crypto.so ${USRLIBDIR}/libsunw1x_crypto.so
+_install L ../../lib/libsunw_crypto.so.${LIBVER} \
+    ${USRLIBDIR}/libsunw1x_crypto.so
 _install L ../../lib/libsunw_ssl.so.${LIBVER} \
     ${USRLIBDIR}/libsunw_ssl.so.${LIBVER}
-_install L ../../lib/libsunw_ssl.so ${USRLIBDIR}/libsunw1x_ssl.so
+_install L ../../lib/libsunw_ssl.so.${LIBVER} ${USRLIBDIR}/libsunw1x_ssl.so
 
 # Install commands
 # Do not use 1.0.x's apps, instead use 3.0's versions.

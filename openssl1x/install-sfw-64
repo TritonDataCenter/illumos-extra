@@ -61,11 +61,12 @@ _install L libsunw_ssl.so.${LIBVER} ${LIBDIR}/libsunw1x_ssl.so
 _install L amd64 ${DESTDIR}/lib/64
 _install L ../../../lib/amd64/libsunw_crypto.so.${LIBVER} \
     ${USRLIBDIR}/libsunw_crypto.so.${LIBVER}
-_install L ../../../lib/amd64/libsunw_crypto.so \
+_install L ../../../lib/amd64/libsunw_crypto.so.${LIBVER} \
     ${USRLIBDIR}/libsunw1x_crypto.so
 _install L ../../../lib/amd64/libsunw_ssl.so.${LIBVER} \
     ${USRLIBDIR}/libsunw_ssl.so.${LIBVER}
-_install L ../../../lib/amd64/libsunw_ssl.so ${USRLIBDIR}/libsunw1x_ssl.so
+_install L ../../../lib/amd64/libsunw_ssl.so.${LIBVER} \
+    ${USRLIBDIR}/libsunw1x_ssl.so
 
 # The pivy tools as well as kbmd deliberately statically
 # link against libsunw_crypto.a to prevent sharing of code pages
