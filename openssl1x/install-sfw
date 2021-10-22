@@ -32,7 +32,7 @@ set -o errexit
 LIBDIR=${DESTDIR}/lib
 BINDIR=${DESTDIR}/usr/bin
 USRLIBDIR=${DESTDIR}/usr/lib
-INCDIR=${DESTDIR}/opt/1x
+INCDIR=${DESTDIR}/usr/include
 
 mkdir -p $LIBDIR
 mkdir -p $BINDIR
@@ -79,10 +79,17 @@ chmod 0700 ${DESTDIR}/etc/openssl/private
 _install L ../openssl ${DESTDIR}/etc/sfw/openssl
 
 # Install header files
-mkdir -p ${INCDIR}/openssl
+# Use "openssl1x" for 1.0.x headers, since OpenSSL 3.0 is now around.
+mkdir -p ${INCDIR}/openssl1x
 cd include/openssl
 for header in !(fips*|idea*|pq_compat.h|tmdiff.h); do
-	_install N ${header} ${INCDIR}/openssl/${header} 0444
+#	_install N ${header} ${INCDIR}/openssl/${header} 0444
+# Because we now have OpenSSL 3, we need to place and modify these headers
+# into openssl1x/ instead, AND have them not include OpenSSL 3 headers by
+# mistake.  Use sed to help us along.
+	sed 's/openssl\//openssl1x\//g' < ${header} \
+	    > ${INCDIR}/openssl1x/${header}
+	chmod 0444 ${INCDIR}/openssl1x/${header}
 done
 
 exit 0
