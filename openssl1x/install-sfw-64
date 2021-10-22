@@ -49,8 +49,8 @@ source ../install.subr
 cd ${VERDIR}
 
 # Install commands
-_install E apps/openssl ${BINDIR}/openssl 0555
-_install L ../../../bin/amd64/openssl ${SFWBINDIR}/openssl
+#_install E apps/openssl ${BINDIR}/openssl 0555
+#_install L ../../../bin/amd64/openssl ${SFWBINDIR}/openssl
 
 # Install libraries
 _install D libsunw_crypto.so.${LIBVER} \
