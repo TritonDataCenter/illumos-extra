@@ -88,6 +88,7 @@ for header in !(fips*|idea*|pq_compat.h|tmdiff.h); do
 # Because we now have OpenSSL 3, we need to place and modify these headers
 # into openssl1x/ instead, AND have them not include OpenSSL 3 headers by
 # mistake.  Use sed to help us along.
+	rm -f ${INCDIR}/openssl1x/${header}
 	sed 's/openssl\//openssl1x\//g' < ${header} \
 	    > ${INCDIR}/openssl1x/${header}
 	chmod 0444 ${INCDIR}/openssl1x/${header}
