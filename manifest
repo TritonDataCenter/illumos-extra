@@ -397,14 +397,13 @@ f usr/openldap/bin/ldapmodrdn 0555 root bin
 f usr/openldap/bin/ldappasswd 0555 root bin
 f usr/openldap/bin/ldapsearch 0555 root bin
 f usr/openldap/bin/ldapurl 0555 root bin
+f usr/openldap/bin/ldapvc 0555 root bin
 f usr/openldap/bin/ldapwhoami 0555 root bin
 d usr/openldap/lib 0755 root bin
-s usr/openldap/lib/liblber-2.4.so.2=liblber-2.4.so.2.7.1
-f usr/openldap/lib/liblber-2.4.so.2.7.1 0555 root bin
-s usr/openldap/lib/libldap-2.4.so.2=libldap-2.4.so.2.7.1
-f usr/openldap/lib/libldap-2.4.so.2.7.1 0555 root bin
-s usr/openldap/lib/libldap_r-2.4.so.2=libldap_r-2.4.so.2.7.1
-f usr/openldap/lib/libldap_r-2.4.so.2.7.1 0555 root bin
+s usr/openldap/lib/liblber-2.5.so.0=liblber-2.5.so.0.1.3
+f usr/openldap/lib/liblber-2.5.so.0.1.3 0555 root bin
+s usr/openldap/lib/libldap-2.5.so.0=libldap-2.4.so.0.1.3
+f usr/openldap/lib/libldap-2.5.so.0.1.3 0555 root bin
 d usr/openldap/share 0755 root bin
 d usr/openldap/share/man 0755 root bin
 d usr/openldap/share/man/man1 0755 root bin
@@ -417,6 +416,7 @@ f usr/openldap/share/man/man1/ldapmodrdn.1 0444 root bin
 f usr/openldap/share/man/man1/ldappasswd.1 0444 root bin
 f usr/openldap/share/man/man1/ldapsearch.1 0444 root bin
 f usr/openldap/share/man/man1/ldapurl.1 0444 root bin
+f usr/openldap/share/man/man1/ldapvc.1 0444 root bin
 f usr/openldap/share/man/man1/ldapwhoami.1 0444 root bin
 d usr/openldap/share/man/man5 0755 root bin
 f usr/openldap/share/man/man5/ldap.conf.5 0444 root bin
