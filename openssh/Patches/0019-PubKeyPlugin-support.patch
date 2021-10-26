@@ -1,4 +1,4 @@
-From 2277df9ecfeb8102085e73f534fb0d90b7a6b901 Mon Sep 17 00:00:00 2001
+From 13c59a699b604d29ff24a209ab739cd5ce6c187a Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 3 Aug 2015 16:27:44 -0700
 Subject: [PATCH 19/34] PubKeyPlugin support
@@ -13,7 +13,7 @@ into to check public keys for authentication.
  3 files changed, 161 insertions(+), 1 deletion(-)
 
 diff --git a/auth2-pubkey.c b/auth2-pubkey.c
-index 721c1d9b..8b1e3883 100644
+index 9e32259a..bd07d15a 100644
 --- a/auth2-pubkey.c
 +++ b/auth2-pubkey.c
 @@ -22,6 +22,11 @@
@@ -60,7 +60,7 @@ index 721c1d9b..8b1e3883 100644
  static char *
  format_key(const struct sshkey *key)
  {
-@@ -1005,6 +1021,127 @@ user_key_command_allowed2(struct ssh *ssh, struct passwd *user_pw,
+@@ -1006,6 +1022,127 @@ user_key_command_allowed2(struct ssh *ssh, struct passwd *user_pw,
  	return found_key;
  }
  
@@ -188,7 +188,7 @@ index 721c1d9b..8b1e3883 100644
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -1045,12 +1182,18 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
+@@ -1046,12 +1183,18 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
  	sshauthopt_free(opts);
  	opts = NULL;
  
@@ -209,10 +209,10 @@ index 721c1d9b..8b1e3883 100644
  		*authoptsp = opts;
  		opts = NULL;
 diff --git a/servconf.c b/servconf.c
-index 9da37110..36a73e49 100644
+index 3265b223..6f99225e 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -208,6 +208,7 @@ initialize_server_options(ServerOptions *options)
+@@ -207,6 +207,7 @@ initialize_server_options(ServerOptions *options)
  	 */
  	options->pam_service_per_authmethod = 1;
  #endif
@@ -220,7 +220,7 @@ index 9da37110..36a73e49 100644
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -556,6 +557,7 @@ typedef enum {
+@@ -551,6 +552,7 @@ typedef enum {
  	sStreamLocalBindMask, sStreamLocalBindUnlink,
  	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
  	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
@@ -228,7 +228,7 @@ index 9da37110..36a73e49 100644
  	sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
-@@ -752,6 +754,7 @@ static struct {
+@@ -747,6 +749,7 @@ static struct {
  	{ "rdomain", sRDomain, SSHCFG_ALL },
  	{ "casignaturealgorithms", sCASignatureAlgorithms, SSHCFG_ALL },
  	{ "securitykeyprovider", sSecurityKeyProvider, SSHCFG_GLOBAL },
@@ -236,7 +236,7 @@ index 9da37110..36a73e49 100644
  	{ NULL, sBadOption, 0 }
  };
  
-@@ -2513,6 +2516,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2546,6 +2549,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  		}
  		break;
  
@@ -256,10 +256,10 @@ index 9da37110..36a73e49 100644
  	case sIgnore:
  	case sUnsupported:
 diff --git a/servconf.h b/servconf.h
-index c65acda3..a3159c1f 100644
+index c4063bfa..527cb6ad 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -240,6 +240,8 @@ typedef struct {
+@@ -239,6 +239,8 @@ typedef struct {
  	int	expose_userauth_info;
  	u_int64_t timing_secret;
  	char   *sk_provider;
@@ -269,5 +269,5 @@ index c65acda3..a3159c1f 100644
  
  /* Information about the incoming connection as used by Match */
 -- 
-2.31.1
+2.30.1 (Apple Git-130)
 

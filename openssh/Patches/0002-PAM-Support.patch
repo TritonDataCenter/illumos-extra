@@ -1,4 +1,4 @@
-From 84c001ca5b32be663ec2e2a65632e0314d7e31b3 Mon Sep 17 00:00:00 2001
+From 2a17e0aac6ece1a4172cdc2f90410b05097168fb Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:19 -0700
 Subject: [PATCH 02/34] PAM Support
@@ -15,10 +15,10 @@ Subject: [PATCH 02/34] PAM Support
  1 file changed, 14 insertions(+)
 
 diff --git a/servconf.c b/servconf.c
-index 4d1910fe..ac105537 100644
+index b2fbf0b2..508e1ce9 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -278,7 +278,12 @@ fill_default_server_options(ServerOptions *options)
+@@ -277,7 +277,12 @@ fill_default_server_options(ServerOptions *options)
  
  	/* Portable-specific options */
  	if (options->use_pam == -1)
@@ -31,7 +31,7 @@ index 4d1910fe..ac105537 100644
  
  	/* Standard Options */
  	if (options->num_host_key_files == 0) {
-@@ -1309,8 +1314,17 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -1329,8 +1334,17 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  	switch (opcode) {
  	/* Portable-specific options */
  	case sUsePAM:
@@ -50,5 +50,5 @@ index 4d1910fe..ac105537 100644
  	/* Standard Options */
  	case sBadOption:
 -- 
-2.31.1
+2.30.1 (Apple Git-130)
 

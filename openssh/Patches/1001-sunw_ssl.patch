@@ -1,4 +1,4 @@
-From b4773dd7d392bed0fffc228cdf461fc995e37745 Mon Sep 17 00:00:00 2001
+From a14d0c45786b491db9713165e6358449ebef6876 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Tue, 22 Dec 2015 14:31:25 -0800
 Subject: [PATCH 34/34] SmartOS local: use sunw_ssl lib from platform
@@ -52,10 +52,10 @@ index 716f8d42..34846ef6 100644
 -#endif /* !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
 +#endif /* !defined(HAVE_SUNW_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
 diff --git a/configure.ac b/configure.ac
-index 04865532..6e82cf70 100644
+index 03880716..3384389d 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -2723,8 +2723,8 @@ AC_ARG_WITH([ssl-engine],
+@@ -2736,8 +2736,8 @@ AC_ARG_WITH([ssl-engine],
  )
  
  if test "x$openssl" = "xyes" ; then
@@ -66,7 +66,7 @@ index 04865532..6e82cf70 100644
  	    [AC_MSG_ERROR([*** working libcrypto not found, check config.log])])
  	AC_CHECK_HEADER([openssl/opensslv.h], ,
  	    [AC_MSG_ERROR([*** OpenSSL headers missing - please install first or check config.log ***])])
-@@ -2896,21 +2896,21 @@ if test "x$openssl" = "xyes" ; then
+@@ -2910,21 +2910,21 @@ if test "x$openssl" = "xyes" ; then
  	)
  
  	AC_CHECK_FUNCS([ \
@@ -100,7 +100,7 @@ index 04865532..6e82cf70 100644
  	    AC_DEFINE(HAVE_OPENSSL_ADD_ALL_ALGORITHMS, 1, [as a function]),
  	    AC_CHECK_DECL(OpenSSL_add_all_algorithms,
  		AC_DEFINE(HAVE_OPENSSL_ADD_ALL_ALGORITHMS, 1, [as a macro]), ,
-@@ -2920,42 +2920,42 @@ if test "x$openssl" = "xyes" ; then
+@@ -2934,42 +2934,42 @@ if test "x$openssl" = "xyes" ; then
  
  	# LibreSSL/OpenSSL 1.1x API
  	AC_CHECK_FUNCS([ \
@@ -179,7 +179,7 @@ index 04865532..6e82cf70 100644
  	])
  
  	if test "x$openssl_engine" = "xyes" ; then
-@@ -3078,7 +3078,7 @@ if test "x$openssl" = "xyes" ; then
+@@ -3092,7 +3092,7 @@ if test "x$openssl" = "xyes" ; then
  	AC_CHECK_FUNCS([crypt DES_crypt])
  
  	# Check for SHA256, SHA384 and SHA512 support in OpenSSL
@@ -188,7 +188,7 @@ index 04865532..6e82cf70 100644
  
  	# Check complete ECC support in OpenSSL
  	AC_MSG_CHECKING([whether OpenSSL has NID_X9_62_prime256v1])
-@@ -3161,7 +3161,7 @@ if test "x$openssl" = "xyes" ; then
+@@ -3174,7 +3174,7 @@ if test "x$openssl" = "xyes" ; then
  	if test x$enable_nistp256 = x1 || test x$enable_nistp384 = x1 || \
  	    test x$enable_nistp521 = x1; then
  		AC_DEFINE(OPENSSL_HAS_ECC, [1], [OpenSSL has ECC])
@@ -866,5 +866,5 @@ index 8ca50b5a..0dfb1c15 100644
  #endif /* WITH_OPENSSL */
  #endif /* _OPENSSL_COMPAT_H */
 -- 
-2.31.1
+2.30.1 (Apple Git-130)
 

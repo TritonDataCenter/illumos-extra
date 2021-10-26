@@ -1,4 +1,4 @@
-From b2d86ac94c9fd4af455a5347b2e498c0ac180775 Mon Sep 17 00:00:00 2001
+From 340e32396194a38dd274eb6a41ee6186562ee9e8 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 4 Sep 2015 10:38:28 -0700
 Subject: [PATCH 27/34] Compatibility for SunSSH_1.5* should include old DH KEx
@@ -15,7 +15,7 @@ new daemon.
  1 file changed, 84 insertions(+), 7 deletions(-)
 
 diff --git a/compat.c b/compat.c
-index 69befa96..6fe8cce5 100644
+index 0dbea68c..e4349ab9 100644
 --- a/compat.c
 +++ b/compat.c
 @@ -53,7 +53,8 @@ compat_banner(struct ssh *ssh, const char *version)
@@ -28,7 +28,7 @@ index 69befa96..6fe8cce5 100644
  		{ "OpenSSH_2*,"
  		  "OpenSSH_3*,"
  		  "OpenSSH_4*",		SSH_BUG_SIGTYPE },
-@@ -155,6 +156,81 @@ compat_banner(struct ssh *ssh, const char *version)
+@@ -156,6 +157,81 @@ compat_banner(struct ssh *ssh, const char *version)
  	debug_f("no match: %s", version);
  }
  
@@ -110,7 +110,7 @@ index 69befa96..6fe8cce5 100644
  char *
  compat_cipher_proposal(struct ssh *ssh, char *cipher_prop)
  {
-@@ -189,15 +265,16 @@ compat_kex_proposal(struct ssh *ssh, char *p)
+@@ -190,15 +266,16 @@ compat_kex_proposal(struct ssh *ssh, char *p)
  	if ((ssh->compat & (SSH_BUG_CURVE25519PAD|SSH_OLD_DHGEX)) == 0)
  		return p;
  	debug2_f("original KEX proposal: %s", p);
@@ -134,5 +134,5 @@ index 69befa96..6fe8cce5 100644
  	debug2_f("compat KEX proposal: %s", p);
  	if (*p == '\0')
 -- 
-2.31.1
+2.30.1 (Apple Git-130)
 

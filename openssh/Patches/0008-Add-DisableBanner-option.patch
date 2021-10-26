@@ -1,4 +1,4 @@
-From 986624a6c52a3c06d38b528bbfc2bb85c789bd9d Mon Sep 17 00:00:00 2001
+From bf8c8cf28a220290d90e850d374494ae50e9294a Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:00 -0700
 Subject: [PATCH 08/34] Add DisableBanner option
@@ -11,7 +11,7 @@ Subject: [PATCH 08/34] Add DisableBanner option
  4 files changed, 75 insertions(+), 4 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
-index 1e31f00c..b0cb3f9d 100644
+index 8c5c6dd1..6ff97694 100644
 --- a/readconf.c
 +++ b/readconf.c
 @@ -166,6 +166,9 @@ typedef enum {
@@ -22,9 +22,9 @@ index 1e31f00c..b0cb3f9d 100644
 +	oDisableBanner,
 +#endif
  	oVisualHostKey,
- 	oKexAlgorithms, oIPQoS, oRequestTTY, oIgnoreUnknown, oProxyUseFdpass,
- 	oCanonicalDomains, oCanonicalizeHostname, oCanonicalizeMaxDots,
-@@ -288,6 +291,9 @@ static struct {
+ 	oKexAlgorithms, oIPQoS, oRequestTTY, oSessionType, oStdinNull,
+ 	oForkAfterAuthentication, oIgnoreUnknown, oProxyUseFdpass,
+@@ -289,6 +292,9 @@ static struct {
  	{ "controlpersist", oControlPersist },
  	{ "hashknownhosts", oHashKnownHosts },
  	{ "include", oInclude },
@@ -34,7 +34,7 @@ index 1e31f00c..b0cb3f9d 100644
  	{ "tunnel", oTunnel },
  	{ "tunneldevice", oTunnelDevice },
  	{ "localcommand", oLocalCommand },
-@@ -914,6 +920,17 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
+@@ -933,6 +939,17 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
  	return -1;
  }
  
@@ -52,7 +52,7 @@ index 1e31f00c..b0cb3f9d 100644
  /*
   * Processes a single option line as used in the configuration files. This
   * only sets those values that have not already been set.
-@@ -2068,6 +2085,13 @@ parse_pubkey_algos:
+@@ -2200,6 +2217,13 @@ parse_pubkey_algos:
  			*charptr = xstrdup(arg);
  		break;
  
@@ -66,9 +66,9 @@ index 1e31f00c..b0cb3f9d 100644
  	case oDeprecated:
  		debug("%s line %d: Deprecated option \"%s\"",
  		    filename, linenum, keyword);
-@@ -2281,6 +2305,9 @@ initialize_options(Options * options)
- 	options->ip_qos_bulk = -1;
- 	options->request_tty = -1;
+@@ -2435,6 +2459,9 @@ initialize_options(Options * options)
+ 	options->stdin_null = -1;
+ 	options->fork_after_authentication = -1;
  	options->proxy_use_fdpass = -1;
 +#ifdef DISABLE_BANNER
 +	options->disable_banner = -1;
@@ -76,7 +76,7 @@ index 1e31f00c..b0cb3f9d 100644
  	options->ignored_unknown = NULL;
  	options->num_canonical_domains = 0;
  	options->num_permitted_cnames = 0;
-@@ -2476,6 +2503,10 @@ fill_default_options(Options * options)
+@@ -2634,6 +2661,10 @@ fill_default_options(Options * options)
  		options->canonicalize_fallback_local = 1;
  	if (options->canonicalize_hostname == -1)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
@@ -88,10 +88,10 @@ index 1e31f00c..b0cb3f9d 100644
  		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
  #ifdef ENABLE_SK_INTERNAL
 diff --git a/readconf.h b/readconf.h
-index 2fba866e..fc66f6ae 100644
+index f24719f9..196af3ca 100644
 --- a/readconf.h
 +++ b/readconf.h
-@@ -176,6 +176,9 @@ typedef struct {
+@@ -177,6 +177,9 @@ typedef struct {
  	char   *known_hosts_command;
  
  	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
@@ -101,7 +101,7 @@ index 2fba866e..fc66f6ae 100644
  }       Options;
  
  #define SSH_CANONICALISE_NO	0
-@@ -210,6 +213,13 @@ typedef struct {
+@@ -215,6 +218,13 @@ typedef struct {
  const char *kex_default_pk_alg(void);
  char	*ssh_connection_hash(const char *thishost, const char *host,
      const char *portstr, const char *user);
@@ -116,10 +116,10 @@ index 2fba866e..fc66f6ae 100644
  int      fill_default_options(Options *);
  void	 fill_default_options_for_canonicalization(Options *);
 diff --git a/ssh_config.4 b/ssh_config.4
-index 1563aae3..2bcc365d 100644
+index a0db5bc5..ccde4035 100644
 --- a/ssh_config.4
 +++ b/ssh_config.4
-@@ -597,6 +597,14 @@ If set to a time in seconds, or a time in any of the formats documented in
+@@ -611,6 +611,14 @@ If set to a time in seconds, or a time in any of the formats documented in
  then the backgrounded master connection will automatically terminate
  after it has remained idle (with no client connections) for the
  specified time.
@@ -135,7 +135,7 @@ index 1563aae3..2bcc365d 100644
  Specifies that a TCP port on the local machine be forwarded
  over the secure channel, and the application
 diff --git a/sshconnect2.c b/sshconnect2.c
-index a53ab95d..65f8e1c9 100644
+index fea50fab..ffebf887 100644
 --- a/sshconnect2.c
 +++ b/sshconnect2.c
 @@ -85,6 +85,10 @@ extern char *client_version_string;
@@ -149,7 +149,7 @@ index a53ab95d..65f8e1c9 100644
  /*
   * SSH2 key exchange
   */
-@@ -581,19 +585,37 @@ input_userauth_error(int type, u_int32_t seq, struct ssh *ssh)
+@@ -586,19 +590,37 @@ input_userauth_error(int type, u_int32_t seq, struct ssh *ssh)
  static int
  input_userauth_banner(int type, u_int32_t seq, struct ssh *ssh)
  {
@@ -192,5 +192,5 @@ index a53ab95d..65f8e1c9 100644
  }
  
 -- 
-2.31.1
+2.30.1 (Apple Git-130)
 
