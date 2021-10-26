@@ -40,7 +40,7 @@ index b2fbf0b2..508e1ce9 100644
 +		logit("%s line %d: ignoring UsePAM option value."
 +		    " This option is always on.", filename, linenum);
 +		while (arg)
-+			arg = strdelim(&cp);
++			arg = strdelim(&str);
 +		break; 
 +#else
  		intptr = &options->use_pam;

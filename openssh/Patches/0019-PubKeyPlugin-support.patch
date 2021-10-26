@@ -245,7 +245,7 @@ index 3265b223..6f99225e 100644
 +		 * Can't use parse_filename, as we need to support plain
 +		 * names which dlopen will find on our lib path.
 +		 */
-+		arg = strdelim(&cp);
++		arg = strdelim(&str);
 +		if (!arg || *arg == '\0')
 +			fatal("%s line %d: missing file name.",
 +			    filename, linenum);

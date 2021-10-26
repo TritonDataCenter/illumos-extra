@@ -524,7 +524,7 @@ index 991ac772..5fd07bd1 100644
  		break;
  
 +	case sPAMServicePrefix:
-+		arg = strdelim(&cp);
++		arg = strdelim(&str);
 +		if (!arg || *arg == '\0')
 +			fatal("%s line %d: Missing argument.",
 +			    filename, linenum);
@@ -536,7 +536,7 @@ index 991ac772..5fd07bd1 100644
 +		break;
 +
 +	case sPAMServiceName:
-+		arg = strdelim(&cp);
++		arg = strdelim(&str);
 +		if (!arg || *arg == '\0')
 +			fatal("%s line %d: Missing argument.",
 +			    filename, linenum);
