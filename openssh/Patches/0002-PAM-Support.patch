@@ -31,7 +31,7 @@ index b2fbf0b2..508e1ce9 100644
  
  	/* Standard Options */
  	if (options->num_host_key_files == 0) {
-@@ -1329,8 +1334,17 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -1329,8 +1334,16 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  	switch (opcode) {
  	/* Portable-specific options */
  	case sUsePAM:
