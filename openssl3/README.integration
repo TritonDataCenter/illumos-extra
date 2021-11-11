@@ -1,23 +1,48 @@
-OpenSSL 1.0.x illumos-extra Integration Notes
+OpenSSL 3 illumos-extra Integration Notes
 
-There are several changes made to OpenSSL that are worth highlighting for
-the benefit of anyone wishing to upgrade or further modify the installation.
-Generally, they are:
+OpenSSL 3.0 includes several breaking API changes from OpenSSL 1.0.x (which
+was really all the "OpenSSL 1.x" directory can feasibly support as-is).  The
+OpenSSL 1.0.x support was engineered to not be a public library, but rather a
+support library for SmartOS components exclusively.  The reasons for this are
+detailed here:
 
-- The addition of a "hw_pk11" engine, written by Sun for 0.9.x, that
-  supports various HW accelerators that have KCF drivers.  It is highly
-  unlikely at this point that anyone actually cares about this.  There are a
-  few minor changes to hook this into the library, as well as the various
-  files themselves that implement the engine and are simply copied in.
-  There are no changes required to the build system in order to make this
-  work.
+http://dtrace.org/blogs/wesolows/2014/04/10/libsunw_ssl-or-how-smartos-avoids-sadness/
+
+And can be summarized by saying that:
+
+- Because OpenSSL changes its APIs frequently enough, we don't wish to
+  provide it in the platform to apps that might need it to stay more up to
+  date.
+
+- To that end, and to protect against accidental library chaining, we not
+  only give OpenSSL's libraries distinct names, but we also prefix its
+  symbols with `sunw_` to make sure the platform OpenSSL isn't used by
+  mistake.
+
+Unlike OpenSSL 1.0.x, OpenSSL 3 allows us to rename the delivered library at
+`./configure` time.  We still. however, need to prefix the symbols.  And
+because OpenSSL 1.0.x is still needed for two SmartOS consumers (our old
+Node.JS, and kbmd), we must, for now, keep OpenSSL 1.0.x around.  Once we
+fully discontinue its use, its README.integration will likely end up in the
+OpenSSL 3 directory for posterity.
+
+A major change from OpenSSL 1.0.x is that we no longer have a "hw_pk11"
+engine, because engines were deprecated in OpenSSL 3.  Furthermore, since
+there appeared to be no consumers of PKCS#11 backends in the platform, we
+chose to not continue its support.
+
+There still, however, are several changes made to OpenSSL that are worth
+highlighting for the benefit of anyone wishing to upgrade or further modify
+the installation.  Generally, they are:
 
 - New smartos-* build targets.  These are patched into Configure as
   templates.  These templates are later filled in by trivial sed rules in
   the build system to generate a configure (lower-case) that we then use to
   actually set up the links.  This allows us to control variables such as CC
   and CFLAGS in the usual way, and to treat the OpenSSL configuration system
-  as if it were autoconf even though it's nothing of the sort.
+  as if it were autoconf even though it's nothing of the sort.  And OpenSSL
+  3's also allows us to provide a name suffix (in this case "-smartos") to
+  libcrypto and libssl.
 
 - Changes to Configure, the assembly generators/translators, and the
   addition of a header file to effect prefixing of globally visible function
@@ -38,35 +63,26 @@ Generally, they are:
   between 32-bit and 64-bit implementation will require further changes in
   this area.
 
-- Minor changes to eliminate warnings so that we can build with -Wall
-  -Werror.  Fixes for these should be accumulated if required, and sent
-  upstream where possible.
-
-IMPORTANT 1.0.x CONSUMER NOTE: With the introduction of OpenSSL 3, the
-remaining users of OpenSSL 1.0.x will have to set their include path to use
-"/opt/1x" for include file searches before "/usr/include", and for link-time,
-to use "-lsunw1x_*" instead of "-lsunw*", so as not to include or link with
-OpenSSL 3 versions
+For now, OpenSSL 3 only has one patch, affecting every thing at configuration
+time, including the prefixing of symbols.
 
 If you are upgrading, it is likely that simply replacing the tarball and
 modifying VER in the makefile will suffice.  The changes to most of the
 above are targeted at areas of the code that are unlikely to be changed,
 especially to fix security bugs.  One other thing to be aware of is that if
 the library numbering (the portion of the filename after '.so') changes, you
-will also need to change LIBVER.  There is also a possibility that changes
-to the library may break the hw_pk11 engine.  For example, from 0.9.x to
-1.x, the aes-ctr NIDs were added, making some of the code redundant.
-Porting this code should not be a great deal of work, but if it becomes so,
-it is probably best to delete it.
+will also need to change LIBVER.
 
 When upgrading, you will need to be sure that no new symbols have been
 introduced.  If any have been, it will be necessary to add them to
 sunw_prefix.h.  Unfortunately, the public interface to OpenSSL is not really
 defined anywhere, so making a proper mapfile is difficult and every new
-symbol, even those that are not intended for public use, must be added
-there.  A tool is included that can generate an appropriate header from an
-OpenSSL library built from unmodified code; however, it will then be
-necessary to append the Sun pk11 engine symbols to that.
+symbol, even those that are not intended for public use, must be added there.
+A tool (developed for OpenSSL 1.0.x, but copied here) is included that can
+generate an appropriate header from an OpenSSL library built from unmodified
+code.  Some of the symbol trampolining done varies from 32-bit builds to
+64-bit builds, so some symbols in sunw_prefix.h are confined to one of 32 or
+64 bit builds.
 
 Also, the prefixing of symbol names can confuse foreign software that
 makes assumptions about the names of symbols in the libraries.  The most
@@ -78,15 +94,14 @@ software that consumes OpenSSL in illumos-extra.  This does not affect
 ON, nor any other software that simply consumes OpenSSL in the
 documented manner.
 
-The libraries as delivered are not, and are not intended to be,
-compatible with consumers built against 0.9.8.  In addition to the
-inherent changes to OpenSSL itself, the symbol prefixing and our
-simplification of algorithm selection (namely, the adoption of the
-standard implementations the OpenSSL Configure script would choose based
-on our hardware architecture) have altered the binary interfaces.  The
-use of the bootstrap proto area allows arbitrary incompatible changes
-here -- the libraries we deliver are used only by software in the
-platform.
+The libraries as delivered are not, and are not intended to be, compatible
+with consumers built against 0.9.8 or 1.0.2.  In addition to the inherent
+changes to OpenSSL itself, the symbol prefixing and our simplification of
+algorithm selection (namely, the adoption of the standard implementations the
+OpenSSL Configure script would choose based on our hardware architecture)
+have altered the binary interfaces.  The use of the bootstrap proto area
+allows arbitrary incompatible changes here -- the libraries we deliver are
+used only by software in the platform.
 
 MOST IMPORTANT OF ALL:
 

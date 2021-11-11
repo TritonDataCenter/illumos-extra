@@ -49,6 +49,7 @@ source ../install.subr
 cd ${VERDIR}
 
 # Install commands
+# Do not use 1.0.x's apps, instead use 3.0's versions.
 #_install E apps/openssl ${BINDIR}/openssl 0555
 #_install L ../../../bin/amd64/openssl ${SFWBINDIR}/openssl
 

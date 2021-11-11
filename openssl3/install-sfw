@@ -67,7 +67,6 @@ _install L ../../lib/libssl-smartos.so ${USRLIBDIR}/libssl-smartos.so
 _install L ../../lib/libssl-smartos.so ${USRLIBDIR}/libsunw_ssl.so
 
 # Install commands
-## XXX KEBE ASKS, put 64-bit version in plain bin/openssl ? (for now no)
 _install P apps/CA.pl ${BINDIR}/CA.pl 0555
 _install E apps/openssl ${BINDIR}/openssl 0555
 mkdir -p ${DESTDIR}/usr/sfw/bin
@@ -85,7 +84,6 @@ _install L ../openssl ${DESTDIR}/etc/sfw/openssl
 # Install header files
 mkdir -p ${INCDIR}/openssl
 cd include/openssl
-# XXX KEBE SAYS THIS MAY NEED MORE FIXES...
 for header in !(fips*|idea*|pq_compat.h|tmdiff.h); do
 	_install N ${header} ${INCDIR}/openssl/${header} 0444
 done

@@ -36,23 +36,6 @@ MT_CPPFLAGS =	-D_REENTRANT
 SHARED_CFLAGS =	-fPIC -DPIC
 SHARED_LDFLAGS =	-fPIC -shared
 
-# XXX KEBE SAYS consider losing the PKCS#11 engine, given 3.0 deprecates it in
-# favor of something new.
-#PKCS11_SRCS = \
-#	hw_pk11_err.c \
-#	hw_pk11_err.h \
-#	hw_pk11_pub.c \
-#	hw_pk11_uri.c \
-#	hw_pk11_uri.h \
-#	hw_pk11.c \
-#	hw_pk11.h
-
-#PKCS11_DST.32 =	$(VER.32)/crypto/engine
-#PKCS11_DST.64 = $(VER.64)/crypto/engine
-
-#PKCS11.32 =	$(PKCS11_SRCS:%=$(PKCS11_DST.32)/%)
-#PKCS11.64 =	$(PKCS11_SRCS:%=$(PKCS11_DST.64)/%)
-
 CHECK_LIBS = \
 	$(VER.32)/libcrypto-smartos.so.$(LIBVER) \
 	$(VER.32)/libssl-smartos.so.$(LIBVER) \

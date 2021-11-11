@@ -6010,7 +6010,6 @@
 #pragma redefine_extname   rsaz_512_sqr sunw_rsaz_512_sqr
 #pragma redefine_extname   SHA3_squeeze sunw_SHA3_squeeze
 
-/* XXX KEBE ASKS are you sure? */
 #pragma redefine_extname   bind_engine sunw_bind_engine 
 #pragma redefine_extname   v_check sunw_v_check
 
@@ -6026,10 +6025,13 @@
 #pragma redefine_extname   padlock_aes_block sunw_padlock_aes_block
 
 
-/* XXX WARNING, KEBE SAYS this introduces more crap than it solves
- * w/o 64-bit guard. Also, these are tests/ things. */
+/*
+ * XXX WARNING: OpenSSL 3 introduces symbols that work differently between
+ * 64-bit vs. 32-bit.  Without 64-bit guards, one or the other will fail.
+ * These are mostly in the tests/ directory, but may become more important if
+ * we re-enable PKCS#11 using the new "provider" interface.
+ */
 #ifdef __amd64
-/* #pragma redefine_extname   p_test_init sunw_p_test_init */
 #pragma redefine_extname   OSSL_provider_init sunw_OSSL_provider_init
 #endif /* __amd64 */
 
