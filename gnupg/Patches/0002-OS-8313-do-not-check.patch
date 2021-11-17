@@ -1,16 +1,13 @@
-Remove checks from build-time for now, because gnupg needs to be able to cope
-with the idea of a proto area's library for testing the freshly-compiled binary.
-
-diff -ru gnupg-1.4.11/Makefile.in gnupg-1.4.11-OS-8313-1/Makefile.in
---- gnupg-1.4.11/Makefile.in    Mon Oct 18 05:53:58 2010
-+++ gnupg-1.4.11-OS-8313-1/Makefile.in  Wed Aug 25 00:27:47 2021
-@@ -291,8 +291,7 @@
+diff -ru a/Makefile.in b/Makefile.in
+--- a/Makefile.in	Mon Jun 11 04:47:56 2018
++++ b/Makefile.in	Tue Nov 16 22:44:35 2021
+@@ -427,8 +427,7 @@
  # selinux-support is enabled.
  DISTCHECK_CONFIGURE_FLAGS = --enable-mailto
- AUTOMAKE_OPTIONS = dist-bzip2 filename-length-max=99
+ GITLOG_TO_CHANGELOG = gitlog-to-changelog
 -@CROSS_COMPILING_FALSE@checks = checks
 -@CROSS_COMPILING_TRUE@checks = 
-+checks = 
- SUBDIRS = m4 intl zlib util mpi cipher tools g10 keyserver po doc ${checks}
- EXTRA_DIST = scripts/config.rpath  PROJECTS BUGS config.h.in autogen.sh
- DISTCLEANFILES = 
++checks =
+ @HAVE_W32_SYSTEM_FALSE@bzlib = 
+ @HAVE_W32_SYSTEM_TRUE@bzlib = bzlib
+ SUBDIRS = m4 intl zlib ${bzlib} util mpi cipher tools \
