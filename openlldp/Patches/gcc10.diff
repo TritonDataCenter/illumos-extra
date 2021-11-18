@@ -1,0 +1,51 @@
+diff -ru a/src/lldp_main.c b/src/lldp_main.c
+--- a/src/lldp_main.c	2021-11-18 00:38:28.000000000 -0500
++++ b/src/lldp_main.c	2021-11-18 00:45:06.000000000 -0500
+@@ -74,6 +74,20 @@
+ 
+ #include "platform/framehandler.h"
+ 
++/* XXX SmartOS - globals go here. */
++char lldp_systemname[512];
++char lldp_systemdesc[512];
++
++int neighbor_local_sd;
++int neighbor_remote_sd;
++
++#ifdef WIN32
++// Need to define this
++#else
++struct sockaddr_un local;
++struct sockaddr_un remote;
++#endif
++
+ // This is set to argv[0] on startup.
+ char *program;
+ 
+diff -ru a/src/lldp_neighbor.h b/src/lldp_neighbor.h
+--- a/src/lldp_neighbor.h	2010-06-08 01:06:29.000000000 -0400
++++ b/src/lldp_neighbor.h	2021-11-18 00:44:59.000000000 -0500
+@@ -19,17 +19,17 @@
+ 
+ #include "lldp_port.h"
+ 
+-char lldp_systemname[512];
+-char lldp_systemdesc[512];
++extern char lldp_systemname[512];
++extern char lldp_systemdesc[512];
+ 
+-int neighbor_local_sd;
+-int neighbor_remote_sd;
++extern int neighbor_local_sd;
++extern int neighbor_remote_sd;
+ 
+ #ifdef WIN32
+ // Need to define this
+ #else
+-struct sockaddr_un local;
+-struct sockaddr_un remote;
++extern struct sockaddr_un local;
++extern struct sockaddr_un remote;
+ #endif
+ 
+ int get_sys_desc(void);
