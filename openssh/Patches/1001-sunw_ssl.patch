@@ -61,7 +61,7 @@ index 03880716..3384389d 100644
  if test "x$openssl" = "xyes" ; then
 -	LIBS="-lcrypto $LIBS"
 -	AC_TRY_LINK_FUNC([RAND_add], ,
-+	LIBS="-lsunw_crypto -R${DESTDIR}/usr/lib $LIBS"
++	LIBS="-lsunw_crypto -R${DESTDIR}/lib -R${DESTDIR}/usr/lib $LIBS"
 +	AC_TRY_LINK_FUNC([sunw_RAND_add], ,
  	    [AC_MSG_ERROR([*** working libcrypto not found, check config.log])])
  	AC_CHECK_HEADER([openssl/opensslv.h], ,
