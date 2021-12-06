@@ -1,7 +1,7 @@
 From 340e32396194a38dd274eb6a41ee6186562ee9e8 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 4 Sep 2015 10:38:28 -0700
-Subject: [PATCH 27/34] Compatibility for SunSSH_1.5* should include old DH KEx
+Subject: [PATCH 27/35] Compatibility for SunSSH_1.5* should include old DH KEx
  algos
 
 We use the kex compat mechanism here to recognise old SunSSH
@@ -134,5 +134,4 @@ index 0dbea68c..e4349ab9 100644
  	debug2_f("compat KEX proposal: %s", p);
  	if (*p == '\0')
 -- 
-2.30.1 (Apple Git-130)
-
+2.34.1

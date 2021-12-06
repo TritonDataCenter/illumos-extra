@@ -1,7 +1,7 @@
 From 6b16889ce33138fd8afee001d49a2e33b1a97380 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:37:01 -0700
-Subject: [PATCH 14/34] Solaris Auditing support
+Subject: [PATCH 14/35] Solaris Auditing support
 
 ---
  INSTALL         |  15 +-
@@ -800,5 +800,4 @@ index 98a63868..c27ddc4d 100644
  	/*
  	 * In privilege separation, we fork another child and prepare
 -- 
-2.30.1 (Apple Git-130)
-
+2.34.1

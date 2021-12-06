@@ -1,7 +1,7 @@
 From 5c64a4ec723a4b433f40ec0606786b50938e24e5 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 4 Sep 2015 11:04:30 -0700
-Subject: [PATCH 28/34] Accept and send LANG and LC_* environment variables by
+Subject: [PATCH 28/35] Accept and send LANG and LC_* environment variables by
  default
 
 This preserves most of the old SunSSH locale negotiation
@@ -266,5 +266,4 @@ index 38db0f48..4dfcc0ee 100644
  Specifies which address family should be used by
  .Xr sshd 1M .
 -- 
-2.30.1 (Apple Git-130)
-
+2.34.1

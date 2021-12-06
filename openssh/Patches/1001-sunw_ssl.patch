@@ -1,7 +1,7 @@
 From a14d0c45786b491db9713165e6358449ebef6876 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Tue, 22 Dec 2015 14:31:25 -0800
-Subject: [PATCH 34/34] SmartOS local: use sunw_ssl lib from platform
+Subject: [PATCH 35/35] SmartOS local: use sunw_ssl lib from platform
 
 ---
  cipher-chachapoly-libcrypto.c        |   4 +-
@@ -866,5 +866,5 @@ index 8ca50b5a..0dfb1c15 100644
  #endif /* WITH_OPENSSL */
  #endif /* _OPENSSL_COMPAT_H */
 -- 
-2.30.1 (Apple Git-130)
+2.34.1
 

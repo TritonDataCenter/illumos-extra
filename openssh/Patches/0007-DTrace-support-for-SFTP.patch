@@ -1,7 +1,7 @@
 From 102a7a3126b5dbdca26e28726dd390940bdb2256 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:43 -0700
-Subject: [PATCH 07/34] DTrace support for SFTP
+Subject: [PATCH 07/35] DTrace support for SFTP
 
 ---
  Makefile.in          | 22 +++++++++++--
@@ -365,5 +365,4 @@ index 00000000..4b18e6ec
 +
 +#endif /* _SFTP_PROVIDER_IMPL_H */
 -- 
-2.30.1 (Apple Git-130)
-
+2.34.1

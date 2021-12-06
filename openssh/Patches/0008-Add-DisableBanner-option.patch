@@ -1,7 +1,7 @@
 From bf8c8cf28a220290d90e850d374494ae50e9294a Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:00 -0700
-Subject: [PATCH 08/34] Add DisableBanner option
+Subject: [PATCH 08/35] Add DisableBanner option
 
 ---
  readconf.c    | 31 +++++++++++++++++++++++++++++++
@@ -143,7 +143,7 @@ index fea50fab..ffebf887 100644
  extern Options options;
  
 +#ifdef DISABLE_BANNER
-+extern struct sshbuf command;
++extern struct sshbuf *command;
 +#endif
 +
  /*
@@ -154,7 +154,7 @@ index fea50fab..ffebf887 100644
  input_userauth_banner(int type, u_int32_t seq, struct ssh *ssh)
  {
 -	char *msg = NULL;
-+	char *msg = NULL, *raw;
++	char *msg, *raw = NULL;
  	size_t len;
  	int r;
  
@@ -171,9 +171,9 @@ index fea50fab..ffebf887 100644
 +	 * use DisableBanner option to decide whether to display it or not.
 +	 */
 +	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO &&
-+            (options.disable_banner == SSH_DISABLEBANNER_NO ||
-+            (options.disable_banner == SSH_DISABLEBANNER_INEXECMODE)) &&
-+            sshbuf_len(&command) == 0) {
++	    (options.disable_banner == SSH_DISABLEBANNER_NO ||
++	    (options.disable_banner == SSH_DISABLEBANNER_INEXECMODE)) &&
++	    command != NULL && sshbuf_len(command) == 0) {
 +#else
 +	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO) {
 +#endif
@@ -192,5 +192,4 @@ index fea50fab..ffebf887 100644
  }
  
 -- 
-2.30.1 (Apple Git-130)
-
+2.34.1

@@ -1,7 +1,7 @@
 From ac321de5289603d46a33a49d4399f4a5c8d3031e Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 5 Aug 2015 12:25:15 -0700
-Subject: [PATCH 21/34] Try to create privsep chroot dir if it doesn't exist
+Subject: [PATCH 21/35] Try to create privsep chroot dir if it doesn't exist
  yet
 
 ---
@@ -47,5 +47,4 @@ index c27ddc4d..11b306e0 100644
  #ifdef HAVE_CYGWIN
  		if (check_ntsec(_PATH_PRIVSEP_CHROOT_DIR) &&
 -- 
-2.30.1 (Apple Git-130)
-
+2.34.1

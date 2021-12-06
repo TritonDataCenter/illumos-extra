@@ -1,7 +1,7 @@
 From f6671ab56213b3d4be368d21f1762203dfacf92f Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 13:32:53 -0700
-Subject: [PATCH 24/34] Add --with-key-dir configure option to place SSH host
+Subject: [PATCH 24/35] Add --with-key-dir configure option to place SSH host
  keys
 
 ---
@@ -126,5 +126,4 @@ index f7ca5a75..48d9e68b 100644
  #ifndef _PATH_SSH_PROGRAM
  #define _PATH_SSH_PROGRAM		"/usr/bin/ssh"
 -- 
-2.30.1 (Apple Git-130)
-
+2.34.1

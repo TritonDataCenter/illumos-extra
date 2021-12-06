@@ -1,7 +1,7 @@
 From 56d0d4e8b05032bf882d26641abe90c173ed3e62 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 24 Aug 2015 18:57:27 -0700
-Subject: [PATCH 26/34] Set default sshd options based on /etc/default/login
+Subject: [PATCH 26/35] Set default sshd options based on /etc/default/login
 
 ---
  pathnames.h   |  1 +
@@ -141,5 +141,4 @@ index 14d9cdcc..38db0f48 100644
  Specifies the addresses/ports on which a remote TCP port forwarding may listen.
  The listen specification must be one of the following forms:
 -- 
-2.30.1 (Apple Git-130)
-
+2.34.1
