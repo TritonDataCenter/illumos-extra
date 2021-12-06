@@ -1,7 +1,7 @@
-From 69b32392a46f15cc3ba02cfa1f8766953adbec9c Mon Sep 17 00:00:00 2001
+From 81a192fae2963bcd7297a0959bb64803a041ac77 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 21 Aug 2015 18:47:46 -0700
-Subject: [PATCH 25/34] Don't use krb5-config to check for GSSAPI on Illumos
+Subject: [PATCH 25/35] Don't use krb5-config to check for GSSAPI on Illumos
 
 ---
  configure.ac | 7 ++++++-
@@ -33,5 +33,5 @@ index 430b3f62..d74859f9 100644
  			AC_SEARCH_LIBS([dn_expand], [resolv])
  
 -- 
-2.31.1
+2.34.1
 

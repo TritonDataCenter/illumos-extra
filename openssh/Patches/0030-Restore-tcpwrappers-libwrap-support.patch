@@ -1,7 +1,7 @@
-From 5668e6cccc468442cd33c1cfb851da6010a5a231 Mon Sep 17 00:00:00 2001
+From 91753f709421a1f3a0dce2e8370af426f9a2d700 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 16 Sep 2015 10:54:13 -0700
-Subject: [PATCH 30/34] Restore tcpwrappers/libwrap support
+Subject: [PATCH 30/35] Restore tcpwrappers/libwrap support
 
 This reverts commit f9696566fb41320820f3b257ab564fa321bb3751
 and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
@@ -159,5 +159,5 @@ index ca3acf77..824ea16a 100644
  	rdomain = ssh_packet_rdomain_in(ssh);
  
 -- 
-2.31.1
+2.34.1
 

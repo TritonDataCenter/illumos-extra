@@ -1,7 +1,7 @@
 From ef1e430bd04b93300422b08e4683d093f57df394 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:34 -0700
-Subject: [PATCH 06/34] GSS store creds for Solaris
+Subject: [PATCH 06/35] GSS store creds for Solaris
 
 ---
  configure.ac    |  3 +++
@@ -188,5 +188,5 @@ index 5aa04d05..12879c49 100644
  #endif
  #ifdef USE_PAM
 -- 
-2.31.1
+2.34.1
 

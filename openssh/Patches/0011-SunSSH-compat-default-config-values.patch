@@ -1,7 +1,7 @@
-From 9833f97f4ba06b30e9db47605a5b63eeab24f367 Mon Sep 17 00:00:00 2001
+From 671b7b054e6c24f1f27a965e3bb8761b8a79cb09 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:22 -0700
-Subject: [PATCH 11/34] SunSSH compat default config values
+Subject: [PATCH 11/35] SunSSH compat default config values
 
 Some options in OpenSSH have different default values from those in SunSSH.
 To make the transition smoother from SunSSH to OpenSSH, we change default
@@ -128,5 +128,5 @@ index dca926d0..b0a7772e 100644
  When X11 forwarding is enabled, there may be additional exposure to
  the server and to client displays if the
 -- 
-2.31.1
+2.34.1
 

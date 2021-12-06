@@ -1,7 +1,7 @@
-From e9c2bdcbe69ed3fec44a324c3b2795f3a3436bd5 Mon Sep 17 00:00:00 2001
+From 7c3365435f8044c26c16a898fbe758f2eae760a7 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 13:24:58 -0700
-Subject: [PATCH 23/34] Make default sshd_config more like the old illumos one
+Subject: [PATCH 23/35] Make default sshd_config more like the old illumos one
 
 ---
  sshd_config | 44 +++++++++++++++++++++++---------------------
@@ -93,5 +93,5 @@ index 19b7c91a..657c4415 100644
  #PermitUserEnvironment no
  #Compression delayed
 -- 
-2.31.1
+2.34.1
 

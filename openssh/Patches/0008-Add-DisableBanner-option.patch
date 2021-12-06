@@ -1,7 +1,7 @@
-From 986624a6c52a3c06d38b528bbfc2bb85c789bd9d Mon Sep 17 00:00:00 2001
+From fa997a0eb47eaebe4ac66a453d459dbf748d6297 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:00 -0700
-Subject: [PATCH 08/34] Add DisableBanner option
+Subject: [PATCH 08/35] Add DisableBanner option
 
 ---
  readconf.c    | 31 +++++++++++++++++++++++++++++++
@@ -135,7 +135,7 @@ index 1563aae3..2bcc365d 100644
  Specifies that a TCP port on the local machine be forwarded
  over the secure channel, and the application
 diff --git a/sshconnect2.c b/sshconnect2.c
-index a53ab95d..65f8e1c9 100644
+index a53ab95d..8573130e 100644
 --- a/sshconnect2.c
 +++ b/sshconnect2.c
 @@ -85,6 +85,10 @@ extern char *client_version_string;
@@ -143,7 +143,7 @@ index a53ab95d..65f8e1c9 100644
  extern Options options;
  
 +#ifdef DISABLE_BANNER
-+extern struct sshbuf command;
++extern struct sshbuf *command;
 +#endif
 +
  /*
@@ -154,7 +154,7 @@ index a53ab95d..65f8e1c9 100644
  input_userauth_banner(int type, u_int32_t seq, struct ssh *ssh)
  {
 -	char *msg = NULL;
-+	char *msg = NULL, *raw;
++	char *msg, *raw = NULL;
  	size_t len;
  	int r;
  
@@ -171,9 +171,9 @@ index a53ab95d..65f8e1c9 100644
 +	 * use DisableBanner option to decide whether to display it or not.
 +	 */
 +	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO &&
-+            (options.disable_banner == SSH_DISABLEBANNER_NO ||
-+            (options.disable_banner == SSH_DISABLEBANNER_INEXECMODE)) &&
-+            sshbuf_len(&command) == 0) {
++	    (options.disable_banner == SSH_DISABLEBANNER_NO ||
++	    (options.disable_banner == SSH_DISABLEBANNER_INEXECMODE)) &&
++	    command != NULL && sshbuf_len(command) == 0) {
 +#else
 +	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO) {
 +#endif
@@ -192,5 +192,5 @@ index a53ab95d..65f8e1c9 100644
  }
  
 -- 
-2.31.1
+2.34.1
 

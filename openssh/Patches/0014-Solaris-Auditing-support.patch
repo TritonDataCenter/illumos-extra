@@ -1,7 +1,7 @@
-From 07ab1ee7313fe9b0df1e7bc940bf41d75acb9158 Mon Sep 17 00:00:00 2001
+From d88f717d7b09b5a4ed59e1ab41adba503445d326 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:37:01 -0700
-Subject: [PATCH 14/34] Solaris Auditing support
+Subject: [PATCH 14/35] Solaris Auditing support
 
 ---
  INSTALL         |  15 +-
@@ -800,5 +800,5 @@ index 12879c49..dded9190 100644
  	/*
  	 * In privilege separation, we fork another child and prepare
 -- 
-2.31.1
+2.34.1
 

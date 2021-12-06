@@ -1,7 +1,7 @@
 From 84c001ca5b32be663ec2e2a65632e0314d7e31b3 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:19 -0700
-Subject: [PATCH 02/34] PAM Support
+Subject: [PATCH 02/35] PAM Support
 
 #
 # To comply to the Solaris PAM policy, the UsePAM option is changed to be
@@ -50,5 +50,5 @@ index 4d1910fe..ac105537 100644
  	/* Standard Options */
  	case sBadOption:
 -- 
-2.31.1
+2.34.1
 
