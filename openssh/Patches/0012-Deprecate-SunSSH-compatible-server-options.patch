@@ -1,7 +1,7 @@
-From 9a8db267a1e9ee1aa6757ec65ae051f93772c2ba Mon Sep 17 00:00:00 2001
+From 7cde9fe0b10e7b2e805e107bcfa908f5145700c9 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:33 -0700
-Subject: [PATCH 12/34] Deprecate SunSSH compatible server options
+Subject: [PATCH 12/35] Deprecate SunSSH compatible server options
 
 #
 # Originally we planned to only deprecate client config (ssh_config) options
@@ -57,5 +57,5 @@ index af0d6e0c..09847be6 100644
  	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
  	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },
 -- 
-2.31.1
+2.34.1
 

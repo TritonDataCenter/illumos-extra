@@ -1,7 +1,7 @@
 From 30964c803fb76014e75c560aed98cf2f9f336ad8 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:41 -0700
-Subject: [PATCH 03/34] lastlogin
+Subject: [PATCH 03/35] lastlogin
 
 *** old/servconf.c Wed Sep 17 02:54:26 2014
 ---
@@ -34,5 +34,5 @@ index 3b339aaf..01df6a67 100644
  .An -nosplit
  OpenSSH is a derivative of the original and free
 -- 
-2.31.1
+2.34.1
 

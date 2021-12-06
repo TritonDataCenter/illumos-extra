@@ -1,7 +1,7 @@
-From c5385cbaeca9dcf4f7d0745b44905d8d78a4d47d Mon Sep 17 00:00:00 2001
+From d7af9ec1e7f46b954a4a0f1c38e7630e87f76103 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex@uq.edu.au>
 Date: Tue, 8 Jun 2021 15:37:04 +1000
-Subject: [PATCH 13/34] Don't blow up on deprecated GSS key exchange options
+Subject: [PATCH 13/35] Don't blow up on deprecated GSS key exchange options
 
 ---
  servconf.c | 6 ++++++
@@ -25,5 +25,5 @@ index 09847be6..9da37110 100644
  	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
  	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },
 -- 
-2.31.1
+2.34.1
 

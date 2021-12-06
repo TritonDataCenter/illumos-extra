@@ -1,7 +1,7 @@
 From 91ea963c6c6ba6a0f5bb0692d6248851cb903055 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:31:53 -0700
-Subject: [PATCH 01/34] Skip config check
+Subject: [PATCH 01/35] Skip config check
 
 #
 # This change is to remove some misleading error messages when running
@@ -37,5 +37,5 @@ index b749206d..61b9dffe 100644
  install-files:
  	$(MKDIR_P) $(DESTDIR)$(bindir)
 -- 
-2.31.1
+2.34.1
 

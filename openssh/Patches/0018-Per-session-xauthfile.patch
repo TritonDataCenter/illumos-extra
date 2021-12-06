@@ -1,7 +1,7 @@
-From 0541b8b2102128dc08f0d7c64157fbc3b662a336 Mon Sep 17 00:00:00 2001
+From 74063a7c03d25a3ec29d7be9669ecc68a8402405 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Tue, 22 Dec 2015 17:12:50 -0800
-Subject: [PATCH 18/34] Per-session xauthfile
+Subject: [PATCH 18/35] Per-session xauthfile
 
 This patch is to fix a X11 connection failure when a user's home directory
 is read-only.
@@ -238,5 +238,5 @@ index ce59dabd..1f078799 100644
  
  	int	chanid;
 -- 
-2.31.1
+2.34.1
 

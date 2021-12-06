@@ -1,7 +1,7 @@
 From f956e645b6b0d3a28d2d97be8df3755a9d0ea2ff Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:12 -0700
-Subject: [PATCH 05/34] Deprecated SunSSH options
+Subject: [PATCH 05/35] Deprecated SunSSH options
 
 #
 # To make the transition from SunSSH to OpenSSH as smooth as possible, we
@@ -45,5 +45,5 @@ index 0f27652b..1e31f00c 100644
  };
  
 -- 
-2.31.1
+2.34.1
 

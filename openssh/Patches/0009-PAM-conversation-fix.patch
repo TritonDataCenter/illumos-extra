@@ -1,7 +1,7 @@
-From ebeae41066726678e0dcb010d35b2787c6248f85 Mon Sep 17 00:00:00 2001
+From dfaff6e4c423c148840f631f50e9b980ff6ea743 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:13 -0700
-Subject: [PATCH 09/34] PAM conversation fix
+Subject: [PATCH 09/35] PAM conversation fix
 
 ---
  auth-pam.c | 36 ++++++++++++++++++++++++++++++++++++
@@ -94,5 +94,5 @@ index 0b4a28ab..253c37d0 100644
  		debug("PAM: password authentication accepted for %.100s",
  		    authctxt->user);
 -- 
-2.31.1
+2.34.1
 
