@@ -30,7 +30,7 @@ include ../Makefile.defs
 SHELL =		/bin/bash
 BUILD64 =	yes
 UNPACK_SENTINEL =	Configure
-AUTOCONF_OUT =	crypto/opensslconf.h
+AUTOCONF_OUT =	include/openssl/conf.h
 
 MT_CPPFLAGS =	-D_REENTRANT
 SHARED_CFLAGS =	-fPIC -DPIC
