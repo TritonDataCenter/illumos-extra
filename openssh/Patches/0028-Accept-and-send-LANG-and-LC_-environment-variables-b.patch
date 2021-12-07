@@ -1,4 +1,4 @@
-From d85a0c74d5acd68ac211b79db6243501352856dc Mon Sep 17 00:00:00 2001
+From 5c64a4ec723a4b433f40ec0606786b50938e24e5 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 4 Sep 2015 11:04:30 -0700
 Subject: [PATCH 28/35] Accept and send LANG and LC_* environment variables by
@@ -7,21 +7,21 @@ Subject: [PATCH 28/35] Accept and send LANG and LC_* environment variables by
 This preserves most of the old SunSSH locale negotiation
 behaviour (at least the parts that are most commonly used).
 ---
- readconf.c    | 19 +++++++++++++++++
+ readconf.c    | 19 ++++++++++++++++
  readconf.h    |  3 ++-
- servconf.c    | 59 +++++++++++++++++++++++++++++++++++++++++++++++++++
- session.c     | 25 ++++++++++++++++++++--
+ servconf.c    | 61 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+ session.c     | 25 +++++++++++++++++++--
  ssh.c         |  3 +++
  sshd.c        |  2 ++
  sshd_config   |  4 ++++
  sshd_config.4 | 15 ++++++++++++-
- 8 files changed, 126 insertions(+), 4 deletions(-)
+ 8 files changed, 127 insertions(+), 5 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
-index 7ad22d76..ed0713b2 100644
+index 1ae54f30..42219dd9 100644
 --- a/readconf.c
 +++ b/readconf.c
-@@ -2337,6 +2337,25 @@ fill_default_options_for_canonicalization(Options *options)
+@@ -2491,6 +2491,25 @@ fill_default_options_for_canonicalization(Options *options)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
  }
  
@@ -48,10 +48,10 @@ index 7ad22d76..ed0713b2 100644
   * Called after processing other sources of option data, this fills those
   * options for which no value has been specified with their default values.
 diff --git a/readconf.h b/readconf.h
-index fc66f6ae..872961a7 100644
+index 196af3ca..4d5a22ba 100644
 --- a/readconf.h
 +++ b/readconf.h
-@@ -221,7 +221,8 @@ char	*ssh_connection_hash(const char *thishost, const char *host,
+@@ -226,7 +226,8 @@ char	*ssh_connection_hash(const char *thishost, const char *host,
  #endif
  
  void     initialize_options(Options *);
@@ -62,10 +62,10 @@ index fc66f6ae..872961a7 100644
  void	 free_options(Options *o);
  int	 process_config_line(Options *, struct passwd *, const char *,
 diff --git a/servconf.c b/servconf.c
-index 4995bac6..23edd73e 100644
+index 06a17d10..d753a35a 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -320,6 +320,22 @@ assemble_algorithms(ServerOptions *o)
+@@ -319,6 +319,22 @@ assemble_algorithms(ServerOptions *o)
  	free(def_sig);
  }
  
@@ -88,7 +88,7 @@ index 4995bac6..23edd73e 100644
  void
  servconf_add_hostkey(const char *file, const int line,
      ServerOptions *options, const char *path, int userprovided)
-@@ -343,6 +359,36 @@ servconf_add_hostcert(const char *file, const int line,
+@@ -342,6 +358,36 @@ servconf_add_hostcert(const char *file, const int line,
  	free(apath);
  }
  
@@ -125,10 +125,11 @@ index 4995bac6..23edd73e 100644
  void
  fill_default_server_options(ServerOptions *options)
  {
-@@ -2139,6 +2185,19 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2176,7 +2222,20 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  				    filename, linenum);
  			if (!*activep)
  				continue;
+-			opt_array_append(filename, linenum, keyword,
 +			if (arg[0] == '-') {
 +				opt_array_delete(filename, linenum, "AcceptEnv",
 +				    &options->accept_env,
@@ -142,11 +143,12 @@ index 4995bac6..23edd73e 100644
 +					free(options->accept_env[j]);
 +				options->num_accept_env = 0;
 +			}
- 			opt_array_append(filename, linenum, "AcceptEnv",
++			opt_array_append(filename, linenum, "AcceptEnv",
  			    &options->accept_env, &options->num_accept_env,
  			    arg);
+ 		}
 diff --git a/session.c b/session.c
-index 44339e99..5c977fd1 100644
+index d12852fb..b7d0bf94 100644
 --- a/session.c
 +++ b/session.c
 @@ -843,6 +843,18 @@ check_quietlogin(Session *s, const char *command)
@@ -196,10 +198,10 @@ index 44339e99..5c977fd1 100644
  #ifdef PER_SESSION_XAUTHFILE
          if (s->auth_file != NULL)
 diff --git a/ssh.c b/ssh.c
-index 35b6b517..afa99f66 100644
+index e6fe8090..fd0e3f6e 100644
 --- a/ssh.c
 +++ b/ssh.c
-@@ -1152,6 +1152,9 @@ main(int ac, char **av)
+@@ -1142,6 +1142,9 @@ main(int ac, char **av)
  	if (debug_flag)
  		logit("%s, %s", SSH_RELEASE, SSH_OPENSSL_VERSION);
  
@@ -210,10 +212,10 @@ index 35b6b517..afa99f66 100644
  	process_config_files(host_arg, pw, 0, &want_final_pass);
  	if (want_final_pass)
 diff --git a/sshd.c b/sshd.c
-index 6238f6ab..ca3acf77 100644
+index 11b306e0..cd4dae82 100644
 --- a/sshd.c
 +++ b/sshd.c
-@@ -1722,6 +1722,8 @@ main(int ac, char **av)
+@@ -1742,6 +1742,8 @@ main(int ac, char **av)
  	} else if (strcasecmp(config_file_name, "none") != 0)
  		load_server_config(config_file_name, cfg);
  
@@ -223,7 +225,7 @@ index 6238f6ab..ca3acf77 100644
  	    cfg, &includes, NULL);
  
 diff --git a/sshd_config b/sshd_config
-index 657c4415..b2336447 100644
+index d2a509c5..8c1cd518 100644
 --- a/sshd_config
 +++ b/sshd_config
 @@ -26,6 +26,10 @@ Port 22
@@ -238,7 +240,7 @@ index 657c4415..b2336447 100644
  
  #LoginGraceTime 2m
 diff --git a/sshd_config.4 b/sshd_config.4
-index e3969af1..bc08fbef 100644
+index 38db0f48..4dfcc0ee 100644
 --- a/sshd_config.4
 +++ b/sshd_config.4
 @@ -86,7 +86,20 @@ directives.
@@ -265,4 +267,3 @@ index e3969af1..bc08fbef 100644
  .Xr sshd 1M .
 -- 
 2.34.1
-

@@ -45,6 +45,7 @@ SUBDIRS = \
 	node.js \
 	nss-nspr \
 	openssl1x \
+	openssl3 \
 	perl \
 	$(EXTRA_COMPILERS) \
 	$(STRAP_ONLY)
@@ -82,6 +83,7 @@ SUBDIRS = \
 	openldap \
 	openlldp \
 	openssl1x \
+	openssl3 \
 	openssh \
 	pbzip2 \
 	perl \
@@ -124,15 +126,15 @@ all: $(SUBDIRS)
 
 strap: $(SUBDIRS)
 
-curl: libz openssl1x libidn2
+curl: libz openssl3 libidn2
 gzip: libz
 node.js: libz openssl1x
 dialog: ncurses
-socat: openssl1x
-wget: openssl1x libidn
-openldap: openssl1x
-ntp: perl openssl1x
-openssh: openssl1x
+socat: openssl3
+wget: openssl3 libidn
+openldap: openssl3
+ntp: perl openssl3
+openssh: openssl3
 
 #
 # pkg-config may be installed. This will actually only hurt us rather than help

@@ -51,21 +51,23 @@ cd $VERDIR
 # Install libraries
 _install D libsunw_crypto.so.${LIBVER} \
     ${LIBDIR}/libsunw_crypto.so.${LIBVER} 0755
-_install L libsunw_crypto.so.${LIBVER} ${LIBDIR}/libsunw_crypto.so
+_install L libsunw_crypto.so.${LIBVER} ${LIBDIR}/libsunw1x_crypto.so
 _install D libsunw_ssl.so.${LIBVER} ${LIBDIR}/libsunw_ssl.so.${LIBVER} 0755
-_install L libsunw_ssl.so.${LIBVER} ${LIBDIR}/libsunw_ssl.so
+_install L libsunw_ssl.so.${LIBVER} ${LIBDIR}/libsunw1x_ssl.so
 _install L ../../lib/libsunw_crypto.so.${LIBVER} \
     ${USRLIBDIR}/libsunw_crypto.so.${LIBVER}
-_install L ../../lib/libsunw_crypto.so ${USRLIBDIR}/libsunw_crypto.so
+_install L ../../lib/libsunw_crypto.so.${LIBVER} \
+    ${USRLIBDIR}/libsunw1x_crypto.so
 _install L ../../lib/libsunw_ssl.so.${LIBVER} \
     ${USRLIBDIR}/libsunw_ssl.so.${LIBVER}
-_install L ../../lib/libsunw_ssl.so ${USRLIBDIR}/libsunw_ssl.so
+_install L ../../lib/libsunw_ssl.so.${LIBVER} ${USRLIBDIR}/libsunw1x_ssl.so
 
 # Install commands
-_install P apps/CA.pl ${BINDIR}/CA.pl 0555
-_install E apps/openssl ${BINDIR}/openssl 0555
-mkdir -p ${DESTDIR}/usr/sfw/bin
-_install L ../../bin/openssl ${DESTDIR}/usr/sfw/bin/openssl
+# Do not use 1.0.x's apps, instead use 3.0's versions.
+#_install P apps/CA.pl ${BINDIR}/CA.pl 0555
+#_install E apps/openssl ${BINDIR}/openssl 0555
+#mkdir -p ${DESTDIR}/usr/sfw/bin
+#_install L ../../bin/openssl ${DESTDIR}/usr/sfw/bin/openssl
 
 # Install etc
 mkdir -p ${DESTDIR}/etc/openssl
@@ -73,14 +75,20 @@ mkdir -p ${DESTDIR}/etc/openssl/certs
 mkdir -p ${DESTDIR}/etc/openssl/private
 mkdir -p ${DESTDIR}/etc/sfw
 chmod 0700 ${DESTDIR}/etc/openssl/private
-_install N apps/openssl.cnf ${DESTDIR}/etc/openssl/openssl.cnf 0644
+# Do not use 1.0.x's apps, instead use 3.0's versions.
+#_install N apps/openssl.cnf ${DESTDIR}/etc/openssl/openssl.cnf 0644
 _install L ../openssl ${DESTDIR}/etc/sfw/openssl
 
 # Install header files
-mkdir -p ${INCDIR}/openssl
+# Use "/opt/1x/openssl" for 1.0.x headers, since OpenSSL 3.0 is now around.
+#mkdir -p ${INCDIR}/openssl
+mkdir -p ${DESTDIR}/opt/1x/openssl
 cd include/openssl
 for header in !(fips*|idea*|pq_compat.h|tmdiff.h); do
-	_install N ${header} ${INCDIR}/openssl/${header} 0444
+#	_install N ${header} ${INCDIR}/openssl/${header} 0444
+# Because we now have OpenSSL 3, we need to place and modify these headers
+# into /opt/1x/openssl instead.
+	_install N ${header} ${DESTDIR}/opt/1x/openssl/${header} 0444
 done
 
 exit 0

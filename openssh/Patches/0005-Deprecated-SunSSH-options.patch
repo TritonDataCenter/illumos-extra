@@ -1,4 +1,4 @@
-From f956e645b6b0d3a28d2d97be8df3755a9d0ea2ff Mon Sep 17 00:00:00 2001
+From 602b628a40b4400cf80747cd0767ae5c0361807a Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:12 -0700
 Subject: [PATCH 05/35] Deprecated SunSSH options
@@ -16,10 +16,10 @@ Subject: [PATCH 05/35] Deprecated SunSSH options
  1 file changed, 18 insertions(+)
 
 diff --git a/readconf.c b/readconf.c
-index 0f27652b..1e31f00c 100644
+index bcca6ed4..8c5c6dd1 100644
 --- a/readconf.c
 +++ b/readconf.c
-@@ -317,6 +317,24 @@ static struct {
+@@ -321,6 +321,24 @@ static struct {
  	{ "securitykeyprovider", oSecurityKeyProvider },
  	{ "knownhostscommand", oKnownHostsCommand },
  
@@ -46,4 +46,3 @@ index 0f27652b..1e31f00c 100644
  
 -- 
 2.34.1
-

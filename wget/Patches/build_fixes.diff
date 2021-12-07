@@ -1,7 +1,31 @@
-diff -ur wget-1.18/configure.ac wget-1.18-patched/configure.ac
---- wget-1.18/configure.ac	2016-03-25 15:23:19.000000000 +0000
-+++ wget-1.18-patched/configure.ac	2016-06-16 08:30:58.383582606 +0000
-@@ -341,18 +341,6 @@
+diff -ru a/configure.ac b/configure.ac
+--- a/configure.ac	2021-06-05 20:39:28.000000000 -0400
++++ b/configure.ac	2021-10-27 10:25:15.000000000 -0400
+@@ -30,10 +30,10 @@
+ dnl Process this file with autoconf to produce a configure script.
+ dnl
+ 
+-dnl Error if AX_CODE_COVERAGE if missing (like on the 1.21 release).
+-m4_pattern_forbid([^_?AX_])
+-m4_pattern_allow([AX_CHECK_GNU_MAKE_HEADLINE])
+-m4_pattern_allow([_AX_CODE_COVERAGE_GCOV_PROG_WITH])
++dnl XXX SmartOS NO Error if AX_CODE_COVERAGE is missing (like on the 1.21 release).
++dnl m4_pattern_forbid([^_?AX_])
++dnl m4_pattern_allow([AX_CHECK_GNU_MAKE_HEADLINE])
++dnl m4_pattern_allow([_AX_CODE_COVERAGE_GCOV_PROG_WITH])
+ 
+ AC_INIT([wget],[m4_esyscmd(build-aux/git-version-gen .tarball-version)],[bug-wget@gnu.org])
+ AC_PREREQ([2.64])
+@@ -335,7 +335,7 @@
+ AM_ICONV
+ gl_INIT
+ 
+-AX_CODE_COVERAGE
++dnl AX_CODE_COVERAGE
+ 
+ dnl
+ dnl Checks for library functions.
+@@ -513,18 +513,6 @@
  ])
  
  AS_IF([test x"$with_ssl" = xopenssl], [
@@ -20,7 +44,7 @@ diff -ur wget-1.18/configure.ac wget-1.18-patched/configure.ac
    if [test x"$ssl_found" != xyes]; then
      dnl As of this writing (OpenSSL 0.9.6), the libcrypto shared library
      dnl doesn't record its dependency on libdl, so we need to make sure
-@@ -388,8 +376,8 @@
+@@ -560,8 +548,8 @@
      esac
  
      AS_IF([test x$ssl_found != xyes], [
@@ -31,7 +55,7 @@ diff -ur wget-1.18/configure.ac wget-1.18-patched/configure.ac
  #include <openssl/ssl.h>
  #include <openssl/x509.h>
  #include <openssl/err.h>
-@@ -398,10 +386,31 @@
+@@ -570,10 +558,31 @@
  #include <openssl/md4.h>
  #include <openssl/md5.h>
        ], [SSL_library_init ()])
@@ -64,7 +88,7 @@ diff -ur wget-1.18/configure.ac wget-1.18-patched/configure.ac
          AC_LIBOBJ([openssl])
          LIBS="$LIBSSL $LIBS"
          AC_CHECK_FUNCS([RAND_egd])
-@@ -496,19 +505,6 @@
+@@ -926,22 +935,6 @@
      ])
  
    have_gpg=no
@@ -74,7 +98,10 @@ diff -ur wget-1.18/configure.ac wget-1.18-patched/configure.ac
 -    dnl
 -    m4_ifdef([AM_PATH_GPGME], [
 -      AM_PATH_GPGME([], [
--        LIBS="$GPGME_LIBS $LIBS"
+-        # Put libgpgme to the end of the library list since it introduces a -L linker flags.
+-        # That -L might break the build if there are two different version of
+-        # a library (e.g. GnuTLS) in /usr/local and in the system directory.
+-        LIBS="$LIBS $GPGME_LIBS"
 -        CFLAGS="$GPGME_CFLAGS $CFLAGS"
 -        AC_DEFINE([HAVE_GPGME], [1], [Define if GPGME is available.])
 -        have_gpg=yes
@@ -83,10 +110,10 @@ diff -ur wget-1.18/configure.ac wget-1.18-patched/configure.ac
 -  ])
  ])
  
- dnl **********************************************************************
-diff -ur wget-1.18/doc/Makefile.am wget-1.18-patched/doc/Makefile.am
---- wget-1.18/doc/Makefile.am	2016-06-03 11:55:13.000000000 +0000
-+++ wget-1.18-patched/doc/Makefile.am	2016-06-16 17:44:11.984668940 +0000
+ dnl
+diff -ru a/doc/Makefile.am b/doc/Makefile.am
+--- a/doc/Makefile.am	2021-06-05 19:45:02.000000000 -0400
++++ b/doc/Makefile.am	2021-10-27 10:24:23.000000000 -0400
 @@ -39,14 +39,13 @@
  
  man_MANS = $(MAN)

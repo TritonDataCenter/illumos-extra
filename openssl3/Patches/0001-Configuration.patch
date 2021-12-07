@@ -1,0 +1,212 @@
+diff -ru a/Configurations/10-main.conf b/Configurations/10-main.conf
+--- a/Configurations/10-main.conf	Tue Sep  7 07:46:32 2021
++++ b/Configurations/10-main.conf	Thu Oct 14 15:30:46 2021
+@@ -210,7 +210,7 @@
+         inherit_from     => [ "BASE_unix" ],
+         template         => 1,
+         lib_cppflags     => "-DFILIO_H",
+-        ex_libs          => add("-lsocket -lnsl -ldl"),
++        ex_libs          => add("-lsocket -lnsl"),
+         dso_scheme       => "dlfcn",
+         thread_scheme    => "pthreads",
+     },
+@@ -238,7 +238,7 @@
+         CC               => "gcc",
+         CFLAGS           => add_before(picker(default => "-Wall",
+                                               debug   => "-O0 -g",
+-                                              release => "-O3 -fomit-frame-pointer")),
++                                              release => "-O3 -gdwarf-2 -gstrict-dwarf")),
+         cflags           => add(threads("-pthread")),
+         lib_cppflags     => add("-DL_ENDIAN"),
+         ex_libs          => add(threads("-pthread")),
+@@ -261,7 +261,7 @@
+         CC               => "gcc",
+         CFLAGS           => add_before(picker(default => "-Wall",
+                                               debug   => "-O0 -g",
+-                                              release => "-O3")),
++                                              release => "-O3 -gdwarf-2 -gstrict-dwarf")),
+         cflags           => add_before("-m64", threads("-pthread")),
+         lib_cppflags     => add("-DL_ENDIAN"),
+         ex_libs          => add(threads("-pthread")),
+@@ -272,7 +272,28 @@
+         shared_ldflag    => add_before("-shared -static-libgcc"),
+         multilib         => "/64",
+     },
++#### SmartOS variations
++    # Inserted by SmartOS patching in illumos-extra to make sure we're
++    # using the "sunw" prefix becuase for SmartOS, the platform's openssl
++    # is NOT intended to be used by user programs like libc, etc.  In
++    # SmartOS, if a user program wants OpenSSL, they need to use one provided
++    # by pkgsrc or themselves.
+ 
++    "smartos-x86-gcc" => {
++        inherit_from     => [ "solaris-x86-gcc" ],
++	shlib_variant    => "-smartos",
++    },
++
++
++    "smartos64-x86_64-gcc" => {
++        inherit_from     => [ "solaris64-x86_64-gcc" ],
++	# For some weird reason AR and ARFLAGS get cleared for this one.
++	AR               => "ar",
++	ARFLAGS          => "qc",
++	shlib_variant    => "-smartos",
++	multilib         => "/amd64",
++    },
++
+ #### Solaris x86 with Sun C setups
+     # There used to be solaris-x86-cc target, but it was removed,
+     # primarily because vendor assembler can't assemble our modules
+diff -ru a/crypto/bio/bio_sock.c b/crypto/bio/bio_sock.c
+--- a/crypto/bio/bio_sock.c	Tue Sep  7 07:46:32 2021
++++ b/crypto/bio/bio_sock.c	Thu Oct 14 15:30:46 2021
+@@ -350,7 +350,12 @@
+     ERR_raise(ERR_LIB_BIO, ERR_R_PASSED_INVALID_ARGUMENT);
+ # endif
+ 
+-    return (ret == 0);
++    /*
++     * XXX SmartOS:  We sometimes ignore 'l' after above use, which throws
++     * an error.  Do stupid variable tricks.
++     */
++    l = ret;
++    return (l == 0);
+ }
+ 
+ int BIO_sock_info(int sock,
+diff -ru a/crypto/perlasm/x86_64-xlate.pl b/crypto/perlasm/x86_64-xlate.pl
+--- a/crypto/perlasm/x86_64-xlate.pl	Tue Sep  7 07:46:32 2021
++++ b/crypto/perlasm/x86_64-xlate.pl	Fri Oct 15 12:02:50 2021
+@@ -73,7 +73,7 @@
+ my $gas=1;	$gas=0 if ($output =~ /\.asm$/);
+ my $elf=1;	$elf=0 if (!$gas);
+ my $win64=0;
+-my $prefix="";
++my $prefix="sunw_";
+ my $decor=".L";
+ 
+ my $masmref=8 + 50727*2**-32;	# 8.00.50727 shipped with VS2005
+@@ -803,6 +803,7 @@
+ 				    }
+ 				    $$line =~ s/\@abi\-omnipotent/\@function/;
+ 				    $$line =~ s/\@function.*/\@function/;
++				    $$line =~ s/$sym/$globals{$sym} or $sym/e;
+ 				    last;
+ 				  };
+ 		/\.asciz/   && do { if ($$line =~ /^"(.*)"$/) {
+@@ -816,6 +817,9 @@
+ 				    $$line =~ s/\.L/$decor/g;
+ 				    last;
+ 				  };
++		/\.size/    && do { $$line =~ s/([_a-z][_a-z0-9]*)/$globals{$1} or $1/gei;
++				    last;
++			    };
+ 	    }
+ 
+ 	    if ($gas) {
+@@ -849,6 +853,7 @@
+ 		} elsif ($dir =~ /\.hidden/) {
+ 		    if    ($flavour eq "macosx")  { $self->{value} = ".private_extern\t$prefix$$line"; }
+ 		    elsif ($flavour eq "mingw64") { $self->{value} = ""; }
++		    else { $self->{value} = ".hidden\t$prefix$$line"; }
+ 		} elsif ($dir =~ /\.comm/) {
+ 		    $self->{value} = "$dir\t$prefix$$line";
+ 		    $self->{value} =~ s|,([0-9]+),([0-9]+)$|",$1,".log($2)/log(2)|e if ($flavour eq "macosx");
+diff -ru a/crypto/perlasm/x86asm.pl b/crypto/perlasm/x86asm.pl
+--- a/crypto/perlasm/x86asm.pl	Tue Sep  7 07:46:32 2021
++++ b/crypto/perlasm/x86asm.pl	Thu Oct 14 15:30:46 2021
+@@ -183,6 +183,7 @@
+ 
+ sub ::islabel		# see is argument is a known label
+ { my $i;
++    if ($_[0] eq "_GLOBAL_OFFSET_TABLE_") { return $_[0]; }
+     foreach $i (values %label) { return $i if ($i eq $_[0]); }
+   $label{$_[0]};	# can be undef
+ }
+diff -ru a/crypto/perlasm/x86gas.pl b/crypto/perlasm/x86gas.pl
+--- a/crypto/perlasm/x86gas.pl	Tue Sep  7 07:46:32 2021
++++ b/crypto/perlasm/x86gas.pl	Thu Oct 14 17:22:14 2021
+@@ -12,7 +12,7 @@
+ *out=\@::out;
+ 
+ $::lbdecor=$::aout?"L":".L";		# local label decoration
+-$nmdecor=($::aout or $::coff)?"_":"";	# external name decoration
++$nmdecor=($::aout or $::coff)?"_":"sunw_";	# external name decoration
+ 
+ $initseg="";
+ 
+diff -ru a/include/internal/cryptlib.h b/include/internal/cryptlib.h
+--- a/include/internal/cryptlib.h	Tue Sep  7 07:46:32 2021
++++ b/include/internal/cryptlib.h	Thu Oct 14 19:58:25 2021
+@@ -85,7 +85,7 @@
+ # define DECIMAL_SIZE(type)      ((sizeof(type)*8+2)/3+1)
+ # define HEX_SIZE(type)          (sizeof(type)*2)
+ 
+-void OPENSSL_cpuid_setup(void);
++extern void OPENSSL_cpuid_setup(void);
+ #if defined(__i386)   || defined(__i386__)   || defined(_M_IX86) || \
+     defined(__x86_64) || defined(__x86_64__) || \
+     defined(_M_AMD64) || defined(_M_X64)
+diff -ru a/include/openssl/configuration.h.in b/include/openssl/configuration.h.in
+--- a/include/openssl/configuration.h.in	Tue Sep  7 07:46:32 2021
++++ b/include/openssl/configuration.h.in	Thu Oct 14 15:30:46 2021
+@@ -46,6 +46,9 @@
+     "";
+ -}
+ 
++/* XXX SmartOS - include here for symbol remapping... */
++#include <openssl/sunw_prefix.h>
++
+ /* Generate 80386 code? */
+ {- $config{processor} eq "386" ? "# define" : "# undef" -} I386_ONLY
+ 
+diff -ru a/test/provider_internal_test.c b/test/provider_internal_test.c
+--- a/test/provider_internal_test.c	Tue Sep  7 07:46:32 2021
++++ b/test/provider_internal_test.c	Mon Oct 18 14:43:58 2021
+@@ -12,6 +12,15 @@
+ #include "internal/provider.h"
+ #include "testutil.h"
+ 
++/*
++ * XXX SmartOS - hack PROVIDER_INIT_FUNCTION_NAME to use sunw_OSSL_provider_init
++ * because of 64-bit weirdness with THIS module.
++ */
++#ifdef __amd64
++#undef PROVIDER_INIT_FUNCTION_NAME
++#define PROVIDER_INIT_FUNCTION_NAME sunw_OSSL_provider_init
++#endif
++
+ extern OSSL_provider_init_fn PROVIDER_INIT_FUNCTION_NAME;
+ 
+ static char buf[256];
+diff -ru a/test/provider_test.c b/test/provider_test.c
+--- a/test/provider_test.c	Tue Sep  7 07:46:32 2021
++++ b/test/provider_test.c	Mon Oct 18 15:35:36 2021
+@@ -11,6 +11,15 @@
+ #include <openssl/provider.h>
+ #include "testutil.h"
+ 
++/*
++ * XXX SmartOS - hack PROVIDER_INIT_FUNCTION_NAME to use sunw_OSSL_provider_init
++ * because of 64-bit weirdness with THIS module.
++ */
++#ifdef __amd64
++#undef PROVIDER_INIT_FUNCTION_NAME
++#define PROVIDER_INIT_FUNCTION_NAME sunw_OSSL_provider_init
++#endif
++
+ extern OSSL_provider_init_fn PROVIDER_INIT_FUNCTION_NAME;
+ 
+ static char buf[256];
+diff -ru a/util/mkdef.pl b/util/mkdef.pl
+--- a/util/mkdef.pl	Tue Sep  7 07:46:32 2021
++++ b/util/mkdef.pl	Thu Oct 14 15:30:46 2021
+@@ -268,7 +268,7 @@
+     global:
+ _____
+         }
+-        print '        ', $_->name(), ";\n";
++        print '        sunw_', $_->name(), ";\n";
+     }
+ 
+     print <<"_____";

@@ -1,4 +1,4 @@
-From 1188577cea5802f75905732216e5f225c156f441 Mon Sep 17 00:00:00 2001
+From 48ebe17df0b835b39b8dbcf130dab48e44a60673 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:38:19 -0700
 Subject: [PATCH 15/35] Enable login to a role if PAM is ok with it
@@ -13,10 +13,10 @@ Subject: [PATCH 15/35] Enable login to a role if PAM is ok with it
  6 files changed, 53 insertions(+)
 
 diff --git a/auth-pam.c b/auth-pam.c
-index 584c57f2..c8018aa4 100644
+index 0038f84a..8e609072 100644
 --- a/auth-pam.c
 +++ b/auth-pam.c
-@@ -1200,6 +1200,20 @@ do_pam_account(void)
+@@ -1201,6 +1201,20 @@ do_pam_account(void)
  	return (sshpam_account_status);
  }
  
@@ -67,7 +67,7 @@ index 49997c86..77e02b39 100644
  
  /*
 diff --git a/auth2-hostbased.c b/auth2-hostbased.c
-index 002e7e4e..1de3ad7b 100644
+index 3a29126c..2a28b789 100644
 --- a/auth2-hostbased.c
 +++ b/auth2-hostbased.c
 @@ -80,6 +80,9 @@ userauth_hostbased(struct ssh *ssh)
@@ -114,10 +114,10 @@ index 07854992..56f6153c 100644
  
  #if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
 diff --git a/monitor.c b/monitor.c
-index dd596e80..f936efd1 100644
+index f3c2f38b..0167940d 100644
 --- a/monitor.c
 +++ b/monitor.c
-@@ -392,6 +392,12 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
+@@ -390,6 +390,12 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
  		}
  	}
  
@@ -130,7 +130,7 @@ index dd596e80..f936efd1 100644
  	if (!authctxt->valid)
  		fatal_f("authenticated invalid user");
  	if (strcmp(auth_method, "unknown") == 0)
-@@ -595,7 +601,10 @@ monitor_reset_key_state(void)
+@@ -593,7 +599,10 @@ monitor_reset_key_state(void)
  {
  	/* reset state */
  	free(key_blob);
@@ -141,7 +141,7 @@ index dd596e80..f936efd1 100644
  	free(hostbased_chost);
  	sshauthopt_free(key_opts);
  	key_blob = NULL;
-@@ -1080,6 +1089,11 @@ mm_answer_pam_account(struct ssh *ssh, int sock, struct sshbuf *m)
+@@ -1078,6 +1087,11 @@ mm_answer_pam_account(struct ssh *ssh, int sock, struct sshbuf *m)
  	if (!options.use_pam)
  		fatal("%s: PAM not enabled", __func__);
  
@@ -155,4 +155,3 @@ index dd596e80..f936efd1 100644
  	if ((r = sshbuf_put_u32(m, ret)) != 0 ||
 -- 
 2.34.1
-

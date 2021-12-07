@@ -10,10 +10,10 @@
 #
 
 #
-# Copyright (c) 2019, Joyent, Inc.
+# Copyright 2021, Joyent, Inc.
 #
 
-VER =			wget-1.18
+VER =			wget-1.21.2
 
 include ../Makefile.defs
 

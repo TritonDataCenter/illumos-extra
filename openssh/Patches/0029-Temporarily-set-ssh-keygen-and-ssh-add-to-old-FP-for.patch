@@ -1,4 +1,4 @@
-From f53f2d549cca5d279c5352b2dad61f7789fadb65 Mon Sep 17 00:00:00 2001
+From 834e5b81e8312edea844455a6c2733054ebf66b3 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 9 Sep 2015 10:36:05 -0700
 Subject: [PATCH 29/35] Temporarily set ssh-keygen and ssh-add to old FP format
@@ -67,7 +67,7 @@ index 92192fcf..1fec4766 100644
  				fatal("Invalid hash algorithm \"%s\"", optarg);
  			break;
 diff --git a/ssh-keygen.c b/ssh-keygen.c
-index 027c6db6..61d907a1 100644
+index 4b40768d..7e954891 100644
 --- a/ssh-keygen.c
 +++ b/ssh-keygen.c
 @@ -42,6 +42,7 @@
@@ -134,7 +134,7 @@ index 027c6db6..61d907a1 100644
  	    comment ? comment : "no comment", sshkey_type(public));
  	if (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
  		printf("%s\n", ra);
-@@ -3177,6 +3190,7 @@ main(int argc, char **argv)
+@@ -3236,6 +3249,7 @@ main(int argc, char **argv)
  			break;
  		case 'E':
  			fingerprint_hash = ssh_digest_alg_by_name(optarg);

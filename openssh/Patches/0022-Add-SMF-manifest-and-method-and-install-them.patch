@@ -1,4 +1,4 @@
-From 2fbd302508fdbfbe98728d9c2a097b0ea4194c5b Mon Sep 17 00:00:00 2001
+From 52b18e7dcb726d96563799245b180588f3335994 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 12:19:47 -0700
 Subject: [PATCH 22/35] Add SMF manifest and method, and install them
@@ -12,7 +12,7 @@ Subject: [PATCH 22/35] Add SMF manifest and method, and install them
  create mode 100644 smf/method.sh
 
 diff --git a/Makefile.in b/Makefile.in
-index bfa56fee..da7123e0 100644
+index d98076a3..b721e11e 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -27,6 +27,8 @@ SSH_KEYSIGN=$(libexecdir)/ssh-keysign
@@ -24,7 +24,7 @@ index bfa56fee..da7123e0 100644
  PRIVSEP_PATH=@PRIVSEP_PATH@
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
-@@ -443,6 +445,10 @@ install-files:
+@@ -445,6 +447,10 @@ install-files:
  	$(INSTALL) -m 644 ssh-pkcs11-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-pkcs11-helper.1m
  	$(INSTALL) -m 644 ssh-sk-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-sk-helper.1m
  	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d
@@ -351,4 +351,3 @@ index 00000000..bd43e7da
 +exit $?
 -- 
 2.34.1
-

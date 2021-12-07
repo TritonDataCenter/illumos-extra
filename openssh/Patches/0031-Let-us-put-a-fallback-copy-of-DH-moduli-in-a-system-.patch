@@ -1,4 +1,4 @@
-From 21edf0aaeecaeec2fae652c4106e3dd2cd1a00f8 Mon Sep 17 00:00:00 2001
+From 4673007b239e498c2ba198bf1ed751001a659421 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Thu, 15 Oct 2015 16:02:37 -0700
 Subject: [PATCH 31/35] Let us put a fallback copy of DH moduli in a system
@@ -15,7 +15,7 @@ that if we can't find one in the SSHKEYDIR.
  3 files changed, 34 insertions(+), 13 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 7bde90b9..c1d2d848 100644
+index 67a5966d..018ed24c 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -18,6 +18,7 @@ srcdir=@srcdir@
@@ -26,7 +26,7 @@ index 7bde90b9..c1d2d848 100644
  
  DESTDIR=
  VPATH=@srcdir@
-@@ -175,8 +176,8 @@ PATHSUBS	= \
+@@ -177,8 +178,8 @@ PATHSUBS	= \
  	-e 's|/etc/ssh/ssh_host_rsa_key|$(keydir)/ssh_host_rsa_key|g' \
  	-e 's|/etc/ssh/ssh_host_ed25519_key|$(keydir)/ssh_host_ed25519_key|g' \
  	-e 's|/var/run/sshd.pid|$(piddir)/sshd.pid|g' \
@@ -37,7 +37,7 @@ index 7bde90b9..c1d2d848 100644
  	-e 's|/etc/ssh/sshrc|$(sysconfdir)/sshrc|g' \
  	-e 's|/usr/X11R6/bin/xauth|$(XAUTH_PATH)|g' \
  	-e 's|/var/empty|$(PRIVSEP_PATH)|g' \
-@@ -451,6 +452,8 @@ install-files:
+@@ -453,6 +454,8 @@ install-files:
  	$(INSTALL) -m 555 smf/method.sh $(SMFMETHODDIR)/sshd
  	$(INSTALL) -m 444 smf/manifest.xml $(SMFNETMANIDIR)/ssh.xml
  	mkdir -p $(DESTDIR)$(keydir)
@@ -46,7 +46,7 @@ index 7bde90b9..c1d2d848 100644
  
  install-sysconf:
  	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
-@@ -464,16 +467,6 @@ install-sysconf:
+@@ -466,16 +469,6 @@ install-sysconf:
  	else \
  		echo "$(DESTDIR)$(sysconfdir)/sshd_config already exists, install will not overwrite"; \
  	fi
@@ -64,10 +64,10 @@ index 7bde90b9..c1d2d848 100644
  host-key: ssh-keygen$(EXEEXT)
  	@if [ -z "$(DESTDIR)" ] ; then \
 diff --git a/configure.ac b/configure.ac
-index 2105b252..04865532 100644
+index 061db495..03880716 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -5242,6 +5242,21 @@ AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
+@@ -5280,6 +5280,21 @@ AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
  	[Specify location of SSH host keys])
  AC_SUBST([keydir])
  

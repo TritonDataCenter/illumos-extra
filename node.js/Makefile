@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2020 Joyent, Inc.
+# Copyright 2021 Joyent, Inc.
 #
 
 MAJOR_VER =	0.10
@@ -28,6 +28,13 @@ include ../Makefile.defs
 
 NODE_ROOT =	$(DESTDIR)/usr/node/$(MAJOR_VER)
 VERSIONJS =	$(NODE_ROOT)/node_modules/platform_node_version.js
+
+#
+# Because we're stuck with OpenSSL 1.0.x, and the shared-openssl-includes below
+# appear to be blown-off by Node's autoconf, be a little more forceful, and
+# a little more immediate.
+#
+CPPFLAGS += -I$(DESTDIR)/opt/1x
 
 #
 # ../deps/v8/src/objects.h:5188:44: error: left operand of shift expression
@@ -74,10 +81,10 @@ endif
 AUTOCONF_OPTS += \
 	--with-dtrace \
 	--without-snapshot \
-	--openssl-use-sys \
-	--openssl-libpath=$(DESTDIR)/lib \
-	--openssl-includes=$(DESTDIR)/usr/include \
-	--shared-openssl-libname=sunw_crypto,sunw_ssl \
+	--shared-openssl \
+	--shared-openssl-includes=$(DESTDIR)/opt/1x \
+	--shared-openssl-libpath=$(DESTDIR)/lib \
+	--shared-openssl-libname=sunw1x_crypto,sunw1x_ssl \
 	--shared-zlib \
 	--shared-zlib-libpath=$(DESTDIR)/lib \
 	--shared-zlib-includes=$(DESTDIR)/usr/include \

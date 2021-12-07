@@ -18,10 +18,10 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2021 Joyent, Inc.
 #
 
-VER =	openldap-2.4.26
+VER =	openldap-2.5.8
 
 include ../Makefile.defs
 
