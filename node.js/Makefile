@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2020 Joyent, Inc.
+# Copyright 2021 Joyent, Inc.
 #
 
 MAJOR_VER =	0.10
