@@ -22,7 +22,7 @@
 # Copyright 2021 Joyent, Inc.
 #
 
-VER = openssl-3.0.0
+VER = openssl-3.0.1
 LIBVER =	3
 
 include ../Makefile.defs
