@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright (c) 2019, Joyent, Inc.
+# Copyright 2022, Joyent, Inc.
 #
 
 #
@@ -121,6 +121,7 @@ LIBSTDCXXVER_4 = 6.0.13
 LIBSTDCXXVER_6 = 6.0.22
 LIBSTDCXXVER_7 = 6.0.24
 LIBSTDCXXVER_9 = 6.0.28
+LIBSTDCXXVER_10 = 6.0.28
 
 all: $(SUBDIRS)
 

@@ -1,0 +1,37 @@
+diff -ru a/include/ipmitool/ipmi_hpmfwupg.h b/include/ipmitool/ipmi_hpmfwupg.h
+--- a/include/ipmitool/ipmi_hpmfwupg.h	2016-06-29 14:01:49.000000000 -0400
++++ b/include/ipmitool/ipmi_hpmfwupg.h	2021-11-17 16:19:43.000000000 -0500
+@@ -800,7 +800,7 @@
+ 	char descString[HPMFWUPG_DESC_STRING_LENGTH + 1];
+ }VERSIONINFO, *PVERSIONINFO;
+ 
+-VERSIONINFO gVersionInfo[HPMFWUPG_COMPONENT_ID_MAX];
++extern VERSIONINFO gVersionInfo[HPMFWUPG_COMPONENT_ID_MAX];
+ 
+ #define TARGET_VER (0x01)
+ #define ROLLBACK_VER (0x02)
+diff -ru a/lib/ipmi_hpmfwupg.c b/lib/ipmi_hpmfwupg.c
+--- a/lib/ipmi_hpmfwupg.c	2016-06-29 14:01:49.000000000 -0400
++++ b/lib/ipmi_hpmfwupg.c	2021-11-17 16:20:14.000000000 -0500
+@@ -1,6 +1,7 @@
+ /*
+  * Copyright (c) 2006 Kontron Canada, Inc.  All Rights Reserved.
+  * Copyright (c) 2003 Sun Microsystems, Inc.  All Rights Reserved.
++ * Copyright 2022 Joyent, Inc.
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -56,6 +57,13 @@
+ uint16_t
+ ipmi_intf_get_max_request_data_size(struct ipmi_intf * intf);
+ 
++#ifndef MAX
++#define MAX(a,b) ((a) > (b) ? (a) : (b))
++#endif
++
++/* XXX SmartOS - don't declare globals in header files post-gcc10. */
++VERSIONINFO gVersionInfo[HPMFWUPG_COMPONENT_ID_MAX];
++
+ extern int verbose;
+ 
+ int HpmfwupgUpgrade(struct ipmi_intf *intf, char *imageFilename,

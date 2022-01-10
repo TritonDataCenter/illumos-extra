@@ -18,16 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2022 Joyent, Inc.
 #
 
-VER =	socat-1.7.1.3
+VER =	socat-1.7.4.1
 
 include ../Makefile.defs
 
 AUTOCONF_OPTS += \
 	--disable-interface \
 	--disable-readline
+
+PATCHES =       Patches/*
 
 include ../Makefile.targ
 include ../Makefile.targ.autoconf

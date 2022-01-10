@@ -1,0 +1,36 @@
+diff -ru a/fdname.c b/fdname.c
+--- a/fdname.c	2021-01-03 13:23:22.000000000 -0500
++++ b/fdname.c	2021-11-18 15:12:43.000000000 -0500
+@@ -232,7 +232,10 @@
+    /*Linux struct ifreq ifc = {{{ 0 }}};*/
+    struct ifreq ifc = {{ 0 }};
+ #endif
++
++#ifndef __sun
+    int rc;
++#endif
+ 
+ #if defined(SO_PROTOCOL) || defined(SO_PROTOTYPE)
+    optlen = sizeof(proto);
+@@ -254,12 +257,20 @@
+ 
+ #if defined(SO_PROTOCOL) || defined(SO_PROTOTYPE)
+ #if HAVE_GETPROTOBYNUMBER_R
++#ifdef __sun
++   protoentp = getprotobynumber_r(proto, &protoent, protoname, sizeof(protoname));
++#else
+    rc = getprotobynumber_r(proto, &protoent, protoname, sizeof(protoname), &protoentp);
++#endif
+    if (protoentp == NULL) {
++#ifdef __sun
++      Warn1("sockname(): getprotobynumber_r(proto=%d, ...)", proto);
++#else
+       Warn2("sockname(): getprotobynumber_r(proto=%d, ...): %s",
+ 	    proto, strerror(rc));
++#endif
+    }
+-   strncpy(protoname, protoentp->p_name, sizeof(protoname));
++   else (void) sprintf(protoname, "proto%d", proto);
+ #elif HAVE_GETPROTOBYNUMBER
+    protoentp = getprotobynumber(proto);
+    strncpy(protoname, protoentp->p_name, sizeof(protoname));
