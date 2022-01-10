@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2022 Joyent, Inc.
 #
 
 VER =	less-590
