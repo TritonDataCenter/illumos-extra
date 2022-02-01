@@ -1,0 +1,13 @@
+diff -ru a/deps/uv/src/unix/sunos.c b/deps/uv/src/unix/sunos.c
+--- a/deps/uv/src/unix/sunos.c	2014-02-18 18:34:29.000000000 -0500
++++ b/deps/uv/src/unix/sunos.c	2022-01-31 10:25:53.000000000 -0500
+@@ -621,7 +621,8 @@
+   for (ent = addrs; ent != NULL; ent = ent->ifa_next) {
+     if (!(ent->ifa_flags & IFF_UP && ent->ifa_flags & IFF_RUNNING) ||
+         (ent->ifa_addr == NULL) ||
+-        (ent->ifa_addr->sa_family == PF_PACKET)) {
++        (ent->ifa_addr->sa_family != AF_INET &&
++	ent->ifa_addr->sa_family != AF_INET6)) {
+       continue;
+     }
+ 
