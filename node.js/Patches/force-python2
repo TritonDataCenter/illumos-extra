@@ -225,13 +225,42 @@ diff -ru a/deps/v8/tools/gc-nvp-trace-processor.py b/deps/v8/tools/gc-nvp-trace-
  # Redistribution and use in source and binary forms, with or without
 diff -ru a/deps/v8/tools/gen-postmortem-metadata.py b/deps/v8/tools/gen-postmortem-metadata.py
 --- a/deps/v8/tools/gen-postmortem-metadata.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/gen-postmortem-metadata.py	Thu Feb  3 00:06:04 2022
++++ b/deps/v8/tools/gen-postmortem-metadata.py	Thu Feb  3 13:54:20 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
 +#!/usr/bin/env python2
  
  #
  # Copyright 2012 the V8 project authors. All rights reserved.
+@@ -438,7 +438,7 @@
+ # Emit the whole output file.
+ #
+ def emit_config():
+-        out = file(sys.argv[1], 'w');
++        out = open(sys.argv[1], 'w');
+ 
+         out.write(header);
+ 
+@@ -448,8 +448,7 @@
+         out.write('/* class type information */\n');
+         consts = [];
+         keys = typeclasses.keys();
+-        keys.sort();
+-        for typename in keys:
++        for typename in sorted(keys):
+                 klass = typeclasses[typename];
+                 consts.append({
+                     'name': 'type_%s__%s' % (klass, typename),
+@@ -461,8 +460,7 @@
+         out.write('/* class hierarchy information */\n');
+         consts = [];
+         keys = klasses.keys();
+-        keys.sort();
+-        for klassname in keys:
++        for klassname in sorted(keys):
+                 pklass = klasses[klassname]['parent'];
+                 if (pklass == None):
+                         continue;
 diff -ru a/deps/v8/tools/grokdump.py b/deps/v8/tools/grokdump.py
 --- a/deps/v8/tools/grokdump.py	Tue Feb 18 18:34:29 2014
 +++ b/deps/v8/tools/grokdump.py	Thu Feb  3 00:06:04 2022
