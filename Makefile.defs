@@ -61,12 +61,6 @@ GXX.host.32 =	$(GCC.host_prefix)/g++ -m32
 GCC.host.64 =	$(GCC.host_prefix)/gcc -m64
 GXX.host.64 =	$(GCC.host_prefix)/g++ -m64
 
-# XXX KEBE SAYS let's try to put gcc4 out to pasture.
-# We need gcc 4.x in order to build our copy of gcc 4.4. This is set by
-# 'configure' in smartos-live. This must be -m32 (as used by gcc4/Makefile).
-#GCC4.host =	$(HOST_GCC4_PREFIX)/gcc -m32
-#GXX4.host =	$(HOST_GCC4_PREFIX)/g++ -m32
-
 PATH =		$(STRAPPROTO)/usr/bin:/usr/bin:/usr/sbin:/sbin:/opt/local/bin
 
 MAKE =		gmake
