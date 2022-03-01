@@ -14,7 +14,7 @@ behaviour (at least the parts that are most commonly used).
  ssh.c         |  3 +++
  sshd.c        |  2 ++
  sshd_config   |  4 ++++
- sshd_config.4 | 15 ++++++++++++-
+ sshd_config.5 | 15 ++++++++++++-
  8 files changed, 127 insertions(+), 5 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
@@ -239,10 +239,10 @@ index d2a509c5..8c1cd518 100644
  # Authentication:
  
  #LoginGraceTime 2m
-diff --git a/sshd_config.4 b/sshd_config.4
+diff --git a/sshd_config.5 b/sshd_config.5
 index 38db0f48..4dfcc0ee 100644
---- a/sshd_config.4
-+++ b/sshd_config.4
+--- a/sshd_config.5
++++ b/sshd_config.5
 @@ -86,7 +86,20 @@ directives.
  Be warned that some environment variables could be used to bypass restricted
  user environments.

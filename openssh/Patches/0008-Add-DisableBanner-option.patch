@@ -6,7 +6,7 @@ Subject: [PATCH 08/35] Add DisableBanner option
 ---
  readconf.c    | 31 +++++++++++++++++++++++++++++++
  readconf.h    | 10 ++++++++++
- ssh_config.4  |  8 ++++++++
+ ssh_config.5  |  8 ++++++++
  sshconnect2.c | 30 ++++++++++++++++++++++++++----
  4 files changed, 75 insertions(+), 4 deletions(-)
 
@@ -115,10 +115,10 @@ index f24719f9..196af3ca 100644
  void     initialize_options(Options *);
  int      fill_default_options(Options *);
  void	 fill_default_options_for_canonicalization(Options *);
-diff --git a/ssh_config.4 b/ssh_config.4
+diff --git a/ssh_config.5 b/ssh_config.5
 index a0db5bc5..ccde4035 100644
---- a/ssh_config.4
-+++ b/ssh_config.4
+--- a/ssh_config.5
++++ b/ssh_config.5
 @@ -611,6 +611,14 @@ If set to a time in seconds, or a time in any of the formats documented in
  then the backgrounded master connection will automatically terminate
  after it has remained idle (with no client connections) for the
