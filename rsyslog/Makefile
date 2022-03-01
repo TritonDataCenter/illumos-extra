@@ -40,15 +40,15 @@ all: all_autoconf
 install: all
 	mkdir -p $(DESTDIR)/usr/sbin
 	mkdir -p $(DESTDIR)/usr/lib/rsyslog
-	mkdir -p $(DESTDIR)/usr/share/man/man1m
-	mkdir -p $(DESTDIR)/usr/share/man/man4
+	mkdir -p $(DESTDIR)/usr/share/man/man5
+	mkdir -p $(DESTDIR)/usr/share/man/man8
 	ginstall -m 0755 $(BASE)/$(VER.32)/tools/rsyslogd \
 	    $(DESTDIR)/usr/sbin/rsyslogd
 	cp $(BASE)/$(VER.32)/runtime/.libs/*.so $(DESTDIR)/usr/lib/rsyslog
 	cp $(BASE)/$(VER.32)/plugins/*/.libs/*.so $(DESTDIR)/usr/lib/rsyslog
 	cp $(BASE)/$(VER.32)/.libs/*.so $(DESTDIR)/usr/lib/rsyslog
 	cp $(BASE)/$(VER.32)/tools/rsyslogd.8 \
-	    $(DESTDIR)/usr/share/man/man1m/rsyslogd.1m
+	    $(DESTDIR)/usr/share/man/man8/rsyslogd.8
 	cp $(BASE)/$(VER.32)/tools/rsyslog.conf.5 \
-	    $(DESTDIR)/usr/share/man/man4/rsyslog.conf.4
+	    $(DESTDIR)/usr/share/man/man5/rsyslog.conf.5
 	cp $(BASE)/rsyslog.conf $(DESTDIR)/etc/rsyslog.conf

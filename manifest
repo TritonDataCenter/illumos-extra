@@ -379,9 +379,9 @@ f usr/share/man/man1/ntp-keygen.1 0444 root bin
 f usr/share/man/man1/ntpd.1 0444 root bin
 f usr/share/man/man1/ntpdc.1 0444 root bin
 f usr/share/man/man1/ntpq.1 0444 root bin
-f usr/share/man/man1m/ntpdate.1m 0444 root bin
-f usr/share/man/man1m/ntptime.1m 0444 root bin
-f usr/share/man/man1m/ntptrace.1m 0444 root bin
+f usr/share/man/man8/ntpdate.8 0444 root bin
+f usr/share/man/man8/ntptime.8 0444 root bin
+f usr/share/man/man8/ntptrace.8 0444 root bin
 # openldap
 d etc/openldap 0755 root bin
 f etc/openldap/ldap.conf 0644 root bin
@@ -456,7 +456,7 @@ d usr/lib/ssh 0755 root bin
 d usr/share/man 0755 root bin
 d usr/share/man/man1 0755 root bin
 d usr/share/man/man5 0755 root bin
-d usr/share/man/man1m 0755 root bin
+d usr/share/man/man8 0755 root bin
 d var/empty 0755 root sys
 f usr/bin/ssh 0755 root bin
 f usr/bin/scp 0755 root bin
@@ -476,13 +476,13 @@ f usr/share/man/man1/ssh-agent.1 0444 root bin
 f usr/share/man/man1/ssh-keygen.1 0444 root bin
 f usr/share/man/man1/ssh-keyscan.1 0444 root bin
 f usr/share/man/man1/sftp.1 0444 root bin
-f usr/share/man/man4/moduli.4 0444 root bin
-f usr/share/man/man4/sshd_config.4 0444 root bin
-f usr/share/man/man4/ssh_config.4 0444 root bin
-f usr/share/man/man1m/sshd.1m 0444 root bin
-f usr/share/man/man1m/sftp-server.1m 0444 root bin
-f usr/share/man/man1m/ssh-keysign.1m 0444 root bin
-f usr/share/man/man1m/ssh-pkcs11-helper.1m 0444 root bin
+f usr/share/man/man5/moduli.5 0444 root bin
+f usr/share/man/man5/sshd_config.5 0444 root bin
+f usr/share/man/man5/ssh_config.5 0444 root bin
+f usr/share/man/man8/sshd.8 0444 root bin
+f usr/share/man/man8/sftp-server.8 0444 root bin
+f usr/share/man/man8/ssh-keysign.8 0444 root bin
+f usr/share/man/man8/ssh-pkcs11-helper.8 0444 root bin
 d usr/lib/dtrace 0755 root bin
 f usr/lib/dtrace/sftp.d 0644 root bin
 d etc/ssh 0755 root sys
@@ -614,8 +614,8 @@ f usr/lib/rsyslog/omprog.so 0755 root bin
 f usr/lib/rsyslog/omruleset.so 0755 root bin
 f usr/lib/rsyslog/omtesting.so 0755 root bin
 f usr/sbin/rsyslogd 0755 root bin
-f usr/share/man/man1m/rsyslogd.1m 0444 root bin
 f usr/share/man/man4/rsyslog.conf.4 0444 root bin
+f usr/share/man/man8/rsyslogd.8 0444 root bin
 # screen
 f usr/bin/screen 0555 root bin
 f usr/share/man/man1/screen.1 0444 root bin
