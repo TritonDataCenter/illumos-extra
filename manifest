@@ -614,7 +614,7 @@ f usr/lib/rsyslog/omprog.so 0755 root bin
 f usr/lib/rsyslog/omruleset.so 0755 root bin
 f usr/lib/rsyslog/omtesting.so 0755 root bin
 f usr/sbin/rsyslogd 0755 root bin
-f usr/share/man/man4/rsyslog.conf.4 0444 root bin
+f usr/share/man/man4/rsyslog.conf.5 0444 root bin
 f usr/share/man/man8/rsyslogd.8 0444 root bin
 # screen
 f usr/bin/screen 0555 root bin
