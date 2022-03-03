@@ -252,7 +252,7 @@ index 00000000..99e99202
 + * We seem currently unable to depend properly on existing D libraries (like
 + * sftp.d). But the definitions for conninfo_t and sftpinfo_t are stored there
 + * (and have to be, since that's where the real translators live). So we're
-+ * forced to define something here to satisfy dtrace(1M), but none of the
++ * forced to define something here to satisfy dtrace(8), but none of the
 + * definitions or translators here are actually used.
 + */
 +typedef struct sftpinfo {

@@ -264,6 +264,6 @@ index 38db0f48..4dfcc0ee 100644
 +directives will add to this default set.
  .It Cm AddressFamily
  Specifies which address family should be used by
- .Xr sshd 1M .
+ .Xr sshd 8 .
 -- 
 2.34.1

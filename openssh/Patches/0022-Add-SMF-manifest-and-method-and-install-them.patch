@@ -203,7 +203,7 @@ index 00000000..50452966
 +			</loctext>
 +		</common_name>
 +		<documentation>
-+			<manpage title='sshd' section='1M' manpath='/usr/share/man' />
++			<manpage title='sshd' section='8' manpath='/usr/share/man' />
 +		</documentation>
 +	</template>
 +
@@ -295,7 +295,7 @@ index 00000000..bd43e7da
 +}
 +
 +# This script is being used for two purposes: as part of an SMF
-+# start/stop/refresh method, and as a sysidconfig(1M)/sys-unconfig(1M)
++# start/stop/refresh method, and as a sysidconfig(8)/sys-unconfig(8)
 +# application.
 +#
 +# Both, the SMF methods and sysidconfig/sys-unconfig use different
@@ -311,7 +311,7 @@ index 00000000..bd43e7da
 +	;;
 +
 +'-u')
-+	# sys-unconfig(1M) knows how to remove ssh host keys, so there's
++	# sys-unconfig(8) knows how to remove ssh host keys, so there's
 +	# nothing to do here.
 +	:
 +	;;
