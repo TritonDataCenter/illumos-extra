@@ -29,7 +29,7 @@ mkdir -p ${DESTDIR}/etc/security/prof_attr.d
 mkdir -p ${DESTDIR}/lib/svc/manifest/network
 mkdir -p ${DESTDIR}/lib/svc/method
 mkdir -p ${DESTDIR}/var/ntp
-mkdir -p ${DESTDIR}/usr/share/man/man5
+mkdir -p ${DESTDIR}/usr/share/man/man8
 
 _install N Solaris/ntp.conf ${DESTDIR}/etc/inet/ntp.conf 0644
 _install N Solaris/ntp.xml ${DESTDIR}/lib/svc/manifest/network/ntp.xml 0444
@@ -37,9 +37,9 @@ _install N Solaris/ntp ${DESTDIR}/lib/svc/method/ntp 0555
 _install N Solaris/auth_attr ${DESTDIR}/etc/security/auth_attr.d/ntp 0555
 _install N Solaris/prof_attr ${DESTDIR}/etc/security/prof_attr.d/ntp 0555
 
-_install N Solaris/ntpdate.8 ${DESTDIR}/usr/share/man/man5/ntpdate.8 0444
-_install N Solaris/ntptime.8 ${DESTDIR}/usr/share/man/man5/ntptime.8 0444
-_install N Solaris/ntptrace.8 ${DESTDIR}/usr/share/man/man5/ntptrace.8 0444
+_install N Solaris/ntpdate.8 ${DESTDIR}/usr/share/man/man8/ntpdate.8 0444
+_install N Solaris/ntptime.8 ${DESTDIR}/usr/share/man/man8/ntptime.8 0444
+_install N Solaris/ntptrace.8 ${DESTDIR}/usr/share/man/man8/ntptrace.8 0444
 
 #
 # ntp-dev-4.2.7p446 appears to have made correct manual page generation
