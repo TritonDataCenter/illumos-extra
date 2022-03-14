@@ -21,7 +21,7 @@
 # Copyright 2021 Joyent, Inc.
 #
 
-VER =	screen-4.8.0
+VER =	screen-4.9.0
 
 include ../Makefile.defs
 
