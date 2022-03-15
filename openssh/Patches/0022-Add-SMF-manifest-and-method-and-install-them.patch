@@ -25,8 +25,8 @@ index d98076a3..b721e11e 100644
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
 @@ -445,6 +447,10 @@ install-files:
- 	$(INSTALL) -m 644 ssh-pkcs11-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-pkcs11-helper.1m
- 	$(INSTALL) -m 644 ssh-sk-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-sk-helper.1m
+ 	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
+ 	$(INSTALL) -m 644 ssh-sk-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8
  	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d
 +	$(srcdir)/mkinstalldirs $(SMFMETHODDIR)
 +	$(srcdir)/mkinstalldirs $(SMFNETMANIDIR)
@@ -203,7 +203,7 @@ index 00000000..50452966
 +			</loctext>
 +		</common_name>
 +		<documentation>
-+			<manpage title='sshd' section='1M' manpath='/usr/share/man' />
++			<manpage title='sshd' section='8' manpath='/usr/share/man' />
 +		</documentation>
 +	</template>
 +
@@ -295,7 +295,7 @@ index 00000000..bd43e7da
 +}
 +
 +# This script is being used for two purposes: as part of an SMF
-+# start/stop/refresh method, and as a sysidconfig(1M)/sys-unconfig(1M)
++# start/stop/refresh method, and as a sysidconfig(8)/sys-unconfig(8)
 +# application.
 +#
 +# Both, the SMF methods and sysidconfig/sys-unconfig use different
@@ -311,7 +311,7 @@ index 00000000..bd43e7da
 +	;;
 +
 +'-u')
-+	# sys-unconfig(1M) knows how to remove ssh host keys, so there's
++	# sys-unconfig(8) knows how to remove ssh host keys, so there's
 +	# nothing to do here.
 +	:
 +	;;

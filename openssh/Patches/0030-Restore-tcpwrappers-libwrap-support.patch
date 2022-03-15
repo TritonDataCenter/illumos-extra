@@ -7,7 +7,7 @@ This reverts commit f9696566fb41320820f3b257ab564fa321bb3751
 and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
 ---
  configure.ac | 57 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- sshd.1m      |  7 +++++++
+ sshd.8       |  7 +++++++
  sshd.c       | 29 ++++++++++++++++++++++++++
  3 files changed, 93 insertions(+)
 
@@ -86,10 +86,10 @@ index 99cb0d63..061db495 100644
  echo "              MD5 password support: $MD5_MSG"
  echo "                   libedit support: $LIBEDIT_MSG"
  echo "                   libldns support: $LDNS_MSG"
-diff --git a/sshd.1m b/sshd.1m
+diff --git a/sshd.8 b/sshd.8
 index 0f6f1eb8..169c77cb 100644
---- a/sshd.1m
-+++ b/sshd.1m
+--- a/sshd.8
++++ b/sshd.8
 @@ -908,6 +908,12 @@ the user's home directory becomes accessible.
  This file should be writable only by the user, and need not be
  readable by anyone else.
@@ -109,8 +109,8 @@ index 0f6f1eb8..169c77cb 100644
  .Xr chroot 2 ,
 +.Xr hosts_access 5 ,
  .Xr login.conf 5 ,
- .Xr moduli 4 ,
- .Xr sshd_config 4 ,
+ .Xr moduli 5 ,
+ .Xr sshd_config 5 ,
 diff --git a/sshd.c b/sshd.c
 index cd4dae82..3afbe988 100644
 --- a/sshd.c

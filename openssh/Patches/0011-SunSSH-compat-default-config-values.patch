@@ -16,8 +16,8 @@ upstream.
 ---
  readconf.c    | 8 ++++++++
  servconf.c    | 8 ++++++++
- ssh_config.4  | 7 +++++--
- sshd_config.4 | 8 ++++----
+ ssh_config.5  | 7 +++++--
+ sshd_config.5 | 8 ++++----
  4 files changed, 25 insertions(+), 6 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
@@ -76,10 +76,10 @@ index 5fd07bd1..66ee2792 100644
  	if (options->gss_cleanup_creds == -1)
  		options->gss_cleanup_creds = 1;
  	if (options->gss_strict_acceptor == -1)
-diff --git a/ssh_config.4 b/ssh_config.4
+diff --git a/ssh_config.5 b/ssh_config.5
 index ccde4035..5f769187 100644
---- a/ssh_config.4
-+++ b/ssh_config.4
+--- a/ssh_config.5
++++ b/ssh_config.5
 @@ -813,6 +813,9 @@ Furthermore, the
  token used for the session will be set to expire after 20 minutes.
  Remote clients will be refused access after this time.
@@ -101,10 +101,10 @@ index ccde4035..5f769187 100644
  .It Cm GSSAPIDelegateCredentials
  Forward (delegate) credentials to the server.
  The default is
-diff --git a/sshd_config.4 b/sshd_config.4
+diff --git a/sshd_config.5 b/sshd_config.5
 index 2b08b0fc..14d9cdcc 100644
---- a/sshd_config.4
-+++ b/sshd_config.4
+--- a/sshd_config.5
++++ b/sshd_config.5
 @@ -643,8 +643,8 @@ The default is
  .Cm no .
  .It Cm GSSAPIAuthentication
