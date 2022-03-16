@@ -1,0 +1,13 @@
+diff -Naur screen-4.9.0.orig/socket.c screen-4.9.0/socket.c
+--- screen-4.9.0.orig/socket.c	2022-01-28 06:06:02.000000000 -0800
++++ screen-4.9.0/socket.c	2022-03-16 13:10:21.000000000 -0700
+@@ -33,7 +33,9 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
++#define _XPG4_2
+ # include <sys/socket.h>
++#undef _XPG4_2
+ # ifdef _OpenBSD_
+ #  include <sys/uio.h>
+ # endif
