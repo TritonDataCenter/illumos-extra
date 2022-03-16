@@ -19,10 +19,10 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2021 Joyent, Inc.
+# Copyright 2022 Joyent, Inc.
 #
 
-VER = openssl-3.0.1
+VER = openssl-3.0.2
 LIBVER =	3
 
 include ../Makefile.defs
