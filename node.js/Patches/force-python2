@@ -1,234 +1,324 @@
+diff -ru a/Makefile b/Makefile
+--- a/Makefile	Tue Feb 18 18:34:29 2014
++++ b/Makefile	Fri Mar 18 15:17:25 2022
+@@ -1,7 +1,7 @@
+ -include config.mk
+ 
+ BUILDTYPE ?= Release
+-PYTHON ?= python
++PYTHON ?= python2.7
+ NINJA ?= ninja
+ DESTDIR ?=
+ SIGN ?=
+diff -ru a/common.gypi b/common.gypi
+--- a/common.gypi	Tue Feb 18 18:34:29 2014
++++ b/common.gypi	Fri Mar 18 15:23:05 2022
+@@ -9,7 +9,7 @@
+     'msvs_multi_core_compile': '0',  # we do enable multicore compiles, but not using the V8 way
+     'gcc_version%': 'unknown',
+     'clang%': 0,
+-    'python%': 'python',
++    'python%': 'python2.7',
+ 
+     # Turn on optimizations that may trigger compiler bugs.
+     # Use at your own risk. Do *NOT* report bugs if this option is enabled.
+Only in b: common.gypi~
 diff -ru a/configure b/configure
---- a/configure	Thu Feb  3 00:00:42 2022
-+++ b/configure	Thu Feb  3 00:06:04 2022
+--- a/configure	Fri Mar 18 15:17:51 2022
++++ b/configure	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  import optparse
  import os
  import pprint
 diff -ru a/deps/cares/build/gcc_version.py b/deps/cares/build/gcc_version.py
 --- a/deps/cares/build/gcc_version.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/cares/build/gcc_version.py	Thu Feb  3 00:06:04 2022
++++ b/deps/cares/build/gcc_version.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  import os
  import re
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/gyp_main.py b/deps/npm/node_modules/node-gyp/gyp/gyp_main.py
 --- a/deps/npm/node_modules/node-gyp/gyp/gyp_main.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/gyp_main.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/gyp_main.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2009 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/gyptest.py b/deps/npm/node_modules/node-gyp/gyp/gyptest.py
 --- a/deps/npm/node_modules/node-gyp/gyp/gyptest.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/gyptest.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/gyptest.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/setup.py b/deps/npm/node_modules/node-gyp/gyp/setup.py
 --- a/deps/npm/node_modules/node-gyp/gyp/setup.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/setup.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/setup.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2009 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/buildbot/buildbot_run.py b/deps/npm/node_modules/node-gyp/gyp/buildbot/buildbot_run.py
 --- a/deps/npm/node_modules/node-gyp/gyp/buildbot/buildbot_run.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/buildbot/buildbot_run.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/buildbot/buildbot_run.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
  # found in the LICENSE file.
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSSettings_test.py b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSSettings_test.py
 --- a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSSettings_test.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSSettings_test.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSSettings_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/__init__.py b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/__init__.py
 --- a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/__init__.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/__init__.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/__init__.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/common_test.py b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/common_test.py
 --- a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/common_test.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/common_test.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/common_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/easy_xml_test.py b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/easy_xml_test.py
 --- a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/easy_xml_test.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/easy_xml_test.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/easy_xml_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2011 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/flock_tool.py b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/flock_tool.py
 --- a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/flock_tool.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/flock_tool.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/flock_tool.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  # Copyright (c) 2011 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
  # found in the LICENSE file.
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/input_test.py b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/input_test.py
 --- a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/input_test.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/input_test.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/input_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright 2013 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/mac_tool.py b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/mac_tool.py
 --- a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/mac_tool.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/mac_tool.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/mac_tool.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
  # found in the LICENSE file.
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/win_tool.py b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/win_tool.py
 --- a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/win_tool.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/win_tool.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/win_tool.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/msvs_test.py b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/msvs_test.py
 --- a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/msvs_test.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/msvs_test.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/msvs_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
  # found in the LICENSE file.
+diff -ru a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja.py b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja.py
+--- a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja.py	Tue Feb 18 18:34:29 2014
++++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja.py	Fri Mar 18 15:24:55 2022
+@@ -1606,7 +1606,7 @@
+       'exe': '1',
+       'dll': '2',
+     }[binary_type]
+-    return cmd % {'python': sys.executable,
++    return cmd % {'python2.7': sys.executable,
+                   'out': out,
+                   'ldcmd': ldcmd,
+                   'resname': resource_name}
+Only in b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator: ninja.py~
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja_test.py b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja_test.py
 --- a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja_test.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja_test.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/xcode_test.py b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/xcode_test.py
 --- a/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/xcode_test.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/xcode_test.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/xcode_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2013 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/tools/graphviz.py b/deps/npm/node_modules/node-gyp/gyp/tools/graphviz.py
 --- a/deps/npm/node_modules/node-gyp/gyp/tools/graphviz.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/tools/graphviz.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/tools/graphviz.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2011 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/tools/pretty_gyp.py b/deps/npm/node_modules/node-gyp/gyp/tools/pretty_gyp.py
 --- a/deps/npm/node_modules/node-gyp/gyp/tools/pretty_gyp.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/tools/pretty_gyp.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/tools/pretty_gyp.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/tools/pretty_sln.py b/deps/npm/node_modules/node-gyp/gyp/tools/pretty_sln.py
 --- a/deps/npm/node_modules/node-gyp/gyp/tools/pretty_sln.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/tools/pretty_sln.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/tools/pretty_sln.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/deps/npm/node_modules/node-gyp/gyp/tools/pretty_vcproj.py b/deps/npm/node_modules/node-gyp/gyp/tools/pretty_vcproj.py
 --- a/deps/npm/node_modules/node-gyp/gyp/tools/pretty_vcproj.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/npm/node_modules/node-gyp/gyp/tools/pretty_vcproj.py	Thu Feb  3 00:06:04 2022
++++ b/deps/npm/node_modules/node-gyp/gyp/tools/pretty_vcproj.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
+diff -ru a/deps/npm/node_modules/node-gyp/gyp/tools/emacs/testdata/media.gyp b/deps/npm/node_modules/node-gyp/gyp/tools/emacs/testdata/media.gyp
+--- a/deps/npm/node_modules/node-gyp/gyp/tools/emacs/testdata/media.gyp	Tue Feb 18 18:34:29 2014
++++ b/deps/npm/node_modules/node-gyp/gyp/tools/emacs/testdata/media.gyp	Fri Mar 18 15:24:42 2022
+@@ -987,7 +987,7 @@
+                 '<(SHARED_INTERMEDIATE_DIR)/media/jni/media_player_listener_jni.h',
+               ],
+               'action': [
+-                'python',
++                'python2.7',
+                 '<(DEPTH)/base/android/jni_generator/jni_generator.py',
+                 '-o',
+                 '<@(_inputs)',
+diff -ru a/deps/npm/node_modules/node-gyp/gyp/tools/emacs/testdata/media.gyp.fontified b/deps/npm/node_modules/node-gyp/gyp/tools/emacs/testdata/media.gyp.fontified
+--- a/deps/npm/node_modules/node-gyp/gyp/tools/emacs/testdata/media.gyp.fontified	Tue Feb 18 18:34:29 2014
++++ b/deps/npm/node_modules/node-gyp/gyp/tools/emacs/testdata/media.gyp.fontified	Fri Mar 18 15:24:35 2022
+@@ -988,7 +988,7 @@
+                 '<(SHARED_INTERMEDIATE_DIR)/media/jni/media_player_listener_jni.h',
+               ],
+               'action': [
+-                'python',
++                'python2.7',
+                 '<(DEPTH)/base/android/jni_generator/jni_generator.py',
+                 '-o',
+                 '<@(_inputs)',
+Only in b/deps/npm/node_modules/node-gyp/gyp/tools/emacs/testdata: media.gyp.fontified~
+Only in b/deps/npm/node_modules/node-gyp/gyp/tools/emacs/testdata: media.gyp~
+diff -ru a/deps/npm/node_modules/node-gyp/lib/configure.js b/deps/npm/node_modules/node-gyp/lib/configure.js
+--- a/deps/npm/node_modules/node-gyp/lib/configure.js	Tue Feb 18 18:34:29 2014
++++ b/deps/npm/node_modules/node-gyp/lib/configure.js	Fri Mar 18 15:23:53 2022
+@@ -22,7 +22,7 @@
+ 
+ function configure (gyp, argv, callback) {
+ 
+-  var python = gyp.opts.python || process.env.PYTHON || 'python'
++  var python = gyp.opts.python || process.env.PYTHON || 'python2.7'
+     , buildDir = path.resolve('build')
+     , configNames = [ 'config.gypi', 'common.gypi' ]
+     , configs = []
+Only in b/deps/npm/node_modules/node-gyp/lib: configure.js~
 diff -ru a/deps/uv/gyp_uv.py b/deps/uv/gyp_uv.py
 --- a/deps/uv/gyp_uv.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/uv/gyp_uv.py	Thu Feb  3 00:06:04 2022
++++ b/deps/uv/gyp_uv.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  import glob
  import platform
+diff -ru a/deps/v8/src/d8.gyp b/deps/v8/src/d8.gyp
+--- a/deps/v8/src/d8.gyp	Tue Feb 18 18:34:29 2014
++++ b/deps/v8/src/d8.gyp	Fri Mar 18 15:23:13 2022
+@@ -99,7 +99,7 @@
+             '<(SHARED_INTERMEDIATE_DIR)/d8-js.cc',
+           ],
+           'action': [
+-            'python',
++            'python2.7',
+             '../tools/js2c.py',
+             '<@(_outputs)',
+             'D8',
+Only in b/deps/v8/src: d8.gyp~
 diff -ru a/deps/v8/tools/android-run.py b/deps/v8/tools/android-run.py
 --- a/deps/v8/tools/android-run.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/android-run.py	Thu Feb  3 00:06:04 2022
++++ b/deps/v8/tools/android-run.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2012 the V8 project authors. All rights reserved.
  # Redistribution and use in source and binary forms, with or without
 diff -ru a/deps/v8/tools/disasm.py b/deps/v8/tools/disasm.py
 --- a/deps/v8/tools/disasm.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/disasm.py	Thu Feb  3 00:06:04 2022
++++ b/deps/v8/tools/disasm.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2011 the V8 project authors. All rights reserved.
  # Redistribution and use in source and binary forms, with or without
 diff -ru a/deps/v8/tools/gc-nvp-trace-processor.py b/deps/v8/tools/gc-nvp-trace-processor.py
 --- a/deps/v8/tools/gc-nvp-trace-processor.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/gc-nvp-trace-processor.py	Thu Feb  3 00:06:04 2022
++++ b/deps/v8/tools/gc-nvp-trace-processor.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2010 the V8 project authors. All rights reserved.
  # Redistribution and use in source and binary forms, with or without
 diff -ru a/deps/v8/tools/gen-postmortem-metadata.py b/deps/v8/tools/gen-postmortem-metadata.py
 --- a/deps/v8/tools/gen-postmortem-metadata.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/gen-postmortem-metadata.py	Thu Feb  3 13:54:20 2022
++++ b/deps/v8/tools/gen-postmortem-metadata.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  #
  # Copyright 2012 the V8 project authors. All rights reserved.
@@ -263,634 +353,727 @@ diff -ru a/deps/v8/tools/gen-postmortem-metadata.py b/deps/v8/tools/gen-postmort
                          continue;
 diff -ru a/deps/v8/tools/grokdump.py b/deps/v8/tools/grokdump.py
 --- a/deps/v8/tools/grokdump.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/grokdump.py	Thu Feb  3 00:06:04 2022
++++ b/deps/v8/tools/grokdump.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2012 the V8 project authors. All rights reserved.
  # Redistribution and use in source and binary forms, with or without
 diff -ru a/deps/v8/tools/js2c.py b/deps/v8/tools/js2c.py
 --- a/deps/v8/tools/js2c.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/js2c.py	Thu Feb  3 00:06:04 2022
++++ b/deps/v8/tools/js2c.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2012 the V8 project authors. All rights reserved.
  # Redistribution and use in source and binary forms, with or without
 diff -ru a/deps/v8/tools/ll_prof.py b/deps/v8/tools/ll_prof.py
 --- a/deps/v8/tools/ll_prof.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/ll_prof.py	Thu Feb  3 00:06:04 2022
++++ b/deps/v8/tools/ll_prof.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2012 the V8 project authors. All rights reserved.
  # Redistribution and use in source and binary forms, with or without
 diff -ru a/deps/v8/tools/presubmit.py b/deps/v8/tools/presubmit.py
 --- a/deps/v8/tools/presubmit.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/presubmit.py	Thu Feb  3 00:06:04 2022
++++ b/deps/v8/tools/presubmit.py	Fri Mar 18 15:23:43 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2012 the V8 project authors. All rights reserved.
  # Redistribution and use in source and binary forms, with or without
+@@ -240,7 +240,7 @@
+     command = ['cpplint.py', '--filter', filt]
+     local_cpplint = join(path, "tools", "cpplint.py")
+     if exists(local_cpplint):
+-      command = ['python', local_cpplint, '--filter', filt]
++      command = ['python2.7', local_cpplint, '--filter', filt]
+ 
+     commands = join([command + [file] for file in files])
+     count = multiprocessing.cpu_count()
+Only in b/deps/v8/tools: presubmit.py~
 diff -ru a/deps/v8/tools/process-heap-prof.py b/deps/v8/tools/process-heap-prof.py
 --- a/deps/v8/tools/process-heap-prof.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/process-heap-prof.py	Thu Feb  3 00:06:04 2022
++++ b/deps/v8/tools/process-heap-prof.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2009 the V8 project authors. All rights reserved.
  # Redistribution and use in source and binary forms, with or without
 diff -ru a/deps/v8/tools/run-tests.py b/deps/v8/tools/run-tests.py
 --- a/deps/v8/tools/run-tests.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/run-tests.py	Thu Feb  3 00:06:04 2022
++++ b/deps/v8/tools/run-tests.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2012 the V8 project authors. All rights reserved.
  # Redistribution and use in source and binary forms, with or without
 diff -ru a/deps/v8/tools/stats-viewer.py b/deps/v8/tools/stats-viewer.py
 --- a/deps/v8/tools/stats-viewer.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/stats-viewer.py	Thu Feb  3 00:06:04 2022
++++ b/deps/v8/tools/stats-viewer.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2008 the V8 project authors. All rights reserved.
  # Redistribution and use in source and binary forms, with or without
 diff -ru a/deps/v8/tools/status-file-converter.py b/deps/v8/tools/status-file-converter.py
 --- a/deps/v8/tools/status-file-converter.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/status-file-converter.py	Thu Feb  3 00:06:04 2022
++++ b/deps/v8/tools/status-file-converter.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2012 the V8 project authors. All rights reserved.
  # Redistribution and use in source and binary forms, with or without
 diff -ru a/deps/v8/tools/test-server.py b/deps/v8/tools/test-server.py
 --- a/deps/v8/tools/test-server.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/test-server.py	Thu Feb  3 00:06:04 2022
++++ b/deps/v8/tools/test-server.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2012 the V8 project authors. All rights reserved.
  # Redistribution and use in source and binary forms, with or without
 diff -ru a/deps/v8/tools/test-wrapper-gypbuild.py b/deps/v8/tools/test-wrapper-gypbuild.py
 --- a/deps/v8/tools/test-wrapper-gypbuild.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/test-wrapper-gypbuild.py	Thu Feb  3 00:06:04 2022
++++ b/deps/v8/tools/test-wrapper-gypbuild.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2012 the V8 project authors. All rights reserved.
  # Redistribution and use in source and binary forms, with or without
 diff -ru a/deps/v8/tools/test.py b/deps/v8/tools/test.py
 --- a/deps/v8/tools/test.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/test.py	Thu Feb  3 00:06:04 2022
++++ b/deps/v8/tools/test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2012 the V8 project authors. All rights reserved.
  # Redistribution and use in source and binary forms, with or without
+diff -ru a/deps/v8/tools/gyp/v8.gyp b/deps/v8/tools/gyp/v8.gyp
+--- a/deps/v8/tools/gyp/v8.gyp	Tue Feb 18 18:34:29 2014
++++ b/deps/v8/tools/gyp/v8.gyp	Fri Mar 18 15:23:30 2022
+@@ -792,7 +792,7 @@
+                 '<(SHARED_INTERMEDIATE_DIR)/libraries.cc',
+               ],
+               'action': [
+-                'python',
++                'python2.7',
+                 '../../tools/js2c.py',
+                 '<@(_outputs)',
+                 'CORE',
+@@ -810,7 +810,7 @@
+                 '<(SHARED_INTERMEDIATE_DIR)/experimental-libraries.cc',
+               ],
+               'action': [
+-                'python',
++                'python2.7',
+                 '../../tools/js2c.py',
+                 '<@(_outputs)',
+                 'EXPERIMENTAL',
+@@ -840,7 +840,7 @@
+                   '<(SHARED_INTERMEDIATE_DIR)/debug-support.cc',
+                 ],
+                 'action': [
+-                  'python',
++                  'python2.7',
+                   '../../tools/gen-postmortem-metadata.py',
+                   '<@(_outputs)',
+                   '<@(heapobject_files)'
+Only in b/deps/v8/tools/gyp: v8.gyp~
 diff -ru a/deps/v8/tools/testrunner/server/daemon.py b/deps/v8/tools/testrunner/server/daemon.py
 --- a/deps/v8/tools/testrunner/server/daemon.py	Tue Feb 18 18:34:29 2014
-+++ b/deps/v8/tools/testrunner/server/daemon.py	Thu Feb  3 00:06:04 2022
++++ b/deps/v8/tools/testrunner/server/daemon.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # This code has been written by Sander Marechal and published at:
  # http://www.jejik.com/articles/2007/02/a_simple_unix_linux_daemon_in_python/
+diff -ru a/test/pummel/test-child-process-spawn-loop.js b/test/pummel/test-child-process-spawn-loop.js
+--- a/test/pummel/test-child-process-spawn-loop.js	Tue Feb 18 18:34:29 2014
++++ b/test/pummel/test-child-process-spawn-loop.js	Fri Mar 18 15:22:37 2022
+@@ -34,7 +34,7 @@
+ var finished = false;
+ 
+ function doSpawn(i) {
+-  var child = spawn('python', ['-c', 'print ' + SIZE + ' * "C"']);
++  var child = spawn('python2.7', ['-c', 'print ' + SIZE + ' * "C"']);
+   var count = 0;
+ 
+   child.stdout.setEncoding('ascii');
+Only in b/test/pummel: test-child-process-spawn-loop.js~
+diff -ru a/test/simple/test-child-process-set-blocking.js b/test/simple/test-child-process-set-blocking.js
+--- a/test/simple/test-child-process-set-blocking.js	Tue Feb 18 18:34:29 2014
++++ b/test/simple/test-child-process-set-blocking.js	Fri Mar 18 15:22:21 2022
+@@ -26,7 +26,7 @@
+ var SIZE = 100000;
+ var childGone = false;
+ 
+-var cp = ch.spawn('python', ['-c', 'print ' + SIZE + ' * "C"'], {
++var cp = ch.spawn('python2.7', ['-c', 'print ' + SIZE + ' * "C"'], {
+   customFds: [0, 1, 2]
+ });
+ 
+Only in b/test/simple: test-child-process-set-blocking.js~
 diff -ru a/tools/genv8constants.py b/tools/genv8constants.py
 --- a/tools/genv8constants.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/genv8constants.py	Thu Feb  3 00:06:04 2022
++++ b/tools/genv8constants.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  #
  # genv8constants.py output_file libv8_base.a
 diff -ru a/tools/gyp_node.py b/tools/gyp_node.py
 --- a/tools/gyp_node.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp_node.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp_node.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  import glob
  import os
  import shlex
 diff -ru a/tools/install.py b/tools/install.py
 --- a/tools/install.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/install.py	Thu Feb  3 00:06:04 2022
++++ b/tools/install.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  import errno
  
 diff -ru a/tools/js2c.py b/tools/js2c.py
 --- a/tools/js2c.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/js2c.py	Thu Feb  3 00:06:04 2022
++++ b/tools/js2c.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2006-2008 the V8 project authors. All rights reserved.
  # Redistribution and use in source and binary forms, with or without
 diff -ru a/tools/test.py b/tools/test.py
 --- a/tools/test.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/test.py	Thu Feb  3 00:06:04 2022
++++ b/tools/test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2008 the V8 project authors. All rights reserved.
  # Redistribution and use in source and binary forms, with or without
 diff -ru a/tools/closure_linter/gflags.py b/tools/closure_linter/gflags.py
 --- a/tools/closure_linter/gflags.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/gflags.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/gflags.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2007, Google Inc.
  # All rights reserved.
 diff -ru a/tools/closure_linter/setup.py b/tools/closure_linter/setup.py
 --- a/tools/closure_linter/setup.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/setup.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/setup.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2010 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/__init__.py b/tools/closure_linter/closure_linter/__init__.py
 --- a/tools/closure_linter/closure_linter/__init__.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/__init__.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/__init__.py	Fri Mar 18 15:17:25 2022
 @@ -1,1 +1,1 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
 diff -ru a/tools/closure_linter/closure_linter/checker.py b/tools/closure_linter/closure_linter/checker.py
 --- a/tools/closure_linter/closure_linter/checker.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/checker.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/checker.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/checkerbase.py b/tools/closure_linter/closure_linter/checkerbase.py
 --- a/tools/closure_linter/closure_linter/checkerbase.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/checkerbase.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/checkerbase.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/ecmalintrules.py b/tools/closure_linter/closure_linter/ecmalintrules.py
 --- a/tools/closure_linter/closure_linter/ecmalintrules.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/ecmalintrules.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/ecmalintrules.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/ecmametadatapass.py b/tools/closure_linter/closure_linter/ecmametadatapass.py
 --- a/tools/closure_linter/closure_linter/ecmametadatapass.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/ecmametadatapass.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/ecmametadatapass.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2010 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/error_fixer.py b/tools/closure_linter/closure_linter/error_fixer.py
 --- a/tools/closure_linter/closure_linter/error_fixer.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/error_fixer.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/error_fixer.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/errorrules.py b/tools/closure_linter/closure_linter/errorrules.py
 --- a/tools/closure_linter/closure_linter/errorrules.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/errorrules.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/errorrules.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2010 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/errors.py b/tools/closure_linter/closure_linter/errors.py
 --- a/tools/closure_linter/closure_linter/errors.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/errors.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/errors.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/fixjsstyle.py b/tools/closure_linter/closure_linter/fixjsstyle.py
 --- a/tools/closure_linter/closure_linter/fixjsstyle.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/fixjsstyle.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/fixjsstyle.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/fixjsstyle_test.py b/tools/closure_linter/closure_linter/fixjsstyle_test.py
 --- a/tools/closure_linter/closure_linter/fixjsstyle_test.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/fixjsstyle_test.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/fixjsstyle_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/full_test.py b/tools/closure_linter/closure_linter/full_test.py
 --- a/tools/closure_linter/closure_linter/full_test.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/full_test.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/full_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/gjslint.py b/tools/closure_linter/closure_linter/gjslint.py
 --- a/tools/closure_linter/closure_linter/gjslint.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/gjslint.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/gjslint.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/indentation.py b/tools/closure_linter/closure_linter/indentation.py
 --- a/tools/closure_linter/closure_linter/indentation.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/indentation.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/indentation.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2010 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/javascriptlintrules.py b/tools/closure_linter/closure_linter/javascriptlintrules.py
 --- a/tools/closure_linter/closure_linter/javascriptlintrules.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/javascriptlintrules.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/javascriptlintrules.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/javascriptstatetracker.py b/tools/closure_linter/closure_linter/javascriptstatetracker.py
 --- a/tools/closure_linter/closure_linter/javascriptstatetracker.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/javascriptstatetracker.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/javascriptstatetracker.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/javascriptstatetracker_test.py b/tools/closure_linter/closure_linter/javascriptstatetracker_test.py
 --- a/tools/closure_linter/closure_linter/javascriptstatetracker_test.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/javascriptstatetracker_test.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/javascriptstatetracker_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2010 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/javascripttokenizer.py b/tools/closure_linter/closure_linter/javascripttokenizer.py
 --- a/tools/closure_linter/closure_linter/javascripttokenizer.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/javascripttokenizer.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/javascripttokenizer.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/javascripttokens.py b/tools/closure_linter/closure_linter/javascripttokens.py
 --- a/tools/closure_linter/closure_linter/javascripttokens.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/javascripttokens.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/javascripttokens.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/statetracker.py b/tools/closure_linter/closure_linter/statetracker.py
 --- a/tools/closure_linter/closure_linter/statetracker.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/statetracker.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/statetracker.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/tokenutil.py b/tools/closure_linter/closure_linter/tokenutil.py
 --- a/tools/closure_linter/closure_linter/tokenutil.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/tokenutil.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/tokenutil.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/common/__init__.py b/tools/closure_linter/closure_linter/common/__init__.py
 --- a/tools/closure_linter/closure_linter/common/__init__.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/common/__init__.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/common/__init__.py	Fri Mar 18 15:17:25 2022
 @@ -1,1 +1,1 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
 diff -ru a/tools/closure_linter/closure_linter/common/error.py b/tools/closure_linter/closure_linter/common/error.py
 --- a/tools/closure_linter/closure_linter/common/error.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/common/error.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/common/error.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/common/erroraccumulator.py b/tools/closure_linter/closure_linter/common/erroraccumulator.py
 --- a/tools/closure_linter/closure_linter/common/erroraccumulator.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/common/erroraccumulator.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/common/erroraccumulator.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/common/errorhandler.py b/tools/closure_linter/closure_linter/common/errorhandler.py
 --- a/tools/closure_linter/closure_linter/common/errorhandler.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/common/errorhandler.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/common/errorhandler.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/common/errorprinter.py b/tools/closure_linter/closure_linter/common/errorprinter.py
 --- a/tools/closure_linter/closure_linter/common/errorprinter.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/common/errorprinter.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/common/errorprinter.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/common/filetestcase.py b/tools/closure_linter/closure_linter/common/filetestcase.py
 --- a/tools/closure_linter/closure_linter/common/filetestcase.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/common/filetestcase.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/common/filetestcase.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/common/htmlutil.py b/tools/closure_linter/closure_linter/common/htmlutil.py
 --- a/tools/closure_linter/closure_linter/common/htmlutil.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/common/htmlutil.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/common/htmlutil.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/common/lintrunner.py b/tools/closure_linter/closure_linter/common/lintrunner.py
 --- a/tools/closure_linter/closure_linter/common/lintrunner.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/common/lintrunner.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/common/lintrunner.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/common/matcher.py b/tools/closure_linter/closure_linter/common/matcher.py
 --- a/tools/closure_linter/closure_linter/common/matcher.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/common/matcher.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/common/matcher.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/common/position.py b/tools/closure_linter/closure_linter/common/position.py
 --- a/tools/closure_linter/closure_linter/common/position.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/common/position.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/common/position.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/common/simplefileflags.py b/tools/closure_linter/closure_linter/common/simplefileflags.py
 --- a/tools/closure_linter/closure_linter/common/simplefileflags.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/common/simplefileflags.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/common/simplefileflags.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/common/tokenizer.py b/tools/closure_linter/closure_linter/common/tokenizer.py
 --- a/tools/closure_linter/closure_linter/common/tokenizer.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/common/tokenizer.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/common/tokenizer.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2007 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/closure_linter/closure_linter/common/tokens.py b/tools/closure_linter/closure_linter/common/tokens.py
 --- a/tools/closure_linter/closure_linter/common/tokens.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/closure_linter/closure_linter/common/tokens.py	Thu Feb  3 00:06:04 2022
++++ b/tools/closure_linter/closure_linter/common/tokens.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  #
  # Copyright 2008 The Closure Linter Authors. All Rights Reserved.
  #
 diff -ru a/tools/gyp/gyp_main.py b/tools/gyp/gyp_main.py
 --- a/tools/gyp/gyp_main.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/gyp_main.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/gyp_main.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2009 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/tools/gyp/gyptest.py b/tools/gyp/gyptest.py
 --- a/tools/gyp/gyptest.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/gyptest.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/gyptest.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/tools/gyp/setup.py b/tools/gyp/setup.py
 --- a/tools/gyp/setup.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/setup.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/setup.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2009 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/tools/gyp/buildbot/buildbot_run.py b/tools/gyp/buildbot/buildbot_run.py
 --- a/tools/gyp/buildbot/buildbot_run.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/buildbot/buildbot_run.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/buildbot/buildbot_run.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
  # found in the LICENSE file.
 diff -ru a/tools/gyp/pylib/gyp/MSVSSettings_test.py b/tools/gyp/pylib/gyp/MSVSSettings_test.py
 --- a/tools/gyp/pylib/gyp/MSVSSettings_test.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/pylib/gyp/MSVSSettings_test.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/pylib/gyp/MSVSSettings_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/tools/gyp/pylib/gyp/__init__.py b/tools/gyp/pylib/gyp/__init__.py
 --- a/tools/gyp/pylib/gyp/__init__.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/pylib/gyp/__init__.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/pylib/gyp/__init__.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/tools/gyp/pylib/gyp/common_test.py b/tools/gyp/pylib/gyp/common_test.py
 --- a/tools/gyp/pylib/gyp/common_test.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/pylib/gyp/common_test.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/pylib/gyp/common_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/tools/gyp/pylib/gyp/easy_xml_test.py b/tools/gyp/pylib/gyp/easy_xml_test.py
 --- a/tools/gyp/pylib/gyp/easy_xml_test.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/pylib/gyp/easy_xml_test.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/pylib/gyp/easy_xml_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2011 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/tools/gyp/pylib/gyp/flock_tool.py b/tools/gyp/pylib/gyp/flock_tool.py
 --- a/tools/gyp/pylib/gyp/flock_tool.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/pylib/gyp/flock_tool.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/pylib/gyp/flock_tool.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  # Copyright (c) 2011 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
  # found in the LICENSE file.
 diff -ru a/tools/gyp/pylib/gyp/input_test.py b/tools/gyp/pylib/gyp/input_test.py
 --- a/tools/gyp/pylib/gyp/input_test.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/pylib/gyp/input_test.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/pylib/gyp/input_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright 2013 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/tools/gyp/pylib/gyp/mac_tool.py b/tools/gyp/pylib/gyp/mac_tool.py
 --- a/tools/gyp/pylib/gyp/mac_tool.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/pylib/gyp/mac_tool.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/pylib/gyp/mac_tool.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
  # found in the LICENSE file.
 diff -ru a/tools/gyp/pylib/gyp/win_tool.py b/tools/gyp/pylib/gyp/win_tool.py
 --- a/tools/gyp/pylib/gyp/win_tool.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/pylib/gyp/win_tool.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/pylib/gyp/win_tool.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/tools/gyp/pylib/gyp/generator/msvs_test.py b/tools/gyp/pylib/gyp/generator/msvs_test.py
 --- a/tools/gyp/pylib/gyp/generator/msvs_test.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/pylib/gyp/generator/msvs_test.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/pylib/gyp/generator/msvs_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
  # found in the LICENSE file.
 diff -ru a/tools/gyp/pylib/gyp/generator/ninja_test.py b/tools/gyp/pylib/gyp/generator/ninja_test.py
 --- a/tools/gyp/pylib/gyp/generator/ninja_test.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/pylib/gyp/generator/ninja_test.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/pylib/gyp/generator/ninja_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/tools/gyp/pylib/gyp/generator/xcode_test.py b/tools/gyp/pylib/gyp/generator/xcode_test.py
 --- a/tools/gyp/pylib/gyp/generator/xcode_test.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/pylib/gyp/generator/xcode_test.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/pylib/gyp/generator/xcode_test.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2013 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/tools/gyp/tools/graphviz.py b/tools/gyp/tools/graphviz.py
 --- a/tools/gyp/tools/graphviz.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/tools/graphviz.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/tools/graphviz.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2011 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/tools/gyp/tools/pretty_gyp.py b/tools/gyp/tools/pretty_gyp.py
 --- a/tools/gyp/tools/pretty_gyp.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/tools/pretty_gyp.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/tools/pretty_gyp.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/tools/gyp/tools/pretty_sln.py b/tools/gyp/tools/pretty_sln.py
 --- a/tools/gyp/tools/pretty_sln.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/tools/pretty_sln.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/tools/pretty_sln.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
 diff -ru a/tools/gyp/tools/pretty_vcproj.py b/tools/gyp/tools/pretty_vcproj.py
 --- a/tools/gyp/tools/pretty_vcproj.py	Tue Feb 18 18:34:29 2014
-+++ b/tools/gyp/tools/pretty_vcproj.py	Thu Feb  3 00:06:04 2022
++++ b/tools/gyp/tools/pretty_vcproj.py	Fri Mar 18 15:17:25 2022
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python
-+#!/usr/bin/env python2
++#!/usr/bin/env python2.7
  
  # Copyright (c) 2012 Google Inc. All rights reserved.
  # Use of this source code is governed by a BSD-style license that can be
+diff -ru a/tools/gyp/tools/emacs/testdata/media.gyp b/tools/gyp/tools/emacs/testdata/media.gyp
+--- a/tools/gyp/tools/emacs/testdata/media.gyp	Tue Feb 18 18:34:29 2014
++++ b/tools/gyp/tools/emacs/testdata/media.gyp	Fri Mar 18 15:25:12 2022
+@@ -987,7 +987,7 @@
+                 '<(SHARED_INTERMEDIATE_DIR)/media/jni/media_player_listener_jni.h',
+               ],
+               'action': [
+-                'python',
++                'python2.7',
+                 '<(DEPTH)/base/android/jni_generator/jni_generator.py',
+                 '-o',
+                 '<@(_inputs)',
+diff -ru a/tools/gyp/tools/emacs/testdata/media.gyp.fontified b/tools/gyp/tools/emacs/testdata/media.gyp.fontified
+--- a/tools/gyp/tools/emacs/testdata/media.gyp.fontified	Tue Feb 18 18:34:29 2014
++++ b/tools/gyp/tools/emacs/testdata/media.gyp.fontified	Fri Mar 18 15:25:03 2022
+@@ -988,7 +988,7 @@
+                 '<(SHARED_INTERMEDIATE_DIR)/media/jni/media_player_listener_jni.h',
+               ],
+               'action': [
+-                'python',
++                'python2.7',
+                 '<(DEPTH)/base/android/jni_generator/jni_generator.py',
+                 '-o',
+                 '<@(_inputs)',
+Only in b/tools/gyp/tools/emacs/testdata: media.gyp.fontified~
+Only in b/tools/gyp/tools/emacs/testdata: media.gyp~
