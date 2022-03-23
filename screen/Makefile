@@ -18,10 +18,10 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2021 Joyent, Inc.
+# Copyright 2022 Joyent, Inc.
 #
 
-VER =	screen-4.8.0
+VER =	screen-4.9.0
 
 include ../Makefile.defs
 
@@ -38,7 +38,7 @@ PATCHES =	Patches/*
 # while running configure (OS-8171).
 #
 AUTOCONF_ENV += \
-	CFLAGS="-std=c99 -D_XOPEN_SOURCE=700" \
+	CFLAGS="-std=c99 -D_XOPEN_SOURCE=700 -D__EXTENSIONS__=1" \
 	LD_LIBRARY_PATH=$(DESTDIR)/usr/lib
 
 #
