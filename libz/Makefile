@@ -42,6 +42,10 @@ AUTOCONF_LDFLAGS.64 =
 AUTOCONF_CC =		CC="$(GCC.32) $(CPPFLAGS)"
 AUTOCONF_CC.64 =	CC="$(GCC.64) $(CPPFLAGS)"
 
+# And with 1.2.12, zlib needs even more help.
+
+PATCHES = Patches/*
+
 #
 # LDFLAGS is used by zlib's build system to build programs, not the library
 # itself.  For that, it accepts only a combined linker+flags+libs command
