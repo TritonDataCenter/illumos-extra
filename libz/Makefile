@@ -20,10 +20,10 @@
 #
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2022 Joyent, Inc.
 #
 
-VER =	zlib-1.2.3
+VER =	zlib-1.2.12
 
 include ../Makefile.defs
 
