@@ -18,20 +18,15 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2022 Joyent, Inc.
 #
 
-VER =	gzip-1.3.5
+VER =	gzip-1.12
 
 include ../Makefile.defs
 
 BINDIR =	$(DESTDIR)/usr/bin
 MANDIR =	$(DESTDIR)/usr/share/man/man1
-
-PATCHES = \
-	gzip-6294656-6283819-diff \
-	gzip-security-diff \
-	gzip.c-message-diff
 
 AUTOCONF_OPTS += \
 	--mandir=/usr/share/man
