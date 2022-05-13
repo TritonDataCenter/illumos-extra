@@ -51,7 +51,7 @@ CXXFLAGS += -fpermissive
 CXXFLAGS += -fno-delete-null-pointer-checks
 
 #
-# gcc9 doesn't like the NODE_MODULE() function cast.
+# gcc10 doesn't like the NODE_MODULE() function cast.
 #
 CXXFLAGS += -Wno-cast-function-type
 
