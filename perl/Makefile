@@ -54,6 +54,7 @@ NATIVE_SHARED_LDFLAGS = \
 	$(NATIVE_LDFLAGS)
 
 PATCHES += \
+	CVE-2022-37434.patch \
 	dtrace.patch \
 	native.patch \
 	fix-gcc-errno.patch
