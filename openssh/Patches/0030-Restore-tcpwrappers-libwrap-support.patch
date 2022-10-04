@@ -83,9 +83,9 @@ index 99cb0d63..061db495 100644
  echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
 +echo "              TCP Wrappers support: $TCPW_MSG"
- echo "              MD5 password support: $MD5_MSG"
  echo "                   libedit support: $LIBEDIT_MSG"
  echo "                   libldns support: $LDNS_MSG"
+ echo "  Solaris process contract support: $SPC_MSG"
 diff --git a/sshd.8 b/sshd.8
 index 0f6f1eb8..169c77cb 100644
 --- a/sshd.8
