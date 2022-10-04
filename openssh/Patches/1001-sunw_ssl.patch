@@ -53,26 +53,28 @@ index 716f8d42..34846ef6 100644
 +#endif /* !defined(HAVE_SUNW_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
 diff --git a/configure.ac b/configure.ac
 index 03880716..3384389d 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -2736,8 +2736,8 @@ AC_ARG_WITH([ssl-engine],
- )
+--- a/configure.ac	Tue Oct  4 16:02:54 2022
++++ b/configure.ac	Tue Oct  4 16:15:25 2022
+@@ -2780,9 +2780,9 @@
  
+ nocrypto_saved_LIBS="$LIBS"
  if test "x$openssl" = "xyes" ; then
 -	LIBS="-lcrypto $LIBS"
+-	CHANNELLIBS="-lcrypto $CHANNELLIBS"
 -	AC_TRY_LINK_FUNC([RAND_add], ,
 +	LIBS="-R /usr/lib:${DESTDIR}/usr/lib -lsunw_crypto $LIBS"
++	CHANNELLIBS="-R /usr/lib:${DESTDIR}/usr/lib -lsunw_crypto $CHANNELLIBS"
 +	AC_TRY_LINK_FUNC([sunw_RAND_add], ,
  	    [AC_MSG_ERROR([*** working libcrypto not found, check config.log])])
  	AC_CHECK_HEADER([openssl/opensslv.h], ,
  	    [AC_MSG_ERROR([*** OpenSSL headers missing - please install first or check config.log ***])])
-@@ -2910,21 +2910,21 @@ if test "x$openssl" = "xyes" ; then
+@@ -2969,23 +2969,23 @@
  	)
  
  	AC_CHECK_FUNCS([ \
 -		BN_is_prime_ex \
+-		DES_crypt \
 -		DSA_generate_parameters_ex \
--		EVP_CIPHER_CTX_ctrl \
 -		EVP_DigestFinal_ex \
 -		EVP_DigestInit_ex \
 -		EVP_MD_CTX_cleanup \
@@ -82,8 +84,8 @@ index 03880716..3384389d 100644
 -		RSA_generate_key_ex \
 -		RSA_get_default_method \
 +		sunw_BN_is_prime_ex \
++		sunw_DES_crypt \
 +		sunw_DSA_generate_parameters_ex \
-+		sunw_EVP_CIPHER_CTX_ctrl \
 +		sunw_EVP_DigestFinal_ex \
 +		sunw_EVP_DigestInit_ex \
 +		sunw_EVP_MD_CTX_cleanup \
@@ -98,9 +100,12 @@ index 03880716..3384389d 100644
 -	AC_CHECK_FUNC(OpenSSL_add_all_algorithms,
 +	AC_CHECK_FUNC(sunw_OpenSSL_add_all_algorithms,
  	    AC_DEFINE(HAVE_OPENSSL_ADD_ALL_ALGORITHMS, 1, [as a function]),
- 	    AC_CHECK_DECL(OpenSSL_add_all_algorithms,
+-	    AC_CHECK_DECL(OpenSSL_add_all_algorithms,
++	    AC_CHECK_DECL(sunw_OpenSSL_add_all_algorithms,
  		AC_DEFINE(HAVE_OPENSSL_ADD_ALL_ALGORITHMS, 1, [as a macro]), ,
-@@ -2934,42 +2934,42 @@ if test "x$openssl" = "xyes" ; then
+ 		[[#include <openssl/evp.h>]]
+ 	    )
+@@ -2993,42 +2993,42 @@
  
  	# LibreSSL/OpenSSL 1.1x API
  	AC_CHECK_FUNCS([ \
@@ -179,8 +184,8 @@ index 03880716..3384389d 100644
  	])
  
  	if test "x$openssl_engine" = "xyes" ; then
-@@ -3092,7 +3092,7 @@ if test "x$openssl" = "xyes" ; then
- 	AC_CHECK_FUNCS([crypt DES_crypt])
+@@ -3087,7 +3087,7 @@
+ 	)
  
  	# Check for SHA256, SHA384 and SHA512 support in OpenSSL
 -	AC_CHECK_FUNCS([EVP_sha256 EVP_sha384 EVP_sha512])
@@ -188,7 +193,7 @@ index 03880716..3384389d 100644
  
  	# Check complete ECC support in OpenSSL
  	AC_MSG_CHECKING([whether OpenSSL has NID_X9_62_prime256v1])
-@@ -3174,7 +3174,7 @@ if test "x$openssl" = "xyes" ; then
+@@ -3167,7 +3167,7 @@
  	if test x$enable_nistp256 = x1 || test x$enable_nistp384 = x1 || \
  	    test x$enable_nistp521 = x1; then
  		AC_DEFINE(OPENSSL_HAS_ECC, [1], [OpenSSL has ECC])
@@ -653,15 +658,6 @@ diff --git a/openbsd-compat/openssl-compat.h b/openbsd-compat/openssl-compat.h
 index 8ca50b5a..0dfb1c15 100644
 --- a/openbsd-compat/openssl-compat.h
 +++ b/openbsd-compat/openssl-compat.h
-@@ -85,7 +85,7 @@ void ssh_aes_ctr_iv(EVP_CIPHER_CTX *, int, u_char *, size_t);
- #endif
- 
- /* Replace missing EVP_CIPHER_CTX_ctrl() with something that returns failure */
--#ifndef HAVE_EVP_CIPHER_CTX_CTRL
-+#ifndef HAVE_SUNW_EVP_CIPHER_CTX_CTRL
- # ifdef OPENSSL_HAVE_EVPGCM
- #  error AES-GCM enabled without EVP_CIPHER_CTX_ctrl /* shouldn't happen */
- # else
 @@ -94,63 +94,63 @@ void ssh_aes_ctr_iv(EVP_CIPHER_CTX *, int, u_char *, size_t);
  #endif
  
