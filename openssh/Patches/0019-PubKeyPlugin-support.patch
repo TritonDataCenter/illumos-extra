@@ -226,7 +226,7 @@ index 3265b223..6f99225e 100644
  	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
  	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
 -	sRequiredRSASize,
-+	sRequiredRSASize, sRsPubKeyPlugin,
++	sRequiredRSASize, sPubKeyPlugin,
  	sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
