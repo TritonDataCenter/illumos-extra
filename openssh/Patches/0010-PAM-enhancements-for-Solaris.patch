@@ -239,9 +239,9 @@ index 84d0ed16..07854992 100644
 +	debug3("%s: entering", __func__);
 +#endif
 +
- 	if (!authctxt->valid && authenticated)
- 		fatal("INTERNAL ERROR: authenticated invalid user %s",
- 		    authctxt->user);
+	if (authenticated) {
+		if (!authctxt->valid) {
+			fatal("INTERNAL ERROR: authenticated invalid user %s",
 @@ -369,6 +400,29 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *method,
  	}
  
@@ -467,9 +467,9 @@ index 991ac772..5fd07bd1 100644
 --- a/servconf.c
 +++ b/servconf.c
 @@ -195,6 +195,18 @@ initialize_server_options(ServerOptions *options)
- 	options->fingerprint_hash = -1;
  	options->disable_forwarding = -1;
  	options->expose_userauth_info = -1;
+	options->required_rsa_size = -1;
 +#ifdef PAM_ENHANCEMENT
 +	options->pam_service_name = NULL;
 +	options->pam_service_prefix = NULL;

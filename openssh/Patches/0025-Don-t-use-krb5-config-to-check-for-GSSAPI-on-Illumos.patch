@@ -11,11 +11,10 @@ diff --git a/configure.ac b/configure.ac
 index a7cdff13..99cb0d63 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4608,20 +4608,17 @@ AC_ARG_WITH([kerberos5],
+@@ -4608,19 +4608,17 @@ AC_ARG_WITH([kerberos5],
  		AC_DEFINE([KRB5], [1], [Define if you want Kerberos 5 support])
  		KRB5_MSG="yes"
  
--		AC_PATH_TOOL([PKGCONFIG], [pkg-config], [no])
 -		use_pkgconfig_for_krb5=
 -		if test "x$PKGCONFIG" != "xno"; then
 -			AC_MSG_CHECKING([if $PKGCONFIG knows about kerberos5])

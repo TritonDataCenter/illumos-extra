@@ -197,10 +197,11 @@ index 9e32259a..bd07d15a 100644
 +	sshauthopt_free(opts);
 +	opts = NULL;
 +
- 	if ((success = user_key_command_allowed2(ssh, pw, key, &opts)) != 0)
- 		goto out;
- 	sshauthopt_free(opts);
- 	opts = NULL;
+	if ((success = user_key_command_allowed2(pw, key, remote_ip,
+	    remote_host, &opts)) != 0)
+		goto out;
+	sshauthopt_free(opts);
+	opts = NULL;
  
 - out:
 +
@@ -220,18 +221,19 @@ index 3265b223..6f99225e 100644
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -551,6 +552,7 @@ typedef enum {
+@@ -551,7 +552,7 @@ typedef enum {
  	sStreamLocalBindMask, sStreamLocalBindUnlink,
  	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
  	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
-+	sPubKeyPlugin,
+-	sRequiredRSASize,
++	sRequiredRSASize, sRsPubKeyPlugin,
  	sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
 @@ -747,6 +749,7 @@ static struct {
- 	{ "rdomain", sRDomain, SSHCFG_ALL },
  	{ "casignaturealgorithms", sCASignatureAlgorithms, SSHCFG_ALL },
  	{ "securitykeyprovider", sSecurityKeyProvider, SSHCFG_GLOBAL },
+	{ "requiredrsasize", sRequiredRSASize, SSHCFG_ALL },
 +	{ "pubkeyplugin", sPubKeyPlugin, SSHCFG_ALL },
  	{ NULL, sBadOption, 0 }
  };
@@ -259,12 +261,12 @@ diff --git a/servconf.h b/servconf.h
 index c4063bfa..527cb6ad 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -239,6 +239,8 @@ typedef struct {
+@@ -239,7 +239,8 @@ typedef struct {
  	int	expose_userauth_info;
  	u_int64_t timing_secret;
  	char   *sk_provider;
+	int	required_rsa_size;	/* minimum size of RSA keys */
 +	char   *pubkey_plugin;
-+
  }       ServerOptions;
  
  /* Information about the incoming connection as used by Match */
