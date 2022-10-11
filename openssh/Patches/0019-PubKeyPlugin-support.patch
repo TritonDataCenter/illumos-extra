@@ -197,11 +197,11 @@ index 9e32259a..bd07d15a 100644
 +	sshauthopt_free(opts);
 +	opts = NULL;
 +
-	if ((success = user_key_command_allowed2(pw, key, remote_ip,
-	    remote_host, &opts)) != 0)
-		goto out;
-	sshauthopt_free(opts);
-	opts = NULL;
+ 	if ((success = user_key_command_allowed2(pw, key, remote_ip,
+ 	    remote_host, &opts)) != 0)
+ 		goto out;
+ 	sshauthopt_free(opts);
+ 	opts = NULL;
  
 - out:
 +
@@ -213,7 +213,7 @@ diff --git a/servconf.c b/servconf.c
 index 3265b223..6f99225e 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -207,6 +207,7 @@ initialize_server_options(ServerOptions *options)
+@@ -208,6 +208,7 @@ initialize_server_options(ServerOptions *options)
  	 */
  	options->pam_service_per_authmethod = 1;
  #endif
@@ -221,7 +221,7 @@ index 3265b223..6f99225e 100644
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -551,7 +552,7 @@ typedef enum {
+@@ -554,7 +554,7 @@ typedef enum {
  	sStreamLocalBindMask, sStreamLocalBindUnlink,
  	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
  	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
@@ -230,10 +230,10 @@ index 3265b223..6f99225e 100644
  	sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
-@@ -747,6 +749,7 @@ static struct {
+@@ -747,6 +748,7 @@ static struct {
  	{ "casignaturealgorithms", sCASignatureAlgorithms, SSHCFG_ALL },
  	{ "securitykeyprovider", sSecurityKeyProvider, SSHCFG_GLOBAL },
-	{ "requiredrsasize", sRequiredRSASize, SSHCFG_ALL },
+ 	{ "requiredrsasize", sRequiredRSASize, SSHCFG_ALL },
 +	{ "pubkeyplugin", sPubKeyPlugin, SSHCFG_ALL },
  	{ NULL, sBadOption, 0 }
  };
@@ -265,7 +265,7 @@ index c4063bfa..527cb6ad 100644
  	int	expose_userauth_info;
  	u_int64_t timing_secret;
  	char   *sk_provider;
-	int	required_rsa_size;	/* minimum size of RSA keys */
+ 	int	required_rsa_size;	/* minimum size of RSA keys */
 +	char   *pubkey_plugin;
  }       ServerOptions;
  

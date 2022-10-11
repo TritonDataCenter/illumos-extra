@@ -215,14 +215,14 @@ diff --git a/sshd.c b/sshd.c
 index 11b306e0..cd4dae82 100644
 --- a/sshd.c
 +++ b/sshd.c
-@@ -1742,6 +1742,8 @@ main(int ac, char **av)
+@@ -1752,6 +1752,8 @@ main(int ac, char **av)
  	} else if (strcasecmp(config_file_name, "none") != 0)
  		load_server_config(config_file_name, cfg);
  
 +	fill_early_default_server_options(&options);
 +
  	parse_server_config(&options, rexeced_flag ? "rexec" : config_file_name,
- 	    cfg, &includes, NULL);
+ 	    cfg, &includes, NULL, rexeced_flag);
  
 diff --git a/sshd_config b/sshd_config
 index d2a509c5..8c1cd518 100644

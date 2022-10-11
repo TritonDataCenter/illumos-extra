@@ -38,7 +38,7 @@ index 6ff97694..1ae54f30 100644
  	/*
 @@ -2534,7 +2538,11 @@ fill_default_options(Options * options)
  	if (options->pubkey_authentication == -1)
- 		options->pubkey_authentication = 1;
+ 		options->pubkey_authentication = SSH_PUBKEY_AUTH_ALL;
  	if (options->gss_authentication == -1)
 +#ifdef OPTION_DEFAULT_VALUE
 +		options->gss_authentication = 1;

@@ -43,14 +43,14 @@ index c6532844..77fdede1 100644
  
  SFTP_CLIENT_OBJS=sftp-common.o sftp-client.o sftp-glob.o
  
-@@ -149,7 +151,7 @@ SKHELPER_OBJS=	ssh-sk-helper.o ssh-sk.o sk-usbhid.o
+@@ -151,7 +153,7 @@ SKHELPER_OBJS=	ssh-sk-helper.o ssh-sk.o sk-usbhid.o
  
  SSHKEYSCAN_OBJS=ssh-keyscan.o $(SKOBJS)
  
 -SFTPSERVER_OBJS=sftp-common.o sftp-server.o sftp-server-main.o
 +SFTPSERVER_OBJS=sftp-common.o sftp-server.o sftp-server-main.o sftp_provider.o
  
- SFTP_OBJS=	sftp.o progressmeter.o $(SFTP_CLIENT_OBJS)
+ SFTP_OBJS=	sftp.o sftp-usergroup.o progressmeter.o $(SFTP_CLIENT_OBJS)
  
 @@ -267,9 +269,22 @@ $(CONFIGFILES): $(CONFIGFILES_IN)
  moduli:

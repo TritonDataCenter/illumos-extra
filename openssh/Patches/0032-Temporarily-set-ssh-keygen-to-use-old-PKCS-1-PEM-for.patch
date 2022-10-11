@@ -19,8 +19,12 @@ diff --git a/ssh-keygen.1 b/ssh-keygen.1
 index fba02c73..dc9de036 100644
 --- a/ssh-keygen.1
 +++ b/ssh-keygen.1
-@@ -276,9 +276,9 @@ This is used by
- .Pa /lib/svc/method/sshd
+@@ -280,12 +280,12 @@ If
+ has also been specified, its argument is used as a prefix to the
+ default path for the resulting host key files.
+ This is used by
+-.Pa /etc/rc
++.Pa /lib/svc/method/sshd
  to generate new host keys.
  .It Fl a Ar rounds
 -When saving a private key, this option specifies the number of KDF
