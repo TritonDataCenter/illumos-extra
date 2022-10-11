@@ -1,7 +1,7 @@
-From d372cc652e5d2b8efd74460d4a66f1d744eda78c Mon Sep 17 00:00:00 2001
+From 162bf23f9e9d66dce6426f3b8925f0502ade8ffa Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 13:24:58 -0700
-Subject: [PATCH 23/35] Make default sshd_config more like the old illumos one
+Subject: [PATCH 22/32] Make default sshd_config more like the old illumos one
 
 ---
  sshd_config | 44 +++++++++++++++++++++++---------------------

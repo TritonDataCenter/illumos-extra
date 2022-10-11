@@ -1,7 +1,7 @@
-From 5e711758ce6d5d4fcb213fe355c64d42fc94fe9c Mon Sep 17 00:00:00 2001
+From d88596a9506fc9a4a62d357e09ebc5e66ac3e503 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:19 -0700
-Subject: [PATCH 10/35] PAM enhancements for Solaris
+Subject: [PATCH 09/32] PAM enhancements for Solaris
 
 ---
  auth-pam.c     | 116 ++++++++++++++++++++++++++++++++++++++++++++++++-
@@ -12,8 +12,8 @@ Subject: [PATCH 10/35] PAM enhancements for Solaris
  monitor_wrap.c |  21 +++++++++
  servconf.c     |  56 ++++++++++++++++++++++++
  servconf.h     |  10 +++++
- sshd_config.5  |  18 +++++++-
  sshd.8         |  27 ++++++++++++
+ sshd_config.5  |  18 +++++++-
  10 files changed, 390 insertions(+), 3 deletions(-)
 
 diff --git a/auth-pam.c b/auth-pam.c
@@ -162,10 +162,10 @@ index bb410e84..0038f84a 100644
  
  	if (sshpam_err != PAM_SUCCESS) {
 diff --git a/auth.h b/auth.h
-index 43c7d3d4..49997c86 100644
+index 6d2d3976..af1cf72d 100644
 --- a/auth.h
 +++ b/auth.h
-@@ -93,6 +93,10 @@ struct Authctxt {
+@@ -95,6 +95,10 @@ struct Authctxt {
  
  	/* Information exposed to session */
  	struct sshbuf	*session_info;	/* Auth info for environment */
@@ -177,10 +177,10 @@ index 43c7d3d4..49997c86 100644
  
  /*
 diff --git a/auth2.c b/auth2.c
-index 84d0ed16..07854992 100644
+index 6c061934..aba88087 100644
 --- a/auth2.c
 +++ b/auth2.c
-@@ -255,6 +255,10 @@ ensure_minimum_time_since(double start, double seconds)
+@@ -256,6 +256,10 @@ ensure_minimum_time_since(double start, double seconds)
  	nanosleep(&ts, NULL);
  }
  
@@ -191,7 +191,7 @@ index 84d0ed16..07854992 100644
  /*ARGSUSED*/
  static int
  input_userauth_request(int type, u_int32_t seq, struct ssh *ssh)
-@@ -292,9 +296,20 @@ input_userauth_request(int type, u_int32_t seq, struct ssh *ssh)
+@@ -296,9 +300,20 @@ input_userauth_request(int type, u_int32_t seq, struct ssh *ssh)
  			PRIVSEP(audit_event(ssh, SSH_INVALID_USER));
  #endif
  		}
@@ -231,7 +231,7 @@ index 84d0ed16..07854992 100644
  		debug2("input_userauth_request: try method %s", method);
  		authenticated =	m->userauth(ssh, method);
  	}
-@@ -359,6 +386,10 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *method,
+@@ -359,6 +386,10 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
  	char *methods;
  	int r, partial = 0;
  
@@ -242,7 +242,7 @@ index 84d0ed16..07854992 100644
  	if (authenticated) {
  		if (!authctxt->valid) {
  			fatal("INTERNAL ERROR: authenticated invalid user %s",
-@@ -369,6 +400,29 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *method,
+@@ -382,6 +413,29 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
  	}
  
  	if (authenticated && options.num_auth_methods != 0) {
@@ -272,7 +272,7 @@ index 84d0ed16..07854992 100644
  		if (!auth2_update_methods_lists(authctxt, method, submethod)) {
  			authenticated = 0;
  			partial = 1;
-@@ -386,7 +440,20 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *method,
+@@ -399,7 +453,20 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
  		return;
  
  #ifdef USE_PAM
@@ -294,7 +294,7 @@ index 84d0ed16..07854992 100644
  
  		/* If PAM returned a message, send it to the user. */
 diff --git a/monitor.c b/monitor.c
-index 74c803e1..f3c2f38b 100644
+index 91e0e624..31f79362 100644
 --- a/monitor.c
 +++ b/monitor.c
 @@ -117,6 +117,9 @@ int mm_answer_sign(struct ssh *, int, struct sshbuf *);
@@ -374,7 +374,7 @@ index 74c803e1..f3c2f38b 100644
  				struct sshbuf *m;
  
  				if ((m = sshbuf_new()) == NULL)
-@@ -803,6 +846,11 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
+@@ -800,6 +843,11 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
  	monitor_permit(mon_dispatch, MONITOR_REQ_AUTHSERV, 1);
  	monitor_permit(mon_dispatch, MONITOR_REQ_AUTH2_READ_BANNER, 1);
  
@@ -386,7 +386,7 @@ index 74c803e1..f3c2f38b 100644
  #ifdef USE_PAM
  	if (options.use_pam)
  		monitor_permit(mon_dispatch, MONITOR_REQ_PAM_START, 1);
-@@ -875,6 +923,29 @@ key_base_type_match(const char *method, const struct sshkey *key,
+@@ -872,6 +920,29 @@ key_base_type_match(const char *method, const struct sshkey *key,
  	return found;
  }
  
@@ -431,7 +431,7 @@ index 683e5e07..dfc56687 100644
  
  struct ssh;
 diff --git a/monitor_wrap.c b/monitor_wrap.c
-index 748333c7..a4fa5a29 100644
+index b2c85205..65d2269c 100644
 --- a/monitor_wrap.c
 +++ b/monitor_wrap.c
 @@ -395,6 +395,27 @@ mm_inform_authserv(char *service, char *style)
@@ -463,10 +463,10 @@ index 748333c7..a4fa5a29 100644
  int
  mm_auth_password(struct ssh *ssh, char *password)
 diff --git a/servconf.c b/servconf.c
-index 991ac772..5fd07bd1 100644
+index 77f2b585..adaf224e 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -195,6 +195,18 @@ initialize_server_options(ServerOptions *options)
+@@ -196,6 +196,18 @@ initialize_server_options(ServerOptions *options)
  	options->disable_forwarding = -1;
  	options->expose_userauth_info = -1;
  	options->required_rsa_size = -1;
@@ -485,7 +485,7 @@ index 991ac772..5fd07bd1 100644
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -434,6 +446,12 @@ fill_default_server_options(ServerOptions *options)
+@@ -435,6 +447,12 @@ fill_default_server_options(ServerOptions *options)
  		options->ip_qos_bulk = IPTOS_DSCP_CS1;
  	if (options->version_addendum == NULL)
  		options->version_addendum = xstrdup("");
@@ -498,7 +498,7 @@ index 991ac772..5fd07bd1 100644
  	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
  		options->fwd_opts.streamlocal_bind_mask = 0177;
  	if (options->fwd_opts.streamlocal_bind_unlink == -1)
-@@ -514,6 +532,9 @@ typedef enum {
+@@ -517,6 +535,9 @@ typedef enum {
  	sMatch, sPermitOpen, sPermitListen, sForceCommand, sChrootDirectory,
  	sUsePrivilegeSeparation, sAllowAgentForwarding,
  	sHostCertificate, sInclude,
@@ -508,7 +508,7 @@ index 991ac772..5fd07bd1 100644
  	sRevokedKeys, sTrustedUserCAKeys, sAuthorizedPrincipalsFile,
  	sAuthorizedPrincipalsCommand, sAuthorizedPrincipalsCommandUser,
  	sKexAlgorithms, sCASignatureAlgorithms, sIPQoS, sVersionAddendum,
-@@ -664,6 +685,10 @@ static struct {
+@@ -668,6 +689,10 @@ static struct {
  	{ "forcecommand", sForceCommand, SSHCFG_ALL },
  	{ "chrootdirectory", sChrootDirectory, SSHCFG_ALL },
  	{ "hostcertificate", sHostCertificate, SSHCFG_GLOBAL },
@@ -558,7 +558,7 @@ index 991ac772..5fd07bd1 100644
  	case sIgnore:
  	case sUnsupported:
 diff --git a/servconf.h b/servconf.h
-index dd5cbc15..c4063bfa 100644
+index 9346155c..f9aa27a0 100644
 --- a/servconf.h
 +++ b/servconf.h
 @@ -73,6 +73,10 @@ struct listenaddr {
@@ -585,44 +585,8 @@ index dd5cbc15..c4063bfa 100644
  	int	fingerprint_hash;
  	int	expose_userauth_info;
  	u_int64_t timing_secret;
-diff --git a/sshd_config.5 b/sshd_config.5
-index e8011df9..2b08b0fc 100644
---- a/sshd_config.5
-+++ b/sshd_config.5
-@@ -1274,6 +1274,21 @@ and
- key exchange methods.
- The default is
- .Pa /etc/moduli .
-+.It Cm PAMServiceName
-+Specifies the PAM service name for the PAM session. The PAMServiceName and
-+PAMServicePrefix options are mutually exclusive and if both set, sshd does not
-+start. If this option is set the service name is the same for all user
-+authentication methods. The option has no default value. See PAMServicePrefix
-+for more information.
-+.It Cm PAMServicePrefix
-+Specifies the PAM service name prefix for service names used for individual
-+user authentication methods. The default is sshd. The PAMServiceName and
-+PAMServicePrefix options are mutually exclusive and if both set, sshd does not
-+start.
-+.Pp
-+For example, if this option is set to admincli, the service name for the
-+keyboard-interactive authentication method is admincli-kbdint instead of the
-+default sshd-kbdint.
- .It Cm PasswordAuthentication
- Specifies whether password authentication is allowed.
- The default is
-@@ -1773,8 +1788,7 @@ If
- is enabled, you will not be able to run
- .Xr sshd 8
- as a non-root user.
--The default is
--.Cm no .
-+On Solaris, the option is always enabled.
- .It Cm VersionAddendum
- Optionally specifies additional text to append to the SSH protocol banner
- sent by the server upon connection.
 diff --git a/sshd.8 b/sshd.8
-index 897de1e0..0f6f1eb8 100644
+index ac1c62de..4465b95d 100644
 --- a/sshd.8
 +++ b/sshd.8
 @@ -1001,6 +1001,33 @@ concurrently for different ports, this contains the process ID of the one
@@ -659,5 +623,42 @@ index 897de1e0..0f6f1eb8 100644
  .Sh SEE ALSO
  .Xr scp 1 ,
  .Xr sftp 1 ,
+diff --git a/sshd_config.5 b/sshd_config.5
+index 894d81e7..65e9959b 100644
+--- a/sshd_config.5
++++ b/sshd_config.5
+@@ -1276,6 +1276,21 @@ and
+ key exchange methods.
+ The default is
+ .Pa /etc/moduli .
++.It Cm PAMServiceName
++Specifies the PAM service name for the PAM session. The PAMServiceName and
++PAMServicePrefix options are mutually exclusive and if both set, sshd does not
++start. If this option is set the service name is the same for all user
++authentication methods. The option has no default value. See PAMServicePrefix
++for more information.
++.It Cm PAMServicePrefix
++Specifies the PAM service name prefix for service names used for individual
++user authentication methods. The default is sshd. The PAMServiceName and
++PAMServicePrefix options are mutually exclusive and if both set, sshd does not
++start.
++.Pp
++For example, if this option is set to admincli, the service name for the
++keyboard-interactive authentication method is admincli-kbdint instead of the
++default sshd-kbdint.
+ .It Cm PasswordAuthentication
+ Specifies whether password authentication is allowed.
+ The default is
+@@ -1784,8 +1799,7 @@ If
+ is enabled, you will not be able to run
+ .Xr sshd 8
+ as a non-root user.
+-The default is
+-.Cm no .
++On Solaris, the option is always enabled.
+ .It Cm VersionAddendum
+ Optionally specifies additional text to append to the SSH protocol banner
+ sent by the server upon connection.
 -- 
 2.34.1
+

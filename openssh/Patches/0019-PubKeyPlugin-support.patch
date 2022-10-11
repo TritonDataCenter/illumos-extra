@@ -1,22 +1,22 @@
-From 13c59a699b604d29ff24a209ab739cd5ce6c187a Mon Sep 17 00:00:00 2001
+From 2df2ddffa5028188648dc7420f83f0319c1234d0 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 3 Aug 2015 16:27:44 -0700
-Subject: [PATCH 19/35] PubKeyPlugin support
+Subject: [PATCH 18/32] PubKeyPlugin support
 
 This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called
 into to check public keys for authentication.
 ---
  auth2-pubkey.c | 145 ++++++++++++++++++++++++++++++++++++++++++++++++-
- servconf.c     |  15 +++++
- servconf.h     |   2 +
- 3 files changed, 161 insertions(+), 1 deletion(-)
+ servconf.c     |  16 +++++-
+ servconf.h     |   1 +
+ 3 files changed, 160 insertions(+), 2 deletions(-)
 
 diff --git a/auth2-pubkey.c b/auth2-pubkey.c
-index 9e32259a..bd07d15a 100644
+index 5d59febc..18a93889 100644
 --- a/auth2-pubkey.c
 +++ b/auth2-pubkey.c
-@@ -22,6 +22,11 @@
+@@ -23,6 +23,11 @@
   * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
   * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   */
@@ -28,7 +28,7 @@ index 9e32259a..bd07d15a 100644
  
  #include "includes.h"
  
-@@ -42,6 +47,7 @@
+@@ -41,6 +46,7 @@
  #include <time.h>
  #include <unistd.h>
  #include <limits.h>
@@ -36,7 +36,7 @@ index 9e32259a..bd07d15a 100644
  
  #include "xmalloc.h"
  #include "ssh.h"
-@@ -49,6 +55,7 @@
+@@ -48,6 +54,7 @@
  #include "packet.h"
  #include "kex.h"
  #include "sshbuf.h"
@@ -44,7 +44,7 @@ index 9e32259a..bd07d15a 100644
  #include "log.h"
  #include "misc.h"
  #include "servconf.h"
-@@ -74,6 +81,15 @@
+@@ -73,6 +80,15 @@
  /* import */
  extern ServerOptions options;
  
@@ -60,7 +60,7 @@ index 9e32259a..bd07d15a 100644
  static char *
  format_key(const struct sshkey *key)
  {
-@@ -1006,6 +1022,127 @@ user_key_command_allowed2(struct ssh *ssh, struct passwd *user_pw,
+@@ -747,6 +763,127 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
  	return found_key;
  }
  
@@ -188,7 +188,7 @@ index 9e32259a..bd07d15a 100644
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -1046,12 +1183,18 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
+@@ -792,13 +929,19 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
  	sshauthopt_free(opts);
  	opts = NULL;
  
@@ -210,7 +210,7 @@ index 9e32259a..bd07d15a 100644
  		*authoptsp = opts;
  		opts = NULL;
 diff --git a/servconf.c b/servconf.c
-index 3265b223..6f99225e 100644
+index 74c99eb4..4e525d10 100644
 --- a/servconf.c
 +++ b/servconf.c
 @@ -208,6 +208,7 @@ initialize_server_options(ServerOptions *options)
@@ -221,7 +221,7 @@ index 3265b223..6f99225e 100644
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -554,7 +554,7 @@ typedef enum {
+@@ -554,7 +555,7 @@ typedef enum {
  	sStreamLocalBindMask, sStreamLocalBindUnlink,
  	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
  	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
@@ -230,7 +230,7 @@ index 3265b223..6f99225e 100644
  	sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
-@@ -747,6 +748,7 @@ static struct {
+@@ -752,6 +753,7 @@ static struct {
  	{ "casignaturealgorithms", sCASignatureAlgorithms, SSHCFG_ALL },
  	{ "securitykeyprovider", sSecurityKeyProvider, SSHCFG_GLOBAL },
  	{ "requiredrsasize", sRequiredRSASize, SSHCFG_ALL },
@@ -238,7 +238,7 @@ index 3265b223..6f99225e 100644
  	{ NULL, sBadOption, 0 }
  };
  
-@@ -2546,6 +2549,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2557,6 +2559,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  		}
  		break;
  
@@ -258,11 +258,10 @@ index 3265b223..6f99225e 100644
  	case sIgnore:
  	case sUnsupported:
 diff --git a/servconf.h b/servconf.h
-index c4063bfa..527cb6ad 100644
+index f9aa27a0..070d7d60 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -239,7 +239,8 @@ typedef struct {
- 	int	expose_userauth_info;
+@@ -240,6 +240,7 @@ typedef struct {
  	u_int64_t timing_secret;
  	char   *sk_provider;
  	int	required_rsa_size;	/* minimum size of RSA keys */
@@ -272,3 +271,4 @@ index c4063bfa..527cb6ad 100644
  /* Information about the incoming connection as used by Match */
 -- 
 2.34.1
+

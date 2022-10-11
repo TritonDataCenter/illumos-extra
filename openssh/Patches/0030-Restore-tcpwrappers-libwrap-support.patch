@@ -1,7 +1,7 @@
-From 448b3cda6a13c056d2c50871b42ac8d648036632 Mon Sep 17 00:00:00 2001
+From d657c0dcb3815e1aea9c82363ceedb92a85bfc2e Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 16 Sep 2015 10:54:13 -0700
-Subject: [PATCH 30/35] Restore tcpwrappers/libwrap support
+Subject: [PATCH 28/32] Restore tcpwrappers/libwrap support
 
 This reverts commit f9696566fb41320820f3b257ab564fa321bb3751
 and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
@@ -12,10 +12,10 @@ and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
  3 files changed, 93 insertions(+)
 
 diff --git a/configure.ac b/configure.ac
-index 99cb0d63..061db495 100644
+index 2eb88fae..edc70477 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1580,6 +1580,62 @@ else
+@@ -1625,6 +1625,62 @@ else
  	AC_MSG_RESULT([no])
  fi
  
@@ -78,7 +78,7 @@ index 99cb0d63..061db495 100644
  # Check whether user wants to use ldns
  LDNS_MSG="no"
  AC_ARG_WITH(ldns,
-@@ -5569,6 +5625,7 @@ echo "                       PAM support: $PAM_MSG"
+@@ -5601,6 +5657,7 @@ echo "                       PAM support: $PAM_MSG"
  echo "                   OSF SIA support: $SIA_MSG"
  echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
@@ -87,7 +87,7 @@ index 99cb0d63..061db495 100644
  echo "                   libldns support: $LDNS_MSG"
  echo "  Solaris process contract support: $SPC_MSG"
 diff --git a/sshd.8 b/sshd.8
-index 0f6f1eb8..169c77cb 100644
+index 4465b95d..e9cabae2 100644
 --- a/sshd.8
 +++ b/sshd.8
 @@ -908,6 +908,12 @@ the user's home directory becomes accessible.
@@ -112,10 +112,10 @@ index 0f6f1eb8..169c77cb 100644
  .Xr moduli 5 ,
  .Xr sshd_config 5 ,
 diff --git a/sshd.c b/sshd.c
-index cd4dae82..3afbe988 100644
+index 9b29d02a..d816f8aa 100644
 --- a/sshd.c
 +++ b/sshd.c
-@@ -126,6 +126,17 @@
+@@ -129,6 +129,17 @@
  #include "srclimit.h"
  #include "dh.h"
  
@@ -133,7 +133,7 @@ index cd4dae82..3afbe988 100644
  /* Re-exec fds */
  #define REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
  #define REEXEC_STARTUP_PIPE_FD		(STDERR_FILENO + 2)
-@@ -2199,6 +2210,24 @@ main(int ac, char **av)
+@@ -2209,6 +2220,24 @@ main(int ac, char **av)
  #ifdef SSH_AUDIT_EVENTS
  	audit_connection_from(ssh, remote_ip, remote_port);
  #endif

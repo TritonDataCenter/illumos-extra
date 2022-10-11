@@ -1,7 +1,7 @@
-From bf8c8cf28a220290d90e850d374494ae50e9294a Mon Sep 17 00:00:00 2001
+From 0ab475e74fda04a4f93bb48ca93b33dc75ea4af2 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:00 -0700
-Subject: [PATCH 08/35] Add DisableBanner option
+Subject: [PATCH 07/32] Add DisableBanner option
 
 ---
  readconf.c    | 31 +++++++++++++++++++++++++++++++
@@ -11,7 +11,7 @@ Subject: [PATCH 08/35] Add DisableBanner option
  4 files changed, 75 insertions(+), 4 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
-index 8c5c6dd1..6ff97694 100644
+index fc86c00b..adfd58d7 100644
 --- a/readconf.c
 +++ b/readconf.c
 @@ -166,6 +166,9 @@ typedef enum {
@@ -34,7 +34,7 @@ index 8c5c6dd1..6ff97694 100644
  	{ "tunnel", oTunnel },
  	{ "tunneldevice", oTunnelDevice },
  	{ "localcommand", oLocalCommand },
-@@ -933,6 +939,17 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
+@@ -939,6 +945,17 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
  	return -1;
  }
  
@@ -66,7 +66,7 @@ index 8c5c6dd1..6ff97694 100644
  	case oRequiredRSASize:
  		intptr = &options->required_rsa_size;
  		goto parse_int;
-@@ -2435,6 +2459,9 @@ initialize_options(Options * options)
+@@ -2434,6 +2458,9 @@ initialize_options(Options * options)
  	options->stdin_null = -1;
  	options->fork_after_authentication = -1;
  	options->proxy_use_fdpass = -1;
@@ -88,7 +88,7 @@ index 8c5c6dd1..6ff97694 100644
  		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
  #ifdef ENABLE_SK_INTERNAL
 diff --git a/readconf.h b/readconf.h
-index f24719f9..196af3ca 100644
+index ffb5ec4f..24690e4a 100644
 --- a/readconf.h
 +++ b/readconf.h
 @@ -179,6 +179,9 @@ typedef struct {
@@ -101,7 +101,7 @@ index f24719f9..196af3ca 100644
  }       Options;
  
  #define SSH_PUBKEY_AUTH_NO	0x00
-@@ -215,6 +218,13 @@ typedef struct {
+@@ -222,6 +225,13 @@ typedef struct {
  const char *kex_default_pk_alg(void);
  char	*ssh_connection_hash(const char *thishost, const char *host,
      const char *portstr, const char *user);
@@ -116,7 +116,7 @@ index f24719f9..196af3ca 100644
  int      fill_default_options(Options *);
  void	 fill_default_options_for_canonicalization(Options *);
 diff --git a/ssh_config.5 b/ssh_config.5
-index a0db5bc5..ccde4035 100644
+index d1ede18e..152216a3 100644
 --- a/ssh_config.5
 +++ b/ssh_config.5
 @@ -611,6 +611,14 @@ If set to a time in seconds, or a time in any of the formats documented in
@@ -135,7 +135,7 @@ index a0db5bc5..ccde4035 100644
  Specifies that a TCP port on the local machine be forwarded
  over the secure channel, and the application
 diff --git a/sshconnect2.c b/sshconnect2.c
-index fea50fab..ffebf887 100644
+index 58fe98db..33808816 100644
 --- a/sshconnect2.c
 +++ b/sshconnect2.c
 @@ -85,6 +85,10 @@ extern char *client_version_string;
@@ -149,7 +149,7 @@ index fea50fab..ffebf887 100644
  /*
   * SSH2 key exchange
   */
-@@ -586,19 +590,37 @@ input_userauth_error(int type, u_int32_t seq, struct ssh *ssh)
+@@ -595,19 +599,37 @@ input_userauth_error(int type, u_int32_t seq, struct ssh *ssh)
  static int
  input_userauth_banner(int type, u_int32_t seq, struct ssh *ssh)
  {
@@ -193,3 +193,4 @@ index fea50fab..ffebf887 100644
  
 -- 
 2.34.1
+

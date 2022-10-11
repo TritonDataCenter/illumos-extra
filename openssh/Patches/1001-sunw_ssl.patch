@@ -1,17 +1,17 @@
-From a14d0c45786b491db9713165e6358449ebef6876 Mon Sep 17 00:00:00 2001
+From 30ef72e775f78d06f37b63a6e54f06d8ede5aba0 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Tue, 22 Dec 2015 14:31:25 -0800
-Subject: [PATCH 35/35] SmartOS local: use sunw_ssl lib from platform
+Subject: [PATCH 32/32] SmartOS local: use sunw_ssl lib from platform
 
 ---
  cipher-chachapoly-libcrypto.c        |   4 +-
  cipher-chachapoly.c                  |   4 +-
- configure.ac                         | 104 ++++++++++-----------
+ configure.ac                         | 108 +++++++++++-----------
  digest-openssl.c                     |   6 +-
  kex.c                                |   8 +-
  openbsd-compat/libressl-api-compat.c | 132 +++++++++++++--------------
- openbsd-compat/openssl-compat.h      | 124 ++++++++++++-------------
- 7 files changed, 191 insertions(+), 191 deletions(-)
+ openbsd-compat/openssl-compat.h      | 122 ++++++++++++-------------
+ 7 files changed, 192 insertions(+), 192 deletions(-)
 
 diff --git a/cipher-chachapoly-libcrypto.c b/cipher-chachapoly-libcrypto.c
 index 719f9c84..3bfbcf8c 100644
@@ -52,10 +52,10 @@ index 716f8d42..34846ef6 100644
 -#endif /* !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
 +#endif /* !defined(HAVE_SUNW_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
 diff --git a/configure.ac b/configure.ac
-index 03880716..3384389d 100644
---- a/configure.ac	Tue Oct  4 16:02:54 2022
-+++ b/configure.ac	Tue Oct  4 16:15:25 2022
-@@ -2780,9 +2780,9 @@
+index 420946aa..78336652 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -2780,9 +2780,9 @@ AC_ARG_WITH([ssl-engine],
  
  nocrypto_saved_LIBS="$LIBS"
  if test "x$openssl" = "xyes" ; then
@@ -68,7 +68,7 @@ index 03880716..3384389d 100644
  	    [AC_MSG_ERROR([*** working libcrypto not found, check config.log])])
  	AC_CHECK_HEADER([openssl/opensslv.h], ,
  	    [AC_MSG_ERROR([*** OpenSSL headers missing - please install first or check config.log ***])])
-@@ -2969,23 +2969,23 @@
+@@ -2969,23 +2969,23 @@ if test "x$openssl" = "xyes" ; then
  	)
  
  	AC_CHECK_FUNCS([ \
@@ -105,7 +105,7 @@ index 03880716..3384389d 100644
  		AC_DEFINE(HAVE_OPENSSL_ADD_ALL_ALGORITHMS, 1, [as a macro]), ,
  		[[#include <openssl/evp.h>]]
  	    )
-@@ -2993,42 +2993,42 @@
+@@ -2993,42 +2993,42 @@ if test "x$openssl" = "xyes" ; then
  
  	# LibreSSL/OpenSSL 1.1x API
  	AC_CHECK_FUNCS([ \
@@ -184,7 +184,7 @@ index 03880716..3384389d 100644
  	])
  
  	if test "x$openssl_engine" = "xyes" ; then
-@@ -3087,7 +3087,7 @@
+@@ -3087,7 +3087,7 @@ if test "x$openssl" = "xyes" ; then
  	)
  
  	# Check for SHA256, SHA384 and SHA512 support in OpenSSL
@@ -193,7 +193,7 @@ index 03880716..3384389d 100644
  
  	# Check complete ECC support in OpenSSL
  	AC_MSG_CHECKING([whether OpenSSL has NID_X9_62_prime256v1])
-@@ -3167,7 +3167,7 @@
+@@ -3167,7 +3167,7 @@ if test "x$openssl" = "xyes" ; then
  	if test x$enable_nistp256 = x1 || test x$enable_nistp384 = x1 || \
  	    test x$enable_nistp521 = x1; then
  		AC_DEFINE(OPENSSL_HAS_ECC, [1], [OpenSSL has ECC])
@@ -224,7 +224,7 @@ index e073a807..c0bf66d6 100644
  #endif
  
 diff --git a/kex.c b/kex.c
-index 709a0ec6..a7e76911 100644
+index 0bcd27dc..ab6b1812 100644
 --- a/kex.c
 +++ b/kex.c
 @@ -93,9 +93,9 @@ static const struct kexalg kexalgs[] = {
@@ -655,10 +655,10 @@ index 801a2e8d..1950fbb9 100644
  
  #endif /* WITH_OPENSSL */
 diff --git a/openbsd-compat/openssl-compat.h b/openbsd-compat/openssl-compat.h
-index 8ca50b5a..0dfb1c15 100644
+index 61a69dd5..3397aed5 100644
 --- a/openbsd-compat/openssl-compat.h
 +++ b/openbsd-compat/openssl-compat.h
-@@ -94,63 +94,63 @@ void ssh_aes_ctr_iv(EVP_CIPHER_CTX *, int, u_char *, size_t);
+@@ -69,63 +69,63 @@ void ssh_libcrypto_init(void);
  #endif
  
  /* LibreSSL/OpenSSL 1.1x API compat */
@@ -749,7 +749,7 @@ index 8ca50b5a..0dfb1c15 100644
  
  #ifndef DSA_SIG_GET0
  void DSA_SIG_get0(const DSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps);
-@@ -161,77 +161,77 @@ int DSA_SIG_set0(DSA_SIG *sig, BIGNUM *r, BIGNUM *s);
+@@ -136,77 +136,77 @@ int DSA_SIG_set0(DSA_SIG *sig, BIGNUM *r, BIGNUM *s);
  #endif /* DSA_SIG_SET0 */
  
  #ifdef OPENSSL_HAS_ECC
