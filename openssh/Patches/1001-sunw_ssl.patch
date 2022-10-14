@@ -62,8 +62,8 @@ index 420946aa..78336652 100644
 -	LIBS="-lcrypto $LIBS"
 -	CHANNELLIBS="-lcrypto $CHANNELLIBS"
 -	AC_TRY_LINK_FUNC([RAND_add], ,
-+	LIBS="-R /usr/lib:${DESTDIR}/usr/lib -lsunw_crypto $LIBS"
-+	CHANNELLIBS="-R /usr/lib:${DESTDIR}/usr/lib -lsunw_crypto $CHANNELLIBS"
++	LIBS="-L /usr/lib:${DESTDIR}/usr/lib -lsunw_crypto $LIBS"
++	CHANNELLIBS="-L /usr/lib:${DESTDIR}/usr/lib -lsunw_crypto $CHANNELLIBS"
 +	AC_TRY_LINK_FUNC([sunw_RAND_add], ,
  	    [AC_MSG_ERROR([*** working libcrypto not found, check config.log])])
  	AC_CHECK_HEADER([openssl/opensslv.h], ,
