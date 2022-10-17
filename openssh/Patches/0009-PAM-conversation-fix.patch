@@ -1,7 +1,7 @@
-From c2b24d52296a9831633ac804389eae9f5f3a3790 Mon Sep 17 00:00:00 2001
+From 2eab60eb75f99803a768e111158b67b077a98304 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:13 -0700
-Subject: [PATCH 09/35] PAM conversation fix
+Subject: [PATCH 08/32] PAM conversation fix
 
 ---
  auth-pam.c | 36 ++++++++++++++++++++++++++++++++++++
@@ -95,3 +95,4 @@ index 29034e40..bb410e84 100644
  		    authctxt->user);
 -- 
 2.34.1
+

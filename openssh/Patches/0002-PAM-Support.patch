@@ -1,7 +1,7 @@
-From 2a17e0aac6ece1a4172cdc2f90410b05097168fb Mon Sep 17 00:00:00 2001
+From 4a926148ad7f8f22aa599c1dda25bdaaa5ea03f3 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:19 -0700
-Subject: [PATCH 02/35] PAM Support
+Subject: [PATCH 02/32] PAM Support
 
 #
 # To comply to the Solaris PAM policy, the UsePAM option is changed to be
@@ -11,14 +11,14 @@ Subject: [PATCH 02/35] PAM Support
 
 *** orig/servconf.c	Mon Dec  5 17:23:03 2011
 ---
- servconf.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ servconf.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/servconf.c b/servconf.c
-index b2fbf0b2..508e1ce9 100644
+index 423772b1..60fae078 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -277,7 +277,12 @@ fill_default_server_options(ServerOptions *options)
+@@ -278,7 +278,12 @@ fill_default_server_options(ServerOptions *options)
  
  	/* Portable-specific options */
  	if (options->use_pam == -1)
@@ -31,7 +31,7 @@ index b2fbf0b2..508e1ce9 100644
  
  	/* Standard Options */
  	if (options->num_host_key_files == 0) {
-@@ -1329,8 +1334,16 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -1333,8 +1338,16 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  	switch (opcode) {
  	/* Portable-specific options */
  	case sUsePAM:
@@ -50,3 +50,4 @@ index b2fbf0b2..508e1ce9 100644
  	case sBadOption:
 -- 
 2.34.1
+

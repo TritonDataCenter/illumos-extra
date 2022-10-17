@@ -20,9 +20,10 @@
 #
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2021 Joyent, Inc.
+# Copyright 2022 MNX Cloud, Inc.
 #
 
-VER =	openssh-portable-8.8p1
+VER =	openssh-9.1p1
 
 include ../Makefile.defs
 

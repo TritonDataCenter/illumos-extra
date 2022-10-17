@@ -1,7 +1,7 @@
-From 6b16889ce33138fd8afee001d49a2e33b1a97380 Mon Sep 17 00:00:00 2001
+From a872016fa603f01628dbdacd310ce774e69506c6 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:37:01 -0700
-Subject: [PATCH 14/35] Solaris Auditing support
+Subject: [PATCH 13/32] Solaris Auditing support
 
 ---
  INSTALL         |  15 +-
@@ -19,10 +19,10 @@ Subject: [PATCH 14/35] Solaris Auditing support
  create mode 100644 audit-solaris.c
 
 diff --git a/INSTALL b/INSTALL
-index dddd912c..78cf366e 100644
+index c605182b..832cdc70 100644
 --- a/INSTALL
 +++ b/INSTALL
-@@ -106,9 +106,13 @@ http://www.gnu.org/software/automake/
+@@ -107,9 +107,13 @@ http://www.gnu.org/software/automake/
  
  Basic Security Module (BSM):
  
@@ -39,7 +39,7 @@ index dddd912c..78cf366e 100644
  
  makedepend:
  
-@@ -174,8 +178,9 @@ name).
+@@ -175,8 +179,9 @@ name).
  There are a few other options to the configure script:
  
  --with-audit=[module] enable additional auditing via the specified module.
@@ -52,10 +52,10 @@ index dddd912c..78cf366e 100644
  --with-pam enables PAM support. If PAM support is compiled in, it must
  also be enabled in sshd_config (refer to the UsePAM directive).
 diff --git a/Makefile.in b/Makefile.in
-index 77fdede1..d98076a3 100644
+index b7b82b96..b91855a9 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -119,7 +119,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o sshtty.o \
+@@ -121,7 +121,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o sshtty.o \
  	sshconnect.o sshconnect2.o mux.o $(SKOBJS)
  
  SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o \
@@ -77,7 +77,7 @@ index 7b754ba4..27a80cc3 100644
 +Prior to Solaris 11
 +-------------------
  If you enable BSM auditing on Solaris, you need to update audit_event(4)
- for praudit(8) to give sensible output.  The following line needs to be
+ for praudit(1m) to give sensible output.  The following line needs to be
  added to /etc/security/audit_event:
 @@ -85,6 +85,9 @@ There is no official registry of 3rd party event numbers, so if this
  number is already in use on your system, you may change it at build time
@@ -724,10 +724,10 @@ index 38cb5ad3..dd6f6d0a 100644
  void	audit_session_open(struct logininfo *);
  void	audit_session_close(struct logininfo *);
 diff --git a/configure.ac b/configure.ac
-index f9eccb4d..93bf52d6 100644
+index f10bb2d6..f6ea6e47 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1686,7 +1686,7 @@ AC_ARG_WITH([libedit],
+@@ -1730,7 +1730,7 @@ AC_ARG_WITH([libedit],
  
  AUDIT_MODULE=none
  AC_ARG_WITH([audit],
@@ -736,7 +736,7 @@ index f9eccb4d..93bf52d6 100644
  	[
  	  AC_MSG_CHECKING([for supported audit module])
  	  case "$withval" in
-@@ -1723,6 +1723,13 @@ AC_ARG_WITH([audit],
+@@ -1767,6 +1767,13 @@ AC_ARG_WITH([audit],
  		SSHDLIBS="$SSHDLIBS -laudit"
  		AC_DEFINE([USE_LINUX_AUDIT], [1], [Use Linux audit module])
  		;;
@@ -751,10 +751,10 @@ index f9eccb4d..93bf52d6 100644
  		AUDIT_MODULE=debug
  		AC_MSG_RESULT([debug])
 diff --git a/defines.h b/defines.h
-index 857abb8b..36824849 100644
+index 279e509a..69ed9b17 100644
 --- a/defines.h
 +++ b/defines.h
-@@ -680,6 +680,11 @@ struct winsize {
+@@ -715,6 +715,11 @@ struct winsize {
  # define CUSTOM_SSH_AUDIT_EVENTS
  #endif
  
@@ -767,10 +767,10 @@ index 857abb8b..36824849 100644
  #  define __func__ __FUNCTION__
  #elif !defined(HAVE___func__)
 diff --git a/sshd.c b/sshd.c
-index 98a63868..c27ddc4d 100644
+index 7cc9dabe..597b3378 100644
 --- a/sshd.c
 +++ b/sshd.c
-@@ -2176,7 +2176,7 @@ main(int ac, char **av)
+@@ -2186,7 +2186,7 @@ main(int ac, char **av)
  	remote_ip = ssh_remote_ipaddr(ssh);
  
  #ifdef SSH_AUDIT_EVENTS
@@ -779,7 +779,7 @@ index 98a63868..c27ddc4d 100644
  #endif
  
  	rdomain = ssh_packet_rdomain_in(ssh);
-@@ -2264,7 +2264,7 @@ main(int ac, char **av)
+@@ -2274,7 +2274,7 @@ main(int ac, char **av)
  		startup_pipe = -1;
  	}
  
@@ -788,7 +788,7 @@ index 98a63868..c27ddc4d 100644
  	audit_event(ssh, SSH_AUTH_SUCCESS);
  #endif
  
-@@ -2295,6 +2295,10 @@ main(int ac, char **av)
+@@ -2305,6 +2305,10 @@ main(int ac, char **av)
  		do_pam_session(ssh);
  	}
  #endif
@@ -801,3 +801,4 @@ index 98a63868..c27ddc4d 100644
  	 * In privilege separation, we fork another child and prepare
 -- 
 2.34.1
+
