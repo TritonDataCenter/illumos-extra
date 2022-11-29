@@ -1,16 +1,12 @@
-From: Joyent
-Date: Wed Dec 8 23:26:28 2010 -0800
-Subject: Fixup rsync(1) manual page
----
-
---- rsync-3.1.2/rsync.1	Thu Sep 17 01:30:37 2009
-+++ rsync-3.1.2/rsync.1.new	Thu Sep 17 01:32:44 2009
-@@ -1426,5 +1426,8 @@
- up less space on the destination.  Conflicts with \fB\-\-inplace\fP because it's
- not possible to overwrite data in a sparse fashion.
+--- a/rsync.1	Tue Nov 29 17:07:57 2022
++++ b/rsync.1	Tue Nov 29 17:09:57 2022
+@@ -1796,6 +1796,9 @@
+ .IP
+ Note that versions of rsync older than 3.1.3 will reject the combination of
+ \fB\-\-sparse\fP and \fB\-\-inplace\fP.
 +.IP
 +NOTE: This option has no effect if the destination is a Solaris "tmpfs"
 +filesystem.  The files won't be sparse\&.
- .IP 
- .IP "\fB\-n, \-\-dry\-run\fP"
- This makes rsync perform a trial run that doesn't
+ .IP "\fB\-\-preallocate\fP"
+ This tells the receiver to allocate each destination file to its eventual
+ size before writing data to the file.  Rsync will only use the real
