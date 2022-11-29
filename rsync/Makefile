@@ -30,7 +30,7 @@ AUTOCONF_ENV += \
 	LD_OPTIONS="-M $(BASE)/mapfile_noexstk"
 AUTOCONF_OPTS += \
 	--with-included-popt \
-	--disable-xxhash
+	--disable-lz4 --disable-xxhash
 
 PATCHES =	Patches/*
 
