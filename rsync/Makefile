@@ -29,7 +29,8 @@ include ../Makefile.defs
 AUTOCONF_ENV += \
 	LD_OPTIONS="-M $(BASE)/mapfile_noexstk"
 AUTOCONF_OPTS += \
-	--with-included-popt
+	--with-included-popt \
+	--disable-xxhash
 
 PATCHES =	Patches/*
 
