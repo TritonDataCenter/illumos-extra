@@ -19,9 +19,10 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2022 MNX Cloud, Inc.
 #
 
-VER =	rsync-3.1.2
+VER =	rsync-3.2.7
 
 include ../Makefile.defs
 
