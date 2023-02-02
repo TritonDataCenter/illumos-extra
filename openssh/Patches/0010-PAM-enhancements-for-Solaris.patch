@@ -1,4 +1,4 @@
-From d88596a9506fc9a4a62d357e09ebc5e66ac3e503 Mon Sep 17 00:00:00 2001
+From dabc2eac9da1cc1040e1473c99829f5e445c294b Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:19 -0700
 Subject: [PATCH 09/32] PAM enhancements for Solaris
@@ -17,10 +17,10 @@ Subject: [PATCH 09/32] PAM enhancements for Solaris
  10 files changed, 390 insertions(+), 3 deletions(-)
 
 diff --git a/auth-pam.c b/auth-pam.c
-index bb410e84..0038f84a 100644
+index 6793dacf..bc3f337b 100644
 --- a/auth-pam.c
 +++ b/auth-pam.c
-@@ -683,6 +683,66 @@ sshpam_cleanup(void)
+@@ -682,6 +682,66 @@ sshpam_cleanup(void)
  	sshpam_handle = NULL;
  }
  
@@ -431,10 +431,10 @@ index 683e5e07..dfc56687 100644
  
  struct ssh;
 diff --git a/monitor_wrap.c b/monitor_wrap.c
-index b2c85205..65d2269c 100644
+index 8e379a15..59c1ccac 100644
 --- a/monitor_wrap.c
 +++ b/monitor_wrap.c
-@@ -395,6 +395,27 @@ mm_inform_authserv(char *service, char *style)
+@@ -396,6 +396,27 @@ mm_inform_authserv(char *service, char *style)
  	sshbuf_free(m);
  }
  
@@ -463,13 +463,13 @@ index b2c85205..65d2269c 100644
  int
  mm_auth_password(struct ssh *ssh, char *password)
 diff --git a/servconf.c b/servconf.c
-index 77f2b585..adaf224e 100644
+index 73f257ad..c308e79f 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -196,6 +196,18 @@ initialize_server_options(ServerOptions *options)
- 	options->disable_forwarding = -1;
- 	options->expose_userauth_info = -1;
- 	options->required_rsa_size = -1;
+@@ -199,6 +199,18 @@ initialize_server_options(ServerOptions *options)
+ 	options->channel_timeouts = NULL;
+ 	options->num_channel_timeouts = 0;
+ 	options->unused_connection_timeout = -1;
 +#ifdef PAM_ENHANCEMENT
 +	options->pam_service_name = NULL;
 +	options->pam_service_prefix = NULL;
@@ -485,7 +485,7 @@ index 77f2b585..adaf224e 100644
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -435,6 +447,12 @@ fill_default_server_options(ServerOptions *options)
+@@ -438,6 +450,12 @@ fill_default_server_options(ServerOptions *options)
  		options->ip_qos_bulk = IPTOS_DSCP_CS1;
  	if (options->version_addendum == NULL)
  		options->version_addendum = xstrdup("");
@@ -498,7 +498,7 @@ index 77f2b585..adaf224e 100644
  	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
  		options->fwd_opts.streamlocal_bind_mask = 0177;
  	if (options->fwd_opts.streamlocal_bind_unlink == -1)
-@@ -517,6 +535,9 @@ typedef enum {
+@@ -529,6 +547,9 @@ typedef enum {
  	sMatch, sPermitOpen, sPermitListen, sForceCommand, sChrootDirectory,
  	sUsePrivilegeSeparation, sAllowAgentForwarding,
  	sHostCertificate, sInclude,
@@ -508,7 +508,7 @@ index 77f2b585..adaf224e 100644
  	sRevokedKeys, sTrustedUserCAKeys, sAuthorizedPrincipalsFile,
  	sAuthorizedPrincipalsCommand, sAuthorizedPrincipalsCommandUser,
  	sKexAlgorithms, sCASignatureAlgorithms, sIPQoS, sVersionAddendum,
-@@ -668,6 +689,10 @@ static struct {
+@@ -680,6 +701,10 @@ static struct {
  	{ "forcecommand", sForceCommand, SSHCFG_ALL },
  	{ "chrootdirectory", sChrootDirectory, SSHCFG_ALL },
  	{ "hostcertificate", sHostCertificate, SSHCFG_GLOBAL },
@@ -519,9 +519,9 @@ index 77f2b585..adaf224e 100644
  	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
  	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },
  	{ "authorizedprincipalsfile", sAuthorizedPrincipalsFile, SSHCFG_ALL },
-@@ -2464,6 +2489,37 @@ process_server_config_line_depth(ServerOptions *options, char *line,
- 		intptr = &options->required_rsa_size;
- 		goto parse_int;
+@@ -2569,6 +2594,37 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+ 		}
+ 		goto parse_time;
  
 +	case sPAMServicePrefix:
 +		arg = argv_next(&ac, &av);
@@ -558,7 +558,7 @@ index 77f2b585..adaf224e 100644
  	case sIgnore:
  	case sUnsupported:
 diff --git a/servconf.h b/servconf.h
-index 9346155c..f9aa27a0 100644
+index 7ad43de8..ee060007 100644
 --- a/servconf.h
 +++ b/servconf.h
 @@ -73,6 +73,10 @@ struct listenaddr {
@@ -586,10 +586,10 @@ index 9346155c..f9aa27a0 100644
  	int	expose_userauth_info;
  	u_int64_t timing_secret;
 diff --git a/sshd.8 b/sshd.8
-index ac1c62de..4465b95d 100644
+index bace9783..57b4e0a8 100644
 --- a/sshd.8
 +++ b/sshd.8
-@@ -1001,6 +1001,33 @@ concurrently for different ports, this contains the process ID of the one
+@@ -1003,6 +1003,33 @@ concurrently for different ports, this contains the process ID of the one
  started last).
  The content of this file is not sensitive; it can be world-readable.
  .El
@@ -624,10 +624,10 @@ index ac1c62de..4465b95d 100644
  .Xr scp 1 ,
  .Xr sftp 1 ,
 diff --git a/sshd_config.5 b/sshd_config.5
-index 894d81e7..65e9959b 100644
+index c0499fa8..f912c913 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
-@@ -1276,6 +1276,21 @@ and
+@@ -1347,6 +1347,21 @@ and
  key exchange methods.
  The default is
  .Pa /etc/moduli .
@@ -649,7 +649,7 @@ index 894d81e7..65e9959b 100644
  .It Cm PasswordAuthentication
  Specifies whether password authentication is allowed.
  The default is
-@@ -1784,8 +1799,7 @@ If
+@@ -1882,8 +1897,7 @@ If
  is enabled, you will not be able to run
  .Xr sshd 8
  as a non-root user.
@@ -660,5 +660,5 @@ index 894d81e7..65e9959b 100644
  Optionally specifies additional text to append to the SSH protocol banner
  sent by the server upon connection.
 -- 
-2.34.1
+2.37.1 (Apple Git-137.1)
 

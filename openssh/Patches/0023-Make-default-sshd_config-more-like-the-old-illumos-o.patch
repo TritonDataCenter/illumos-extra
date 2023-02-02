@@ -1,4 +1,4 @@
-From 162bf23f9e9d66dce6426f3b8925f0502ade8ffa Mon Sep 17 00:00:00 2001
+From 7fd7f4a6081d3dfb79a6b9b032e6abcab1c3bd99 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 13:24:58 -0700
 Subject: [PATCH 22/32] Make default sshd_config more like the old illumos one
@@ -8,7 +8,7 @@ Subject: [PATCH 22/32] Make default sshd_config more like the old illumos one
  1 file changed, 23 insertions(+), 21 deletions(-)
 
 diff --git a/sshd_config b/sshd_config
-index c423eba1..d2a509c5 100644
+index 36894ace..d2a509c5 100644
 --- a/sshd_config
 +++ b/sshd_config
 @@ -10,7 +10,7 @@
@@ -57,7 +57,7 @@ index c423eba1..d2a509c5 100644
 -# be allowed through the KbdInteractiveAuthentication and
 -# PasswordAuthentication.  Depending on your PAM configuration,
 -# PAM authentication via KbdInteractiveAuthentication may bypass
--# the setting of "PermitRootLogin without-password".
+-# the setting of "PermitRootLogin prohibit-password".
 -# If you just want the PAM account and session checks to run without
 -# PAM authentication, then enable this but set PasswordAuthentication
 -# and KbdInteractiveAuthentication to 'no'.
@@ -93,5 +93,5 @@ index c423eba1..d2a509c5 100644
  #PermitUserEnvironment no
  #Compression delayed
 -- 
-2.34.1
+2.37.1 (Apple Git-137.1)
 

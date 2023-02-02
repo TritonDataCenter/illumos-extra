@@ -1,4 +1,4 @@
-From 0ab475e74fda04a4f93bb48ca93b33dc75ea4af2 Mon Sep 17 00:00:00 2001
+From 308759dce66411317592f5a6ecc97e3c6c5928e2 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:00 -0700
 Subject: [PATCH 07/32] Add DisableBanner option
@@ -11,7 +11,7 @@ Subject: [PATCH 07/32] Add DisableBanner option
  4 files changed, 75 insertions(+), 4 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
-index fc86c00b..adfd58d7 100644
+index 93119762..1d397a0d 100644
 --- a/readconf.c
 +++ b/readconf.c
 @@ -166,6 +166,9 @@ typedef enum {
@@ -24,7 +24,7 @@ index fc86c00b..adfd58d7 100644
  	oVisualHostKey,
  	oKexAlgorithms, oIPQoS, oRequestTTY, oSessionType, oStdinNull,
  	oForkAfterAuthentication, oIgnoreUnknown, oProxyUseFdpass,
-@@ -289,6 +292,9 @@ static struct {
+@@ -290,6 +293,9 @@ static struct {
  	{ "controlpersist", oControlPersist },
  	{ "hashknownhosts", oHashKnownHosts },
  	{ "include", oInclude },
@@ -34,7 +34,7 @@ index fc86c00b..adfd58d7 100644
  	{ "tunnel", oTunnel },
  	{ "tunneldevice", oTunnelDevice },
  	{ "localcommand", oLocalCommand },
-@@ -939,6 +945,17 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
+@@ -941,6 +947,17 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
  	return -1;
  }
  
@@ -52,9 +52,9 @@ index fc86c00b..adfd58d7 100644
  /*
   * Processes a single option line as used in the configuration files. This
   * only sets those values that have not already been set.
-@@ -2195,6 +2212,13 @@ parse_pubkey_algos:
- 			*charptr = xstrdup(arg);
- 		break;
+@@ -2205,6 +2222,13 @@ parse_pubkey_algos:
+ 		intptr = &options->enable_escape_commandline;
+ 		goto parse_flag;
  
 +#ifdef DISABLE_BANNER
 +	case oDisableBanner:
@@ -66,7 +66,7 @@ index fc86c00b..adfd58d7 100644
  	case oRequiredRSASize:
  		intptr = &options->required_rsa_size;
  		goto parse_int;
-@@ -2434,6 +2458,9 @@ initialize_options(Options * options)
+@@ -2445,6 +2469,9 @@ initialize_options(Options * options)
  	options->stdin_null = -1;
  	options->fork_after_authentication = -1;
  	options->proxy_use_fdpass = -1;
@@ -76,7 +76,7 @@ index fc86c00b..adfd58d7 100644
  	options->ignored_unknown = NULL;
  	options->num_canonical_domains = 0;
  	options->num_permitted_cnames = 0;
-@@ -2634,6 +2661,10 @@ fill_default_options(Options * options)
+@@ -2646,6 +2673,10 @@ fill_default_options(Options * options)
  		options->canonicalize_fallback_local = 1;
  	if (options->canonicalize_hostname == -1)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
@@ -88,11 +88,11 @@ index fc86c00b..adfd58d7 100644
  		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
  #ifdef ENABLE_SK_INTERNAL
 diff --git a/readconf.h b/readconf.h
-index ffb5ec4f..24690e4a 100644
+index 2ce1b4c3..0ca0ebe0 100644
 --- a/readconf.h
 +++ b/readconf.h
-@@ -179,6 +179,9 @@ typedef struct {
- 	int	required_rsa_size;	/* minimum size of RSA keys */
+@@ -181,6 +181,9 @@ typedef struct {
+ 	int	enable_escape_commandline;	/* ~C commandline */
  
  	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
 +#ifdef DISABLE_BANNER
@@ -101,7 +101,7 @@ index ffb5ec4f..24690e4a 100644
  }       Options;
  
  #define SSH_PUBKEY_AUTH_NO	0x00
-@@ -222,6 +225,13 @@ typedef struct {
+@@ -224,6 +227,13 @@ typedef struct {
  const char *kex_default_pk_alg(void);
  char	*ssh_connection_hash(const char *thishost, const char *host,
      const char *portstr, const char *user);
@@ -116,7 +116,7 @@ index ffb5ec4f..24690e4a 100644
  int      fill_default_options(Options *);
  void	 fill_default_options_for_canonicalization(Options *);
 diff --git a/ssh_config.5 b/ssh_config.5
-index d1ede18e..152216a3 100644
+index 9eb6b977..640a73d1 100644
 --- a/ssh_config.5
 +++ b/ssh_config.5
 @@ -611,6 +611,14 @@ If set to a time in seconds, or a time in any of the formats documented in
@@ -192,5 +192,5 @@ index 58fe98db..33808816 100644
  }
  
 -- 
-2.34.1
+2.37.1 (Apple Git-137.1)
 

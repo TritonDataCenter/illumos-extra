@@ -1,4 +1,4 @@
-From 733fb13a40761a2cacc3d90aeab658ad1b8e8283 Mon Sep 17 00:00:00 2001
+From 519c6769806494d24eb24c2fb71666b1588ac327 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 4 Sep 2015 11:04:30 -0700
 Subject: [PATCH 26/32] Accept and send LANG and LC_* environment variables by
@@ -18,10 +18,10 @@ behaviour (at least the parts that are most commonly used).
  8 files changed, 127 insertions(+), 5 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
-index 51856412..d38b5efb 100644
+index 89b6e972..20055b0d 100644
 --- a/readconf.c
 +++ b/readconf.c
-@@ -2491,6 +2491,25 @@ fill_default_options_for_canonicalization(Options *options)
+@@ -2503,6 +2503,25 @@ fill_default_options_for_canonicalization(Options *options)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
  }
  
@@ -48,10 +48,10 @@ index 51856412..d38b5efb 100644
   * Called after processing other sources of option data, this fills those
   * options for which no value has been specified with their default values.
 diff --git a/readconf.h b/readconf.h
-index 24690e4a..5bc3da82 100644
+index 0ca0ebe0..4ff3ce70 100644
 --- a/readconf.h
 +++ b/readconf.h
-@@ -233,7 +233,8 @@ char	*ssh_connection_hash(const char *thishost, const char *host,
+@@ -235,7 +235,8 @@ char	*ssh_connection_hash(const char *thishost, const char *host,
  #endif
  
  void     initialize_options(Options *);
@@ -62,10 +62,10 @@ index 24690e4a..5bc3da82 100644
  void	 free_options(Options *o);
  int	 process_config_line(Options *, struct passwd *, const char *,
 diff --git a/servconf.c b/servconf.c
-index 4c15b020..dd6022e9 100644
+index f0202712..b94643a1 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -320,6 +320,22 @@ assemble_algorithms(ServerOptions *o)
+@@ -323,6 +323,22 @@ assemble_algorithms(ServerOptions *o)
  	free(def_sig);
  }
  
@@ -88,7 +88,7 @@ index 4c15b020..dd6022e9 100644
  void
  servconf_add_hostkey(const char *file, const int line,
      ServerOptions *options, const char *path, int userprovided)
-@@ -343,6 +359,36 @@ servconf_add_hostcert(const char *file, const int line,
+@@ -346,6 +362,36 @@ servconf_add_hostcert(const char *file, const int line,
  	free(apath);
  }
  
@@ -125,7 +125,7 @@ index 4c15b020..dd6022e9 100644
  void
  fill_default_server_options(ServerOptions *options)
  {
-@@ -2177,7 +2223,20 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2247,7 +2293,20 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  				    filename, linenum);
  			if (!*activep)
  				continue;
@@ -148,7 +148,7 @@ index 4c15b020..dd6022e9 100644
  			    arg);
  		}
 diff --git a/session.c b/session.c
-index a8e1cd39..6859bf4b 100644
+index 706295a6..faffe795 100644
 --- a/session.c
 +++ b/session.c
 @@ -842,6 +842,18 @@ check_quietlogin(Session *s, const char *command)
@@ -198,10 +198,10 @@ index a8e1cd39..6859bf4b 100644
  #ifdef PER_SESSION_XAUTHFILE
          if (s->auth_file != NULL)
 diff --git a/ssh.c b/ssh.c
-index 25be53d5..55d3e983 100644
+index 87454b84..92361055 100644
 --- a/ssh.c
 +++ b/ssh.c
-@@ -1152,6 +1152,9 @@ main(int ac, char **av)
+@@ -1155,6 +1155,9 @@ main(int ac, char **av)
  	if (debug_flag)
  		logit("%s, %s", SSH_RELEASE, SSH_OPENSSL_VERSION);
  
@@ -209,13 +209,13 @@ index 25be53d5..55d3e983 100644
 +		cleanup_exit(255);
 +
  	/* Parse the configuration files */
- 	process_config_files(host_arg, pw, 0, &want_final_pass);
+ 	process_config_files(options.host_arg, pw, 0, &want_final_pass);
  	if (want_final_pass)
 diff --git a/sshd.c b/sshd.c
-index 20b61f02..9b29d02a 100644
+index 9ad85df7..d9d7fa0a 100644
 --- a/sshd.c
 +++ b/sshd.c
-@@ -1752,6 +1752,8 @@ main(int ac, char **av)
+@@ -1751,6 +1751,8 @@ main(int ac, char **av)
  	} else if (strcasecmp(config_file_name, "none") != 0)
  		load_server_config(config_file_name, cfg);
  
@@ -240,7 +240,7 @@ index d2a509c5..8c1cd518 100644
  
  #LoginGraceTime 2m
 diff --git a/sshd_config.5 b/sshd_config.5
-index fa9618bf..92307ff5 100644
+index 845cc25d..d2500c2a 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
 @@ -86,7 +86,20 @@ directives.
@@ -266,5 +266,5 @@ index fa9618bf..92307ff5 100644
  Specifies which address family should be used by
  .Xr sshd 8 .
 -- 
-2.34.1
+2.37.1 (Apple Git-137.1)
 

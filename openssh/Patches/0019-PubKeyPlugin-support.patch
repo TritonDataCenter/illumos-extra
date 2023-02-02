@@ -1,4 +1,4 @@
-From 2df2ddffa5028188648dc7420f83f0319c1234d0 Mon Sep 17 00:00:00 2001
+From 0106f47b3ef67c3dec513938f2fc2c13d2572924 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 3 Aug 2015 16:27:44 -0700
 Subject: [PATCH 18/32] PubKeyPlugin support
@@ -210,10 +210,10 @@ index 5d59febc..18a93889 100644
  		*authoptsp = opts;
  		opts = NULL;
 diff --git a/servconf.c b/servconf.c
-index 74c99eb4..4e525d10 100644
+index f8b14368..e4259285 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -208,6 +208,7 @@ initialize_server_options(ServerOptions *options)
+@@ -211,6 +211,7 @@ initialize_server_options(ServerOptions *options)
  	 */
  	options->pam_service_per_authmethod = 1;
  #endif
@@ -221,24 +221,24 @@ index 74c99eb4..4e525d10 100644
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -554,7 +555,7 @@ typedef enum {
+@@ -566,7 +567,7 @@ typedef enum {
  	sStreamLocalBindMask, sStreamLocalBindUnlink,
  	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
  	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
--	sRequiredRSASize,
+-	sRequiredRSASize, sChannelTimeout, sUnusedConnectionTimeout,
 +	sRequiredRSASize, sPubKeyPlugin,
  	sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
-@@ -752,6 +753,7 @@ static struct {
- 	{ "casignaturealgorithms", sCASignatureAlgorithms, SSHCFG_ALL },
- 	{ "securitykeyprovider", sSecurityKeyProvider, SSHCFG_GLOBAL },
+@@ -766,6 +767,7 @@ static struct {
  	{ "requiredrsasize", sRequiredRSASize, SSHCFG_ALL },
+ 	{ "channeltimeout", sChannelTimeout, SSHCFG_ALL },
+ 	{ "unusedconnectiontimeout", sUnusedConnectionTimeout, SSHCFG_ALL },
 +	{ "pubkeyplugin", sPubKeyPlugin, SSHCFG_ALL },
  	{ NULL, sBadOption, 0 }
  };
  
-@@ -2557,6 +2559,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2662,6 +2664,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  		}
  		break;
  
@@ -258,7 +258,7 @@ index 74c99eb4..4e525d10 100644
  	case sIgnore:
  	case sUnsupported:
 diff --git a/servconf.h b/servconf.h
-index f9aa27a0..070d7d60 100644
+index ee060007..417c63cf 100644
 --- a/servconf.h
 +++ b/servconf.h
 @@ -240,6 +240,7 @@ typedef struct {
@@ -266,9 +266,9 @@ index f9aa27a0..070d7d60 100644
  	char   *sk_provider;
  	int	required_rsa_size;	/* minimum size of RSA keys */
 +	char   *pubkey_plugin;
- }       ServerOptions;
  
- /* Information about the incoming connection as used by Match */
+ 	char	**channel_timeouts;	/* inactivity timeout by channel type */
+ 	u_int	num_channel_timeouts;
 -- 
-2.34.1
+2.37.1 (Apple Git-137.1)
 
