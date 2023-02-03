@@ -46,24 +46,23 @@ source without its configure script or any generated files. The
 patches should only ever modify configure.ac and not configure, since
 the Makefile here will regenerate configure using autoreconf.
 
+NOTE: Some of these have been renumbered in Patches/ over time.
+
 # Patches for upstreaming
 
-Patches #21 and #29 relate to dropping Illumos privileges, and can probably be
+Patch #21 relates to dropping Illumos privileges, and can probably be
 eventually upstreamed (in a form modified to have some more `#ifdef`s, maybe a
 `configure` arg).
 
-Patches #22 and maybe a cleaned up version of #28 would also make decent
-candidates for upstreaming.
+Patches #22 (SMF) and maybe a cleaned up version of #28 (accept and send
+LANG and LC_* variables) would also make decent candidates for upstreaming.
 
 # Patches to be dropped eventually
 
-The #33 patch, which sets `ssh-keygen` and `ssh-add` to the old fingerprint
-behaviour should be eventually dropped once we're assured of not breaking
-SDC users. HEAD-2257 is probably relevant.
+The #29 and #32 patches, which sets `ssh-keygen` and `ssh-add` to the old
+fingerprint behaviour and 'ssh-keygen' to PKCS#1 PEM, should be eventually
+dropped once we're assured of not breaking SDC users. HEAD-2257 is probably
+relevant.
 
-#26 should be droppable once we figure out if we can move ssh keys back to
+#24 should be droppable once we figure out if we can move ssh keys back to
 `/etc/ssh`, like the rest of the known world.
-
-Eventually, #31 will be droppable, but this is not likely until circa 2018 or
-so, once we're fairly confident there aren't SunSSH clients left in the wild
-that we care about.
