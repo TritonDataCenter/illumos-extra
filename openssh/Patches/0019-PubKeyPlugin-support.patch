@@ -225,9 +225,9 @@ index f8b14368..e4259285 100644
  	sStreamLocalBindMask, sStreamLocalBindUnlink,
  	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
  	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
--	sRequiredRSASize, sChannelTimeout, sUnusedConnectionTimeout,
-+	sRequiredRSASize, sPubKeyPlugin,
- 	sDeprecated, sIgnore, sUnsupported
+ 	sRequiredRSASize, sChannelTimeout, sUnusedConnectionTimeout,
+-	sDeprecated, sIgnore, sUnsupported
++	sPubKeyPlugin, sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
 @@ -766,6 +767,7 @@ static struct {
