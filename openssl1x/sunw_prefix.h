@@ -2936,6 +2936,7 @@
 #pragma redefine_extname	OSSL_DES_version sunw_OSSL_DES_version
 #pragma redefine_extname	OSSL_libdes_version sunw_OSSL_libdes_version
 #pragma redefine_extname	ossl_safe_getenv sunw_ossl_safe_getenv
+#pragma redefine_extname	ossl_bn_rsa_do_unblind sunw_ossl_bn_rsa_do_unblind
 #pragma redefine_extname	OTHERNAME_cmp sunw_OTHERNAME_cmp
 #pragma redefine_extname	OTHERNAME_free sunw_OTHERNAME_free
 #pragma redefine_extname	OTHERNAME_it sunw_OTHERNAME_it
