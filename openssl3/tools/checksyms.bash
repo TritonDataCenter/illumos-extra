@@ -12,6 +12,7 @@
 
 #
 # Copyright (c) 2017, Joyent, Inc.
+# Copyright 2023 MNX Cloud, Inc.
 #
 
 #
@@ -28,6 +29,7 @@ ALLOWED_SYMS="$ALLOWED_SYMS _init _lib_version _PROCEDURE_LINKAGE_TABLE_"
 # Because we let OpenSSL 3 do the library renaming, it includes this in the
 # symbol list. OpenSSL 3 will be adding to this as it adds new symbols.
 ALLOWED_SYMS="$ALLOWED_SYMS OPENSSL_SMARTOS_3.0.0 OPENSSL_SMARTOS_3.0.3"
+ALLOWED_SYMS="$ALLOWED_SYMS OPENSSL_SMARTOS_3.0.8"
 
 NM=/usr/bin/nm
 PREFIX="^sunw_"
