@@ -26,9 +26,9 @@ BUILD64=yes
 BUILD32=
 
 GCC_VER = 10
-VER = gcc-10.3.0-il-1
-MPFR_VER = mpfr-4.1.0
+VER = gcc-10.4.0-il-1
+MPFR_VER = mpfr-4.2.0
 GMP_VER = gmp-6.2.1
-MPC_VER = mpc-1.2.1
+MPC_VER = mpc-1.3.1
 
 include ../Makefile.gcc
