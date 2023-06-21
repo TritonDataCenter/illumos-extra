@@ -1,12 +1,12 @@
-From dabc2eac9da1cc1040e1473c99829f5e445c294b Mon Sep 17 00:00:00 2001
-From: oracle <solaris@oracle.com>
-Date: Mon, 3 Aug 2015 14:36:19 -0700
-Subject: [PATCH 09/32] PAM enhancements for Solaris
+From 20fd0aa0a19c5a142fd1fc79a885c1e3ef2f5c61 Mon Sep 17 00:00:00 2001
+From: Dan McDonald <danmcd@mnx.io>
+Date: Wed, 21 Jun 2023 15:25:28 -0400
+Subject: [PATCH] [PATCH 09/32] PAM enhancements for Solaris
 
 ---
  auth-pam.c     | 116 ++++++++++++++++++++++++++++++++++++++++++++++++-
  auth.h         |   4 ++
- auth2.c        |  67 ++++++++++++++++++++++++++++
+ auth2.c        |  68 +++++++++++++++++++++++++++++
  monitor.c      |  71 ++++++++++++++++++++++++++++++
  monitor.h      |   3 ++
  monitor_wrap.c |  21 +++++++++
@@ -14,13 +14,13 @@ Subject: [PATCH 09/32] PAM enhancements for Solaris
  servconf.h     |  10 +++++
  sshd.8         |  27 ++++++++++++
  sshd_config.5  |  18 +++++++-
- 10 files changed, 390 insertions(+), 3 deletions(-)
+ 10 files changed, 391 insertions(+), 3 deletions(-)
 
 diff --git a/auth-pam.c b/auth-pam.c
-index 6793dacf..bc3f337b 100644
+index 28f53987..b416b079 100644
 --- a/auth-pam.c
 +++ b/auth-pam.c
-@@ -682,6 +682,66 @@ sshpam_cleanup(void)
+@@ -687,6 +687,66 @@ sshpam_cleanup(void)
  	sshpam_handle = NULL;
  }
  
@@ -87,7 +87,7 @@ index 6793dacf..bc3f337b 100644
  static int
  sshpam_init(struct ssh *ssh, Authctxt *authctxt)
  {
-@@ -700,18 +760,72 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
+@@ -705,18 +765,72 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
  			fatal("%s: called initially with no "
  			    "packet context", __func__);
  		}
@@ -177,10 +177,10 @@ index 6d2d3976..af1cf72d 100644
  
  /*
 diff --git a/auth2.c b/auth2.c
-index 6c061934..aba88087 100644
+index 34346e57..b936eb41 100644
 --- a/auth2.c
 +++ b/auth2.c
-@@ -256,6 +256,10 @@ ensure_minimum_time_since(double start, double seconds)
+@@ -254,6 +254,11 @@ ensure_minimum_time_since(double start, double seconds)
  	nanosleep(&ts, NULL);
  }
  
@@ -188,10 +188,11 @@ index 6c061934..aba88087 100644
 +void mm_inform_authmethod(char *authmethod);
 +#endif
 +
- /*ARGSUSED*/
++/*ARGSUSED*/
  static int
  input_userauth_request(int type, u_int32_t seq, struct ssh *ssh)
-@@ -296,9 +300,20 @@ input_userauth_request(int type, u_int32_t seq, struct ssh *ssh)
+ {
+@@ -293,9 +298,20 @@ input_userauth_request(int type, u_int32_t seq, struct ssh *ssh)
  			PRIVSEP(audit_event(ssh, SSH_INVALID_USER));
  #endif
  		}
@@ -212,7 +213,7 @@ index 6c061934..aba88087 100644
  #endif
  		ssh_packet_set_log_preamble(ssh, "%suser %s",
  		    authctxt->valid ? "authenticating " : "invalid ", user);
-@@ -334,6 +349,18 @@ input_userauth_request(int type, u_int32_t seq, struct ssh *ssh)
+@@ -331,6 +347,18 @@ input_userauth_request(int type, u_int32_t seq, struct ssh *ssh)
  	/* try to authenticate user */
  	m = authmethod_lookup(authctxt, method);
  	if (m != NULL && authctxt->failures < options.max_authtries) {
@@ -231,7 +232,7 @@ index 6c061934..aba88087 100644
  		debug2("input_userauth_request: try method %s", method);
  		authenticated =	m->userauth(ssh, method);
  	}
-@@ -359,6 +386,10 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
+@@ -356,6 +384,10 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
  	char *methods;
  	int r, partial = 0;
  
@@ -242,7 +243,7 @@ index 6c061934..aba88087 100644
  	if (authenticated) {
  		if (!authctxt->valid) {
  			fatal("INTERNAL ERROR: authenticated invalid user %s",
-@@ -382,6 +413,29 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
+@@ -379,6 +411,29 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
  	}
  
  	if (authenticated && options.num_auth_methods != 0) {
@@ -272,7 +273,7 @@ index 6c061934..aba88087 100644
  		if (!auth2_update_methods_lists(authctxt, method, submethod)) {
  			authenticated = 0;
  			partial = 1;
-@@ -399,7 +453,20 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
+@@ -396,7 +451,20 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
  		return;
  
  #ifdef USE_PAM
@@ -294,7 +295,7 @@ index 6c061934..aba88087 100644
  
  		/* If PAM returned a message, send it to the user. */
 diff --git a/monitor.c b/monitor.c
-index 91e0e624..31f79362 100644
+index fda4a366..2766b7bd 100644
 --- a/monitor.c
 +++ b/monitor.c
 @@ -117,6 +117,9 @@ int mm_answer_sign(struct ssh *, int, struct sshbuf *);
@@ -463,10 +464,10 @@ index 8e379a15..59c1ccac 100644
  int
  mm_auth_password(struct ssh *ssh, char *password)
 diff --git a/servconf.c b/servconf.c
-index 73f257ad..c308e79f 100644
+index 24b6c07b..113e527a 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -199,6 +199,18 @@ initialize_server_options(ServerOptions *options)
+@@ -198,6 +198,18 @@ initialize_server_options(ServerOptions *options)
  	options->channel_timeouts = NULL;
  	options->num_channel_timeouts = 0;
  	options->unused_connection_timeout = -1;
@@ -485,7 +486,7 @@ index 73f257ad..c308e79f 100644
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -438,6 +450,12 @@ fill_default_server_options(ServerOptions *options)
+@@ -437,6 +449,12 @@ fill_default_server_options(ServerOptions *options)
  		options->ip_qos_bulk = IPTOS_DSCP_CS1;
  	if (options->version_addendum == NULL)
  		options->version_addendum = xstrdup("");
@@ -498,7 +499,7 @@ index 73f257ad..c308e79f 100644
  	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
  		options->fwd_opts.streamlocal_bind_mask = 0177;
  	if (options->fwd_opts.streamlocal_bind_unlink == -1)
-@@ -529,6 +547,9 @@ typedef enum {
+@@ -528,6 +546,9 @@ typedef enum {
  	sMatch, sPermitOpen, sPermitListen, sForceCommand, sChrootDirectory,
  	sUsePrivilegeSeparation, sAllowAgentForwarding,
  	sHostCertificate, sInclude,
@@ -508,7 +509,7 @@ index 73f257ad..c308e79f 100644
  	sRevokedKeys, sTrustedUserCAKeys, sAuthorizedPrincipalsFile,
  	sAuthorizedPrincipalsCommand, sAuthorizedPrincipalsCommandUser,
  	sKexAlgorithms, sCASignatureAlgorithms, sIPQoS, sVersionAddendum,
-@@ -680,6 +701,10 @@ static struct {
+@@ -679,6 +700,10 @@ static struct {
  	{ "forcecommand", sForceCommand, SSHCFG_ALL },
  	{ "chrootdirectory", sChrootDirectory, SSHCFG_ALL },
  	{ "hostcertificate", sHostCertificate, SSHCFG_GLOBAL },
@@ -519,7 +520,7 @@ index 73f257ad..c308e79f 100644
  	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
  	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },
  	{ "authorizedprincipalsfile", sAuthorizedPrincipalsFile, SSHCFG_ALL },
-@@ -2569,6 +2594,37 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2568,6 +2593,37 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  		}
  		goto parse_time;
  
@@ -586,10 +587,10 @@ index 7ad43de8..ee060007 100644
  	int	expose_userauth_info;
  	u_int64_t timing_secret;
 diff --git a/sshd.8 b/sshd.8
-index bace9783..57b4e0a8 100644
+index 9c8f2fca..d6fa3fc5 100644
 --- a/sshd.8
 +++ b/sshd.8
-@@ -1003,6 +1003,33 @@ concurrently for different ports, this contains the process ID of the one
+@@ -1017,6 +1017,33 @@ concurrently for different ports, this contains the process ID of the one
  started last).
  The content of this file is not sensitive; it can be world-readable.
  .El
@@ -624,10 +625,10 @@ index bace9783..57b4e0a8 100644
  .Xr scp 1 ,
  .Xr sftp 1 ,
 diff --git a/sshd_config.5 b/sshd_config.5
-index c0499fa8..f912c913 100644
+index 0e931d5d..80980d4e 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
-@@ -1347,6 +1347,21 @@ and
+@@ -1359,6 +1359,21 @@ and
  key exchange methods.
  The default is
  .Pa /etc/moduli .
@@ -649,7 +650,7 @@ index c0499fa8..f912c913 100644
  .It Cm PasswordAuthentication
  Specifies whether password authentication is allowed.
  The default is
-@@ -1882,8 +1897,7 @@ If
+@@ -1894,8 +1909,7 @@ If
  is enabled, you will not be able to run
  .Xr sshd 8
  as a non-root user.
@@ -660,5 +661,5 @@ index c0499fa8..f912c913 100644
  Optionally specifies additional text to append to the SSH protocol banner
  sent by the server upon connection.
 -- 
-2.37.1 (Apple Git-137.1)
+2.34.1
 
