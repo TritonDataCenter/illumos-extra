@@ -1,7 +1,7 @@
-From 20fd0aa0a19c5a142fd1fc79a885c1e3ef2f5c61 Mon Sep 17 00:00:00 2001
-From: Dan McDonald <danmcd@mnx.io>
-Date: Wed, 21 Jun 2023 15:25:28 -0400
-Subject: [PATCH] [PATCH 09/32] PAM enhancements for Solaris
+From dabc2eac9da1cc1040e1473c99829f5e445c294b Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:36:19 -0700
+Subject: [PATCH 09/32] PAM enhancements for Solaris
 
 ---
  auth-pam.c     | 116 ++++++++++++++++++++++++++++++++++++++++++++++++-
