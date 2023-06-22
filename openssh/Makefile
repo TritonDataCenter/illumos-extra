@@ -23,7 +23,7 @@
 # Copyright 2023 MNX Cloud, Inc.
 #
 
-VER =	openssh-9.2p1
+VER =	openssh-9.3p1
 
 include ../Makefile.defs
 
