@@ -19,9 +19,10 @@
 # CDDL HEADER END
 #
 # Copyright 2021 Joyent, Inc.
+# Copyright 2023 MNX Cloud, Inc.
 #
 
-VER =	openldap-2.5.8
+VER =	openldap-2.5.14
 
 include ../Makefile.defs
 
