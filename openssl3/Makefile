@@ -23,7 +23,7 @@
 # Copyright 2023 MNX Cloud, Inc.
 #
 
-VER = openssl-3.0.8
+VER = openssl-3.0.9
 LIBVER =	3
 
 include ../Makefile.defs
