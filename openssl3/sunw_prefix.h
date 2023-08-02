@@ -6028,6 +6028,7 @@
 #pragma redefine_extname   padlock_ofb_encrypt sunw_padlock_ofb_encrypt
 #pragma redefine_extname   padlock_aes_block sunw_padlock_aes_block
 
+#pragma redefine_extname   rc4_md5_enc sunw_rc4_md5_enc
 
 /*
  * XXX WARNING: OpenSSL 3 introduces symbols that work differently between
