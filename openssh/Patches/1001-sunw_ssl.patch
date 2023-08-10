@@ -1,23 +1,23 @@
-From 30ef72e775f78d06f37b63a6e54f06d8ede5aba0 Mon Sep 17 00:00:00 2001
-From: Alex Wilson <alex.wilson@joyent.com>
-Date: Tue, 22 Dec 2015 14:31:25 -0800
-Subject: [PATCH 32/32] SmartOS local: use sunw_ssl lib from platform
+From ac960b9ba3f80d0b7af61198a964f9a03906e929 Mon Sep 17 00:00:00 2001
+From: Dan McDonald <danmcd@mnx.io>
+Date: Thu, 10 Aug 2023 18:11:52 -0400
+Subject: [PATCH] [PATCH 32/32] SmartOS local: use sunw_ssl lib from platform
 
 ---
- cipher-chachapoly-libcrypto.c        |   4 +-
- cipher-chachapoly.c                  |   4 +-
- configure.ac                         | 108 +++++++++++-----------
- digest-openssl.c                     |   6 +-
- kex.c                                |   8 +-
- openbsd-compat/libressl-api-compat.c | 132 +++++++++++++--------------
- openbsd-compat/openssl-compat.h      | 122 ++++++++++++-------------
- 7 files changed, 192 insertions(+), 192 deletions(-)
+ cipher-chachapoly-libcrypto.c        |  4 +--
+ cipher-chachapoly.c                  |  4 +--
+ configure.ac                         | 46 ++++++++++++++--------------
+ digest-openssl.c                     |  6 ++--
+ kex.c                                |  8 ++---
+ openbsd-compat/libressl-api-compat.c | 16 +++++-----
+ openbsd-compat/openssl-compat.h      | 14 ++++-----
+ 7 files changed, 49 insertions(+), 49 deletions(-)
 
 diff --git a/cipher-chachapoly-libcrypto.c b/cipher-chachapoly-libcrypto.c
-index 719f9c84..3bfbcf8c 100644
+index e8d20c28..2ebd699c 100644
 --- a/cipher-chachapoly-libcrypto.c
 +++ b/cipher-chachapoly-libcrypto.c
-@@ -21,7 +21,7 @@
+@@ -20,7 +20,7 @@
  #include "openbsd-compat/openssl-compat.h"
  #endif
  
@@ -26,17 +26,17 @@ index 719f9c84..3bfbcf8c 100644
  
  #include <sys/types.h>
  #include <stdarg.h> /* needed for log.h */
-@@ -163,4 +163,4 @@ chachapoly_get_length(struct chachapoly_ctx *ctx,
+@@ -162,4 +162,4 @@ chachapoly_get_length(struct chachapoly_ctx *ctx,
  	*plenp = PEEK_U32(buf);
  	return 0;
  }
 -#endif /* defined(HAVE_EVP_CHACHA20) && !defined(HAVE_BROKEN_CHACHA20) */
 +#endif /* defined(HAVE_SUNW_EVP_CHACHA20) && !defined(HAVE_BROKEN_CHACHA20) */
 diff --git a/cipher-chachapoly.c b/cipher-chachapoly.c
-index 716f8d42..34846ef6 100644
+index 4471fe2d..010de2d3 100644
 --- a/cipher-chachapoly.c
 +++ b/cipher-chachapoly.c
-@@ -21,7 +21,7 @@
+@@ -20,7 +20,7 @@
  #include "openbsd-compat/openssl-compat.h"
  #endif
  
@@ -45,17 +45,17 @@ index 716f8d42..34846ef6 100644
  
  #include <sys/types.h>
  #include <stdarg.h> /* needed for log.h */
-@@ -136,4 +136,4 @@ chachapoly_get_length(struct chachapoly_ctx *ctx,
+@@ -135,4 +135,4 @@ chachapoly_get_length(struct chachapoly_ctx *ctx,
  	return 0;
  }
  
 -#endif /* !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
 +#endif /* !defined(HAVE_SUNW_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
 diff --git a/configure.ac b/configure.ac
-index 420946aa..78336652 100644
+index 495b45c7..27b072d4 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -2780,9 +2780,9 @@ AC_ARG_WITH([ssl-engine],
+@@ -2810,9 +2810,9 @@ AC_ARG_WITH([ssl-engine],
  
  nocrypto_saved_LIBS="$LIBS"
  if test "x$openssl" = "xyes" ; then
@@ -68,7 +68,7 @@ index 420946aa..78336652 100644
  	    [AC_MSG_ERROR([*** working libcrypto not found, check config.log])])
  	AC_CHECK_HEADER([openssl/opensslv.h], ,
  	    [AC_MSG_ERROR([*** OpenSSL headers missing - please install first or check config.log ***])])
-@@ -2969,23 +2969,23 @@ if test "x$openssl" = "xyes" ; then
+@@ -3003,23 +3003,23 @@ if test "x$openssl" = "xyes" ; then
  	)
  
  	AC_CHECK_FUNCS([ \
@@ -105,95 +105,33 @@ index 420946aa..78336652 100644
  		AC_DEFINE(HAVE_OPENSSL_ADD_ALL_ALGORITHMS, 1, [as a macro]), ,
  		[[#include <openssl/evp.h>]]
  	    )
-@@ -2993,42 +2993,42 @@ if test "x$openssl" = "xyes" ; then
+@@ -3027,11 +3027,11 @@ if test "x$openssl" = "xyes" ; then
  
- 	# LibreSSL/OpenSSL 1.1x API
+ 	# LibreSSL/OpenSSL API differences
  	AC_CHECK_FUNCS([ \
--		OPENSSL_init_crypto \
--		DH_get0_key \
--		DH_get0_pqg \
--		DH_set0_key \
--		DH_set_length \
--		DH_set0_pqg \
--		DSA_get0_key \
--		DSA_get0_pqg \
--		DSA_set0_key \
--		DSA_set0_pqg \
--		DSA_SIG_get0 \
--		DSA_SIG_set0 \
--		ECDSA_SIG_get0 \
--		ECDSA_SIG_set0 \
 -		EVP_CIPHER_CTX_iv \
 -		EVP_CIPHER_CTX_iv_noconst \
 -		EVP_CIPHER_CTX_get_iv \
 -		EVP_CIPHER_CTX_get_updated_iv \
 -		EVP_CIPHER_CTX_set_iv \
--		RSA_get0_crt_params \
--		RSA_get0_factors \
--		RSA_get0_key \
--		RSA_set0_crt_params \
--		RSA_set0_factors \
--		RSA_set0_key \
--		RSA_meth_free \
--		RSA_meth_dup \
--		RSA_meth_set1_name \
--		RSA_meth_get_finish \
--		RSA_meth_set_priv_enc \
--		RSA_meth_set_priv_dec \
--		RSA_meth_set_finish \
--		EVP_PKEY_get0_RSA \
--		EVP_MD_CTX_new \
--		EVP_MD_CTX_free \
--		EVP_chacha20 \
-+		sunw_OPENSSL_init_crypto \
-+		sunw_DH_get0_key \
-+		sunw_DH_get0_pqg \
-+		sunw_DH_set0_key \
-+		sunw_DH_set_length \
-+		sunw_DH_set0_pqg \
-+		sunw_DSA_get0_key \
-+		sunw_DSA_get0_pqg \
-+		sunw_DSA_set0_key \
-+		sunw_DSA_set0_pqg \
-+		sunw_DSA_SIG_get0 \
-+		sunw_DSA_SIG_set0 \
-+		sunw_ECDSA_SIG_get0 \
-+		sunw_ECDSA_SIG_set0 \
 +		sunw_EVP_CIPHER_CTX_iv \
 +		sunw_EVP_CIPHER_CTX_iv_noconst \
 +		sunw_EVP_CIPHER_CTX_get_iv \
 +		sunw_EVP_CIPHER_CTX_get_updated_iv \
 +		sunw_EVP_CIPHER_CTX_set_iv \
-+		sunw_RSA_get0_crt_params \
-+		sunw_RSA_get0_factors \
-+		sunw_RSA_get0_key \
-+		sunw_RSA_set0_crt_params \
-+		sunw_RSA_set0_factors \
-+		sunw_RSA_set0_key \
-+		sunw_RSA_meth_free \
-+		sunw_RSA_meth_dup \
-+		sunw_RSA_meth_set1_name \
-+		sunw_RSA_meth_get_finish \
-+		sunw_RSA_meth_set_priv_enc \
-+		sunw_RSA_meth_set_priv_dec \
-+		sunw_RSA_meth_set_finish \
-+		sunw_EVP_PKEY_get0_RSA \
-+		sunw_EVP_MD_CTX_new \
-+		sunw_EVP_MD_CTX_free \
-+		sunw_EVP_chacha20 \
  	])
  
  	if test "x$openssl_engine" = "xyes" ; then
-@@ -3087,7 +3087,7 @@ if test "x$openssl" = "xyes" ; then
+@@ -3090,7 +3090,7 @@ if test "x$openssl" = "xyes" ; then
  	)
  
- 	# Check for SHA256, SHA384 and SHA512 support in OpenSSL
--	AC_CHECK_FUNCS([EVP_sha256 EVP_sha384 EVP_sha512])
-+	AC_CHECK_FUNCS([sunw_EVP_sha256 sunw_EVP_sha384 sunw_EVP_sha512])
+ 	# Check for various EVP support in OpenSSL
+-	AC_CHECK_FUNCS([EVP_sha256 EVP_sha384 EVP_sha512 EVP_chacha20])
++	AC_CHECK_FUNCS([sunw_EVP_sha256 sunw_EVP_sha384 sunw_EVP_sha512 sunw_EVP_chacha20])
  
  	# Check complete ECC support in OpenSSL
  	AC_MSG_CHECKING([whether OpenSSL has NID_X9_62_prime256v1])
-@@ -3167,7 +3167,7 @@ if test "x$openssl" = "xyes" ; then
+@@ -3170,7 +3170,7 @@ if test "x$openssl" = "xyes" ; then
  	if test x$enable_nistp256 = x1 || test x$enable_nistp384 = x1 || \
  	    test x$enable_nistp521 = x1; then
  		AC_DEFINE(OPENSSL_HAS_ECC, [1], [OpenSSL has ECC])
@@ -224,10 +162,10 @@ index e073a807..c0bf66d6 100644
  #endif
  
 diff --git a/kex.c b/kex.c
-index 0bcd27dc..ab6b1812 100644
+index b4e2ab75..4952f7b6 100644
 --- a/kex.c
 +++ b/kex.c
-@@ -93,9 +93,9 @@ static const struct kexalg kexalgs[] = {
+@@ -95,9 +95,9 @@ static const struct kexalg kexalgs[] = {
  	{ KEX_DH16_SHA512, KEX_DH_GRP16_SHA512, 0, SSH_DIGEST_SHA512 },
  	{ KEX_DH18_SHA512, KEX_DH_GRP18_SHA512, 0, SSH_DIGEST_SHA512 },
  	{ KEX_DHGEX_SHA1, KEX_DH_GEX_SHA1, 0, SSH_DIGEST_SHA1 },
@@ -239,7 +177,7 @@ index 0bcd27dc..ab6b1812 100644
  #ifdef OPENSSL_HAS_ECC
  	{ KEX_ECDH_SHA2_NISTP256, KEX_ECDH_SHA2,
  	    NID_X9_62_prime256v1, SSH_DIGEST_SHA256 },
-@@ -107,14 +107,14 @@ static const struct kexalg kexalgs[] = {
+@@ -109,14 +109,14 @@ static const struct kexalg kexalgs[] = {
  # endif /* OPENSSL_HAS_NISTP521 */
  #endif /* OPENSSL_HAS_ECC */
  #endif /* WITH_OPENSSL */
@@ -257,139 +195,19 @@ index 0bcd27dc..ab6b1812 100644
  };
  
 diff --git a/openbsd-compat/libressl-api-compat.c b/openbsd-compat/libressl-api-compat.c
-index 801a2e8d..1950fbb9 100644
+index 59be1739..543e11f8 100644
 --- a/openbsd-compat/libressl-api-compat.c
 +++ b/openbsd-compat/libressl-api-compat.c
-@@ -157,7 +157,7 @@
- #endif
- #include <openssl/dh.h>
+@@ -25,7 +25,7 @@
  
--#ifndef HAVE_DSA_GET0_PQG
-+#ifndef HAVE_SUNW_DSA_GET0_PQG
- void
- DSA_get0_pqg(const DSA *d, const BIGNUM **p, const BIGNUM **q, const BIGNUM **g)
- {
-@@ -168,9 +168,9 @@ DSA_get0_pqg(const DSA *d, const BIGNUM **p, const BIGNUM **q, const BIGNUM **g)
- 	if (g != NULL)
- 		*g = d->g;
- }
--#endif /* HAVE_DSA_GET0_PQG */
-+#endif /* HAVE_SUNW_DSA_GET0_PQG */
- 
--#ifndef HAVE_DSA_SET0_PQG
-+#ifndef HAVE_SUNW_DSA_SET0_PQG
- int
- DSA_set0_pqg(DSA *d, BIGNUM *p, BIGNUM *q, BIGNUM *g)
- {
-@@ -193,9 +193,9 @@ DSA_set0_pqg(DSA *d, BIGNUM *p, BIGNUM *q, BIGNUM *g)
- 
- 	return 1;
- }
--#endif /* HAVE_DSA_SET0_PQG */
-+#endif /* HAVE_SUNW_DSA_SET0_PQG */
- 
--#ifndef HAVE_DSA_GET0_KEY
-+#ifndef HAVE_SUNW_DSA_GET0_KEY
- void
- DSA_get0_key(const DSA *d, const BIGNUM **pub_key, const BIGNUM **priv_key)
- {
-@@ -204,9 +204,9 @@ DSA_get0_key(const DSA *d, const BIGNUM **pub_key, const BIGNUM **priv_key)
- 	if (priv_key != NULL)
- 		*priv_key = d->priv_key;
- }
--#endif /* HAVE_DSA_GET0_KEY */
-+#endif /* HAVE_SUNW_DSA_GET0_KEY */
- 
--#ifndef HAVE_DSA_SET0_KEY
-+#ifndef HAVE_SUNW_DSA_SET0_KEY
- int
- DSA_set0_key(DSA *d, BIGNUM *pub_key, BIGNUM *priv_key)
- {
-@@ -224,9 +224,9 @@ DSA_set0_key(DSA *d, BIGNUM *pub_key, BIGNUM *priv_key)
- 
- 	return 1;
- }
--#endif /* HAVE_DSA_SET0_KEY */
-+#endif /* HAVE_SUNW_DSA_SET0_KEY */
- 
--#ifndef HAVE_RSA_GET0_KEY
-+#ifndef HAVE_SUNW_RSA_GET0_KEY
- void
- RSA_get0_key(const RSA *r, const BIGNUM **n, const BIGNUM **e, const BIGNUM **d)
- {
-@@ -237,9 +237,9 @@ RSA_get0_key(const RSA *r, const BIGNUM **n, const BIGNUM **e, const BIGNUM **d)
- 	if (d != NULL)
- 		*d = r->d;
- }
--#endif /* HAVE_RSA_GET0_KEY */
-+#endif /* HAVE_SUNW_RSA_GET0_KEY */
- 
--#ifndef HAVE_RSA_SET0_KEY
-+#ifndef HAVE_SUNW_RSA_SET0_KEY
- int
- RSA_set0_key(RSA *r, BIGNUM *n, BIGNUM *e, BIGNUM *d)
- {
-@@ -261,9 +261,9 @@ RSA_set0_key(RSA *r, BIGNUM *n, BIGNUM *e, BIGNUM *d)
- 
- 	return 1;
- }
--#endif /* HAVE_RSA_SET0_KEY */
-+#endif /* HAVE_SUNW_RSA_SET0_KEY */
- 
--#ifndef HAVE_RSA_GET0_CRT_PARAMS
-+#ifndef HAVE_SUNW_RSA_GET0_CRT_PARAMS
- void
- RSA_get0_crt_params(const RSA *r, const BIGNUM **dmp1, const BIGNUM **dmq1,
-     const BIGNUM **iqmp)
-@@ -275,9 +275,9 @@ RSA_get0_crt_params(const RSA *r, const BIGNUM **dmp1, const BIGNUM **dmq1,
- 	if (iqmp != NULL)
- 		*iqmp = r->iqmp;
- }
--#endif /* HAVE_RSA_GET0_CRT_PARAMS */
-+#endif /* HAVE_SUNW_RSA_GET0_CRT_PARAMS */
- 
--#ifndef HAVE_RSA_SET0_CRT_PARAMS
-+#ifndef HAVE_SUNW_RSA_SET0_CRT_PARAMS
- int
- RSA_set0_crt_params(RSA *r, BIGNUM *dmp1, BIGNUM *dmq1, BIGNUM *iqmp)
- {
-@@ -301,9 +301,9 @@ RSA_set0_crt_params(RSA *r, BIGNUM *dmp1, BIGNUM *dmq1, BIGNUM *iqmp)
- 
- 	return 1;
- }
--#endif /* HAVE_RSA_SET0_CRT_PARAMS */
-+#endif /* HAVE_SUNW_RSA_SET0_CRT_PARAMS */
- 
--#ifndef HAVE_RSA_GET0_FACTORS
-+#ifndef HAVE_SUNW_RSA_GET0_FACTORS
- void
- RSA_get0_factors(const RSA *r, const BIGNUM **p, const BIGNUM **q)
- {
-@@ -312,9 +312,9 @@ RSA_get0_factors(const RSA *r, const BIGNUM **p, const BIGNUM **q)
- 	if (q != NULL)
- 		*q = r->q;
- }
--#endif /* HAVE_RSA_GET0_FACTORS */
-+#endif /* HAVE_SUNW_RSA_GET0_FACTORS */
- 
--#ifndef HAVE_RSA_SET0_FACTORS
-+#ifndef HAVE_SUNW_RSA_SET0_FACTORS
- int
- RSA_set0_factors(RSA *r, BIGNUM *p, BIGNUM *q)
- {
-@@ -332,9 +332,9 @@ RSA_set0_factors(RSA *r, BIGNUM *p, BIGNUM *q)
- 
- 	return 1;
- }
--#endif /* HAVE_RSA_SET0_FACTORS */
-+#endif /* HAVE_SUNW_RSA_SET0_FACTORS */
+ #include <openssl/evp.h>
  
 -#ifndef HAVE_EVP_CIPHER_CTX_GET_IV
 +#ifndef HAVE_SUNW_EVP_CIPHER_CTX_GET_IV
  int
  EVP_CIPHER_CTX_get_iv(const EVP_CIPHER_CTX *ctx, unsigned char *iv, size_t len)
  {
-@@ -353,17 +353,17 @@ EVP_CIPHER_CTX_get_iv(const EVP_CIPHER_CTX *ctx, unsigned char *iv, size_t len)
+@@ -44,17 +44,17 @@ EVP_CIPHER_CTX_get_iv(const EVP_CIPHER_CTX *ctx, unsigned char *iv, size_t len)
  	if (len != 0) {
  		if (iv == NULL)
  			return 0;
@@ -411,7 +229,7 @@ index 801a2e8d..1950fbb9 100644
  int
  EVP_CIPHER_CTX_set_iv(EVP_CIPHER_CTX *ctx, const unsigned char *iv, size_t len)
  {
-@@ -382,17 +382,17 @@ EVP_CIPHER_CTX_set_iv(EVP_CIPHER_CTX *ctx, const unsigned char *iv, size_t len)
+@@ -73,14 +73,14 @@ EVP_CIPHER_CTX_set_iv(EVP_CIPHER_CTX *ctx, const unsigned char *iv, size_t len)
  	if (len != 0) {
  		if (iv == NULL)
  			return 0;
@@ -428,265 +246,14 @@ index 801a2e8d..1950fbb9 100644
 -#endif /* HAVE_EVP_CIPHER_CTX_SET_IV */
 +#endif /* HAVE_SUNW_EVP_CIPHER_CTX_SET_IV */
  
--#ifndef HAVE_DSA_SIG_GET0
-+#ifndef HAVE_SUNW_DSA_SIG_GET0
- void
- DSA_SIG_get0(const DSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps)
- {
-@@ -401,9 +401,9 @@ DSA_SIG_get0(const DSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps)
- 	if (ps != NULL)
- 		*ps = sig->s;
- }
--#endif /* HAVE_DSA_SIG_GET0 */
-+#endif /* HAVE_SUNW_DSA_SIG_GET0 */
- 
--#ifndef HAVE_DSA_SIG_SET0
-+#ifndef HAVE_SUNW_DSA_SIG_SET0
- int
- DSA_SIG_set0(DSA_SIG *sig, BIGNUM *r, BIGNUM *s)
- {
-@@ -417,10 +417,10 @@ DSA_SIG_set0(DSA_SIG *sig, BIGNUM *r, BIGNUM *s)
- 
- 	return 1;
- }
--#endif /* HAVE_DSA_SIG_SET0 */
-+#endif /* HAVE_SUNW_DSA_SIG_SET0 */
- 
- #ifdef OPENSSL_HAS_ECC
--#ifndef HAVE_ECDSA_SIG_GET0
-+#ifndef HAVE_SUNW_ECDSA_SIG_GET0
- void
- ECDSA_SIG_get0(const ECDSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps)
- {
-@@ -429,9 +429,9 @@ ECDSA_SIG_get0(const ECDSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps)
- 	if (ps != NULL)
- 		*ps = sig->s;
- }
--#endif /* HAVE_ECDSA_SIG_GET0 */
-+#endif /* HAVE_SUNW_ECDSA_SIG_GET0 */
- 
--#ifndef HAVE_ECDSA_SIG_SET0
-+#ifndef HAVE_SUNW_ECDSA_SIG_SET0
- int
- ECDSA_SIG_set0(ECDSA_SIG *sig, BIGNUM *r, BIGNUM *s)
- {
-@@ -444,10 +444,10 @@ ECDSA_SIG_set0(ECDSA_SIG *sig, BIGNUM *r, BIGNUM *s)
- 	sig->s = s;
- 	return 1;
- }
--#endif /* HAVE_ECDSA_SIG_SET0 */
-+#endif /* HAVE_SUNW_ECDSA_SIG_SET0 */
- #endif /* OPENSSL_HAS_ECC */
- 
--#ifndef HAVE_DH_GET0_PQG
-+#ifndef HAVE_SUNW_DH_GET0_PQG
- void
- DH_get0_pqg(const DH *dh, const BIGNUM **p, const BIGNUM **q, const BIGNUM **g)
- {
-@@ -458,9 +458,9 @@ DH_get0_pqg(const DH *dh, const BIGNUM **p, const BIGNUM **q, const BIGNUM **g)
- 	if (g != NULL)
- 		*g = dh->g;
- }
--#endif /* HAVE_DH_GET0_PQG */
-+#endif /* HAVE_SUNW_DH_GET0_PQG */
- 
--#ifndef HAVE_DH_SET0_PQG
-+#ifndef HAVE_SUNW_DH_SET0_PQG
- int
- DH_set0_pqg(DH *dh, BIGNUM *p, BIGNUM *q, BIGNUM *g)
- {
-@@ -482,9 +482,9 @@ DH_set0_pqg(DH *dh, BIGNUM *p, BIGNUM *q, BIGNUM *g)
- 
- 	return 1;
- }
--#endif /* HAVE_DH_SET0_PQG */
-+#endif /* HAVE_SUNW_DH_SET0_PQG */
- 
--#ifndef HAVE_DH_GET0_KEY
-+#ifndef HAVE_SUNW_DH_GET0_KEY
- void
- DH_get0_key(const DH *dh, const BIGNUM **pub_key, const BIGNUM **priv_key)
- {
-@@ -493,9 +493,9 @@ DH_get0_key(const DH *dh, const BIGNUM **pub_key, const BIGNUM **priv_key)
- 	if (priv_key != NULL)
- 		*priv_key = dh->priv_key;
- }
--#endif /* HAVE_DH_GET0_KEY */
-+#endif /* HAVE_SUNW_DH_GET0_KEY */
- 
--#ifndef HAVE_DH_SET0_KEY
-+#ifndef HAVE_SUNW_DH_SET0_KEY
- int
- DH_set0_key(DH *dh, BIGNUM *pub_key, BIGNUM *priv_key)
- {
-@@ -510,9 +510,9 @@ DH_set0_key(DH *dh, BIGNUM *pub_key, BIGNUM *priv_key)
- 
- 	return 1;
- }
--#endif /* HAVE_DH_SET0_KEY */
-+#endif /* HAVE_SUNW_DH_SET0_KEY */
- 
--#ifndef HAVE_DH_SET_LENGTH
-+#ifndef HAVE_SUNW_DH_SET_LENGTH
- int
- DH_set_length(DH *dh, long length)
- {
-@@ -522,9 +522,9 @@ DH_set_length(DH *dh, long length)
- 	dh->length = length;
- 	return 1;
- }
--#endif /* HAVE_DH_SET_LENGTH */
-+#endif /* HAVE_SUNW_DH_SET_LENGTH */
- 
--#ifndef HAVE_RSA_METH_FREE
-+#ifndef HAVE_SUNW_RSA_METH_FREE
- void
- RSA_meth_free(RSA_METHOD *meth)
- {
-@@ -533,9 +533,9 @@ RSA_meth_free(RSA_METHOD *meth)
- 		free(meth);
- 	}
- }
--#endif /* HAVE_RSA_METH_FREE */
-+#endif /* HAVE_SUNW_RSA_METH_FREE */
- 
--#ifndef HAVE_RSA_METH_DUP
-+#ifndef HAVE_SUNW_RSA_METH_DUP
- RSA_METHOD *
- RSA_meth_dup(const RSA_METHOD *meth)
- {
-@@ -551,9 +551,9 @@ RSA_meth_dup(const RSA_METHOD *meth)
- 
- 	return copy;
- }
--#endif /* HAVE_RSA_METH_DUP */
-+#endif /* HAVE_SUNW_RSA_METH_DUP */
- 
--#ifndef HAVE_RSA_METH_SET1_NAME
-+#ifndef HAVE_SUNW_RSA_METH_SET1_NAME
- int
- RSA_meth_set1_name(RSA_METHOD *meth, const char *name)
- {
-@@ -565,17 +565,17 @@ RSA_meth_set1_name(RSA_METHOD *meth, const char *name)
- 	meth->name = copy;
- 	return 1;
- }
--#endif /* HAVE_RSA_METH_SET1_NAME */
-+#endif /* HAVE_SUNW_RSA_METH_SET1_NAME */
- 
--#ifndef HAVE_RSA_METH_GET_FINISH
-+#ifndef HAVE_SUNW_RSA_METH_GET_FINISH
- int
- (*RSA_meth_get_finish(const RSA_METHOD *meth))(RSA *rsa)
- {
- 	return meth->finish;
- }
--#endif /* HAVE_RSA_METH_GET_FINISH */
-+#endif /* HAVE_SUNW_RSA_METH_GET_FINISH */
- 
--#ifndef HAVE_RSA_METH_SET_PRIV_ENC
-+#ifndef HAVE_SUNW_RSA_METH_SET_PRIV_ENC
- int
- RSA_meth_set_priv_enc(RSA_METHOD *meth, int (*priv_enc)(int flen,
-     const unsigned char *from, unsigned char *to, RSA *rsa, int padding))
-@@ -583,9 +583,9 @@ RSA_meth_set_priv_enc(RSA_METHOD *meth, int (*priv_enc)(int flen,
- 	meth->rsa_priv_enc = priv_enc;
- 	return 1;
- }
--#endif /* HAVE_RSA_METH_SET_PRIV_ENC */
-+#endif /* HAVE_SUNW_RSA_METH_SET_PRIV_ENC */
- 
--#ifndef HAVE_RSA_METH_SET_PRIV_DEC
-+#ifndef HAVE_SUNW_RSA_METH_SET_PRIV_DEC
- int
- RSA_meth_set_priv_dec(RSA_METHOD *meth, int (*priv_dec)(int flen,
-     const unsigned char *from, unsigned char *to, RSA *rsa, int padding))
-@@ -593,18 +593,18 @@ RSA_meth_set_priv_dec(RSA_METHOD *meth, int (*priv_dec)(int flen,
- 	meth->rsa_priv_dec = priv_dec;
- 	return 1;
- }
--#endif /* HAVE_RSA_METH_SET_PRIV_DEC */
-+#endif /* HAVE_SUNW_RSA_METH_SET_PRIV_DEC */
- 
--#ifndef HAVE_RSA_METH_SET_FINISH
-+#ifndef HAVE_SUNW_RSA_METH_SET_FINISH
- int
- RSA_meth_set_finish(RSA_METHOD *meth, int (*finish)(RSA *rsa))
- {
- 	meth->finish = finish;
- 	return 1;
- }
--#endif /* HAVE_RSA_METH_SET_FINISH */
-+#endif /* HAVE_SUNW_RSA_METH_SET_FINISH */
- 
--#ifndef HAVE_EVP_PKEY_GET0_RSA
-+#ifndef HAVE_SUNW_EVP_PKEY_GET0_RSA
- RSA *
- EVP_PKEY_get0_RSA(EVP_PKEY *pkey)
- {
-@@ -614,17 +614,17 @@ EVP_PKEY_get0_RSA(EVP_PKEY *pkey)
- 	}
- 	return pkey->pkey.rsa;
- }
--#endif /* HAVE_EVP_PKEY_GET0_RSA */
-+#endif /* HAVE_SUNW_EVP_PKEY_GET0_RSA */
- 
--#ifndef HAVE_EVP_MD_CTX_NEW
-+#ifndef HAVE_SUNW_EVP_MD_CTX_NEW
- EVP_MD_CTX *
- EVP_MD_CTX_new(void)
- {
- 	return calloc(1, sizeof(EVP_MD_CTX));
- }
--#endif /* HAVE_EVP_MD_CTX_NEW */
-+#endif /* HAVE_SUNW_EVP_MD_CTX_NEW */
- 
--#ifndef HAVE_EVP_MD_CTX_FREE
-+#ifndef HAVE_SUNW_EVP_MD_CTX_FREE
- void
- EVP_MD_CTX_free(EVP_MD_CTX *ctx)
- {
-@@ -635,6 +635,6 @@ EVP_MD_CTX_free(EVP_MD_CTX *ctx)
- 
- 	free(ctx);
- }
--#endif /* HAVE_EVP_MD_CTX_FREE */
-+#endif /* HAVE_SUNW_EVP_MD_CTX_FREE */
- 
  #endif /* WITH_OPENSSL */
 diff --git a/openbsd-compat/openssl-compat.h b/openbsd-compat/openssl-compat.h
-index 61a69dd5..3397aed5 100644
+index f6796b3b..9a333d64 100644
 --- a/openbsd-compat/openssl-compat.h
 +++ b/openbsd-compat/openssl-compat.h
-@@ -69,63 +69,63 @@ void ssh_libcrypto_init(void);
+@@ -64,19 +64,19 @@ void ssh_libcrypto_init(void);
+ # define BN_set_flags(a, b)
  #endif
- 
- /* LibreSSL/OpenSSL 1.1x API compat */
--#ifndef HAVE_DSA_GET0_PQG
-+#ifndef HAVE_SUNW_DSA_GET0_PQG
- void DSA_get0_pqg(const DSA *d, const BIGNUM **p, const BIGNUM **q,
-     const BIGNUM **g);
--#endif /* HAVE_DSA_GET0_PQG */
-+#endif /* HAVE_SUNW_DSA_GET0_PQG */
- 
--#ifndef HAVE_DSA_SET0_PQG
-+#ifndef HAVE_SUNW_DSA_SET0_PQG
- int DSA_set0_pqg(DSA *d, BIGNUM *p, BIGNUM *q, BIGNUM *g);
--#endif /* HAVE_DSA_SET0_PQG */
-+#endif /* HAVE_SUNW_DSA_SET0_PQG */
- 
--#ifndef HAVE_DSA_GET0_KEY
-+#ifndef HAVE_SUNW_DSA_GET0_KEY
- void DSA_get0_key(const DSA *d, const BIGNUM **pub_key,
-     const BIGNUM **priv_key);
--#endif /* HAVE_DSA_GET0_KEY */
-+#endif /* HAVE_SUNW_DSA_GET0_KEY */
- 
--#ifndef HAVE_DSA_SET0_KEY
-+#ifndef HAVE_SUNW_DSA_SET0_KEY
- int DSA_set0_key(DSA *d, BIGNUM *pub_key, BIGNUM *priv_key);
--#endif /* HAVE_DSA_SET0_KEY */
-+#endif /* HAVE_SUNW_DSA_SET0_KEY */
  
 -#ifndef HAVE_EVP_CIPHER_CTX_GET_IV
 -# ifdef HAVE_EVP_CIPHER_CTX_GET_UPDATED_IV
@@ -708,156 +275,6 @@ index 61a69dd5..3397aed5 100644
      const unsigned char *iv, size_t len);
 -#endif /* HAVE_EVP_CIPHER_CTX_SET_IV */
 +#endif /* HAVE_SUNW_EVP_CIPHER_CTX_SET_IV */
- 
--#ifndef HAVE_RSA_GET0_KEY
-+#ifndef HAVE_SUNW_RSA_GET0_KEY
- void RSA_get0_key(const RSA *r, const BIGNUM **n, const BIGNUM **e,
-     const BIGNUM **d);
--#endif /* HAVE_RSA_GET0_KEY */
-+#endif /* HAVE_SUNW_RSA_GET0_KEY */
- 
--#ifndef HAVE_RSA_SET0_KEY
-+#ifndef HAVE_SUNW_RSA_SET0_KEY
- int RSA_set0_key(RSA *r, BIGNUM *n, BIGNUM *e, BIGNUM *d);
--#endif /* HAVE_RSA_SET0_KEY */
-+#endif /* HAVE_SUNW_RSA_SET0_KEY */
- 
--#ifndef HAVE_RSA_GET0_CRT_PARAMS
-+#ifndef HAVE_SUNW_RSA_GET0_CRT_PARAMS
- void RSA_get0_crt_params(const RSA *r, const BIGNUM **dmp1, const BIGNUM **dmq1,
-     const BIGNUM **iqmp);
--#endif /* HAVE_RSA_GET0_CRT_PARAMS */
-+#endif /* HAVE_SUNW_RSA_GET0_CRT_PARAMS */
- 
--#ifndef HAVE_RSA_SET0_CRT_PARAMS
-+#ifndef HAVE_SUNW_RSA_SET0_CRT_PARAMS
- int RSA_set0_crt_params(RSA *r, BIGNUM *dmp1, BIGNUM *dmq1, BIGNUM *iqmp);
--#endif /* HAVE_RSA_SET0_CRT_PARAMS */
-+#endif /* HAVE_SUNW_RSA_SET0_CRT_PARAMS */
- 
--#ifndef HAVE_RSA_GET0_FACTORS
-+#ifndef HAVE_SUNW_RSA_GET0_FACTORS
- void RSA_get0_factors(const RSA *r, const BIGNUM **p, const BIGNUM **q);
--#endif /* HAVE_RSA_GET0_FACTORS */
-+#endif /* HAVE_SUNW_RSA_GET0_FACTORS */
- 
--#ifndef HAVE_RSA_SET0_FACTORS
-+#ifndef HAVE_SUNW_RSA_SET0_FACTORS
- int RSA_set0_factors(RSA *r, BIGNUM *p, BIGNUM *q);
--#endif /* HAVE_RSA_SET0_FACTORS */
-+#endif /* HAVE_SUNW_RSA_SET0_FACTORS */
- 
- #ifndef DSA_SIG_GET0
- void DSA_SIG_get0(const DSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps);
-@@ -136,77 +136,77 @@ int DSA_SIG_set0(DSA_SIG *sig, BIGNUM *r, BIGNUM *s);
- #endif /* DSA_SIG_SET0 */
- 
- #ifdef OPENSSL_HAS_ECC
--#ifndef HAVE_ECDSA_SIG_GET0
-+#ifndef HAVE_SUNW_ECDSA_SIG_GET0
- void ECDSA_SIG_get0(const ECDSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps);
--#endif /* HAVE_ECDSA_SIG_GET0 */
-+#endif /* HAVE_SUNW_ECDSA_SIG_GET0 */
- 
--#ifndef HAVE_ECDSA_SIG_SET0
-+#ifndef HAVE_SUNW_ECDSA_SIG_SET0
- int ECDSA_SIG_set0(ECDSA_SIG *sig, BIGNUM *r, BIGNUM *s);
--#endif /* HAVE_ECDSA_SIG_SET0 */
-+#endif /* HAVE_SUNW_ECDSA_SIG_SET0 */
- #endif /* OPENSSL_HAS_ECC */
- 
--#ifndef HAVE_DH_GET0_PQG
-+#ifndef HAVE_SUNW_DH_GET0_PQG
- void DH_get0_pqg(const DH *dh, const BIGNUM **p, const BIGNUM **q,
-     const BIGNUM **g);
--#endif /* HAVE_DH_GET0_PQG */
-+#endif /* HAVE_SUNW_DH_GET0_PQG */
- 
--#ifndef HAVE_DH_SET0_PQG
-+#ifndef HAVE_SUNW_DH_SET0_PQG
- int DH_set0_pqg(DH *dh, BIGNUM *p, BIGNUM *q, BIGNUM *g);
--#endif /* HAVE_DH_SET0_PQG */
-+#endif /* HAVE_SUNW_DH_SET0_PQG */
- 
--#ifndef HAVE_DH_GET0_KEY
-+#ifndef HAVE_SUNW_DH_GET0_KEY
- void DH_get0_key(const DH *dh, const BIGNUM **pub_key, const BIGNUM **priv_key);
--#endif /* HAVE_DH_GET0_KEY */
-+#endif /* HAVE_SUNW_DH_GET0_KEY */
- 
--#ifndef HAVE_DH_SET0_KEY
-+#ifndef HAVE_SUNW_DH_SET0_KEY
- int DH_set0_key(DH *dh, BIGNUM *pub_key, BIGNUM *priv_key);
--#endif /* HAVE_DH_SET0_KEY */
-+#endif /* HAVE_SUNW_DH_SET0_KEY */
- 
--#ifndef HAVE_DH_SET_LENGTH
-+#ifndef HAVE_SUNW_DH_SET_LENGTH
- int DH_set_length(DH *dh, long length);
--#endif /* HAVE_DH_SET_LENGTH */
-+#endif /* HAVE_SUNW_DH_SET_LENGTH */
- 
--#ifndef HAVE_RSA_METH_FREE
-+#ifndef HAVE_SUNW_RSA_METH_FREE
- void RSA_meth_free(RSA_METHOD *meth);
--#endif /* HAVE_RSA_METH_FREE */
-+#endif /* HAVE_SUNW_RSA_METH_FREE */
- 
--#ifndef HAVE_RSA_METH_DUP
-+#ifndef HAVE_SUNW_RSA_METH_DUP
- RSA_METHOD *RSA_meth_dup(const RSA_METHOD *meth);
--#endif /* HAVE_RSA_METH_DUP */
-+#endif /* HAVE_SUNW_RSA_METH_DUP */
- 
--#ifndef HAVE_RSA_METH_SET1_NAME
-+#ifndef HAVE_SUNW_RSA_METH_SET1_NAME
- int RSA_meth_set1_name(RSA_METHOD *meth, const char *name);
--#endif /* HAVE_RSA_METH_SET1_NAME */
-+#endif /* HAVE_SUNW_RSA_METH_SET1_NAME */
- 
--#ifndef HAVE_RSA_METH_GET_FINISH
-+#ifndef HAVE_SUNW_RSA_METH_GET_FINISH
- int (*RSA_meth_get_finish(const RSA_METHOD *meth))(RSA *rsa);
--#endif /* HAVE_RSA_METH_GET_FINISH */
-+#endif /* HAVE_SUNW_RSA_METH_GET_FINISH */
- 
--#ifndef HAVE_RSA_METH_SET_PRIV_ENC
-+#ifndef HAVE_SUNW_RSA_METH_SET_PRIV_ENC
- int RSA_meth_set_priv_enc(RSA_METHOD *meth, int (*priv_enc)(int flen,
-     const unsigned char *from, unsigned char *to, RSA *rsa, int padding));
--#endif /* HAVE_RSA_METH_SET_PRIV_ENC */
-+#endif /* HAVE_SUNW_RSA_METH_SET_PRIV_ENC */
- 
--#ifndef HAVE_RSA_METH_SET_PRIV_DEC
-+#ifndef HAVE_SUNW_RSA_METH_SET_PRIV_DEC
- int RSA_meth_set_priv_dec(RSA_METHOD *meth, int (*priv_dec)(int flen,
-     const unsigned char *from, unsigned char *to, RSA *rsa, int padding));
--#endif /* HAVE_RSA_METH_SET_PRIV_DEC */
-+#endif /* HAVE_SUNW_RSA_METH_SET_PRIV_DEC */
- 
--#ifndef HAVE_RSA_METH_SET_FINISH
-+#ifndef HAVE_SUNW_RSA_METH_SET_FINISH
- int RSA_meth_set_finish(RSA_METHOD *meth, int (*finish)(RSA *rsa));
--#endif /* HAVE_RSA_METH_SET_FINISH */
-+#endif /* HAVE_SUNW_RSA_METH_SET_FINISH */
- 
--#ifndef HAVE_EVP_PKEY_GET0_RSA
-+#ifndef HAVE_SUNW_EVP_PKEY_GET0_RSA
- RSA *EVP_PKEY_get0_RSA(EVP_PKEY *pkey);
--#endif /* HAVE_EVP_PKEY_GET0_RSA */
-+#endif /* HAVE_SUNW_EVP_PKEY_GET0_RSA */
- 
--#ifndef HAVE_EVP_MD_CTX_new
-+#ifndef HAVE_SUNW_EVP_MD_CTX_new
- EVP_MD_CTX *EVP_MD_CTX_new(void);
--#endif /* HAVE_EVP_MD_CTX_new */
-+#endif /* HAVE_SUNW_EVP_MD_CTX_new */
- 
--#ifndef HAVE_EVP_MD_CTX_free
-+#ifndef HAVE_SUNW_EVP_MD_CTX_free
- void EVP_MD_CTX_free(EVP_MD_CTX *ctx);
--#endif /* HAVE_EVP_MD_CTX_free */
-+#endif /* HAVE_SUNW_EVP_MD_CTX_free */
  
  #endif /* WITH_OPENSSL */
  #endif /* _OPENSSL_COMPAT_H */

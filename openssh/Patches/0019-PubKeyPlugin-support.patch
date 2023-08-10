@@ -1,21 +1,15 @@
-From 0106f47b3ef67c3dec513938f2fc2c13d2572924 Mon Sep 17 00:00:00 2001
+From 1e9262a6ff5a256ef884dcb6cb4c188f33721c7c Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 3 Aug 2015 16:27:44 -0700
-Subject: [PATCH 18/32] PubKeyPlugin support
+Subject: [PATCH 19/34] PubKeyPlugin support
 
 This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called
 into to check public keys for authentication.
----
- auth2-pubkey.c | 145 ++++++++++++++++++++++++++++++++++++++++++++++++-
- servconf.c     |  16 +++++-
- servconf.h     |   1 +
- 3 files changed, 160 insertions(+), 2 deletions(-)
 
-diff --git a/auth2-pubkey.c b/auth2-pubkey.c
-index 5d59febc..18a93889 100644
---- a/auth2-pubkey.c
-+++ b/auth2-pubkey.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
+--- a~/auth2-pubkey.c	1970-01-01 00:00:00
++++ a/auth2-pubkey.c	1970-01-01 00:00:00
 @@ -23,6 +23,11 @@
   * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
   * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -28,7 +22,7 @@ index 5d59febc..18a93889 100644
  
  #include "includes.h"
  
-@@ -41,6 +46,7 @@
+@@ -41,11 +46,13 @@
  #include <time.h>
  #include <unistd.h>
  #include <limits.h>
@@ -36,17 +30,15 @@ index 5d59febc..18a93889 100644
  
  #include "xmalloc.h"
  #include "ssh.h"
-@@ -48,6 +54,7 @@
+ #include "ssh2.h"
  #include "packet.h"
++#include "digest.h"
  #include "kex.h"
  #include "sshbuf.h"
-+#include "digest.h"
  #include "log.h"
- #include "misc.h"
- #include "servconf.h"
-@@ -73,6 +80,15 @@
- /* import */
- extern ServerOptions options;
+@@ -84,6 +91,15 @@ format_key(const struct sshkey *key)
+ 	return ret;
+ }
  
 +static const char *RSA_SYM_NAME = "sshd_user_rsa_key_allowed";
 +static const char *ECDSA_SYM_NAME = "sshd_user_ecdsa_key_allowed";
@@ -57,10 +49,10 @@ index 5d59febc..18a93889 100644
 +typedef int (*UNIV_SYM)(struct passwd *, const char *,
 +    const u_char *, size_t);
 +
- static char *
- format_key(const struct sshkey *key)
+ static int
+ userauth_pubkey(struct ssh *ssh, const char *method)
  {
-@@ -747,6 +763,127 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
+@@ -745,6 +761,124 @@ user_key_command_allowed2(struct passwd
  	return found_key;
  }
  
@@ -78,8 +70,7 @@ index 5d59febc..18a93889 100644
 + * it keeps this code minimally invasive.
 + */
 +static int
-+user_key_allowed_from_plugin(struct passwd *pw, struct sshkey *key,
-+    struct sshauthopt **authoptsp)
++user_key_allowed_from_plugin(struct passwd *pw, struct sshkey *key)
 +{
 +	RSA_SYM rsa_sym = NULL;
 +	ECDSA_SYM ecdsa_sym = NULL;
@@ -90,8 +81,8 @@ index 5d59febc..18a93889 100644
 +	int success = 0;
 +
 +	if (options.pubkey_plugin == NULL || pw == NULL || key == NULL ||
-+	    (key->type != KEY_RSA && key->type != KEY_DSA &&
-+	    key->type != KEY_ECDSA))
++	    (key->type != KEY_RSA &&
++	    key->type != KEY_DSA && key->type != KEY_ECDSA))
 +		return success;
 +
 +	handle = dlopen(options.pubkey_plugin, RTLD_NOW);
@@ -172,10 +163,8 @@ index 5d59febc..18a93889 100644
 +		handle = NULL;
 +	}
 +
-+	if (success) {
++	if (success)
 +		verbose("Found matching %s key: %s", sshkey_type(key), fp);
-+		*authoptsp = sshauthopt_new_with_keys_defaults();
-+	}
 +
 +	if (fp != NULL) {
 +		free(fp);
@@ -188,32 +177,21 @@ index 5d59febc..18a93889 100644
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -792,13 +929,19 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
+@@ -796,6 +930,10 @@ user_key_allowed(struct ssh *ssh, struct
  	sshauthopt_free(opts);
  	opts = NULL;
  
-+	if ((success = user_key_allowed_from_plugin(pw, key, &opts)) != 0)
-+		goto out;
-+	sshauthopt_free(opts);
-+	opts = NULL;
++	success = user_key_allowed_from_plugin(pw, key);
++	if (success > 0)
++		return success;
 +
  	if ((success = user_key_command_allowed2(pw, key, remote_ip,
- 	    remote_host, &opts)) != 0)
+ 	    remote_host, conn_id, rdomain, &opts)) != 0)
  		goto out;
- 	sshauthopt_free(opts);
- 	opts = NULL;
- 
-- out:
-+
-+out:
- 	if (success && authoptsp != NULL) {
- 		*authoptsp = opts;
- 		opts = NULL;
-diff --git a/servconf.c b/servconf.c
-index f8b14368..e4259285 100644
---- a/servconf.c
-+++ b/servconf.c
-@@ -211,6 +211,7 @@ initialize_server_options(ServerOptions *options)
+diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
+--- a~/servconf.c	1970-01-01 00:00:00
++++ a/servconf.c	1970-01-01 00:00:00
+@@ -209,6 +209,7 @@ initialize_server_options(ServerOptions
  	 */
  	options->pam_service_per_authmethod = 1;
  #endif
@@ -221,24 +199,23 @@ index f8b14368..e4259285 100644
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -566,7 +567,7 @@ typedef enum {
- 	sStreamLocalBindMask, sStreamLocalBindUnlink,
+@@ -557,6 +558,7 @@ typedef enum {
  	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
  	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
  	sRequiredRSASize, sChannelTimeout, sUnusedConnectionTimeout,
--	sDeprecated, sIgnore, sUnsupported
-+	sPubKeyPlugin, sDeprecated, sIgnore, sUnsupported
++	sPubKeyPlugin,
+ 	sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
-@@ -766,6 +767,7 @@ static struct {
+@@ -723,6 +725,7 @@ static struct {
+ 	{ "exposeauthinfo", sExposeAuthInfo, SSHCFG_ALL },
+ 	{ "rdomain", sRDomain, SSHCFG_ALL },
+ 	{ "casignaturealgorithms", sCASignatureAlgorithms, SSHCFG_ALL },
++	{ "pubkeyplugin", sPubKeyPlugin, SSHCFG_ALL },
+ 	{ "securitykeyprovider", sSecurityKeyProvider, SSHCFG_GLOBAL },
  	{ "requiredrsasize", sRequiredRSASize, SSHCFG_ALL },
  	{ "channeltimeout", sChannelTimeout, SSHCFG_ALL },
- 	{ "unusedconnectiontimeout", sUnusedConnectionTimeout, SSHCFG_ALL },
-+	{ "pubkeyplugin", sPubKeyPlugin, SSHCFG_ALL },
- 	{ NULL, sBadOption, 0 }
- };
- 
-@@ -2662,6 +2664,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2631,6 +2634,18 @@ process_server_config_line_depth(ServerO
  		}
  		break;
  
@@ -247,7 +224,7 @@ index f8b14368..e4259285 100644
 +		 * Can't use parse_filename, as we need to support plain
 +		 * names which dlopen will find on our lib path.
 +		 */
-+		arg = argv_next(&ac, &av);
++		arg = strdelim(&str);
 +		if (!arg || *arg == '\0')
 +			fatal("%s line %d: missing file name.",
 +			    filename, linenum);
@@ -257,18 +234,14 @@ index f8b14368..e4259285 100644
  	case sDeprecated:
  	case sIgnore:
  	case sUnsupported:
-diff --git a/servconf.h b/servconf.h
-index ee060007..417c63cf 100644
---- a/servconf.h
-+++ b/servconf.h
-@@ -240,6 +240,7 @@ typedef struct {
+diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.h a/servconf.h
+--- a~/servconf.h	1970-01-01 00:00:00
++++ a/servconf.h	1970-01-01 00:00:00
+@@ -237,6 +237,7 @@ typedef struct {
+ 
+ 	int	fingerprint_hash;
+ 	int	expose_userauth_info;
++	char	*pubkey_plugin;
  	u_int64_t timing_secret;
  	char   *sk_provider;
  	int	required_rsa_size;	/* minimum size of RSA keys */
-+	char   *pubkey_plugin;
- 
- 	char	**channel_timeouts;	/* inactivity timeout by channel type */
- 	u_int	num_channel_timeouts;
--- 
-2.37.1 (Apple Git-137.1)
-
