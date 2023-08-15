@@ -188,7 +188,7 @@ index 5d59febc..18a93889 100644
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -792,13 +929,19 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
+@@ -796,6 +796,11 @@
  	sshauthopt_free(opts);
  	opts = NULL;
  
@@ -198,17 +198,8 @@ index 5d59febc..18a93889 100644
 +	opts = NULL;
 +
  	if ((success = user_key_command_allowed2(pw, key, remote_ip,
- 	    remote_host, &opts)) != 0)
+ 	    remote_host, conn_id, rdomain, &opts)) != 0)
  		goto out;
- 	sshauthopt_free(opts);
- 	opts = NULL;
- 
-- out:
-+
-+out:
- 	if (success && authoptsp != NULL) {
- 		*authoptsp = opts;
- 		opts = NULL;
 diff --git a/servconf.c b/servconf.c
 index f8b14368..e4259285 100644
 --- a/servconf.c
