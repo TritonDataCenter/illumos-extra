@@ -18,6 +18,9 @@ unmodified on the new replacement sshd, to avoid users being locked out by an
 SSH daemon that can no longer start. SmartOS is a live distro, and has no
 ability to "migrate" or "upgrade" user configuration files during a change of
 version, so the SSH daemon has to be able to start using an old config file.
+This is particularly true since zone images use their own config file. Any
+current platform may still be used to run ancient images and the configs
+in those images are expected to work.
 
 PAM and configuration compatibility account for about half the patches applied
 by count. The rest include some forward-ported features such as GSSAPI KeyEx
@@ -66,3 +69,6 @@ relevant.
 
 #24 should be droppable once we figure out if we can move ssh keys back to
 `/etc/ssh`, like the rest of the known world.
+
+#23 and portions of #28 are moot because `sshd_config` is delivered from
+smartos-live, not the build here.
