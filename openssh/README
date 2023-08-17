@@ -70,5 +70,6 @@ relevant.
 #24 should be droppable once we figure out if we can move ssh keys back to
 `/etc/ssh`, like the rest of the known world.
 
-#23 and portions of #28 are moot because `sshd_config` is delivered from
-smartos-live, not the build here.
+#23 and portions of #28 are moot because `sshd_config` for the global zone is
+delivered from smartos-live, not the build here. And as mentioned above,
+non-global zones have the config in the image.
