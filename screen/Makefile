@@ -19,9 +19,10 @@
 # CDDL HEADER END
 #
 # Copyright 2022 Joyent, Inc.
+# Copyright 2023 MNX Cloud, Inc.
 #
 
-VER =	screen-4.9.0
+VER =	screen-4.9.1
 
 include ../Makefile.defs
 
