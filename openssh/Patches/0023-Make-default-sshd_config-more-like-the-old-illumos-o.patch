@@ -48,7 +48,7 @@ index 36894ace..d2a509c5 100644
  
  # Change to no to disable s/key passwords
  #KbdInteractiveAuthentication yes
-@@ -70,26 +70,28 @@ AuthorizedKeysFile	.ssh/authorized_keys
+@@ -70,26 +70,27 @@ AuthorizedKeysFile	.ssh/authorized_keys
  #GSSAPIAuthentication no
  #GSSAPICleanupCredentials yes
  
@@ -87,7 +87,6 @@ index 36894ace..d2a509c5 100644
 +# Should sshd print the /etc/motd file and check for mail.
 +# On Solaris it is assumed that the login shell will do these (eg /etc/profile).
 +PrintMotd no
-+PrintLastLog no
 +
  #TCPKeepAlive yes
  #PermitUserEnvironment no
