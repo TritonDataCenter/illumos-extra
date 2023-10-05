@@ -24,17 +24,17 @@ mkdir -p ${LIBDIR} ${INCDIR}
 
 cd ${VERS}
 
-LVER=0.0.11
+LVER=2.3.4
 set -x
 
 # Perform manual install in order to alter SONAME
 rm -f ${LIBDIR}/libjoy_idn2.so.${LVER}
 /usr/bin/elfedit -e 'dyn:value -s SONAME libjoy_idn2.so.0' \
-	.libs/libidn2.so.${LVER} ${LIBDIR}/libjoy_idn2.so.${LVER}
+	lib/.libs/libidn2.so ${LIBDIR}/libjoy_idn2.so.${LVER}
 chmod 0555 ${LIBDIR}/libjoy_idn2.so.${LVER}
 
-_install L libjoy_idn2.so.0.0.11 ${LIBDIR}/libjoy_idn2.so
-_install L libjoy_idn2.so.0.0.11 ${LIBDIR}/libjoy_idn2.so.0
-_install N idn2.h ${INCDIR}/idn2.h 0444
+_install L libjoy_idn2.so.${LVER} ${LIBDIR}/libjoy_idn2.so
+_install L libjoy_idn2.so.${LVER} ${LIBDIR}/libjoy_idn2.so.0
+_install N lib/idn2.h ${INCDIR}/idn2.h 0444
 
 exit 0

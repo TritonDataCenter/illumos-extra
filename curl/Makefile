@@ -19,9 +19,10 @@
 # CDDL HEADER END
 #
 # Copyright 2015, Joyent, Inc.
+# Copyright 2023 MNX Cloud, Inc.
 #
 
-VER =	curl-7.51.0
+VER =	curl-8.4.0
 
 include ../Makefile.defs
 

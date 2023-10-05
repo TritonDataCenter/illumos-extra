@@ -11,9 +11,10 @@
 
 #
 # Copyright 2016 Joyent, Inc.
+# Copyright 2023 MNX Cloud, Inc.
 #
 
-VER =	libidn2-0.11
+VER =	libidn2-2.3.4
 
 include ../Makefile.defs
 
@@ -23,7 +24,7 @@ CFLAGS +=	-g
 AUTOCONF_ENV += \
 	INSTALL="/usr/ucb/install -c"
 
-PATCHES =	Patches/*
+# PATCHES =	Patches/*
 
 include ../Makefile.targ
 
