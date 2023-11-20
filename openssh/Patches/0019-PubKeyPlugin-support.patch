@@ -1,19 +1,21 @@
-From 0106f47b3ef67c3dec513938f2fc2c13d2572924 Mon Sep 17 00:00:00 2001
-From: Alex Wilson <alex.wilson@joyent.com>
-Date: Mon, 3 Aug 2015 16:27:44 -0700
-Subject: [PATCH 18/32] PubKeyPlugin support
+From 5aefa07f415b16d433eb0cd6be4b31a003bd6220 Mon Sep 17 00:00:00 2001
+From: Travis Paul <travis.paul@mnx.io>
+Date: Mon, 20 Nov 2023 21:55:36 +0000
+Subject: [PATCH] PubKeyPlugin support
 
 This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called
 into to check public keys for authentication.
+
+Patch updated from original by Alex Wilson <alex.wilson@joyent.com>
 ---
- auth2-pubkey.c | 145 ++++++++++++++++++++++++++++++++++++++++++++++++-
- servconf.c     |  16 +++++-
+ auth2-pubkey.c | 157 +++++++++++++++++++++++++++++++++++++++++++++++++
+ servconf.c     |  16 ++++-
  servconf.h     |   1 +
- 3 files changed, 160 insertions(+), 2 deletions(-)
+ 3 files changed, 173 insertions(+), 1 deletion(-)
 
 diff --git a/auth2-pubkey.c b/auth2-pubkey.c
-index 5d59febc..18a93889 100644
+index 3f49e1df3..50889fb20 100644
 --- a/auth2-pubkey.c
 +++ b/auth2-pubkey.c
 @@ -23,6 +23,11 @@
@@ -44,14 +46,16 @@ index 5d59febc..18a93889 100644
  #include "log.h"
  #include "misc.h"
  #include "servconf.h"
-@@ -73,6 +80,15 @@
+@@ -73,6 +80,17 @@
  /* import */
  extern ServerOptions options;
  
 +static const char *RSA_SYM_NAME = "sshd_user_rsa_key_allowed";
 +static const char *ECDSA_SYM_NAME = "sshd_user_ecdsa_key_allowed";
++static const char *ED25519_SYM_NAME = "sshd_user_ed25519_key_allowed";
 +typedef int (*RSA_SYM)(struct passwd *, RSA *, const char *);
 +typedef int (*ECDSA_SYM)(struct passwd *, EC_KEY *, const char *);
++typedef int (*ED25519_SYM)(struct passwd *, EC_KEY *, const char *);
 +
 +static const char *UNIV_SYM_NAME = "sshd_user_key_allowed";
 +typedef int (*UNIV_SYM)(struct passwd *, const char *,
@@ -60,7 +64,7 @@ index 5d59febc..18a93889 100644
  static char *
  format_key(const struct sshkey *key)
  {
-@@ -747,6 +763,127 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
+@@ -745,6 +763,140 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
  	return found_key;
  }
  
@@ -83,6 +87,7 @@ index 5d59febc..18a93889 100644
 +{
 +	RSA_SYM rsa_sym = NULL;
 +	ECDSA_SYM ecdsa_sym = NULL;
++	ED25519_SYM ed25519_sym = NULL;
 +	UNIV_SYM univ_sym = NULL;
 +	char *fp = NULL;
 +	char *argfp = NULL;
@@ -91,7 +96,7 @@ index 5d59febc..18a93889 100644
 +
 +	if (options.pubkey_plugin == NULL || pw == NULL || key == NULL ||
 +	    (key->type != KEY_RSA && key->type != KEY_DSA &&
-+	    key->type != KEY_ECDSA))
++	    key->type != KEY_ECDSA && key->type != KEY_ED25519))
 +		return success;
 +
 +	handle = dlopen(options.pubkey_plugin, RTLD_NOW);
@@ -157,8 +162,19 @@ index 5d59febc..18a93889 100644
 +		    options.pubkey_plugin);
 +		success = (*ecdsa_sym)(pw, key->ecdsa, argfp);
 +		break;
++	case KEY_ED25519:
++		ecdsa_sym = (ED25519_SYM)dlsym(handle, ED25519_SYM_NAME);
++		if (ecdsa_sym == NULL) {
++			debug("Unable to resolve symbol %s: %s", ED25519_SYM_NAME,
++			dlerror());
++			goto out;
++		}
++		debug2("Invoking %s from %s", ED25519_SYM_NAME,
++		    options.pubkey_plugin);
++		success = (*ed25519_sym)(pw, key->ed25519, argfp);
++		break;
 +	default:
-+		debug2("user_key_plugins only support RSA and ECDSA keys");
++		debug2("user_key_plugins only support RSA, ECDSA, and ED25519 keys");
 +	}
 +
 +	debug("pubkeyplugin returned: %d", success);
@@ -168,6 +184,7 @@ index 5d59febc..18a93889 100644
 +		dlclose(handle);
 +		ecdsa_sym = NULL;
 +		rsa_sym = NULL;
++		ed25519_sym = NULL;
 +		univ_sym = NULL;
 +		handle = NULL;
 +	}
@@ -188,7 +205,7 @@ index 5d59febc..18a93889 100644
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -796,6 +796,11 @@
+@@ -796,6 +948,11 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
  	sshauthopt_free(opts);
  	opts = NULL;
  
@@ -201,10 +218,10 @@ index 5d59febc..18a93889 100644
  	    remote_host, conn_id, rdomain, &opts)) != 0)
  		goto out;
 diff --git a/servconf.c b/servconf.c
-index f8b14368..e4259285 100644
+index ba3b16fd6..69f5ac0b8 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -211,6 +211,7 @@ initialize_server_options(ServerOptions *options)
+@@ -209,6 +209,7 @@ initialize_server_options(ServerOptions *options)
  	 */
  	options->pam_service_per_authmethod = 1;
  #endif
@@ -212,8 +229,7 @@ index f8b14368..e4259285 100644
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -566,7 +567,7 @@ typedef enum {
- 	sStreamLocalBindMask, sStreamLocalBindUnlink,
+@@ -565,7 +566,7 @@ typedef enum {
  	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
  	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
  	sRequiredRSASize, sChannelTimeout, sUnusedConnectionTimeout,
@@ -221,7 +237,8 @@ index f8b14368..e4259285 100644
 +	sPubKeyPlugin, sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
-@@ -766,6 +767,7 @@ static struct {
+ #define SSHCFG_GLOBAL		0x01	/* allowed in main section of config */
+@@ -764,6 +765,7 @@ static struct {
  	{ "requiredrsasize", sRequiredRSASize, SSHCFG_ALL },
  	{ "channeltimeout", sChannelTimeout, SSHCFG_ALL },
  	{ "unusedconnectiontimeout", sUnusedConnectionTimeout, SSHCFG_ALL },
@@ -229,7 +246,7 @@ index f8b14368..e4259285 100644
  	{ NULL, sBadOption, 0 }
  };
  
-@@ -2662,6 +2664,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2682,6 +2684,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  		}
  		break;
  
@@ -249,10 +266,10 @@ index f8b14368..e4259285 100644
  	case sIgnore:
  	case sUnsupported:
 diff --git a/servconf.h b/servconf.h
-index ee060007..417c63cf 100644
+index 0bc7eecb4..d830a1582 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -240,6 +240,7 @@ typedef struct {
+@@ -238,6 +238,7 @@ typedef struct {
  	u_int64_t timing_secret;
  	char   *sk_provider;
  	int	required_rsa_size;	/* minimum size of RSA keys */
@@ -261,5 +278,5 @@ index ee060007..417c63cf 100644
  	char	**channel_timeouts;	/* inactivity timeout by channel type */
  	u_int	num_channel_timeouts;
 -- 
-2.37.1 (Apple Git-137.1)
+2.34.1
 
