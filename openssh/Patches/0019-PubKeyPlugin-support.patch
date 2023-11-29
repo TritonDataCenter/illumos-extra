@@ -1,6 +1,6 @@
-From 5aefa07f415b16d433eb0cd6be4b31a003bd6220 Mon Sep 17 00:00:00 2001
+From 4fb36df5ddcd5061068d621a59837617d52deb3a Mon Sep 17 00:00:00 2001
 From: Travis Paul <travis.paul@mnx.io>
-Date: Mon, 20 Nov 2023 21:55:36 +0000
+Date: Wed, 29 Nov 2023 00:10:43 +0000
 Subject: [PATCH] PubKeyPlugin support
 
 This adds the PubKeyPlugin directive and associated code from
@@ -9,13 +9,13 @@ into to check public keys for authentication.
 
 Patch updated from original by Alex Wilson <alex.wilson@joyent.com>
 ---
- auth2-pubkey.c | 157 +++++++++++++++++++++++++++++++++++++++++++++++++
- servconf.c     |  16 ++++-
+ auth2-pubkey.c | 142 +++++++++++++++++++++++++++++++++++++++++++++++++
+ servconf.c     |  16 +++++-
  servconf.h     |   1 +
- 3 files changed, 173 insertions(+), 1 deletion(-)
+ 3 files changed, 158 insertions(+), 1 deletion(-)
 
 diff --git a/auth2-pubkey.c b/auth2-pubkey.c
-index 3f49e1df3..50889fb20 100644
+index 3f49e1df3..13af69c47 100644
 --- a/auth2-pubkey.c
 +++ b/auth2-pubkey.c
 @@ -23,6 +23,11 @@
@@ -46,16 +46,14 @@ index 3f49e1df3..50889fb20 100644
  #include "log.h"
  #include "misc.h"
  #include "servconf.h"
-@@ -73,6 +80,17 @@
+@@ -73,6 +80,15 @@
  /* import */
  extern ServerOptions options;
  
 +static const char *RSA_SYM_NAME = "sshd_user_rsa_key_allowed";
 +static const char *ECDSA_SYM_NAME = "sshd_user_ecdsa_key_allowed";
-+static const char *ED25519_SYM_NAME = "sshd_user_ed25519_key_allowed";
 +typedef int (*RSA_SYM)(struct passwd *, RSA *, const char *);
 +typedef int (*ECDSA_SYM)(struct passwd *, EC_KEY *, const char *);
-+typedef int (*ED25519_SYM)(struct passwd *, EC_KEY *, const char *);
 +
 +static const char *UNIV_SYM_NAME = "sshd_user_key_allowed";
 +typedef int (*UNIV_SYM)(struct passwd *, const char *,
@@ -64,7 +62,7 @@ index 3f49e1df3..50889fb20 100644
  static char *
  format_key(const struct sshkey *key)
  {
-@@ -745,6 +763,140 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
+@@ -745,6 +761,127 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
  	return found_key;
  }
  
@@ -87,7 +85,6 @@ index 3f49e1df3..50889fb20 100644
 +{
 +	RSA_SYM rsa_sym = NULL;
 +	ECDSA_SYM ecdsa_sym = NULL;
-+	ED25519_SYM ed25519_sym = NULL;
 +	UNIV_SYM univ_sym = NULL;
 +	char *fp = NULL;
 +	char *argfp = NULL;
@@ -162,19 +159,8 @@ index 3f49e1df3..50889fb20 100644
 +		    options.pubkey_plugin);
 +		success = (*ecdsa_sym)(pw, key->ecdsa, argfp);
 +		break;
-+	case KEY_ED25519:
-+		ecdsa_sym = (ED25519_SYM)dlsym(handle, ED25519_SYM_NAME);
-+		if (ecdsa_sym == NULL) {
-+			debug("Unable to resolve symbol %s: %s", ED25519_SYM_NAME,
-+			dlerror());
-+			goto out;
-+		}
-+		debug2("Invoking %s from %s", ED25519_SYM_NAME,
-+		    options.pubkey_plugin);
-+		success = (*ed25519_sym)(pw, key->ed25519, argfp);
-+		break;
 +	default:
-+		debug2("user_key_plugins only support RSA, ECDSA, and ED25519 keys");
++		debug2("user_key_plugins only support RSA and ECDSA keys");
 +	}
 +
 +	debug("pubkeyplugin returned: %d", success);
@@ -184,7 +170,6 @@ index 3f49e1df3..50889fb20 100644
 +		dlclose(handle);
 +		ecdsa_sym = NULL;
 +		rsa_sym = NULL;
-+		ed25519_sym = NULL;
 +		univ_sym = NULL;
 +		handle = NULL;
 +	}
@@ -205,7 +190,7 @@ index 3f49e1df3..50889fb20 100644
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -796,6 +948,11 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
+@@ -796,6 +933,11 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
  	sshauthopt_free(opts);
  	opts = NULL;
  
