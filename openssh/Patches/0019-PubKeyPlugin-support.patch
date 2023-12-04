@@ -1,34 +1,35 @@
-From 0106f47b3ef67c3dec513938f2fc2c13d2572924 Mon Sep 17 00:00:00 2001
-From: Alex Wilson <alex.wilson@joyent.com>
-Date: Mon, 3 Aug 2015 16:27:44 -0700
-Subject: [PATCH 18/32] PubKeyPlugin support
+From 90ae154e7d5ade98bd9ab544a6188bc91874aff2 Mon Sep 17 00:00:00 2001
+From: Travis Paul <travis.paul@mnx.io>
+Date: Thu, 30 Nov 2023 19:18:37 +0000
+Subject: [PATCH] PubKeyPlugin support
 
 This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called
 into to check public keys for authentication.
 ---
- auth2-pubkey.c | 145 ++++++++++++++++++++++++++++++++++++++++++++++++-
- servconf.c     |  16 +++++-
- servconf.h     |   1 +
- 3 files changed, 160 insertions(+), 2 deletions(-)
+ auth2-pubkey.c | 86 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ servconf.c     | 16 +++++++++-
+ servconf.h     |  1 +
+ 3 files changed, 102 insertions(+), 1 deletion(-)
 
 diff --git a/auth2-pubkey.c b/auth2-pubkey.c
-index 5d59febc..18a93889 100644
+index 3f49e1df3..7c4a8621e 100644
 --- a/auth2-pubkey.c
 +++ b/auth2-pubkey.c
-@@ -23,6 +23,11 @@
+@@ -23,6 +23,12 @@
   * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
   * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   */
 +/*
 + * Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
 + * Copyright 2015 Joyent, Inc.
++ * Copyright 2023 MNX Cloud, Inc.
 + * Use is subject to license terms.
 + */
  
  #include "includes.h"
  
-@@ -41,6 +46,7 @@
+@@ -41,6 +47,7 @@
  #include <time.h>
  #include <unistd.h>
  #include <limits.h>
@@ -36,23 +37,10 @@ index 5d59febc..18a93889 100644
  
  #include "xmalloc.h"
  #include "ssh.h"
-@@ -48,6 +54,7 @@
- #include "packet.h"
- #include "kex.h"
- #include "sshbuf.h"
-+#include "digest.h"
- #include "log.h"
- #include "misc.h"
- #include "servconf.h"
-@@ -73,6 +80,15 @@
+@@ -73,6 +80,10 @@
  /* import */
  extern ServerOptions options;
  
-+static const char *RSA_SYM_NAME = "sshd_user_rsa_key_allowed";
-+static const char *ECDSA_SYM_NAME = "sshd_user_ecdsa_key_allowed";
-+typedef int (*RSA_SYM)(struct passwd *, RSA *, const char *);
-+typedef int (*ECDSA_SYM)(struct passwd *, EC_KEY *, const char *);
-+
 +static const char *UNIV_SYM_NAME = "sshd_user_key_allowed";
 +typedef int (*UNIV_SYM)(struct passwd *, const char *,
 +    const u_char *, size_t);
@@ -60,7 +48,7 @@ index 5d59febc..18a93889 100644
  static char *
  format_key(const struct sshkey *key)
  {
-@@ -747,6 +763,127 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
+@@ -745,6 +756,76 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
  	return found_key;
  }
  
@@ -69,7 +57,7 @@ index 5d59febc..18a93889 100644
 + * in sshd_config (PubKeyPlugin).
 + *
 + * Note that this expects a symbol in the loaded library that takes
-+ * the current user (pwd entry), the current RSA key and it's fingerprint.
++ * the current user (pwd entry), the current key and it's fingerprint.
 + * The symbol is expected to return 1 on success and 0 on failure.
 + *
 + * While we could optimize this code to dlopen once in the process' lifetime,
@@ -81,17 +69,13 @@ index 5d59febc..18a93889 100644
 +user_key_allowed_from_plugin(struct passwd *pw, struct sshkey *key,
 +    struct sshauthopt **authoptsp)
 +{
-+	RSA_SYM rsa_sym = NULL;
-+	ECDSA_SYM ecdsa_sym = NULL;
 +	UNIV_SYM univ_sym = NULL;
-+	char *fp = NULL;
-+	char *argfp = NULL;
 +	void *handle = NULL;
 +	int success = 0;
 +
 +	if (options.pubkey_plugin == NULL || pw == NULL || key == NULL ||
 +	    (key->type != KEY_RSA && key->type != KEY_DSA &&
-+	    key->type != KEY_ECDSA))
++	    key->type != KEY_ECDSA && key->type != KEY_ED25519))
 +		return success;
 +
 +	handle = dlopen(options.pubkey_plugin, RTLD_NOW);
@@ -102,8 +86,8 @@ index 5d59febc..18a93889 100644
 +	}
 +
 +	/*
-+	 * If we have the new-style universal symbol for checking keys, use
-+	 * that instead of the old-style per-key-type symbols.
++	 * Check that the universal symbol for checking keys is present in
++	 * the libsmartsshd plugin.
 +	 */
 +	univ_sym = (UNIV_SYM)dlsym(handle, UNIV_SYM_NAME);
 +	if (univ_sym != NULL) {
@@ -119,67 +103,20 @@ index 5d59febc..18a93889 100644
 +		success = (*univ_sym)(pw, type, blob, len);
 +		debug("pubkeyplugin returned: %d", success);
 +		goto out;
++	} else {
++		debug("pubkeyplugin missing %s symbol", UNIV_SYM_NAME);
 +	}
-+
-+	/* Otherwise, continue with the old-style fingerprint symbols. */
-+	fp = sshkey_fingerprint(key, SSH_DIGEST_MD5, SSH_FP_HEX);
-+	if (fp == NULL) {
-+		debug("failed to generate fingerprint");
-+		goto out;
-+	}
-+	if (strncmp(fp, "MD5:", 4) != 0) {
-+		debug("fingerprint not in MD5:hex format");
-+		goto out;
-+	}
-+	/* give the plugin the string without leading MD5: */
-+	argfp = fp + 4;
-+
-+	switch (key->type) {
-+	case KEY_RSA:
-+		rsa_sym = (RSA_SYM)dlsym(handle, RSA_SYM_NAME);
-+		if (rsa_sym == NULL) {
-+			debug("Unable to resolve symbol %s: %s", RSA_SYM_NAME,
-+			dlerror());
-+			goto out;
-+		}
-+		debug2("Invoking %s from %s", RSA_SYM_NAME,
-+		    options.pubkey_plugin);
-+		success = (*rsa_sym)(pw, key->rsa, argfp);
-+		break;
-+	case KEY_ECDSA:
-+		ecdsa_sym = (ECDSA_SYM)dlsym(handle, ECDSA_SYM_NAME);
-+		if (ecdsa_sym == NULL) {
-+			debug("Unable to resolve symbol %s: %s", ECDSA_SYM_NAME,
-+			dlerror());
-+			goto out;
-+		}
-+		debug2("Invoking %s from %s", ECDSA_SYM_NAME,
-+		    options.pubkey_plugin);
-+		success = (*ecdsa_sym)(pw, key->ecdsa, argfp);
-+		break;
-+	default:
-+		debug2("user_key_plugins only support RSA and ECDSA keys");
-+	}
-+
-+	debug("pubkeyplugin returned: %d", success);
 +
 +out:
 +	if (handle != NULL) {
 +		dlclose(handle);
-+		ecdsa_sym = NULL;
-+		rsa_sym = NULL;
 +		univ_sym = NULL;
 +		handle = NULL;
 +	}
 +
 +	if (success) {
-+		verbose("Found matching %s key: %s", sshkey_type(key), fp);
++		verbose("Found matching %s key", sshkey_type(key));
 +		*authoptsp = sshauthopt_new_with_keys_defaults();
-+	}
-+
-+	if (fp != NULL) {
-+		free(fp);
-+		fp = NULL;
 +	}
 +
 +	return success;
@@ -188,7 +125,7 @@ index 5d59febc..18a93889 100644
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -796,6 +796,11 @@
+@@ -796,6 +877,11 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
  	sshauthopt_free(opts);
  	opts = NULL;
  
@@ -201,10 +138,10 @@ index 5d59febc..18a93889 100644
  	    remote_host, conn_id, rdomain, &opts)) != 0)
  		goto out;
 diff --git a/servconf.c b/servconf.c
-index f8b14368..e4259285 100644
+index ba3b16fd6..69f5ac0b8 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -211,6 +211,7 @@ initialize_server_options(ServerOptions *options)
+@@ -209,6 +209,7 @@ initialize_server_options(ServerOptions *options)
  	 */
  	options->pam_service_per_authmethod = 1;
  #endif
@@ -212,8 +149,7 @@ index f8b14368..e4259285 100644
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -566,7 +567,7 @@ typedef enum {
- 	sStreamLocalBindMask, sStreamLocalBindUnlink,
+@@ -565,7 +566,7 @@ typedef enum {
  	sAllowStreamLocalForwarding, sFingerprintHash, sDisableForwarding,
  	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
  	sRequiredRSASize, sChannelTimeout, sUnusedConnectionTimeout,
@@ -221,7 +157,8 @@ index f8b14368..e4259285 100644
 +	sPubKeyPlugin, sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
-@@ -766,6 +767,7 @@ static struct {
+ #define SSHCFG_GLOBAL		0x01	/* allowed in main section of config */
+@@ -764,6 +765,7 @@ static struct {
  	{ "requiredrsasize", sRequiredRSASize, SSHCFG_ALL },
  	{ "channeltimeout", sChannelTimeout, SSHCFG_ALL },
  	{ "unusedconnectiontimeout", sUnusedConnectionTimeout, SSHCFG_ALL },
@@ -229,7 +166,7 @@ index f8b14368..e4259285 100644
  	{ NULL, sBadOption, 0 }
  };
  
-@@ -2662,6 +2664,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2682,6 +2684,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  		}
  		break;
  
@@ -249,10 +186,10 @@ index f8b14368..e4259285 100644
  	case sIgnore:
  	case sUnsupported:
 diff --git a/servconf.h b/servconf.h
-index ee060007..417c63cf 100644
+index 0bc7eecb4..d830a1582 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -240,6 +240,7 @@ typedef struct {
+@@ -238,6 +238,7 @@ typedef struct {
  	u_int64_t timing_secret;
  	char   *sk_provider;
  	int	required_rsa_size;	/* minimum size of RSA keys */
@@ -261,5 +198,5 @@ index ee060007..417c63cf 100644
  	char	**channel_timeouts;	/* inactivity timeout by channel type */
  	u_int	num_channel_timeouts;
 -- 
-2.37.1 (Apple Git-137.1)
+2.34.1
 
