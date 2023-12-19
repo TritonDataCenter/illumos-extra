@@ -1,4 +1,4 @@
-From 308759dce66411317592f5a6ecc97e3c6c5928e2 Mon Sep 17 00:00:00 2001
+From 9222f319cf0c96d22a58f1b01ed1ee650d33d864 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:00 -0700
 Subject: [PATCH 07/32] Add DisableBanner option
@@ -11,10 +11,10 @@ Subject: [PATCH 07/32] Add DisableBanner option
  4 files changed, 75 insertions(+), 4 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
-index 93119762..1d397a0d 100644
+index ec85b5382..6728b55da 100644
 --- a/readconf.c
 +++ b/readconf.c
-@@ -166,6 +166,9 @@ typedef enum {
+@@ -169,6 +169,9 @@ typedef enum {
  	oHashKnownHosts,
  	oTunnel, oTunnelDevice,
  	oLocalCommand, oPermitLocalCommand, oRemoteCommand,
@@ -24,7 +24,7 @@ index 93119762..1d397a0d 100644
  	oVisualHostKey,
  	oKexAlgorithms, oIPQoS, oRequestTTY, oSessionType, oStdinNull,
  	oForkAfterAuthentication, oIgnoreUnknown, oProxyUseFdpass,
-@@ -290,6 +293,9 @@ static struct {
+@@ -294,6 +297,9 @@ static struct {
  	{ "controlpersist", oControlPersist },
  	{ "hashknownhosts", oHashKnownHosts },
  	{ "include", oInclude },
@@ -34,7 +34,7 @@ index 93119762..1d397a0d 100644
  	{ "tunnel", oTunnel },
  	{ "tunneldevice", oTunnelDevice },
  	{ "localcommand", oLocalCommand },
-@@ -941,6 +947,17 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
+@@ -1029,6 +1035,17 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
  	return -1;
  }
  
@@ -52,7 +52,7 @@ index 93119762..1d397a0d 100644
  /*
   * Processes a single option line as used in the configuration files. This
   * only sets those values that have not already been set.
-@@ -2205,6 +2222,13 @@ parse_pubkey_algos:
+@@ -2300,6 +2317,13 @@ parse_pubkey_algos:
  		intptr = &options->enable_escape_commandline;
  		goto parse_flag;
  
@@ -66,7 +66,7 @@ index 93119762..1d397a0d 100644
  	case oRequiredRSASize:
  		intptr = &options->required_rsa_size;
  		goto parse_int;
-@@ -2445,6 +2469,9 @@ initialize_options(Options * options)
+@@ -2607,6 +2631,9 @@ initialize_options(Options * options)
  	options->stdin_null = -1;
  	options->fork_after_authentication = -1;
  	options->proxy_use_fdpass = -1;
@@ -76,7 +76,7 @@ index 93119762..1d397a0d 100644
  	options->ignored_unknown = NULL;
  	options->num_canonical_domains = 0;
  	options->num_permitted_cnames = 0;
-@@ -2646,6 +2673,10 @@ fill_default_options(Options * options)
+@@ -2812,6 +2839,10 @@ fill_default_options(Options * options)
  		options->canonicalize_fallback_local = 1;
  	if (options->canonicalize_hostname == -1)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
@@ -88,11 +88,11 @@ index 93119762..1d397a0d 100644
  		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
  #ifdef ENABLE_SK_INTERNAL
 diff --git a/readconf.h b/readconf.h
-index 2ce1b4c3..0ca0ebe0 100644
+index ff7180cd0..43d451406 100644
 --- a/readconf.h
 +++ b/readconf.h
-@@ -181,6 +181,9 @@ typedef struct {
- 	int	enable_escape_commandline;	/* ~C commandline */
+@@ -186,6 +186,9 @@ typedef struct {
+ 	u_int	num_channel_timeouts;
  
  	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
 +#ifdef DISABLE_BANNER
@@ -101,10 +101,10 @@ index 2ce1b4c3..0ca0ebe0 100644
  }       Options;
  
  #define SSH_PUBKEY_AUTH_NO	0x00
-@@ -224,6 +227,13 @@ typedef struct {
+@@ -234,6 +237,13 @@ typedef struct {
  const char *kex_default_pk_alg(void);
  char	*ssh_connection_hash(const char *thishost, const char *host,
-     const char *portstr, const char *user);
+     const char *portstr, const char *user, const char *jump_host);
 +
 +#ifdef DISABLE_BANNER
 +#define SSH_DISABLEBANNER_NO		0
@@ -116,10 +116,10 @@ index 2ce1b4c3..0ca0ebe0 100644
  int      fill_default_options(Options *);
  void	 fill_default_options_for_canonicalization(Options *);
 diff --git a/ssh_config.5 b/ssh_config.5
-index 9eb6b977..640a73d1 100644
+index 4bbdfefd1..166a07e88 100644
 --- a/ssh_config.5
 +++ b/ssh_config.5
-@@ -611,6 +611,14 @@ If set to a time in seconds, or a time in any of the formats documented in
+@@ -700,6 +700,14 @@ If set to a time in seconds, or a time in any of the formats documented in
  then the backgrounded master connection will automatically terminate
  after it has remained idle (with no client connections) for the
  specified time.
@@ -135,10 +135,10 @@ index 9eb6b977..640a73d1 100644
  Specifies that a TCP port on the local machine be forwarded
  over the secure channel, and the application
 diff --git a/sshconnect2.c b/sshconnect2.c
-index 58fe98db..33808816 100644
+index fab1e36be..16230a52c 100644
 --- a/sshconnect2.c
 +++ b/sshconnect2.c
-@@ -85,6 +85,10 @@ extern char *client_version_string;
+@@ -84,6 +84,10 @@ extern char *client_version_string;
  extern char *server_version_string;
  extern Options options;
  
@@ -149,7 +149,7 @@ index 58fe98db..33808816 100644
  /*
   * SSH2 key exchange
   */
-@@ -595,19 +599,37 @@ input_userauth_error(int type, u_int32_t seq, struct ssh *ssh)
+@@ -578,19 +582,37 @@ input_userauth_error(int type, u_int32_t seq, struct ssh *ssh)
  static int
  input_userauth_banner(int type, u_int32_t seq, struct ssh *ssh)
  {
@@ -192,5 +192,5 @@ index 58fe98db..33808816 100644
  }
  
 -- 
-2.37.1 (Apple Git-137.1)
+2.34.1
 
