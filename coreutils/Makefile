@@ -19,11 +19,16 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2024 MNX Cloud, Inc.
 #
 
-VER =	coreutils-8.13
+VER =	coreutils-9.4
 
 include ../Makefile.defs
+
+BUILD32 =
+BUILD64 = yes
+
 include ../Makefile.targ
 
 all: all_autoconf
@@ -31,9 +36,9 @@ all: all_autoconf
 install: all
 	mkdir -p $(DESTDIR)/usr/bin
 	mkdir -p $(DESTDIR)/usr/share/man/man1
-	cp $(BASE)/$(VER.32)/src/readlink $(DESTDIR)/usr/bin
-	cp $(BASE)/$(VER.32)/src/seq $(DESTDIR)/usr/bin
-	cp $(BASE)/$(VER.32)/src/stat $(DESTDIR)/usr/bin
-	cp -f $(BASE)/$(VER.32)/man/readlink.1 $(DESTDIR)/usr/share/man/man1
-	cp -f $(BASE)/$(VER.32)/man/seq.1 $(DESTDIR)/usr/share/man/man1
-	cp -f $(BASE)/$(VER.32)/man/stat.1 $(DESTDIR)/usr/share/man/man1
+	cp $(BASE)/$(VER.64)/src/readlink $(DESTDIR)/usr/bin
+	cp $(BASE)/$(VER.64)/src/seq $(DESTDIR)/usr/bin
+	cp $(BASE)/$(VER.64)/src/stat $(DESTDIR)/usr/bin
+	cp -f $(BASE)/$(VER.64)/man/readlink.1 $(DESTDIR)/usr/share/man/man1
+	cp -f $(BASE)/$(VER.64)/man/seq.1 $(DESTDIR)/usr/share/man/man1
+	cp -f $(BASE)/$(VER.64)/man/stat.1 $(DESTDIR)/usr/share/man/man1
