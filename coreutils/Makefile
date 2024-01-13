@@ -31,6 +31,11 @@ BUILD64 = yes
 
 include ../Makefile.targ
 
+# Jenkins agents run as root, and coreutils' configure doesn't like that
+# without an override. Oh and make sure it's the 64-bit build override too.
+AUTOCONF_ENV.64 += FORCE_UNSAFE_CONFIGURE=1
+OVERRIDES.64 += FORCE_UNSAFE_CONFIGURE=1
+
 all: all_autoconf
 
 install: all
