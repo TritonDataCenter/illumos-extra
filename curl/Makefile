@@ -22,7 +22,7 @@
 # Copyright 2023 MNX Cloud, Inc.
 #
 
-VER =	curl-8.5.0
+VER =	curl-8.6.0
 
 include ../Makefile.defs
 
