@@ -19,17 +19,17 @@
 # CDDL HEADER END
 #
 # Copyright 2015, Joyent, Inc.
-# Copyright 2023 MNX Cloud, Inc.
+# Copyright 2024 MNX Cloud, Inc.
 #
 
-VER =	curl-8.5.0
+VER =	curl-8.6.0
 
 include ../Makefile.defs
 
 TARBALL =		$(VER).tar.bz2
 TARBALL_COMPRESS =	-j
 
-AUTOCONF_OPTS +=	--with-ssl=$(DESTDIR)/usr
+AUTOCONF_OPTS +=	--with-ssl=$(DESTDIR)/usr --without-libpsl
 
 PATCHES =	Patches/*
 
