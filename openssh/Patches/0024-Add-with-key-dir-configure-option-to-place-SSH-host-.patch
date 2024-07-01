@@ -66,7 +66,7 @@ index f68e7ae11..07a8f9226 100644
 +	]
 +)
 +AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
-+	Specify location of SSH host keys])
++	[Specify location of SSH host keys])
 +AC_SUBST([keydir])
 +
 +
