@@ -1,4 +1,4 @@
-From 68e4ab842caa6fe96771dc02c6c1ebacb898ee8f Mon Sep 17 00:00:00 2001
+From 247ac91a82a7ca0f6a8f8b0e208b2628f459a701 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 3 Aug 2015 17:27:41 -0700
 Subject: [PATCH 19/32] Compatibility fix for "ListenAddress ::"
@@ -10,10 +10,10 @@ fact will listen on both IPv4 and IPv6.
  1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/servconf.c b/servconf.c
-index 4e525d10..ff703ca6 100644
+index a219d842a..ee2cf2f07 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -954,10 +954,21 @@ process_queued_listen_addrs(ServerOptions *options)
+@@ -1013,10 +1013,21 @@ process_queued_listen_addrs(ServerOptions *options)
  
  	for (i = 0; i < options->num_queued_listens; i++) {
  		qla = &options->queued_listen_addrs[i];
