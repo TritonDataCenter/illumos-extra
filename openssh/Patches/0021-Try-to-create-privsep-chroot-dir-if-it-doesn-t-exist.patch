@@ -1,27 +1,26 @@
-From 9aad562d8cab046f1eeaeb7c9491aebf8a701fd2 Mon Sep 17 00:00:00 2001
+From 16ad9e5f401c6951a26628123d29eb36b919e7c6 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 5 Aug 2015 12:25:15 -0700
 Subject: [PATCH 20/32] Try to create privsep chroot dir if it doesn't exist
  yet
 
 ---
- sshd.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+ sshd-session.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/sshd.c b/sshd.c
-index 597b3378..20b61f02 100644
---- a/sshd.c
-+++ b/sshd.c
-@@ -1965,11 +1965,30 @@ main(int ac, char **av)
+diff --git a/sshd-session.c b/sshd-session.c
+index 36cbaea89..89e5ea000 100644
+--- a/sshd-session.c
++++ b/sshd-session.c
+@@ -301,6 +301,32 @@ privsep_preauth_child(void)
  
+ 	/* Demote the child */
  	if (privsep_chroot) {
- 		struct stat st;
++		struct stat st;
 +		int rc;
- 
- 		if ((stat(_PATH_PRIVSEP_CHROOT_DIR, &st) == -1) ||
--		    (S_ISDIR(st.st_mode) == 0))
--			fatal("Missing privilege separation directory: %s",
--			    _PATH_PRIVSEP_CHROOT_DIR);
++
++		/* If not there, try and mkdir our chroot... */
++		if ((stat(_PATH_PRIVSEP_CHROOT_DIR, &st) == -1) ||
 +		    (S_ISDIR(st.st_mode) == 0)) {
 +			rc = mkdir(_PATH_PRIVSEP_CHROOT_DIR, 0755);
 +			if (rc == 0) {
@@ -43,9 +42,9 @@ index 597b3378..20b61f02 100644
 +				    strerror(errno));
 +			}
 +		}
- 
- #ifdef HAVE_CYGWIN
- 		if (check_ntsec(_PATH_PRIVSEP_CHROOT_DIR) &&
+ 		/* Change our root directory */
+ 		if (chroot(_PATH_PRIVSEP_CHROOT_DIR) == -1)
+ 			fatal("chroot(\"%s\"): %s", _PATH_PRIVSEP_CHROOT_DIR,
 -- 
 2.34.1
 
