@@ -1,0 +1,23 @@
+From 7f4a743171f9e6b283207d448de6562219774fbf Mon Sep 17 00:00:00 2001
+From: Salvatore Bonaccorso <carnil@debian.org>
+Date: Tue, 25 Jun 2024 12:24:29 +0100
+Subject: Disable async-signal-unsafe code from the sshsigdie() function
+
+diff -git a/log.c b/log.c
+--- a/log.c	1970-01-01 00:00:00
++++ b/log.c	1970-01-01 00:00:00
+@@ -451,12 +451,14 @@ void
+ sshsigdie(const char *file, const char *func, int line, int showfunc,
+     LogLevel level, const char *suffix, const char *fmt, ...)
+ {
++#if 0
+ 	va_list args;
+ 
+ 	va_start(args, fmt);
+ 	sshlogv(file, func, line, showfunc, SYSLOG_LEVEL_FATAL,
+ 	    suffix, fmt, args);
+ 	va_end(args);
++#endif
+ 	_exit(1);
+ }
+ 
