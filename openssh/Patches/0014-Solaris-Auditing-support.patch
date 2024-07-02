@@ -784,7 +784,7 @@ index 259d0e51a..36cbaea89 100644
  		set_process_rdomain(ssh, options.routing_domain);
  
 -#ifdef SSH_AUDIT_EVENTS
-+#ifdef defined(SSH_AUDIT_EVENTS) && !defined(USE_SOLARIS_AUDIT)
++#if defined(SSH_AUDIT_EVENTS) && !defined(USE_SOLARIS_AUDIT)
  	audit_event(ssh, SSH_AUTH_SUCCESS);
  #endif
  
