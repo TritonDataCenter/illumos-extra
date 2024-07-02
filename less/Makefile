@@ -19,9 +19,10 @@
 # CDDL HEADER END
 #
 # Copyright 2022 Joyent, Inc.
+# Copyright 2024 MNX Cloud, Inc.
 #
 
-VER =	less-590
+VER =	less-661
 
 include ../Makefile.defs
 include ../Makefile.targ
