@@ -576,7 +576,7 @@ index 22b158d10..9ed2ada4d 100644
  
 +#ifdef PAM_ENHANCEMENT
 +	char   *pam_service_prefix;
-+	char   *pam_service_name;
++	/* char   *pam_service_name; */ /* Now in upstream! */
 +	int	pam_service_per_authmethod;
 +#endif
 +
