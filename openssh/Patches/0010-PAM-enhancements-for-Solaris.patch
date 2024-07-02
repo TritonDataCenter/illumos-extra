@@ -252,9 +252,8 @@ index 67dec88c3..76f935aa4 100644
 +		 * If each userauth has its own PAM service, then PAM needs to
 +		 * perform the account check for this service.
 +		 */
-+		if (options.use_pam && options.pam_service_per_authmethod &&
-+		    !mm_do_pam_account()) {
-+			int r;
++		if (options.use_pam && options.pam_service_per_authmethod) {
++			int r, success = mm_do_pam_account();
 +			/* if PAM returned a message, send it to the user */
 +			if (sshbuf_len(loginmsg) > 0) {
 +				if ((r = sshbuf_put_u8(loginmsg, 0))) {
@@ -264,9 +263,10 @@ index 67dec88c3..76f935aa4 100644
 +				userauth_send_banner(ssh, sshbuf_ptr(loginmsg));
 +				ssh_packet_write_wait(ssh);
 +			}
-+
-+			fatal("Access denied for user %s by PAM account "
-+			    "configuration", authctxt->user);
++			if (!success) {
++				fatal("Access denied for user %s by PAM account"
++				    " configuration", authctxt->user);
++			}
 +		}
 +#endif
  		if (!auth2_update_methods_lists(authctxt, method, submethod)) {
