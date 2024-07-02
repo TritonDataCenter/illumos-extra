@@ -1,7 +1,7 @@
-From fc8880fe6fff564aee411154d89fd770952bd7e8 Mon Sep 17 00:00:00 2001
+From 6fcb9ac2a0a3c377b37b4207bded60eeabd2ef57 Mon Sep 17 00:00:00 2001
 From: Travis Paul <travis.paul@mnx.io>
 Date: Thu, 30 Nov 2023 19:18:37 +0000
-Subject: [PATCH 18/32] PubKeyPlugin support
+Subject: [PATCH] PubKeyPlugin support
 
 This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called
@@ -138,7 +138,7 @@ index 7580db78d..13c404a5d 100644
  	    remote_host, conn_id, rdomain, &opts)) != 0)
  		goto out;
 diff --git a/servconf.c b/servconf.c
-index 0e24d6df7..a219d842a 100644
+index ea76eaefc..d4e87a904 100644
 --- a/servconf.c
 +++ b/servconf.c
 @@ -225,6 +225,7 @@ initialize_server_options(ServerOptions *options)
@@ -166,8 +166,8 @@ index 0e24d6df7..a219d842a 100644
  	{ NULL, sBadOption, 0 }
  };
  
-@@ -2768,6 +2770,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
- 		}
+@@ -2760,6 +2762,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+ 			options->pam_service_prefix = xstrdup(arg);
  		break;
  
 +	case sPubKeyPlugin:
@@ -186,7 +186,7 @@ index 0e24d6df7..a219d842a 100644
  	case sIgnore:
  	case sUnsupported:
 diff --git a/servconf.h b/servconf.h
-index 9ed2ada4d..c017fc852 100644
+index 9fc15cb9c..090a83356 100644
 --- a/servconf.h
 +++ b/servconf.h
 @@ -250,6 +250,7 @@ typedef struct {
