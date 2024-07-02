@@ -1,7 +1,7 @@
-From a960839331d63a076f42f0212f4df15e99f30268 Mon Sep 17 00:00:00 2001
+From 7063065c481deaf5cd40ad71839ae80155dd9fca Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:19 -0700
-Subject: [PATCH 09/32] PAM enhancements for Solaris
+Subject: [PATCH] PAM enhancements for Solaris
 
 ---
  auth-pam.c     | 113 +++++++++++++++++++++++++++++++++++++++++++++++++
@@ -10,11 +10,11 @@ Subject: [PATCH 09/32] PAM enhancements for Solaris
  monitor.c      |  71 +++++++++++++++++++++++++++++++
  monitor.h      |   3 ++
  monitor_wrap.c |  21 +++++++++
- servconf.c     |  55 ++++++++++++++++++++++++
+ servconf.c     |  49 ++++++++++++++++++++-
  servconf.h     |   9 ++++
  sshd.8         |  27 ++++++++++++
  sshd_config.5  |  23 ++++++----
- 10 files changed, 386 insertions(+), 8 deletions(-)
+ 10 files changed, 379 insertions(+), 9 deletions(-)
 
 diff --git a/auth-pam.c b/auth-pam.c
 index b24ada304..0b4aef163 100644
@@ -463,7 +463,7 @@ index 5358c77a1..695fcc826 100644
  int
  mm_auth_password(struct ssh *ssh, char *password)
 diff --git a/servconf.c b/servconf.c
-index 1a66f3f84..343382543 100644
+index 1a66f3f84..7a7eb4341 100644
 --- a/servconf.c
 +++ b/servconf.c
 @@ -213,6 +213,18 @@ initialize_server_options(ServerOptions *options)
@@ -503,7 +503,7 @@ index 1a66f3f84..343382543 100644
  	sUsePrivilegeSeparation, sAllowAgentForwarding,
  	sHostCertificate, sInclude,
 +#ifdef PAM_ENHANCEMENT
-+	sPAMServicePrefix, sPAMServiceName,
++	sPAMServicePrefix, /* sPAMServiceName,  (in upstream!) */
 +#endif
  	sRevokedKeys, sTrustedUserCAKeys, sAuthorizedPrincipalsFile,
  	sAuthorizedPrincipalsCommand, sAuthorizedPrincipalsCommandUser,
@@ -514,15 +514,35 @@ index 1a66f3f84..343382543 100644
  	{ "hostcertificate", sHostCertificate, SSHCFG_GLOBAL },
 +#ifdef PAM_ENHANCEMENT
 +	{ "pamserviceprefix", sPAMServicePrefix, SSHCFG_GLOBAL },
-+	{ "pamservicename", sPAMServiceName, SSHCFG_GLOBAL },
++	/* { "pamservicename", sPAMServiceName, SSHCFG_GLOBAL }, Upstreamed! */
 +#endif
  	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
  	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },
  	{ "authorizedprincipalsfile", sAuthorizedPrincipalsFile, SSHCFG_ALL },
-@@ -2675,6 +2700,36 @@ process_server_config_line_depth(ServerOptions *options, char *line,
- 	case sSshdSessionPath:
+@@ -1352,8 +1377,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+ 			fatal("%s line %d: missing argument.",
+ 			    filename, linenum);
+ 		}
+-		if (*activep && *charptr == NULL)
++		if (options->pam_service_prefix != NULL)
++			fatal("%s line %d: PAMServiceName and PAMServicePrefix"
++			    " are mutually exclusive.", filename, linenum);
++		if (*activep && *charptr == NULL) {
+ 			*charptr = xstrdup(arg);
++
++			/*
++			 * When this option is specified, we will not have
++			 * PAM service for each auth method.
++                         */
++			options->pam_service_per_authmethod = 0;
++		}
+ 		break;
+ 
+ 	/* Standard Options */
+@@ -2676,6 +2711,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  		charptr = &options->sshd_session_path;
  		goto parse_filename;
+ 
 +	case sPAMServicePrefix:
 +		arg = argv_next(&ac, &av);
 +		if (!arg || *arg == '\0')
@@ -535,29 +555,11 @@ index 1a66f3f84..343382543 100644
 +			options->pam_service_prefix = xstrdup(arg);
 +		break;
 +
-+	case sPAMServiceName:
-+		arg = argv_next(&ac, &av);
-+		if (!arg || *arg == '\0')
-+			fatal("%s line %d: Missing argument.",
-+			    filename, linenum);
-+		if (options->pam_service_prefix != NULL)
-+			fatal("%s line %d: PAMServiceName and PAMServicePrefix"
-+			    " are mutually exclusive.", filename, linenum);
-+		if (options->pam_service_name == NULL) {
-+			options->pam_service_name = xstrdup(arg);
-+
-+			/*
-+			 * When this option is specified, we will not have
-+			 * PAM service for each auth method.
-+                         */
-+			options->pam_service_per_authmethod = 0;
-+		}
-+		break;
- 
  	case sDeprecated:
  	case sIgnore:
+ 	case sUnsupported:
 diff --git a/servconf.h b/servconf.h
-index 22b158d10..9ed2ada4d 100644
+index 22b158d10..9fc15cb9c 100644
 --- a/servconf.h
 +++ b/servconf.h
 @@ -80,6 +80,9 @@ struct per_source_penalty {
