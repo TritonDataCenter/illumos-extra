@@ -183,7 +183,7 @@ index e63bb5ec6..49282599e 100644
 +		char *safe = xmalloc(len * 4 + 1); /* max expansion from strnvis() */
 +		strnvis(safe, msg, len * 4 + 1, VIS_SAFE|VIS_OCTAL|VIS_NOSLASH);
 +		fmprintf(stderr, "%s", safe);
-+		free(msg);
++		free(safe);
 +	}
  	r = 0;
   out:
