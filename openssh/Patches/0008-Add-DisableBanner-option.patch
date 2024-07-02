@@ -173,8 +173,8 @@ index e63bb5ec6..49282599e 100644
 +	 */
 +	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO &&
 +	    (options.disable_banner == SSH_DISABLEBANNER_NO ||
-+	    (options.disable_banner == SSH_DISABLEBANNER_INEXECMODE)) &&
-+	    sshbuf_len(command) == 0) {
++	    (options.disable_banner == SSH_DISABLEBANNER_INEXECMODE &&
++	    sshbuf_len(command) == 0))) {
 +#else
 +	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO) {
 +#endif
