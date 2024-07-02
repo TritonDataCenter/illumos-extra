@@ -223,9 +223,9 @@ index 67dec88c3..76f935aa4 100644
 +			if (authctxt->authmethod_name != NULL)
 +				free(authctxt->authmethod_name);
 +			authctxt->authmethod_name = xstrdup(method);
-+			if (use_privsep)
-+				mm_inform_authmethod(method);
-+			PRIVSEP(start_pam(ssh));
++			/* XXX SmartOS - use_privsep is now implicit! */
++			mm_inform_authmethod(method);
++			mm_start_pam(ssh);
 +		}
 +#endif
  		debug2("input_userauth_request: try method %s", method);
