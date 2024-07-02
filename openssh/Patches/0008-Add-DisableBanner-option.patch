@@ -164,6 +164,7 @@ index e63bb5ec6..49282599e 100644
  	    (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0)
  		goto out;
 -	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO)
+-		fmprintf(stderr, "%s", msg);
 +#ifdef DISABLE_BANNER
 +	/*
 +	 * Banner is a warning message according to RFC 4252. So, never print
