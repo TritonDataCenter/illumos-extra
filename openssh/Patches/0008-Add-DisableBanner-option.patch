@@ -154,17 +154,17 @@ index e63bb5ec6..49282599e 100644
  input_userauth_banner(int type, u_int32_t seq, struct ssh *ssh)
  {
 -	char *msg = NULL;
-+	char *msg, *raw = NULL;
++	char *msg = NULL; /* Placeholder diff */
  	size_t len;
  	int r;
  
  	debug3_f("entering");
 -	if ((r = sshpkt_get_cstring(ssh, &msg, &len)) != 0 ||
-+	if ((r = sshpkt_get_cstring(ssh, &raw, &len)) != 0 ||
++	if ((r = sshpkt_get_cstring(ssh, &msg, &len)) != 0 || /* placeholder */
  	    (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0)
  		goto out;
 -	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO)
-+#if defined(DISABLE_BANNER)
++#ifdef DISABLE_BANNER
 +	/*
 +	 * Banner is a warning message according to RFC 4252. So, never print
 +	 * a banner in error log level or lower. If the log level is higher,
@@ -173,21 +173,20 @@ index e63bb5ec6..49282599e 100644
 +	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO &&
 +	    (options.disable_banner == SSH_DISABLEBANNER_NO ||
 +	    (options.disable_banner == SSH_DISABLEBANNER_INEXECMODE)) &&
-+	    command != NULL && sshbuf_len(command) == 0) {
++	    sshbuf_len(command) == 0) {
 +#else
 +	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO) {
 +#endif
 +		if (len > 65536)
 +			len = 65536;
-+		msg = xmalloc(len * 4 + 1); /* max expansion from strnvis() */
-+		strnvis(msg, raw, len * 4 + 1, VIS_SAFE|VIS_OCTAL|VIS_NOSLASH);
- 		fmprintf(stderr, "%s", msg);
++		char *safe = xmalloc(len * 4 + 1); /* max expansion from strnvis() */
++		strnvis(safe, msg, len * 4 + 1, VIS_SAFE|VIS_OCTAL|VIS_NOSLASH);
++		fmprintf(stderr, "%s", safe);
 +		free(msg);
 +	}
  	r = 0;
   out:
--	free(msg);
-+	free(raw);
+ 	free(msg);
  	return r;
  }
  
