@@ -204,7 +204,7 @@ index 67dec88c3..76f935aa4 100644
 +		 * has its own PAM service.
 +		 */
 +		if (options.use_pam && !options.pam_service_per_authmethod)
-+			PRIVSEP(start_pam(ssh));
++			mm_start_pam(ssh);
 +#else
  		if (options.use_pam)
  			mm_start_pam(ssh);
@@ -253,7 +253,7 @@ index 67dec88c3..76f935aa4 100644
 +		 * perform the account check for this service.
 +		 */
 +		if (options.use_pam && options.pam_service_per_authmethod &&
-+		    !PRIVSEP(do_pam_account())) {
++		    !mm_do_pam_account()) {
 +			int r;
 +			/* if PAM returned a message, send it to the user */
 +			if (sshbuf_len(loginmsg) > 0) {
