@@ -18,7 +18,7 @@ index 1ab0f41d9..92eac4ec2 100644
  in interactively.
 -The default is
 -.Cm yes .
-+On Solaris this option is always ignored since pam_unix_session(5)
++On SmartOS this option is always ignored since pam_unix_session(5)
 +reports the last login time.
  .It Cm PrintMotd
  Specifies whether
