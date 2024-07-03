@@ -18,7 +18,7 @@ index 1ab0f41d9..92eac4ec2 100644
  in interactively.
 -The default is
 -.Cm yes .
-+On SmartOS this option is always ignored since pam_unix_session(5)
++On SmartOS this option is always ignored since pam_unix_session(7)
 +reports the last login time.
  .It Cm PrintMotd
  Specifies whether
@@ -29,7 +29,7 @@ index 1ab0f41d9..92eac4ec2 100644
  .Xr sftp-server 8 ,
 -.Xr sshd 8
 +.Xr sshd 8 ,
-+.Xr pam_unix_session 5
++.Xr pam_unix_session 7
  .Sh AUTHORS
  .An -nosplit
  OpenSSH is a derivative of the original and free
