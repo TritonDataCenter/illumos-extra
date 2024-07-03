@@ -25,5 +25,9 @@
 VER =	less-661
 
 include ../Makefile.defs
+
+BUILD32 = 
+BUILD64 = yes
+
 include ../Makefile.targ
 include ../Makefile.targ.autoconf
