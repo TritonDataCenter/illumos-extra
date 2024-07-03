@@ -1,7 +1,7 @@
-From 924a56cbfc3b44b7c145be542b0807a13b9b3a2a Mon Sep 17 00:00:00 2001
+From 35afc7b6c1c5293ee287fc4cbefdf8eb54419093 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 16 Sep 2015 10:54:13 -0700
-Subject: [PATCH 28/32] Restore tcpwrappers/libwrap support
+Subject: [PATCH 28/33] Restore tcpwrappers/libwrap support
 
 This reverts commit f9696566fb41320820f3b257ab564fa321bb3751
 and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
@@ -12,10 +12,10 @@ and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
  3 files changed, 93 insertions(+)
 
 diff --git a/configure.ac b/configure.ac
-index 006f39941..9225fefae 100644
+index 834afb423..c6f3072ca 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1665,6 +1665,62 @@ else
+@@ -1672,6 +1672,62 @@ else
  	AC_MSG_RESULT([no])
  fi
  
@@ -78,7 +78,7 @@ index 006f39941..9225fefae 100644
  # Check whether user wants to use ldns
  LDNS_MSG="no"
  AC_ARG_WITH(ldns,
-@@ -5712,6 +5768,7 @@ echo "                       PAM support: $PAM_MSG"
+@@ -5719,6 +5775,7 @@ echo "                       PAM support: $PAM_MSG"
  echo "                   OSF SIA support: $SIA_MSG"
  echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
@@ -87,7 +87,7 @@ index 006f39941..9225fefae 100644
  echo "                   libldns support: $LDNS_MSG"
  echo "  Solaris process contract support: $SPC_MSG"
 diff --git a/sshd-session.c b/sshd-session.c
-index 89e5ea000..dde609462 100644
+index d1985b247..df9b97b1d 100644
 --- a/sshd-session.c
 +++ b/sshd-session.c
 @@ -110,6 +110,17 @@

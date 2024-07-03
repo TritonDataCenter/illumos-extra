@@ -1,7 +1,7 @@
-From 4c5891a81a9c87907cec03f02b78011b8d63473c Mon Sep 17 00:00:00 2001
+From 948d14c6bdd09c3b8faafaa4747feb672621c53c Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 24 Aug 2015 18:57:27 -0700
-Subject: [PATCH 25/32] Set default sshd options based on /etc/default/login
+Subject: [PATCH 25/33] Set default sshd options based on /etc/default/login
 
 ---
  pathnames.h   |  1 +
@@ -22,7 +22,7 @@ index 1243d3c9a..bee90668d 100644
  #define _PATH_DH_PRIMES			SSHDIR "/primes"
  
 diff --git a/servconf.c b/servconf.c
-index ee2cf2f07..362c127f2 100644
+index c85efeeac..b00b21f99 100644
 --- a/servconf.c
 +++ b/servconf.c
 @@ -36,6 +36,7 @@
@@ -33,7 +33,7 @@ index ee2cf2f07..362c127f2 100644
  #include <errno.h>
  #ifdef HAVE_UTIL_H
  #include <util.h>
-@@ -235,6 +236,64 @@ option_clear_or_none(const char *o)
+@@ -234,6 +235,64 @@ option_clear_or_none(const char *o)
  	return o == NULL || strcasecmp(o, "none") == 0;
  }
  
@@ -98,9 +98,9 @@ index ee2cf2f07..362c127f2 100644
  static void
  assemble_algorithms(ServerOptions *o)
  {
-@@ -318,6 +377,8 @@ fill_default_server_options(ServerOptions *options)
- 	if (options->pam_service_name == NULL)
+@@ -321,6 +380,8 @@ fill_default_server_options(ServerOptions *options)
  		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
+ #endif
  
 +	deflt_fill_default_server_options(options);
 +
@@ -108,7 +108,7 @@ index ee2cf2f07..362c127f2 100644
  	if (options->num_host_key_files == 0) {
  		/* fill default hostkeys for protocols */
 diff --git a/sshd_config.5 b/sshd_config.5
-index decf2cc02..a6ad2c1dc 100644
+index 4588eab38..8a1f6eb21 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
 @@ -1336,7 +1336,13 @@ Specifies the maximum number of authentication attempts permitted per

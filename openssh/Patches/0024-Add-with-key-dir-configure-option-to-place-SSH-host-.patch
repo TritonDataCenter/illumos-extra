@@ -1,7 +1,7 @@
-From 2afa887a2a8fc4ee845cb27716fbfbd83db9c4ca Mon Sep 17 00:00:00 2001
+From 87bbf788ff83f44763a6812395f436d367471eb3 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 13:32:53 -0700
-Subject: [PATCH 23/32] Add --with-key-dir configure option to place SSH host
+Subject: [PATCH 23/33] Add --with-key-dir configure option to place SSH host
  keys
 
 ---
@@ -48,10 +48,10 @@ index de3a37b22..0290d66c3 100644
  install-sysconf:
  	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
 diff --git a/configure.ac b/configure.ac
-index f68e7ae11..07a8f9226 100644
+index e58e9bf04..624bdba6b 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -5357,6 +5357,21 @@ AC_ARG_ENABLE([fd-passing],
+@@ -5364,6 +5364,21 @@ AC_ARG_ENABLE([fd-passing],
  	]
  )
  
@@ -73,7 +73,7 @@ index f68e7ae11..07a8f9226 100644
  dnl allow user to disable some login recording features
  AC_ARG_ENABLE([lastlog],
  	[  --disable-lastlog       disable use of lastlog even if detected [no]],
-@@ -5681,12 +5696,14 @@ G=`eval echo ${piddir}` ; G=`eval echo ${G}`
+@@ -5688,12 +5703,14 @@ G=`eval echo ${piddir}` ; G=`eval echo ${G}`
  H=`eval echo ${PRIVSEP_PATH}` ; H=`eval echo ${H}`
  I=`eval echo ${user_path}` ; I=`eval echo ${I}`
  J=`eval echo ${superuser_path}` ; J=`eval echo ${J}`

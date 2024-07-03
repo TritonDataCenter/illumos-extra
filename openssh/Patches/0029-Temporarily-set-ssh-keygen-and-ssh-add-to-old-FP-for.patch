@@ -1,7 +1,7 @@
-From 9e4f07fa993d3af7b70112d288abb8423de46e00 Mon Sep 17 00:00:00 2001
+From 62c199360144b8198bb0625189adec1cbffc4a45 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 9 Sep 2015 10:36:05 -0700
-Subject: [PATCH 27/32] Temporarily set ssh-keygen and ssh-add to old FP format
+Subject: [PATCH 27/33] Temporarily set ssh-keygen and ssh-add to old FP format
 
 SDC and its users have a lot of scripts that expect ssh-add
 and ssh-keygen to return fingerprints in the old format.

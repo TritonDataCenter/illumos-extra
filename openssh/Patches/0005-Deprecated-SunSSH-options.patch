@@ -1,7 +1,7 @@
-From 3778d274a512c4ed14ab2970aaa7b9f5804e8405 Mon Sep 17 00:00:00 2001
+From 95d4da70491e1e9c2eaf7ebe3a75f4f6a82e2e15 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:12 -0700
-Subject: [PATCH 04/32] Deprecated SunSSH options
+Subject: [PATCH 04/33] Deprecated SunSSH options
 
 #
 # To make the transition from SunSSH to OpenSSH as smooth as possible, we

@@ -1,23 +1,23 @@
-From 7063065c481deaf5cd40ad71839ae80155dd9fca Mon Sep 17 00:00:00 2001
+From c3cdb2e7bcef35edd069e8918b8ff013e26612c5 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:19 -0700
-Subject: [PATCH] PAM enhancements for Solaris
+Subject: [PATCH 09/33] PAM enhancements for Solaris
 
 ---
- auth-pam.c     | 113 +++++++++++++++++++++++++++++++++++++++++++++++++
+ auth-pam.c     | 115 +++++++++++++++++++++++++++++++++++++++++++++++++
  auth.h         |   4 ++
  auth2.c        |  68 +++++++++++++++++++++++++++++
- monitor.c      |  71 +++++++++++++++++++++++++++++++
+ monitor.c      |  71 ++++++++++++++++++++++++++++++
  monitor.h      |   3 ++
  monitor_wrap.c |  21 +++++++++
- servconf.c     |  49 ++++++++++++++++++++-
+ servconf.c     |  55 ++++++++++++++++++++++-
  servconf.h     |   9 ++++
  sshd.8         |  27 ++++++++++++
  sshd_config.5  |  23 ++++++----
- 10 files changed, 379 insertions(+), 9 deletions(-)
+ 10 files changed, 386 insertions(+), 10 deletions(-)
 
 diff --git a/auth-pam.c b/auth-pam.c
-index b24ada304..0b4aef163 100644
+index b24ada304..425389fb4 100644
 --- a/auth-pam.c
 +++ b/auth-pam.c
 @@ -683,6 +683,66 @@ sshpam_cleanup(void)
@@ -87,18 +87,29 @@ index b24ada304..0b4aef163 100644
  static int
  sshpam_init(struct ssh *ssh, Authctxt *authctxt)
  {
-@@ -704,19 +764,72 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
- 			    "packet context", __func__);
- 		}
- 	}
+@@ -690,8 +750,18 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
+ 	const char **ptr_pam_user = &pam_user;
+ 	int r;
+ 
++
 +#ifdef PAM_ENHANCEMENT
 +	const char *pam_service;
-+        const char **ptr_pam_service = &pam_service;
++	const char **ptr_pam_service = &pam_service;
 +	char *svc = NULL;
 +
 +	svc = derive_pam_service_name(authctxt);
-+        debug3("PAM service is %s", svc);
++	debug3("PAM service is %s", svc);
++#else
+ 	if (options.pam_service_name == NULL)
+ 		fatal_f("internal error: NULL PAM service name");
 +#endif
+ #if defined(PAM_SUN_CODEBASE) && defined(PAM_MAX_RESP_SIZE)
+ 	/* Protect buggy PAM implementations from excessively long usernames */
+ 	if (strlen(user) >= PAM_MAX_RESP_SIZE)
+@@ -704,19 +774,64 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
+ 			    "packet context", __func__);
+ 		}
+ 	}
 +
  	if (sshpam_handle != NULL) {
 +#ifdef PAM_ENHANCEMENT
@@ -176,7 +187,7 @@ index 98bb23d4c..de90f18ec 100644
  
  /*
 diff --git a/auth2.c b/auth2.c
-index 67dec88c3..76f935aa4 100644
+index 67dec88c3..ddf07939a 100644
 --- a/auth2.c
 +++ b/auth2.c
 @@ -265,6 +265,11 @@ ensure_minimum_time_since(double start, double seconds)
@@ -463,29 +474,51 @@ index 5358c77a1..695fcc826 100644
  int
  mm_auth_password(struct ssh *ssh, char *password)
 diff --git a/servconf.c b/servconf.c
-index 1a66f3f84..7a7eb4341 100644
+index 1a66f3f84..0526cc943 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -213,6 +213,18 @@ initialize_server_options(ServerOptions *options)
- 	options->num_channel_timeouts = 0;
- 	options->unused_connection_timeout = -1;
- 	options->sshd_session_path = NULL;
+@@ -93,6 +93,17 @@ initialize_server_options(ServerOptions *options)
+ 	/* Portable-specific options */
+ 	options->use_pam = -1;
+ 	options->pam_service_name = NULL;
 +#ifdef PAM_ENHANCEMENT
-+	options->pam_service_name = NULL;
 +	options->pam_service_prefix = NULL;
 +
 +	/*
 +	 * Each user method will have its own PAM service by default.
-+	 * However, if PAMServiceName is specified or the protocal version
-+	 * is not compat20, then there will be only one PAM service for the
++	 * However, if PAMServiceName is specified
++	 * then there will be only one PAM service for the
 +	 * entire user authentication.
 +	 */
 +	options->pam_service_per_authmethod = 1;
 +#endif
+ 
+ 	/* Standard Options */
+ 	options->num_ports = 0;
+@@ -213,6 +224,7 @@ initialize_server_options(ServerOptions *options)
+ 	options->num_channel_timeouts = 0;
+ 	options->unused_connection_timeout = -1;
+ 	options->sshd_session_path = NULL;
++	options->pubkey_plugin = NULL;
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -477,6 +489,12 @@ fill_default_server_options(ServerOptions *options)
+@@ -301,9 +313,13 @@ fill_default_server_options(ServerOptions *options)
+ #else
+ 		options->use_pam = 0;
+ #endif
+-
++#ifdef PAM_ENHANCEMENT
++	if (options->pam_service_prefix == NULL)
++		options->pam_service_prefix = xstrdup(SSHD_PAM_SERVICE);
++#else
+ 	if (options->pam_service_name == NULL)
+ 		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
++#endif
+ 
+ 	/* Standard Options */
+ 	if (options->num_host_key_files == 0) {
+@@ -477,6 +493,12 @@ fill_default_server_options(ServerOptions *options)
  		options->ip_qos_bulk = IPTOS_DSCP_CS1;
  	if (options->version_addendum == NULL)
  		options->version_addendum = xstrdup("");
@@ -498,7 +531,7 @@ index 1a66f3f84..7a7eb4341 100644
  	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
  		options->fwd_opts.streamlocal_bind_mask = 0177;
  	if (options->fwd_opts.streamlocal_bind_unlink == -1)
-@@ -568,6 +586,9 @@ typedef enum {
+@@ -568,6 +590,9 @@ typedef enum {
  	sMatch, sPermitOpen, sPermitListen, sForceCommand, sChrootDirectory,
  	sUsePrivilegeSeparation, sAllowAgentForwarding,
  	sHostCertificate, sInclude,
@@ -508,7 +541,7 @@ index 1a66f3f84..7a7eb4341 100644
  	sRevokedKeys, sTrustedUserCAKeys, sAuthorizedPrincipalsFile,
  	sAuthorizedPrincipalsCommand, sAuthorizedPrincipalsCommandUser,
  	sKexAlgorithms, sCASignatureAlgorithms, sIPQoS, sVersionAddendum,
-@@ -724,6 +745,10 @@ static struct {
+@@ -724,6 +749,10 @@ static struct {
  	{ "forcecommand", sForceCommand, SSHCFG_ALL },
  	{ "chrootdirectory", sChrootDirectory, SSHCFG_ALL },
  	{ "hostcertificate", sHostCertificate, SSHCFG_GLOBAL },
@@ -519,7 +552,7 @@ index 1a66f3f84..7a7eb4341 100644
  	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
  	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },
  	{ "authorizedprincipalsfile", sAuthorizedPrincipalsFile, SSHCFG_ALL },
-@@ -1352,8 +1377,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -1352,8 +1381,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  			fatal("%s line %d: missing argument.",
  			    filename, linenum);
  		}
@@ -539,7 +572,7 @@ index 1a66f3f84..7a7eb4341 100644
  		break;
  
  	/* Standard Options */
-@@ -2676,6 +2711,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2676,6 +2715,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  		charptr = &options->sshd_session_path;
  		goto parse_filename;
  
@@ -624,7 +657,7 @@ index c0f095ca4..c1054fe32 100644
  .Xr scp 1 ,
  .Xr sftp 1 ,
 diff --git a/sshd_config.5 b/sshd_config.5
-index 92eac4ec2..dd6bd49c4 100644
+index 5c00dac94..768821e8f 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
 @@ -1375,12 +1375,20 @@ key exchange methods.

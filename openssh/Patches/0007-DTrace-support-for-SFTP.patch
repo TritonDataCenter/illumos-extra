@@ -1,7 +1,7 @@
-From 597affec50234ab78fdf5f89f541d69fd56f709b Mon Sep 17 00:00:00 2001
+From 28754fc6db6e3bfb783d3791cbaae33442a88443 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:43 -0700
-Subject: [PATCH 06/32] DTrace support for SFTP
+Subject: [PATCH 06/33] DTrace support for SFTP
 
 ---
  Makefile.in          | 22 +++++++++++--

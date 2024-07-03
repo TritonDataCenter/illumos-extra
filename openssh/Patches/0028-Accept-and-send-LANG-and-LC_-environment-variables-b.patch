@@ -1,7 +1,7 @@
-From 63080b17fe4c9372cc96411c1a04b68b24e0275f Mon Sep 17 00:00:00 2001
+From 83e1d205c355bedac79946c6cc686ceb2e48bf00 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 4 Sep 2015 11:04:30 -0700
-Subject: [PATCH 26/32] Accept and send LANG and LC_* environment variables by
+Subject: [PATCH 26/33] Accept and send LANG and LC_* environment variables by
  default
 
 This preserves most of the old SunSSH locale negotiation
@@ -62,10 +62,10 @@ index 282130cfa..4b0541820 100644
  void	 free_options(Options *o);
  int	 process_config_line(Options *, struct passwd *, const char *,
 diff --git a/servconf.c b/servconf.c
-index 362c127f2..0b1414456 100644
+index b00b21f99..b4ac2f7e8 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -337,6 +337,22 @@ assemble_algorithms(ServerOptions *o)
+@@ -336,6 +336,22 @@ assemble_algorithms(ServerOptions *o)
  	free(def_sig);
  }
  
@@ -88,7 +88,7 @@ index 362c127f2..0b1414456 100644
  void
  servconf_add_hostkey(const char *file, const int line,
      ServerOptions *options, const char *path, int userprovided)
-@@ -360,6 +376,36 @@ servconf_add_hostcert(const char *file, const int line,
+@@ -359,6 +375,36 @@ servconf_add_hostcert(const char *file, const int line,
  	free(apath);
  }
  
@@ -125,7 +125,7 @@ index 362c127f2..0b1414456 100644
  void
  fill_default_server_options(ServerOptions *options)
  {
-@@ -2324,7 +2370,20 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2337,7 +2383,20 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  			found = 1;
  			if (!*activep)
  				continue;
@@ -240,7 +240,7 @@ index 2fcf3bbba..73de9d607 100644
  
  #LoginGraceTime 2m
 diff --git a/sshd_config.5 b/sshd_config.5
-index a6ad2c1dc..3e750d399 100644
+index 8a1f6eb21..729641a8d 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
 @@ -86,7 +86,20 @@ directives.

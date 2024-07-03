@@ -1,7 +1,7 @@
-From dad1e10b925eec5f9f56fff7c321b0c94ef0c935 Mon Sep 17 00:00:00 2001
+From d45eb4ebdcd0081c37beed45f8ab4986ed3db453 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:41 -0700
-Subject: [PATCH 03/32] lastlogin
+Subject: [PATCH 03/33] lastlogin
 
 *** old/servconf.c Wed Sep 17 02:54:26 2014
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH 03/32] lastlogin
  1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/sshd_config.5 b/sshd_config.5
-index 1ab0f41d9..92eac4ec2 100644
+index 1ab0f41d9..5c00dac94 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
 @@ -1670,8 +1670,8 @@ Specifies whether

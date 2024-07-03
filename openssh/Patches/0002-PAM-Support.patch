@@ -1,7 +1,7 @@
-From dbc9917341c82181d748cc9c6372a2b080294548 Mon Sep 17 00:00:00 2001
+From ec1a323da955d152959f563dfa0268f69be46ab6 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:19 -0700
-Subject: [PATCH 02/32] PAM Support
+Subject: [PATCH 02/33] PAM Support
 
 #
 # To comply to the Solaris PAM policy, the UsePAM option is changed to be

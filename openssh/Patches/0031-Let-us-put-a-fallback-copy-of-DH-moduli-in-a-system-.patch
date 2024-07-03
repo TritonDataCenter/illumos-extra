@@ -1,7 +1,7 @@
-From bc3cc42723530f977a6b16edbe6c62b22bb77ff2 Mon Sep 17 00:00:00 2001
+From 3a3406ca309190ffd5d8bfdc4407169da435e21e Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Thu, 15 Oct 2015 16:02:37 -0700
-Subject: [PATCH 29/32] Let us put a fallback copy of DH moduli in a system
+Subject: [PATCH 29/33] Let us put a fallback copy of DH moduli in a system
  path
 
 Live distributions like SmartOS can't keep and update default
@@ -64,10 +64,10 @@ index 0290d66c3..cbbb56b01 100644
  host-key: ssh-keygen$(EXEEXT)
  	@if [ -z "$(DESTDIR)" ] ; then \
 diff --git a/configure.ac b/configure.ac
-index 9225fefae..1c6e172d5 100644
+index c6f3072ca..c96c28e87 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -5413,6 +5413,21 @@ AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
+@@ -5420,6 +5420,21 @@ AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
  	[Specify location of SSH host keys])
  AC_SUBST([keydir])
  

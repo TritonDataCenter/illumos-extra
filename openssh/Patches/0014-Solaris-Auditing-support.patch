@@ -1,7 +1,7 @@
-From feebf05082b2b79c0ad5ed1e2a6b0ff0cf925f3d Mon Sep 17 00:00:00 2001
+From 0070bf57628b0d11a7479ae8e62fedca09d9f40f Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:37:01 -0700
-Subject: [PATCH 13/32] Solaris Auditing support
+Subject: [PATCH 13/33] Solaris Auditing support
 
 ---
  INSTALL         |  15 +-
@@ -724,10 +724,10 @@ index 38cb5ad31..dd6f6d0a1 100644
  void	audit_session_open(struct logininfo *);
  void	audit_session_close(struct logininfo *);
 diff --git a/configure.ac b/configure.ac
-index bdaaf3829..f68e7ae11 100644
+index 56567cf32..e58e9bf04 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1770,7 +1770,7 @@ AC_ARG_WITH([libedit],
+@@ -1777,7 +1777,7 @@ AC_ARG_WITH([libedit],
  
  AUDIT_MODULE=none
  AC_ARG_WITH([audit],
@@ -736,7 +736,7 @@ index bdaaf3829..f68e7ae11 100644
  	[
  	  AC_MSG_CHECKING([for supported audit module])
  	  case "$withval" in
-@@ -1807,6 +1807,13 @@ AC_ARG_WITH([audit],
+@@ -1814,6 +1814,13 @@ AC_ARG_WITH([audit],
  		SSHDLIBS="$SSHDLIBS -laudit"
  		AC_DEFINE([USE_LINUX_AUDIT], [1], [Use Linux audit module])
  		;;
@@ -767,7 +767,7 @@ index 279e509aa..69ed9b17c 100644
  #  define __func__ __FUNCTION__
  #elif !defined(HAVE___func__)
 diff --git a/sshd-session.c b/sshd-session.c
-index 259d0e51a..36cbaea89 100644
+index 259d0e51a..08673ca62 100644
 --- a/sshd-session.c
 +++ b/sshd-session.c
 @@ -1252,7 +1252,7 @@ main(int ac, char **av)

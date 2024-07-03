@@ -1,7 +1,7 @@
-From 07e5dfd94cbc804e00b76c589fd5e0556e118ae6 Mon Sep 17 00:00:00 2001
+From cf531c46833ed15a07f3968e6df6b7b51528c9b3 Mon Sep 17 00:00:00 2001
 From: Dan McDonald <danmcd@mnx.io>
 Date: Mon, 1 Jul 2024 21:20:42 -0400
-Subject: [PATCH] PID printing needs %l
+Subject: [PATCH 31/33] PID printing needs %l
 
 ---
  sshd-session.c | 4 ++--

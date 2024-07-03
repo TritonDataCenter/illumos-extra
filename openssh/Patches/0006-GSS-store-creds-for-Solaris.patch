@@ -1,7 +1,7 @@
-From ae4a757f702a744822b087ab43a2250902c416eb Mon Sep 17 00:00:00 2001
+From f8809353a924f239841d87835f2f89efd5f1b79b Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:34 -0700
-Subject: [PATCH 05/32] GSS store creds for Solaris
+Subject: [PATCH 05/33] GSS store creds for Solaris
 
 ---
  configure.ac    |  3 +++
@@ -12,7 +12,7 @@ Subject: [PATCH 05/32] GSS store creds for Solaris
  5 files changed, 78 insertions(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index 5a865f8e1..bdaaf3829 100644
+index 2eede34c3..56567cf32 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -1170,6 +1170,9 @@ mips-sony-bsd|mips-sony-newsos4)

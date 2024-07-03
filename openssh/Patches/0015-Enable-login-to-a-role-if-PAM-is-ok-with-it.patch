@@ -1,7 +1,7 @@
-From c2254c8e36a944710145a2a5d63797149bc0ade7 Mon Sep 17 00:00:00 2001
+From b5c8914c0c28b338c80264e8c3d738450f8ffc4f Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:38:19 -0700
-Subject: [PATCH 14/32] Enable login to a role if PAM is ok with it
+Subject: [PATCH 14/33] Enable login to a role if PAM is ok with it
 
 ---
  auth-pam.c        | 14 ++++++++++++++
@@ -12,10 +12,10 @@ Subject: [PATCH 14/32] Enable login to a role if PAM is ok with it
  5 files changed, 45 insertions(+)
 
 diff --git a/auth-pam.c b/auth-pam.c
-index 0b4aef163..c23138696 100644
+index 425389fb4..2c4d0cd1c 100644
 --- a/auth-pam.c
 +++ b/auth-pam.c
-@@ -1213,6 +1213,20 @@ do_pam_account(void)
+@@ -1215,6 +1215,20 @@ do_pam_account(void)
  	return (sshpam_account_status);
  }
  
