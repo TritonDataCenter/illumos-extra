@@ -1,0 +1,29 @@
+From cf531c46833ed15a07f3968e6df6b7b51528c9b3 Mon Sep 17 00:00:00 2001
+From: Dan McDonald <danmcd@mnx.io>
+Date: Mon, 1 Jul 2024 21:20:42 -0400
+Subject: [PATCH 31/33] PID printing needs %l
+
+---
+ sshd-session.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sshd-session.c b/sshd-session.c
+index df9b97b1d..7fa9b4924 100644
+--- a/sshd-session.c
++++ b/sshd-session.c
+@@ -1553,10 +1553,10 @@ cleanup_exit(int i)
+ 		do_cleanup(the_active_state, the_authctxt);
+ 		if (privsep_is_preauth &&
+ 		    pmonitor != NULL && pmonitor->m_pid > 1) {
+-			debug("Killing privsep child %d", pmonitor->m_pid);
++			debug("Killing privsep child %l", pmonitor->m_pid);
+ 			if (kill(pmonitor->m_pid, SIGKILL) != 0 &&
+ 			    errno != ESRCH) {
+-				error_f("kill(%d): %s", pmonitor->m_pid,
++				error_f("kill(%l): %s", pmonitor->m_pid,
+ 				    strerror(errno));
+ 			}
+ 		}
+-- 
+2.34.1
+

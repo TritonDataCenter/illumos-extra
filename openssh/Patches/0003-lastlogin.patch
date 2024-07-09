@@ -1,7 +1,7 @@
-From 53e691cbc4a4f97a04b36f487223b8a9da441196 Mon Sep 17 00:00:00 2001
+From d45eb4ebdcd0081c37beed45f8ab4986ed3db453 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:41 -0700
-Subject: [PATCH 03/32] lastlogin
+Subject: [PATCH 03/33] lastlogin
 
 *** old/servconf.c Wed Sep 17 02:54:26 2014
 ---
@@ -9,27 +9,27 @@ Subject: [PATCH 03/32] lastlogin
  1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/sshd_config.5 b/sshd_config.5
-index f5a06637..894d81e7 100644
+index 1ab0f41d9..5c00dac94 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
-@@ -1485,8 +1485,8 @@ Specifies whether
+@@ -1670,8 +1670,8 @@ Specifies whether
  .Xr sshd 8
  should print the date and time of the last user login when a user logs
  in interactively.
 -The default is
 -.Cm yes .
-+On Solaris this option is always ignored since pam_unix_session(5)
++On SmartOS this option is always ignored since pam_unix_session(7)
 +reports the last login time.
  .It Cm PrintMotd
  Specifies whether
  .Xr sshd 8
-@@ -1964,7 +1964,8 @@ This file should be writable by root only, but it is recommended
+@@ -2195,7 +2195,8 @@ This file should be writable by root only, but it is recommended
  .El
  .Sh SEE ALSO
  .Xr sftp-server 8 ,
 -.Xr sshd 8
 +.Xr sshd 8 ,
-+.Xr pam_unix_session 5
++.Xr pam_unix_session 7
  .Sh AUTHORS
  .An -nosplit
  OpenSSH is a derivative of the original and free

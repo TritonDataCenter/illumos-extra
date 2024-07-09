@@ -1,7 +1,7 @@
-From a872016fa603f01628dbdacd310ce774e69506c6 Mon Sep 17 00:00:00 2001
+From 0070bf57628b0d11a7479ae8e62fedca09d9f40f Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:37:01 -0700
-Subject: [PATCH 13/32] Solaris Auditing support
+Subject: [PATCH 13/33] Solaris Auditing support
 
 ---
  INSTALL         |  15 +-
@@ -14,15 +14,15 @@ Subject: [PATCH 13/32] Solaris Auditing support
  audit.h         |   2 +-
  configure.ac    |   9 +-
  defines.h       |   5 +
- sshd.c          |   8 +-
+ sshd-session.c  |   8 +-
  11 files changed, 615 insertions(+), 15 deletions(-)
  create mode 100644 audit-solaris.c
 
 diff --git a/INSTALL b/INSTALL
-index c605182b..832cdc70 100644
+index f99d1e2a8..b6783a743 100644
 --- a/INSTALL
 +++ b/INSTALL
-@@ -107,9 +107,13 @@ http://www.gnu.org/software/automake/
+@@ -103,9 +103,13 @@ http://www.gnu.org/software/automake/
  
  Basic Security Module (BSM):
  
@@ -39,7 +39,7 @@ index c605182b..832cdc70 100644
  
  makedepend:
  
-@@ -175,8 +179,9 @@ name).
+@@ -171,8 +175,9 @@ name).
  There are a few other options to the configure script:
  
  --with-audit=[module] enable additional auditing via the specified module.
@@ -52,23 +52,23 @@ index c605182b..832cdc70 100644
  --with-pam enables PAM support. If PAM support is compiled in, it must
  also be enabled in sshd_config (refer to the UsePAM directive).
 diff --git a/Makefile.in b/Makefile.in
-index b7b82b96..b91855a9 100644
+index 04e0cf20f..6f32a0a0e 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -121,7 +121,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o sshtty.o \
- 	sshconnect.o sshconnect2.o mux.o $(SKOBJS)
+@@ -129,7 +129,7 @@ SSHDOBJS=sshd.o \
+ 	$(SKOBJS)
  
- SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o \
+ SSHD_SESSION_OBJS=sshd-session.o auth-rhosts.o auth-passwd.o \
 -	audit.o audit-bsm.o audit-linux.o platform.o \
 +	audit.o audit-bsm.o audit-linux.o audit-solaris.o platform.o \
  	sshpty.o sshlogin.o servconf.o serverloop.o \
- 	auth.o auth2.o auth-options.o session.o \
+ 	auth.o auth2.o auth2-methods.o auth-options.o session.o \
  	auth2-chall.o groupaccess.o \
 diff --git a/README.platform b/README.platform
-index 7b754ba4..27a80cc3 100644
+index 4edf9d1f5..77fac619f 100644
 --- a/README.platform
 +++ b/README.platform
-@@ -71,8 +71,8 @@ zlib-devel and pam-devel, on Debian based distros these may be
+@@ -72,8 +72,8 @@ zlib-devel and pam-devel, on Debian based distros these may be
  libssl-dev, libz-dev and libpam-dev.
  
  
@@ -79,7 +79,7 @@ index 7b754ba4..27a80cc3 100644
  If you enable BSM auditing on Solaris, you need to update audit_event(4)
  for praudit(1m) to give sensible output.  The following line needs to be
  added to /etc/security/audit_event:
-@@ -85,6 +85,9 @@ There is no official registry of 3rd party event numbers, so if this
+@@ -86,6 +86,9 @@ There is no official registry of 3rd party event numbers, so if this
  number is already in use on your system, you may change it at build time
  by configure'ing --with-cflags=-DAUE_openssh=32801 then rebuilding.
  
@@ -90,7 +90,7 @@ index 7b754ba4..27a80cc3 100644
  Platforms using PAM
  -------------------
 diff --git a/audit-bsm.c b/audit-bsm.c
-index ccfcf6f7..42cbc127 100644
+index ccfcf6f7f..42cbc1273 100644
 --- a/audit-bsm.c
 +++ b/audit-bsm.c
 @@ -348,7 +348,7 @@ bsm_audit_bad_login(const char *what)
@@ -103,7 +103,7 @@ index ccfcf6f7..42cbc127 100644
  	AuditInfoTermID *tid = &ssh_bsm_tid;
  	char buf[1024];
 diff --git a/audit-linux.c b/audit-linux.c
-index 3fcbe5c5..3c12bc91 100644
+index 3fcbe5c53..3c12bc916 100644
 --- a/audit-linux.c
 +++ b/audit-linux.c
 @@ -71,7 +71,7 @@ linux_audit_record_event(int uid, const char *username, const char *hostname,
@@ -117,7 +117,7 @@ index 3fcbe5c5..3c12bc91 100644
  }
 diff --git a/audit-solaris.c b/audit-solaris.c
 new file mode 100644
-index 00000000..981efe79
+index 000000000..981efe79a
 --- /dev/null
 +++ b/audit-solaris.c
 @@ -0,0 +1,576 @@
@@ -698,7 +698,7 @@ index 00000000..981efe79
 +}
 +#endif	/* USE_SOLARIS_AUDIT */
 diff --git a/audit.c b/audit.c
-index dd2f0355..2452f2e0 100644
+index dd2f03558..2452f2e07 100644
 --- a/audit.c
 +++ b/audit.c
 @@ -120,7 +120,7 @@ audit_event_lookup(ssh_audit_event_t ev)
@@ -711,7 +711,7 @@ index dd2f0355..2452f2e0 100644
  	debug("audit connection from %s port %d euid %d", host, port,
  	    (int)geteuid());
 diff --git a/audit.h b/audit.h
-index 38cb5ad3..dd6f6d0a 100644
+index 38cb5ad31..dd6f6d0a1 100644
 --- a/audit.h
 +++ b/audit.h
 @@ -47,7 +47,7 @@ enum ssh_audit_event_type {
@@ -724,10 +724,10 @@ index 38cb5ad3..dd6f6d0a 100644
  void	audit_session_open(struct logininfo *);
  void	audit_session_close(struct logininfo *);
 diff --git a/configure.ac b/configure.ac
-index f10bb2d6..f6ea6e47 100644
+index 56567cf32..e58e9bf04 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1730,7 +1730,7 @@ AC_ARG_WITH([libedit],
+@@ -1777,7 +1777,7 @@ AC_ARG_WITH([libedit],
  
  AUDIT_MODULE=none
  AC_ARG_WITH([audit],
@@ -736,7 +736,7 @@ index f10bb2d6..f6ea6e47 100644
  	[
  	  AC_MSG_CHECKING([for supported audit module])
  	  case "$withval" in
-@@ -1767,6 +1767,13 @@ AC_ARG_WITH([audit],
+@@ -1814,6 +1814,13 @@ AC_ARG_WITH([audit],
  		SSHDLIBS="$SSHDLIBS -laudit"
  		AC_DEFINE([USE_LINUX_AUDIT], [1], [Use Linux audit module])
  		;;
@@ -751,7 +751,7 @@ index f10bb2d6..f6ea6e47 100644
  		AUDIT_MODULE=debug
  		AC_MSG_RESULT([debug])
 diff --git a/defines.h b/defines.h
-index 279e509a..69ed9b17 100644
+index 279e509aa..69ed9b17c 100644
 --- a/defines.h
 +++ b/defines.h
 @@ -715,6 +715,11 @@ struct winsize {
@@ -766,11 +766,11 @@ index 279e509a..69ed9b17 100644
  #if !defined(HAVE___func__) && defined(HAVE___FUNCTION__)
  #  define __func__ __FUNCTION__
  #elif !defined(HAVE___func__)
-diff --git a/sshd.c b/sshd.c
-index 7cc9dabe..597b3378 100644
---- a/sshd.c
-+++ b/sshd.c
-@@ -2186,7 +2186,7 @@ main(int ac, char **av)
+diff --git a/sshd-session.c b/sshd-session.c
+index 259d0e51a..08673ca62 100644
+--- a/sshd-session.c
++++ b/sshd-session.c
+@@ -1252,7 +1252,7 @@ main(int ac, char **av)
  	remote_ip = ssh_remote_ipaddr(ssh);
  
  #ifdef SSH_AUDIT_EVENTS
@@ -779,23 +779,23 @@ index 7cc9dabe..597b3378 100644
  #endif
  
  	rdomain = ssh_packet_rdomain_in(ssh);
-@@ -2274,7 +2274,7 @@ main(int ac, char **av)
- 		startup_pipe = -1;
- 	}
+@@ -1333,7 +1333,7 @@ main(int ac, char **av)
+ 	if (options.routing_domain != NULL)
+ 		set_process_rdomain(ssh, options.routing_domain);
  
 -#ifdef SSH_AUDIT_EVENTS
 +#if defined(SSH_AUDIT_EVENTS) && !defined(USE_SOLARIS_AUDIT)
  	audit_event(ssh, SSH_AUTH_SUCCESS);
  #endif
  
-@@ -2305,6 +2305,10 @@ main(int ac, char **av)
+@@ -1364,6 +1364,10 @@ bail_storecred: ;
  		do_pam_session(ssh);
  	}
  #endif
-+#ifdef	USE_SOLARIS_AUDIT
++#ifdef USE_SOLARIS_AUDIT
 +	/* Audit should take place after all successful pam */
 +	audit_event(ssh, SSH_AUTH_SUCCESS);
-+#endif	/* USE_SOLARIS_AUDIT */
++#endif /* USE_SOLARIS_AUDIT */
  
  	/*
  	 * In privilege separation, we fork another child and prepare

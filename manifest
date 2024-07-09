@@ -467,6 +467,7 @@ f usr/bin/ssh-keyscan 0755 root bin
 f usr/bin/sftp 0755 root bin
 f usr/lib/ssh/sshd 0755 root bin
 f usr/lib/ssh/ssh-keysign 4711 root bin
+f usr/lib/ssh/sshd-session 0755 root bin
 f usr/lib/ssh/ssh-pkcs11-helper 0755 root bin
 f usr/lib/ssh/sftp-server 0755 root bin
 f usr/share/man/man1/ssh.1 0444 root bin

@@ -1,7 +1,7 @@
-From 9222f319cf0c96d22a58f1b01ed1ee650d33d864 Mon Sep 17 00:00:00 2001
+From 1b45123eaa117435eacd40fa42b70506309840e3 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:00 -0700
-Subject: [PATCH 07/32] Add DisableBanner option
+Subject: [PATCH 07/33] Add DisableBanner option
 
 ---
  readconf.c    | 31 +++++++++++++++++++++++++++++++
@@ -11,7 +11,7 @@ Subject: [PATCH 07/32] Add DisableBanner option
  4 files changed, 75 insertions(+), 4 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
-index ec85b5382..6728b55da 100644
+index 98c8bd54c..cd05e76fc 100644
 --- a/readconf.c
 +++ b/readconf.c
 @@ -169,6 +169,9 @@ typedef enum {
@@ -34,7 +34,7 @@ index ec85b5382..6728b55da 100644
  	{ "tunnel", oTunnel },
  	{ "tunneldevice", oTunnelDevice },
  	{ "localcommand", oLocalCommand },
-@@ -1029,6 +1035,17 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
+@@ -1043,6 +1049,17 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
  	return -1;
  }
  
@@ -52,7 +52,7 @@ index ec85b5382..6728b55da 100644
  /*
   * Processes a single option line as used in the configuration files. This
   * only sets those values that have not already been set.
-@@ -2300,6 +2317,13 @@ parse_pubkey_algos:
+@@ -2329,6 +2346,13 @@ parse_pubkey_algos:
  		intptr = &options->enable_escape_commandline;
  		goto parse_flag;
  
@@ -66,7 +66,7 @@ index ec85b5382..6728b55da 100644
  	case oRequiredRSASize:
  		intptr = &options->required_rsa_size;
  		goto parse_int;
-@@ -2607,6 +2631,9 @@ initialize_options(Options * options)
+@@ -2644,6 +2668,9 @@ initialize_options(Options * options)
  	options->stdin_null = -1;
  	options->fork_after_authentication = -1;
  	options->proxy_use_fdpass = -1;
@@ -76,7 +76,7 @@ index ec85b5382..6728b55da 100644
  	options->ignored_unknown = NULL;
  	options->num_canonical_domains = 0;
  	options->num_permitted_cnames = 0;
-@@ -2812,6 +2839,10 @@ fill_default_options(Options * options)
+@@ -2851,6 +2878,10 @@ fill_default_options(Options * options)
  		options->canonicalize_fallback_local = 1;
  	if (options->canonicalize_hostname == -1)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
@@ -88,7 +88,7 @@ index ec85b5382..6728b55da 100644
  		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
  #ifdef ENABLE_SK_INTERNAL
 diff --git a/readconf.h b/readconf.h
-index ff7180cd0..43d451406 100644
+index 9447d5d6e..282130cfa 100644
 --- a/readconf.h
 +++ b/readconf.h
 @@ -186,6 +186,9 @@ typedef struct {
@@ -116,10 +116,10 @@ index ff7180cd0..43d451406 100644
  int      fill_default_options(Options *);
  void	 fill_default_options_for_canonicalization(Options *);
 diff --git a/ssh_config.5 b/ssh_config.5
-index 4bbdfefd1..166a07e88 100644
+index 2e1902283..b6a79666d 100644
 --- a/ssh_config.5
 +++ b/ssh_config.5
-@@ -700,6 +700,14 @@ If set to a time in seconds, or a time in any of the formats documented in
+@@ -710,6 +710,14 @@ If set to a time in seconds, or a time in any of the formats documented in
  then the backgrounded master connection will automatically terminate
  after it has remained idle (with no client connections) for the
  specified time.
@@ -135,11 +135,11 @@ index 4bbdfefd1..166a07e88 100644
  Specifies that a TCP port on the local machine be forwarded
  over the secure channel, and the application
 diff --git a/sshconnect2.c b/sshconnect2.c
-index fab1e36be..16230a52c 100644
+index e63bb5ec6..400bbe71e 100644
 --- a/sshconnect2.c
 +++ b/sshconnect2.c
-@@ -84,6 +84,10 @@ extern char *client_version_string;
- extern char *server_version_string;
+@@ -82,6 +82,10 @@
+ /* import */
  extern Options options;
  
 +#ifdef DISABLE_BANNER
@@ -149,22 +149,23 @@ index fab1e36be..16230a52c 100644
  /*
   * SSH2 key exchange
   */
-@@ -578,19 +582,37 @@ input_userauth_error(int type, u_int32_t seq, struct ssh *ssh)
+@@ -567,16 +571,34 @@ input_userauth_error(int type, u_int32_t seq, struct ssh *ssh)
  static int
  input_userauth_banner(int type, u_int32_t seq, struct ssh *ssh)
  {
 -	char *msg = NULL;
-+	char *msg, *raw = NULL;
++	char *msg = NULL; /* Placeholder diff */
  	size_t len;
  	int r;
  
  	debug3_f("entering");
 -	if ((r = sshpkt_get_cstring(ssh, &msg, &len)) != 0 ||
-+	if ((r = sshpkt_get_cstring(ssh, &raw, &len)) != 0 ||
++	if ((r = sshpkt_get_cstring(ssh, &msg, &len)) != 0 || /* placeholder */
  	    (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0)
  		goto out;
 -	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO)
-+#if defined(DISABLE_BANNER)
+-		fmprintf(stderr, "%s", msg);
++#ifdef DISABLE_BANNER
 +	/*
 +	 * Banner is a warning message according to RFC 4252. So, never print
 +	 * a banner in error log level or lower. If the log level is higher,
@@ -172,25 +173,21 @@ index fab1e36be..16230a52c 100644
 +	 */
 +	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO &&
 +	    (options.disable_banner == SSH_DISABLEBANNER_NO ||
-+	    (options.disable_banner == SSH_DISABLEBANNER_INEXECMODE)) &&
-+	    command != NULL && sshbuf_len(command) == 0) {
++	    (options.disable_banner == SSH_DISABLEBANNER_INEXECMODE &&
++	    sshbuf_len(command) == 0))) {
 +#else
 +	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO) {
 +#endif
 +		if (len > 65536)
 +			len = 65536;
-+		msg = xmalloc(len * 4 + 1); /* max expansion from strnvis() */
-+		strnvis(msg, raw, len * 4 + 1, VIS_SAFE|VIS_OCTAL|VIS_NOSLASH);
- 		fmprintf(stderr, "%s", msg);
-+		free(msg);
++		char *safe = xmalloc(len * 4 + 1); /* max expansion from strnvis() */
++		strnvis(safe, msg, len * 4 + 1, VIS_SAFE|VIS_OCTAL|VIS_NOSLASH);
++		fmprintf(stderr, "%s", safe);
++		free(safe);
 +	}
  	r = 0;
   out:
--	free(msg);
-+	free(raw);
- 	return r;
- }
- 
+ 	free(msg);
 -- 
 2.34.1
 

@@ -1,14 +1,14 @@
-From 7fd7f4a6081d3dfb79a6b9b032e6abcab1c3bd99 Mon Sep 17 00:00:00 2001
+From fe9b2ded3ec44d5365641ca683e8f3e2aa5394a6 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 13:24:58 -0700
-Subject: [PATCH 22/32] Make default sshd_config more like the old illumos one
+Subject: [PATCH 22/33] Make default sshd_config more like the old illumos one
 
 ---
- sshd_config | 44 +++++++++++++++++++++++---------------------
- 1 file changed, 23 insertions(+), 21 deletions(-)
+ sshd_config | 43 ++++++++++++++++++++++---------------------
+ 1 file changed, 22 insertions(+), 21 deletions(-)
 
 diff --git a/sshd_config b/sshd_config
-index 36894ace..d2a509c5 100644
+index 36894ace5..2fcf3bbba 100644
 --- a/sshd_config
 +++ b/sshd_config
 @@ -10,7 +10,7 @@
@@ -92,5 +92,5 @@ index 36894ace..d2a509c5 100644
  #PermitUserEnvironment no
  #Compression delayed
 -- 
-2.37.1 (Apple Git-137.1)
+2.34.1
 

@@ -1,7 +1,7 @@
-From d6cba8676ce53d933d0523ffd77714b9ba91fafc Mon Sep 17 00:00:00 2001
+From 24737c2b3027a1f3c90d55418515341b7ad45c7b Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:38:41 -0700
-Subject: [PATCH 16/32] Don't call do_pam_setcred twice
+Subject: [PATCH 16/33] Don't call do_pam_setcred twice
 
 # This issue has been raised with the upstream OpenSSH community:
 #
@@ -30,10 +30,10 @@ Subject: [PATCH 16/32] Don't call do_pam_setcred twice
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/platform.c b/platform.c
-index 4fe8744e..ad8e38ea 100644
+index 4c4fe57ea..8cc3a154c 100644
 --- a/platform.c
 +++ b/platform.c
-@@ -146,7 +146,7 @@ platform_setusercontext(struct passwd *pw)
+@@ -101,7 +101,7 @@ platform_setusercontext(struct passwd *pw)
  void
  platform_setusercontext_post_groups(struct passwd *pw)
  {

@@ -1,7 +1,7 @@
-From 837769385628a718d0efc247e1a2fd26fd672dba Mon Sep 17 00:00:00 2001
+From 95d4da70491e1e9c2eaf7ebe3a75f4f6a82e2e15 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:12 -0700
-Subject: [PATCH 04/32] Deprecated SunSSH options
+Subject: [PATCH 04/33] Deprecated SunSSH options
 
 #
 # To make the transition from SunSSH to OpenSSH as smooth as possible, we
@@ -16,12 +16,12 @@ Subject: [PATCH 04/32] Deprecated SunSSH options
  1 file changed, 18 insertions(+)
 
 diff --git a/readconf.c b/readconf.c
-index cf794988..93119762 100644
+index 4e3791cb7..98c8bd54c 100644
 --- a/readconf.c
 +++ b/readconf.c
-@@ -324,6 +324,24 @@ static struct {
- 	{ "requiredrsasize", oRequiredRSASize },
- 	{ "enableescapecommandline", oEnableEscapeCommandline },
+@@ -330,6 +330,24 @@ static struct {
+ 	{ "obscurekeystroketiming", oObscureKeystrokeTiming },
+ 	{ "channeltimeout", oChannelTimeout },
  
 +#ifdef DEPRECATE_SUNSSH_OPT
 +        /*
@@ -45,5 +45,5 @@ index cf794988..93119762 100644
  };
  
 -- 
-2.37.1 (Apple Git-137.1)
+2.34.1
 

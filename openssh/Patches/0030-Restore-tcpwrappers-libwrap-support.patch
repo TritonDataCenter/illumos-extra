@@ -1,21 +1,21 @@
-From d657c0dcb3815e1aea9c82363ceedb92a85bfc2e Mon Sep 17 00:00:00 2001
+From 35afc7b6c1c5293ee287fc4cbefdf8eb54419093 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 16 Sep 2015 10:54:13 -0700
-Subject: [PATCH 28/32] Restore tcpwrappers/libwrap support
+Subject: [PATCH 28/33] Restore tcpwrappers/libwrap support
 
 This reverts commit f9696566fb41320820f3b257ab564fa321bb3751
 and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
 ---
- configure.ac | 57 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- sshd.8       |  7 +++++++
- sshd.c       | 29 ++++++++++++++++++++++++++
+ configure.ac   | 57 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ sshd-session.c | 29 +++++++++++++++++++++++++
+ sshd.8         |  7 +++++++
  3 files changed, 93 insertions(+)
 
 diff --git a/configure.ac b/configure.ac
-index 2eb88fae..edc70477 100644
+index 834afb423..c6f3072ca 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1625,6 +1625,62 @@ else
+@@ -1672,6 +1672,62 @@ else
  	AC_MSG_RESULT([no])
  fi
  
@@ -78,7 +78,7 @@ index 2eb88fae..edc70477 100644
  # Check whether user wants to use ldns
  LDNS_MSG="no"
  AC_ARG_WITH(ldns,
-@@ -5601,6 +5657,7 @@ echo "                       PAM support: $PAM_MSG"
+@@ -5719,6 +5775,7 @@ echo "                       PAM support: $PAM_MSG"
  echo "                   OSF SIA support: $SIA_MSG"
  echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
@@ -86,36 +86,11 @@ index 2eb88fae..edc70477 100644
  echo "                   libedit support: $LIBEDIT_MSG"
  echo "                   libldns support: $LDNS_MSG"
  echo "  Solaris process contract support: $SPC_MSG"
-diff --git a/sshd.8 b/sshd.8
-index 4465b95d..e9cabae2 100644
---- a/sshd.8
-+++ b/sshd.8
-@@ -908,6 +908,12 @@ the user's home directory becomes accessible.
- This file should be writable only by the user, and need not be
- readable by anyone else.
- .Pp
-+.It Pa /etc/hosts.allow
-+.It Pa /etc/hosts.deny
-+Access controls that should be enforced by tcp-wrappers are defined here.
-+Further details are described in
-+.Xr hosts_access 5 .
-+.Pp
- .It Pa /etc/hosts.equiv
- This file is for host-based authentication (see
- .Xr ssh 1 ) .
-@@ -1037,6 +1043,7 @@ Each SSHv2 userauth type has its own PAM service name:
- .Xr ssh-keygen 1 ,
- .Xr ssh-keyscan 1 ,
- .Xr chroot 2 ,
-+.Xr hosts_access 5 ,
- .Xr login.conf 5 ,
- .Xr moduli 5 ,
- .Xr sshd_config 5 ,
-diff --git a/sshd.c b/sshd.c
-index 9b29d02a..d816f8aa 100644
---- a/sshd.c
-+++ b/sshd.c
-@@ -129,6 +129,17 @@
+diff --git a/sshd-session.c b/sshd-session.c
+index d1985b247..df9b97b1d 100644
+--- a/sshd-session.c
++++ b/sshd-session.c
+@@ -110,6 +110,17 @@
  #include "srclimit.h"
  #include "dh.h"
  
@@ -127,13 +102,13 @@ index 9b29d02a..d816f8aa 100644
 +#endif /* LIBWRAP */
 +
 +#ifndef O_NOCTTY
-+#define O_NOCTTY	0
++#define O_NOCTTY       0
 +#endif
 +
  /* Re-exec fds */
  #define REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
  #define REEXEC_STARTUP_PIPE_FD		(STDERR_FILENO + 2)
-@@ -2209,6 +2220,24 @@ main(int ac, char **av)
+@@ -1280,6 +1291,24 @@ main(int ac, char **av)
  #ifdef SSH_AUDIT_EVENTS
  	audit_connection_from(ssh, remote_ip, remote_port);
  #endif
@@ -158,6 +133,31 @@ index 9b29d02a..d816f8aa 100644
  
  	rdomain = ssh_packet_rdomain_in(ssh);
  
+diff --git a/sshd.8 b/sshd.8
+index c1054fe32..1139acbae 100644
+--- a/sshd.8
++++ b/sshd.8
+@@ -921,6 +921,12 @@ the user's home directory becomes accessible.
+ This file should be writable only by the user, and need not be
+ readable by anyone else.
+ .Pp
++.It Pa /etc/hosts.allow
++.It Pa /etc/hosts.deny
++Access controls that should be enforced by tcp-wrappers are defined here.
++Further details are described in
++.Xr hosts_access 5 .
++.Pp
+ .It Pa /etc/hosts.equiv
+ This file is for host-based authentication (see
+ .Xr ssh 1 ) .
+@@ -1050,6 +1056,7 @@ Each SSHv2 userauth type has its own PAM service name:
+ .Xr ssh-keygen 1 ,
+ .Xr ssh-keyscan 1 ,
+ .Xr chroot 2 ,
++.Xr hosts_access 5 ,
+ .Xr login.conf 5 ,
+ .Xr moduli 5 ,
+ .Xr sshd_config 5 ,
 -- 
 2.34.1
 
