@@ -305,7 +305,7 @@ index 000000000..f0a6d428a
 +	# sysidconfig/sys-unconfig arguments (-c and -u)
 +'-c')
 +	create_host_key rsa
-+	create_host_key dsa
++#	create_host_key dsa
 +	create_host_key ecdsa
 +	create_host_key ed25519
 +	;;
@@ -329,7 +329,7 @@ index 000000000..f0a6d428a
 +	# the install media).
 +	#
 +	create_host_key rsa
-+	create_host_key dsa
++#	create_host_key dsa
 +	create_host_key ecdsa
 +	create_host_key ed25519
 +
