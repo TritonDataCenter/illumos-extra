@@ -1,7 +1,6 @@
-diff -ru a/configure b/configure
---- a/configure	Wed Sep 13 02:18:50 2023
-+++ b/configure	Thu Oct  5 17:10:35 2023
-@@ -8328,7 +8328,7 @@
+--- a/configure	2024-07-23 23:21:35
++++ b/configure	2024-07-24 09:59:30
+@@ -8399,7 +8399,7 @@
      We can't simply define LARGE_OFF_T to be 9223372036854775807,
      since some C++ compilers masquerading as C compilers
      incorrectly reject 9223372036854775807.  */
@@ -10,7 +9,7 @@ diff -ru a/configure b/configure
    int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
  		       && LARGE_OFF_T % 2147483647 == 1)
  		      ? 1 : -1];
-@@ -8376,7 +8376,7 @@
+@@ -8447,7 +8447,7 @@
      We can't simply define LARGE_OFF_T to be 9223372036854775807,
      since some C++ compilers masquerading as C compilers
      incorrectly reject 9223372036854775807.  */
@@ -19,7 +18,7 @@ diff -ru a/configure b/configure
    int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
  		       && LARGE_OFF_T % 2147483647 == 1)
  		      ? 1 : -1];
-@@ -8400,7 +8400,7 @@
+@@ -8471,7 +8471,7 @@
      We can't simply define LARGE_OFF_T to be 9223372036854775807,
      since some C++ compilers masquerading as C compilers
      incorrectly reject 9223372036854775807.  */
@@ -28,7 +27,7 @@ diff -ru a/configure b/configure
    int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
  		       && LARGE_OFF_T % 2147483647 == 1)
  		      ? 1 : -1];
-@@ -8444,7 +8444,7 @@
+@@ -8515,7 +8515,7 @@
      We can't simply define LARGE_OFF_T to be 9223372036854775807,
      since some C++ compilers masquerading as C compilers
      incorrectly reject 9223372036854775807.  */
@@ -37,7 +36,7 @@ diff -ru a/configure b/configure
    int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
  		       && LARGE_OFF_T % 2147483647 == 1)
  		      ? 1 : -1];
-@@ -8468,7 +8468,7 @@
+@@ -8539,7 +8539,7 @@
      We can't simply define LARGE_OFF_T to be 9223372036854775807,
      since some C++ compilers masquerading as C compilers
      incorrectly reject 9223372036854775807.  */
@@ -46,7 +45,16 @@ diff -ru a/configure b/configure
    int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
  		       && LARGE_OFF_T % 2147483647 == 1)
  		      ? 1 : -1];
-@@ -26551,14 +26551,14 @@
+@@ -24794,7 +24794,7 @@
+     '-llber -lldap' \
+     '-lldapssl -lldapx -lldapsdk' \
+     '-lldapsdk -lldapx -lldapssl' \
+-    '-lldap -llber -lssl -lcrypto' ; do
++    '-lldap -llber -lsunw_ssl -lsunw_crypto' ; do
+ 
+     if test "$curl_cv_ldap_LIBS" = "unknown"; then
+       if test -z "$x_nlibs"; then
+@@ -26530,14 +26530,14 @@
      CPPFLAGS="$CPPFLAGS $SSL_CPPFLAGS"
    LDFLAGS="$LDFLAGS $SSL_LDFLAGS"
  
@@ -65,7 +73,7 @@ diff -ru a/configure b/configure
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26566,10 +26566,10 @@
+@@ -26545,31 +26545,31 @@
  #ifdef __cplusplus
  extern "C"
  #endif
@@ -78,7 +86,6 @@ diff -ru a/configure b/configure
   ;
   return 0;
  }
-@@ -26576,21 +26576,21 @@
  _ACEOF
  if ac_fn_c_try_link "$LINENO"
  then :
@@ -106,7 +113,7 @@ diff -ru a/configure b/configure
  
  else $as_nop
  
-@@ -26604,14 +26604,14 @@
+@@ -26583,14 +26583,14 @@
       # Linking previously failed, try extra paths from --with-openssl or
       # pkg-config.  Use a different function name to avoid reusing the earlier
       # cached result.
@@ -125,7 +132,7 @@ diff -ru a/configure b/configure
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26619,10 +26619,10 @@
+@@ -26598,37 +26598,37 @@
  #ifdef __cplusplus
  extern "C"
  #endif
@@ -138,7 +145,6 @@ diff -ru a/configure b/configure
   ;
   return 0;
  }
-@@ -26629,27 +26629,27 @@
  _ACEOF
  if ac_fn_c_try_link "$LINENO"
  then :
@@ -173,7 +179,7 @@ diff -ru a/configure b/configure
         cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26658,7 +26658,7 @@
+@@ -26637,7 +26637,7 @@
  int main (void)
  {
  
@@ -182,21 +188,23 @@ diff -ru a/configure b/configure
  
   ;
   return 0;
-@@ -26688,7 +26688,7 @@
- int main (void)
- {
+@@ -26657,7 +26657,7 @@
  
--           ERR_clear_error();
-+           sunw_ERR_clear_error();
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking OpenSSL linking with -ldl and -lpthread" >&5
+ printf %s "checking OpenSSL linking with -ldl and -lpthread... " >&6; }
+-         LIBS="-lcrypto $CLEANLIBS -ldl -lpthread"
++         LIBS="-lsunw_crypto $CLEANLIBS -ldl -lpthread"
+          cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
  
-  ;
-  return 0;
-@@ -26729,13 +26729,13 @@
+@@ -26707,14 +26707,14 @@
+ 
    if test X"$HAVECRYPTO" = X"yes"; then
  
-     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for SSL_connect in -lssl" >&5
+-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for SSL_connect in -lssl" >&5
 -printf %s "checking for SSL_connect in -lssl... " >&6; }
 -if test ${ac_cv_lib_ssl_SSL_connect+y}
++    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for sunw_SSL_connect in -lsunw_ssl" >&5
 +printf %s "checking for sunw_SSL_connect in -lsunw_ssl... " >&6; }
 +if test ${ac_cv_lib_sunw_ssl_sunw_SSL_connect+y}
  then :
@@ -208,7 +216,7 @@ diff -ru a/configure b/configure
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26743,10 +26743,10 @@
+@@ -26722,48 +26722,48 @@
  #ifdef __cplusplus
  extern "C"
  #endif
@@ -221,7 +229,6 @@ diff -ru a/configure b/configure
   ;
   return 0;
  }
-@@ -26753,33 +26753,33 @@
  _ACEOF
  if ac_fn_c_try_link "$LINENO"
  then :
@@ -265,7 +272,13 @@ diff -ru a/configure b/configure
  then :
    printf %s "(cached) " >&6
  else $as_nop
-@@ -26792,10 +26792,10 @@
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lssl  $LIBS"
++LIBS="-lsunw_ssl  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -26771,35 +26771,35 @@
  #ifdef __cplusplus
  extern "C"
  #endif
@@ -278,7 +291,6 @@ diff -ru a/configure b/configure
   ;
   return 0;
  }
-@@ -26802,25 +26802,25 @@
  _ACEOF
  if ac_fn_c_try_link "$LINENO"
  then :
