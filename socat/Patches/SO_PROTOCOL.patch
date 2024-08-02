@@ -1,0 +1,14 @@
+diff -ru a/xio-socket.h b/xio-socket.h
+--- a/xio-socket.h	2021-01-03 13:23:22
++++ b/xio-socket.h	2024-08-06 13:47:49
+@@ -8,8 +8,9 @@
+ /* SO_PROTOTYPE is defined on Solaris, HP-UX
+    SO_PROTOCOL in Linux, is the better name, but came much later */
+ #ifdef SO_PROTOCOL
+-#  undef SO_PROTOTYPE
++#  ifndef SO_PROTOTYPE
+ #    define SO_PROTOTYPE SO_PROTOCOL
++#  endif
+ #else
+ #  ifdef SO_PROTOTYPE
+ #    define SO_PROTOCOL SO_PROTOTYPE
