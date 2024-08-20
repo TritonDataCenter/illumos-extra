@@ -36,16 +36,11 @@ include ../Makefile.targ
 AUTOCONF_ENV.64 += FORCE_UNSAFE_CONFIGURE=1
 OVERRIDES.64 += FORCE_UNSAFE_CONFIGURE=1
 
-LD_LIBRARY_PATH_HACK = /tmp/extra-ldlibpath
 PATCHES = Patches/*
 
 all: all_autoconf
 
-scribble_ld_library:
-	echo $(DESTDIR)/lib/64 > $(LD_LIBRARY_PATH_HACK)
-
-install: scribble_ld_library all
-	/bin/rm -f $(LD_LIBRARY_PATH_HACK)
+install: all
 	mkdir -p $(DESTDIR)/usr/bin
 	mkdir -p $(DESTDIR)/usr/share/man/man1
 	cp $(BASE)/$(VER.64)/src/readlink $(DESTDIR)/usr/bin
