@@ -45,7 +45,7 @@ scribble_ld_library:
 	echo $(DESTDIR)/lib/64 > $(LD_LIBRARY_PATH_HACK)
 
 install: scribble_ld_library all
-	/bin/rm -rf $(LD_LIBRARY_PATH_PACK)
+	/bin/rm -f $(LD_LIBRARY_PATH_HACK)
 	mkdir -p $(DESTDIR)/usr/bin
 	mkdir -p $(DESTDIR)/usr/share/man/man1
 	cp $(BASE)/$(VER.64)/src/readlink $(DESTDIR)/usr/bin
