@@ -8,7 +8,7 @@ diff -ru a/Makefile.in b/Makefile.in
 -	  && (cd $$t && $(LN_S) '$(abs_top_builddir)/src/'$$prog$(EXEEXT) \
 -				$$argv$(EXEEXT))			\
 +	  && (cd $$t && (echo "#!/bin/bash" &&				\
-+		echo "export LD_LIBRARY_PATH=`cat /tmp/extra-ldlibpath`" && \
++		echo "export LD_LIBRARY_PATH=`echo $(abs_top_builddir) | sed 's/projects\/illumos-extra\/coreutils\/coreutils.*-64$$/proto\/lib\/64/g'`" && \
 +		echo '$(abs_top_builddir)/src/'$$prog$(EXEEXT) '$$@' )	\
 +			> $$argv$(EXEEXT) && chmod 0755 $$argv$(EXTEXT) ) \
  	&& : $${SOURCE_DATE_EPOCH=`cat $(srcdir)/.timestamp 2>/dev/null || :`} \
