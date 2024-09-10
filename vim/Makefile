@@ -21,9 +21,10 @@
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 # Copyright 2020 Joyent, Inc.
+# Copyright 2024 MNX Cloud, Inc.
 #
 
-VER =	vim82
+VER =	vim91
 
 include ../Makefile.defs
 
@@ -38,10 +39,11 @@ AUTOCONF_ENV += \
 AUTOCONF_OPTS += \
 	--disable-gui \
 	--disable-gtktest \
+	--disable-nls \
 	--with-features=huge \
 	--without-x
 
-TARBALL =		vim-8.2.tar.bz2
+TARBALL =		vim-9.1.tar.bz2
 TARBALL_COMPRESS =	-j
 
 include ../Makefile.targ
