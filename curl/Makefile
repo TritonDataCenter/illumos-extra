@@ -22,9 +22,12 @@
 # Copyright 2024 MNX Cloud, Inc.
 #
 
-VER =	curl-8.9.1
+VER =	curl-8.10.0
 
 include ../Makefile.defs
+
+BUILD32 =
+BUILD64 = yes
 
 TARBALL =		$(VER).tar.bz2
 TARBALL_COMPRESS =	-j
