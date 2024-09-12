@@ -33,6 +33,8 @@ TARBALL =		$(VER).tar.bz2
 TARBALL_COMPRESS =	-j
 
 AUTOCONF_OPTS +=	--with-ssl=$(DESTDIR)/usr --without-libpsl
+# Now that we're 64-bit...
+AUTOCONF_OPTS += --libdir=/usr/lib/amd64
 
 PATCHES =	Patches/*
 
