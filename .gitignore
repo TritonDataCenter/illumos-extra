@@ -9,7 +9,7 @@
 /cpp/cpp.o*
 /cpp/y.tab.c
 /cpp/y.tab.o*
-/curl/curl-8.9.1-32
+/curl/curl-8.10.0-32
 /dialog/dialog-1.1-20111020-32
 /g11n/proto/
 /g11n/src/lib/iconv/common/amd64/

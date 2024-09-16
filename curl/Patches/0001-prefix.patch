@@ -1,6 +1,7 @@
---- a/configure	2024-07-23 23:21:35
-+++ b/configure	2024-07-24 09:59:30
-@@ -8399,7 +8399,7 @@
+diff -ru a/configure b/configure
+--- a/configure	Wed Sep 11 01:37:35 2024
++++ b/configure	Wed Sep 11 18:29:49 2024
+@@ -8416,7 +8416,7 @@
      We can't simply define LARGE_OFF_T to be 9223372036854775807,
      since some C++ compilers masquerading as C compilers
      incorrectly reject 9223372036854775807.  */
@@ -9,7 +10,7 @@
    int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
  		       && LARGE_OFF_T % 2147483647 == 1)
  		      ? 1 : -1];
-@@ -8447,7 +8447,7 @@
+@@ -8464,7 +8464,7 @@
      We can't simply define LARGE_OFF_T to be 9223372036854775807,
      since some C++ compilers masquerading as C compilers
      incorrectly reject 9223372036854775807.  */
@@ -18,7 +19,7 @@
    int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
  		       && LARGE_OFF_T % 2147483647 == 1)
  		      ? 1 : -1];
-@@ -8471,7 +8471,7 @@
+@@ -8488,7 +8488,7 @@
      We can't simply define LARGE_OFF_T to be 9223372036854775807,
      since some C++ compilers masquerading as C compilers
      incorrectly reject 9223372036854775807.  */
@@ -27,7 +28,7 @@
    int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
  		       && LARGE_OFF_T % 2147483647 == 1)
  		      ? 1 : -1];
-@@ -8515,7 +8515,7 @@
+@@ -8532,7 +8532,7 @@
      We can't simply define LARGE_OFF_T to be 9223372036854775807,
      since some C++ compilers masquerading as C compilers
      incorrectly reject 9223372036854775807.  */
@@ -36,7 +37,7 @@
    int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
  		       && LARGE_OFF_T % 2147483647 == 1)
  		      ? 1 : -1];
-@@ -8539,7 +8539,7 @@
+@@ -8556,7 +8556,7 @@
      We can't simply define LARGE_OFF_T to be 9223372036854775807,
      since some C++ compilers masquerading as C compilers
      incorrectly reject 9223372036854775807.  */
@@ -45,7 +46,7 @@
    int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
  		       && LARGE_OFF_T % 2147483647 == 1)
  		      ? 1 : -1];
-@@ -24794,7 +24794,7 @@
+@@ -24828,7 +24828,7 @@
      '-llber -lldap' \
      '-lldapssl -lldapx -lldapsdk' \
      '-lldapsdk -lldapx -lldapssl' \
@@ -54,7 +55,7 @@
  
      if test "$curl_cv_ldap_LIBS" = "unknown"; then
        if test -z "$x_nlibs"; then
-@@ -26530,14 +26530,14 @@
+@@ -26567,14 +26567,14 @@
      CPPFLAGS="$CPPFLAGS $SSL_CPPFLAGS"
    LDFLAGS="$LDFLAGS $SSL_LDFLAGS"
  
@@ -73,7 +74,7 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26545,31 +26545,31 @@
+@@ -26582,10 +26582,10 @@
  #ifdef __cplusplus
  extern "C"
  #endif
@@ -86,6 +87,7 @@
   ;
   return 0;
  }
+@@ -26592,21 +26592,21 @@
  _ACEOF
  if ac_fn_c_try_link "$LINENO"
  then :
@@ -107,20 +109,20 @@
 +if test "x$ac_cv_lib_sunw_crypto_sunw_HMAC_Update" = xyes
  then :
  
-      HAVECRYPTO="yes"
--     LIBS="-lcrypto $LIBS"
-+     LIBS="-lsunw_crypto $LIBS"
+     HAVECRYPTO="yes"
+-    LIBS="-lcrypto $LIBS"
++    LIBS="-lsunw_crypto $LIBS"
  
  else $as_nop
  
-@@ -26583,14 +26583,14 @@
-      # Linking previously failed, try extra paths from --with-openssl or
-      # pkg-config.  Use a different function name to avoid reusing the earlier
-      # cached result.
--     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for HMAC_Init_ex in -lcrypto" >&5
+@@ -26620,14 +26620,14 @@
+     # Linking previously failed, try extra paths from --with-openssl or
+     # pkg-config.  Use a different function name to avoid reusing the earlier
+     # cached result.
+-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for HMAC_Init_ex in -lcrypto" >&5
 -printf %s "checking for HMAC_Init_ex in -lcrypto... " >&6; }
 -if test ${ac_cv_lib_crypto_HMAC_Init_ex+y}
-+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for sunw_HMAC_Init_ex in -lsunw_crypto" >&5
++    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for sunw_HMAC_Init_ex in -lsunw_crypto" >&5
 +printf %s "checking for sunw_HMAC_Init_ex in -lsunw_crypto... " >&6; }
 +if test ${ac_cv_lib_sunw_crypto_sunw_HMAC_Init_ex+y}
  then :
@@ -132,7 +134,7 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26598,37 +26598,37 @@
+@@ -26635,10 +26635,10 @@
  #ifdef __cplusplus
  extern "C"
  #endif
@@ -145,6 +147,7 @@
   ;
   return 0;
  }
+@@ -26645,27 +26645,27 @@
  _ACEOF
  if ac_fn_c_try_link "$LINENO"
  then :
@@ -166,38 +169,47 @@
 +if test "x$ac_cv_lib_sunw_crypto_sunw_HMAC_Init_ex" = xyes
  then :
  
-        HAVECRYPTO="yes"
--       LIBS="-lcrypto $LIBS"
-+       LIBS="-lsunw_crypto $LIBS"
+       HAVECRYPTO="yes"
+-      LIBS="-lcrypto $LIBS"
++      LIBS="-lsunw_crypto $LIBS"
  else $as_nop
  
  
-               { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking OpenSSL linking with -ldl" >&5
+             { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking OpenSSL linking with -ldl" >&5
  printf %s "checking OpenSSL linking with -ldl... " >&6; }
--       LIBS="-lcrypto $CLEANLIBS -ldl"
-+       LIBS="-lsunw_crypto $CLEANLIBS -ldl"
-        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+-      LIBS="-lcrypto $CLEANLIBS -ldl"
++      LIBS="-lsunw_crypto $CLEANLIBS -ldl"
+       cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26637,7 +26637,7 @@
+@@ -26674,7 +26674,7 @@
  int main (void)
  {
  
--         ERR_clear_error();
-+         sunw_ERR_clear_error();
+-        ERR_clear_error();
++        sunw_ERR_clear_error();
  
   ;
   return 0;
-@@ -26657,7 +26657,7 @@
+@@ -26694,7 +26694,7 @@
  
-          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking OpenSSL linking with -ldl and -lpthread" >&5
+         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking OpenSSL linking with -ldl and -lpthread" >&5
  printf %s "checking OpenSSL linking with -ldl and -lpthread... " >&6; }
--         LIBS="-lcrypto $CLEANLIBS -ldl -lpthread"
-+         LIBS="-lsunw_crypto $CLEANLIBS -ldl -lpthread"
-          cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+-        LIBS="-lcrypto $CLEANLIBS -ldl -lpthread"
++        LIBS="-lsunw_crypto $CLEANLIBS -ldl -lpthread"
+         cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26707,14 +26707,14 @@
+@@ -26704,7 +26704,7 @@
+ int main (void)
+ {
+ 
+-          ERR_clear_error();
++          sunw_ERR_clear_error();
+ 
+  ;
+  return 0;
+@@ -26741,14 +26741,14 @@
  
    if test X"$HAVECRYPTO" = X"yes"; then
  
@@ -216,7 +228,7 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26722,48 +26722,48 @@
+@@ -26756,10 +26756,10 @@
  #ifdef __cplusplus
  extern "C"
  #endif
@@ -229,6 +241,7 @@
   ;
   return 0;
  }
+@@ -26766,38 +26766,38 @@
  _ACEOF
  if ac_fn_c_try_link "$LINENO"
  then :
@@ -259,15 +272,15 @@
  
 -    if test "$ac_cv_lib_ssl_SSL_connect" != yes; then
 +    if test "$ac_cv_lib_sunw_ssl_sunw_SSL_connect" != yes; then
-                 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for ssl with RSAglue/rsaref libs in use" >&5
+             { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for ssl with RSAglue/rsaref libs in use" >&5
  printf %s "checking for ssl with RSAglue/rsaref libs in use... " >&6; };
-         OLIBS=$LIBS
-         LIBS="-lRSAglue -lrsaref $LIBS"
--        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for SSL_connect in -lssl" >&5
+       OLIBS=$LIBS
+       LIBS="-lRSAglue -lrsaref $LIBS"
+-      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for SSL_connect in -lssl" >&5
 -printf %s "checking for SSL_connect in -lssl... " >&6; }
 -if test ${ac_cv_lib_ssl_SSL_connect+y}
-+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for sunw_SSL_connect in -lsunw_ssl" >&5
-+printf %s "checking for sunw_SSL_connect in -lsunw_ssl... " >&6; }
++      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for SSL_connect in -lsunw_ssl" >&5
++printf %s "checking for SSL_connect in -lsunw_ssl... " >&6; }
 +if test ${ac_cv_lib_sunw_ssl_sunw_SSL_connect+y}
  then :
    printf %s "(cached) " >&6
@@ -278,7 +291,7 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26771,35 +26771,35 @@
+@@ -26805,10 +26805,10 @@
  #ifdef __cplusplus
  extern "C"
  #endif
@@ -291,6 +304,7 @@
   ;
   return 0;
  }
+@@ -26815,25 +26815,25 @@
  _ACEOF
  if ac_fn_c_try_link "$LINENO"
  then :
@@ -318,8 +332,8 @@
  
  fi
  
--        if test "$ac_cv_lib_ssl_SSL_connect" != yes; then
-+        if test "$ac_cv_lib_sunw_ssl_sunw_SSL_connect" != yes; then
-                         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+-      if test "$ac_cv_lib_ssl_SSL_connect" != yes; then
++      if test "$ac_cv_lib_sunw_ssl_sunw_SSL_connect" != yes; then
+                 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
  printf "%s\n" "no" >&6; }
-             LIBS=$OLIBS
+         LIBS=$OLIBS
