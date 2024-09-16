@@ -89,8 +89,8 @@ d usr/ccs/lib 0755 root bin
 s usr/ccs/lib/cpp=../../lib/cpp
 f usr/lib/cpp 0555 root bin
 # curl
-f usr/lib/amd64/libcurl.so.4.8.0 0755 root bin
-s usr/lib/amd64/libcurl.so.4=libcurl.so.4.8.0
+f usr/lib/libcurl.so.4.8.0 0755 root bin
+s usr/lib/libcurl.so.4=libcurl.so.4.8.0
 d usr/include/curl 0755 root bin
 f usr/share/man/man1/curl.1 0444 root bin
 f usr/bin/curl 0755 root bin
