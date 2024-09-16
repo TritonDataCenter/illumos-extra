@@ -92,10 +92,10 @@ diff -ru a/configure b/configure
  if ac_fn_c_try_link "$LINENO"
  then :
 -  ac_cv_lib_crypto_HMAC_Update=yes
-+  ac_cv_lib_crypto_sunw_HMAC_Update=yes
++  ac_cv_lib_sunw_crypto_sunw_HMAC_Update=yes
  else $as_nop
 -  ac_cv_lib_crypto_HMAC_Update=no
-+  ac_cv_lib_crypto_sunw_HMAC_Update=no
++  ac_cv_lib_sunw_crypto_sunw_HMAC_Update=no
  fi
  rm -f core conftest.err conftest.$ac_objext conftest.beam \
      conftest$ac_exeext conftest.$ac_ext
