@@ -1,4 +1,4 @@
-From 28754fc6db6e3bfb783d3791cbaae33442a88443 Mon Sep 17 00:00:00 2001
+From 835177b5bd7330749f8ebec6d2be5238106cdba6 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:43 -0700
 Subject: [PATCH 06/33] DTrace support for SFTP
@@ -15,7 +15,7 @@ Subject: [PATCH 06/33] DTrace support for SFTP
  create mode 100644 sftp_provider_impl.h
 
 diff --git a/Makefile.in b/Makefile.in
-index 5159c7db1..04e0cf20f 100644
+index 090ca48cd..5dabd5e94 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -27,6 +27,7 @@ SSH_KEYSIGN=$(libexecdir)/ssh-keysign

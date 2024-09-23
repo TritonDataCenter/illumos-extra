@@ -1,4 +1,4 @@
-From 3a3406ca309190ffd5d8bfdc4407169da435e21e Mon Sep 17 00:00:00 2001
+From 352c6d8753d681ccc29de1051c69eb27a7832293 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Thu, 15 Oct 2015 16:02:37 -0700
 Subject: [PATCH 29/33] Let us put a fallback copy of DH moduli in a system
@@ -15,7 +15,7 @@ that if we can't find one in the SSHKEYDIR.
  3 files changed, 34 insertions(+), 13 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 0290d66c3..cbbb56b01 100644
+index 4e5fa7f1a..df12043e5 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -18,6 +18,7 @@ top_srcdir=@top_srcdir@
@@ -64,10 +64,10 @@ index 0290d66c3..cbbb56b01 100644
  host-key: ssh-keygen$(EXEEXT)
  	@if [ -z "$(DESTDIR)" ] ; then \
 diff --git a/configure.ac b/configure.ac
-index c6f3072ca..c96c28e87 100644
+index 4eb293d56..2b404b015 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -5420,6 +5420,21 @@ AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
+@@ -5424,6 +5424,21 @@ AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
  	[Specify location of SSH host keys])
  AC_SUBST([keydir])
  

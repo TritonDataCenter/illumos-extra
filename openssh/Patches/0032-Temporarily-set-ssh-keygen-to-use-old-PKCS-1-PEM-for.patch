@@ -1,4 +1,4 @@
-From b64b24cb8a29ff19f4b72de0a8277ad2db773f01 Mon Sep 17 00:00:00 2001
+From dffd8ba48a20745efd87e652c972db40c5bc5cfe Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Tue, 16 Jul 2019 13:43:14 -0700
 Subject: [PATCH 30/33] Temporarily set ssh-keygen to use old PKCS#1 PEM format
@@ -16,7 +16,7 @@ to the new format, otherwise old.
  2 files changed, 33 insertions(+), 10 deletions(-)
 
 diff --git a/ssh-keygen.1 b/ssh-keygen.1
-index df6803fd9..944f9c56e 100644
+index 06f0555a4..b3fdca441 100644
 --- a/ssh-keygen.1
 +++ b/ssh-keygen.1
 @@ -279,12 +279,12 @@ If
@@ -73,7 +73,7 @@ index df6803fd9..944f9c56e 100644
  Provides the (old) passphrase.
  .It Fl p
 diff --git a/ssh-keygen.c b/ssh-keygen.c
-index b5b589ad7..f25ff9bc0 100644
+index f7fc88d45..3333c9f65 100644
 --- a/ssh-keygen.c
 +++ b/ssh-keygen.c
 @@ -157,7 +157,8 @@ static char *pkcs11provider = NULL;
@@ -86,7 +86,7 @@ index b5b589ad7..f25ff9bc0 100644
  
  /* Cipher for new-format private keys */
  static char *openssh_format_cipher = NULL;
-@@ -1484,6 +1485,10 @@ do_change_passphrase(struct passwd *pw)
+@@ -1512,6 +1513,10 @@ do_change_passphrase(struct passwd *pw)
  		freezero(passphrase2, strlen(passphrase2));
  	}
  
@@ -97,7 +97,7 @@ index b5b589ad7..f25ff9bc0 100644
  	/* Save the file using the new passphrase. */
  	if ((r = sshkey_save_private(private, identity_file, passphrase1,
  	    comment, private_key_format, openssh_format_cipher, rounds)) != 0) {
-@@ -1577,6 +1582,10 @@ do_change_comment(struct passwd *pw, const char *identity_comment)
+@@ -1605,6 +1610,10 @@ do_change_comment(struct passwd *pw, const char *identity_comment)
  		}
  	}
  
@@ -108,7 +108,7 @@ index b5b589ad7..f25ff9bc0 100644
  	if (private->type != KEY_ED25519 && private->type != KEY_XMSS &&
  	    private_key_format != SSHKEY_PRIVATE_OPENSSH) {
  		error("Comments are only supported for keys stored in "
-@@ -3454,11 +3463,13 @@ main(int argc, char **argv)
+@@ -3487,11 +3496,13 @@ main(int argc, char **argv)
  			if (strcasecmp(optarg, "PKCS8") == 0) {
  				convert_format = FMT_PKCS8;
  				private_key_format = SSHKEY_PRIVATE_PKCS8;
@@ -122,7 +122,7 @@ index b5b589ad7..f25ff9bc0 100644
  				break;
  			}
  			fatal("Unsupported conversion format \"%s\"", optarg);
-@@ -3466,7 +3477,8 @@ main(int argc, char **argv)
+@@ -3499,7 +3510,8 @@ main(int argc, char **argv)
  			cert_principals = optarg;
  			break;
  		case 'o':
@@ -132,7 +132,7 @@ index b5b589ad7..f25ff9bc0 100644
  			break;
  		case 'p':
  			change_passphrase = 1;
-@@ -3935,6 +3947,10 @@ main(int argc, char **argv)
+@@ -3968,6 +3980,10 @@ main(int argc, char **argv)
  		snprintf(comment, sizeof comment, "%s@%s", pw->pw_name, hostname);
  	}
  

@@ -1,4 +1,4 @@
-From 1b45123eaa117435eacd40fa42b70506309840e3 Mon Sep 17 00:00:00 2001
+From 845b44523be8260d6e1b155e67f2c6cd5eb71e7a Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:00 -0700
 Subject: [PATCH 07/33] Add DisableBanner option
@@ -11,7 +11,7 @@ Subject: [PATCH 07/33] Add DisableBanner option
  4 files changed, 75 insertions(+), 4 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
-index 98c8bd54c..cd05e76fc 100644
+index e95df5b43..3b5d9886c 100644
 --- a/readconf.c
 +++ b/readconf.c
 @@ -169,6 +169,9 @@ typedef enum {
@@ -34,7 +34,7 @@ index 98c8bd54c..cd05e76fc 100644
  	{ "tunnel", oTunnel },
  	{ "tunneldevice", oTunnelDevice },
  	{ "localcommand", oLocalCommand },
-@@ -1043,6 +1049,17 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
+@@ -1072,6 +1078,17 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
  	return -1;
  }
  
@@ -52,7 +52,7 @@ index 98c8bd54c..cd05e76fc 100644
  /*
   * Processes a single option line as used in the configuration files. This
   * only sets those values that have not already been set.
-@@ -2329,6 +2346,13 @@ parse_pubkey_algos:
+@@ -2363,6 +2380,13 @@ parse_pubkey_algos:
  		intptr = &options->enable_escape_commandline;
  		goto parse_flag;
  
@@ -66,7 +66,7 @@ index 98c8bd54c..cd05e76fc 100644
  	case oRequiredRSASize:
  		intptr = &options->required_rsa_size;
  		goto parse_int;
-@@ -2644,6 +2668,9 @@ initialize_options(Options * options)
+@@ -2678,6 +2702,9 @@ initialize_options(Options * options)
  	options->stdin_null = -1;
  	options->fork_after_authentication = -1;
  	options->proxy_use_fdpass = -1;
@@ -76,7 +76,7 @@ index 98c8bd54c..cd05e76fc 100644
  	options->ignored_unknown = NULL;
  	options->num_canonical_domains = 0;
  	options->num_permitted_cnames = 0;
-@@ -2851,6 +2878,10 @@ fill_default_options(Options * options)
+@@ -2885,6 +2912,10 @@ fill_default_options(Options * options)
  		options->canonicalize_fallback_local = 1;
  	if (options->canonicalize_hostname == -1)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
@@ -116,7 +116,7 @@ index 9447d5d6e..282130cfa 100644
  int      fill_default_options(Options *);
  void	 fill_default_options_for_canonicalization(Options *);
 diff --git a/ssh_config.5 b/ssh_config.5
-index 2e1902283..b6a79666d 100644
+index 7c7c5c50d..fad544d0a 100644
 --- a/ssh_config.5
 +++ b/ssh_config.5
 @@ -710,6 +710,14 @@ If set to a time in seconds, or a time in any of the formats documented in
@@ -135,7 +135,7 @@ index 2e1902283..b6a79666d 100644
  Specifies that a TCP port on the local machine be forwarded
  over the secure channel, and the application
 diff --git a/sshconnect2.c b/sshconnect2.c
-index e63bb5ec6..400bbe71e 100644
+index 11fcdea8a..6e6a73d6e 100644
 --- a/sshconnect2.c
 +++ b/sshconnect2.c
 @@ -82,6 +82,10 @@
@@ -149,7 +149,7 @@ index e63bb5ec6..400bbe71e 100644
  /*
   * SSH2 key exchange
   */
-@@ -567,16 +571,34 @@ input_userauth_error(int type, u_int32_t seq, struct ssh *ssh)
+@@ -568,16 +572,34 @@ input_userauth_error(int type, u_int32_t seq, struct ssh *ssh)
  static int
  input_userauth_banner(int type, u_int32_t seq, struct ssh *ssh)
  {

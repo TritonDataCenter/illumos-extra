@@ -1,4 +1,4 @@
-From 8abd977693fbdd47eaf9c22d1031aa1cc67c4721 Mon Sep 17 00:00:00 2001
+From f588eded1e08d56c9e1d1178253a12908f2db504 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Tue, 22 Dec 2015 17:12:50 -0800
 Subject: [PATCH 17/33] Per-session xauthfile

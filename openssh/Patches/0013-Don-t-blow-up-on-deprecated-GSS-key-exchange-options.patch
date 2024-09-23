@@ -1,4 +1,4 @@
-From 454432371491542a32cc829d8c8162e97243643b Mon Sep 17 00:00:00 2001
+From ed8056d5e3c1821a0dc288ccd11e64640c481dcc Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex@uq.edu.au>
 Date: Tue, 8 Jun 2021 15:37:04 +1000
 Subject: [PATCH 12/33] Don't blow up on deprecated GSS key exchange options
@@ -8,10 +8,10 @@ Subject: [PATCH 12/33] Don't blow up on deprecated GSS key exchange options
  1 file changed, 6 insertions(+)
 
 diff --git a/servconf.c b/servconf.c
-index 7770ae329..b4872ac3d 100644
+index 6d64bad97..1ddf1c81b 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -783,6 +783,12 @@ static struct {
+@@ -789,6 +789,12 @@ static struct {
  	{ "useunsupportedsshv1", sDeprecated, SSHCFG_GLOBAL },
  	{ "usefips140", sDeprecated, SSHCFG_ALL},
  	{ "gssapistoredelegatedcredentials", sDeprecated, SSHCFG_ALL },

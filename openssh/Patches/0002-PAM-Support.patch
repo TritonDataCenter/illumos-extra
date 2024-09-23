@@ -1,4 +1,4 @@
-From ec1a323da955d152959f563dfa0268f69be46ab6 Mon Sep 17 00:00:00 2001
+From a2e92cd2c32c0f23ccb36f0d6554ec99227c956b Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:19 -0700
 Subject: [PATCH 02/33] PAM Support
@@ -15,10 +15,10 @@ Subject: [PATCH 02/33] PAM Support
  1 file changed, 14 insertions(+)
 
 diff --git a/servconf.c b/servconf.c
-index 5b32f0bfc..e67c4d412 100644
+index 89b8413e8..9473714f3 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -295,7 +295,13 @@ fill_default_server_options(ServerOptions *options)
+@@ -297,7 +297,13 @@ fill_default_server_options(ServerOptions *options)
  
  	/* Portable-specific options */
  	if (options->use_pam == -1)
@@ -32,7 +32,7 @@ index 5b32f0bfc..e67c4d412 100644
  	if (options->pam_service_name == NULL)
  		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
  
-@@ -1325,8 +1331,16 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -1345,8 +1351,16 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  	switch (opcode) {
  	/* Portable-specific options */
  	case sUsePAM:

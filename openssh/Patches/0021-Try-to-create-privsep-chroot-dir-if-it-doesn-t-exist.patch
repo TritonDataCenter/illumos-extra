@@ -1,4 +1,4 @@
-From 1df777507a7961b034dfb18e75d995faedf0948f Mon Sep 17 00:00:00 2001
+From 92e7125cedf431c84ea27e3a1b892588a9c9b18d Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 5 Aug 2015 12:25:15 -0700
 Subject: [PATCH 20/33] Try to create privsep chroot dir if it doesn't exist
@@ -9,10 +9,10 @@ Subject: [PATCH 20/33] Try to create privsep chroot dir if it doesn't exist
  1 file changed, 26 insertions(+)
 
 diff --git a/sshd-session.c b/sshd-session.c
-index 08673ca62..d1985b247 100644
+index fe0152ed1..423e2c64b 100644
 --- a/sshd-session.c
 +++ b/sshd-session.c
-@@ -301,6 +301,32 @@ privsep_preauth_child(void)
+@@ -303,6 +303,32 @@ privsep_preauth_child(void)
  
  	/* Demote the child */
  	if (privsep_chroot) {

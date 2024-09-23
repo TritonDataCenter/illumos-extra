@@ -1,4 +1,4 @@
-From 33a233d05d8e16b54a30885334957b20fc4bab53 Mon Sep 17 00:00:00 2001
+From 30782734ec9c66c526081440810852066a290784 Mon Sep 17 00:00:00 2001
 From: Travis Paul <travis.paul@mnx.io>
 Date: Thu, 30 Nov 2023 19:18:37 +0000
 Subject: [PATCH 18/33] PubKeyPlugin support
@@ -138,27 +138,27 @@ index 7580db78d..13c404a5d 100644
  	    remote_host, conn_id, rdomain, &opts)) != 0)
  		goto out;
 diff --git a/servconf.c b/servconf.c
-index b4872ac3d..5e19fc47c 100644
+index 1ddf1c81b..d82d12c62 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -611,7 +611,7 @@ typedef enum {
+@@ -617,7 +617,7 @@ typedef enum {
  	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
  	sRequiredRSASize, sChannelTimeout, sUnusedConnectionTimeout,
- 	sSshdSessionPath,
+ 	sSshdSessionPath, sRefuseConnection,
 -	sDeprecated, sIgnore, sUnsupported
 +	sPubKeyPlugin, sDeprecated, sIgnore, sUnsupported
  } ServerOpCodes;
  
  #define SSHCFG_GLOBAL		0x01	/* allowed in main section of config */
-@@ -815,6 +815,7 @@ static struct {
- 	{ "channeltimeout", sChannelTimeout, SSHCFG_ALL },
+@@ -822,6 +822,7 @@ static struct {
  	{ "unusedconnectiontimeout", sUnusedConnectionTimeout, SSHCFG_ALL },
  	{ "sshdsessionpath", sSshdSessionPath, SSHCFG_GLOBAL },
+ 	{ "refuseconnection", sRefuseConnection, SSHCFG_ALL },
 +	{ "pubkeyplugin", sPubKeyPlugin, SSHCFG_ALL },
  	{ NULL, sBadOption, 0 }
  };
  
-@@ -2764,6 +2765,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2787,6 +2788,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  			options->pam_service_prefix = xstrdup(arg);
  		break;
  
@@ -178,10 +178,10 @@ index b4872ac3d..5e19fc47c 100644
  	case sIgnore:
  	case sUnsupported:
 diff --git a/servconf.h b/servconf.h
-index 9fc15cb9c..090a83356 100644
+index d4bf38151..b77a629fe 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -250,6 +250,7 @@ typedef struct {
+@@ -251,6 +251,7 @@ typedef struct {
  	u_int64_t timing_secret;
  	char   *sk_provider;
  	int	required_rsa_size;	/* minimum size of RSA keys */
