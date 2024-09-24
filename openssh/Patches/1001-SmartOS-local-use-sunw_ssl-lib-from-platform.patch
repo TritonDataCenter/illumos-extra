@@ -1,4 +1,4 @@
-From ac71ffe76532ae5a3bf29f0e058ca3274f34d162 Mon Sep 17 00:00:00 2001
+From bf62a06ee91a24782d6ee395a31dcfaf9c819505 Mon Sep 17 00:00:00 2001
 From: Dan McDonald <danmcd@mnx.io>
 Date: Thu, 10 Aug 2023 18:11:52 -0400
 Subject: [PATCH 33/33] SmartOS local: use sunw_ssl lib from platform
@@ -6,13 +6,13 @@ Subject: [PATCH 33/33] SmartOS local: use sunw_ssl lib from platform
 ---
  cipher-chachapoly-libcrypto.c        |  4 +--
  cipher-chachapoly.c                  |  4 +--
- configure.ac                         | 46 ++++++++++++++--------------
+ configure.ac                         | 50 ++++++++++++++--------------
  digest-openssl.c                     |  6 ++--
- openbsd-compat/libressl-api-compat.c | 16 +++++-----
- openbsd-compat/openssl-compat.h      | 14 ++++-----
- ssh-pkcs11-client.c                  | 20 ++++++------
- ssh-pkcs11.c                         | 26 ++++++++--------
- 8 files changed, 68 insertions(+), 68 deletions(-)
+ openbsd-compat/libressl-api-compat.c | 16 ++++-----
+ openbsd-compat/openssl-compat.h      | 10 +++---
+ ssh-pkcs11-client.c                  | 24 ++++++-------
+ ssh-pkcs11.c                         | 24 ++++++-------
+ 8 files changed, 69 insertions(+), 69 deletions(-)
 
 diff --git a/cipher-chachapoly-libcrypto.c b/cipher-chachapoly-libcrypto.c
 index e8d20c288..2ebd699c4 100644
@@ -53,10 +53,10 @@ index 4471fe2d2..010de2d38 100644
 -#endif /* !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
 +#endif /* !defined(HAVE_SUNW_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
 diff --git a/configure.ac b/configure.ac
-index c96c28e87..552c53601 100644
+index 2b404b015..fdd2ae175 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -2854,9 +2854,9 @@ AC_ARG_WITH([ssl-engine],
+@@ -2856,9 +2856,9 @@ AC_ARG_WITH([ssl-engine],
  
  nocrypto_saved_LIBS="$LIBS"
  if test "x$openssl" = "xyes" ; then
@@ -69,13 +69,15 @@ index c96c28e87..552c53601 100644
  	    [AC_MSG_ERROR([*** working libcrypto not found, check config.log])])
  	AC_CHECK_HEADER([openssl/opensslv.h], ,
  	    [AC_MSG_ERROR([*** OpenSSL headers missing - please install first or check config.log ***])])
-@@ -3044,23 +3044,23 @@ if test "x$openssl" = "xyes" ; then
+@@ -3046,25 +3046,25 @@ if test "x$openssl" = "xyes" ; then
  	)
  
  	AC_CHECK_FUNCS([ \
 -		BN_is_prime_ex \
 -		DES_crypt \
 -		DSA_generate_parameters_ex \
+-		EVP_DigestSign \
+-		EVP_DigestVerify \
 -		EVP_DigestFinal_ex \
 -		EVP_DigestInit_ex \
 -		EVP_MD_CTX_cleanup \
@@ -87,6 +89,8 @@ index c96c28e87..552c53601 100644
 +		sunw_BN_is_prime_ex \
 +		sunw_DES_crypt \
 +		sunw_DSA_generate_parameters_ex \
++		sunw_EVP_DigestSign \
++		sunw_EVP_DigestVerify \
 +		sunw_EVP_DigestFinal_ex \
 +		sunw_EVP_DigestInit_ex \
 +		sunw_EVP_MD_CTX_cleanup \
@@ -106,7 +110,7 @@ index c96c28e87..552c53601 100644
  		AC_DEFINE(HAVE_OPENSSL_ADD_ALL_ALGORITHMS, 1, [as a macro]), ,
  		[[#include <openssl/evp.h>]]
  	    )
-@@ -3068,11 +3068,11 @@ if test "x$openssl" = "xyes" ; then
+@@ -3072,11 +3072,11 @@ if test "x$openssl" = "xyes" ; then
  
  	# LibreSSL/OpenSSL API differences
  	AC_CHECK_FUNCS([ \
@@ -123,7 +127,7 @@ index c96c28e87..552c53601 100644
  	])
  
  	if test "x$openssl_engine" = "xyes" ; then
-@@ -3131,7 +3131,7 @@ if test "x$openssl" = "xyes" ; then
+@@ -3135,7 +3135,7 @@ if test "x$openssl" = "xyes" ; then
  	)
  
  	# Check for various EVP support in OpenSSL
@@ -132,7 +136,7 @@ index c96c28e87..552c53601 100644
  
  	# Check complete ECC support in OpenSSL
  	AC_MSG_CHECKING([whether OpenSSL has NID_X9_62_prime256v1])
-@@ -3211,7 +3211,7 @@ if test "x$openssl" = "xyes" ; then
+@@ -3215,7 +3215,7 @@ if test "x$openssl" = "xyes" ; then
  	if test x$enable_nistp256 = x1 || test x$enable_nistp384 = x1 || \
  	    test x$enable_nistp521 = x1; then
  		AC_DEFINE(OPENSSL_HAS_ECC, [1], [OpenSSL has ECC])
@@ -216,10 +220,10 @@ index 59be17397..543e11f85 100644
  
  #endif /* WITH_OPENSSL */
 diff --git a/openbsd-compat/openssl-compat.h b/openbsd-compat/openssl-compat.h
-index f6796b3ba..9a333d646 100644
+index 2b9780f5e..f05274e71 100644
 --- a/openbsd-compat/openssl-compat.h
 +++ b/openbsd-compat/openssl-compat.h
-@@ -64,19 +64,19 @@ void ssh_libcrypto_init(void);
+@@ -64,14 +64,14 @@ void ssh_libcrypto_init(void);
  # define BN_set_flags(a, b)
  #endif
  
@@ -237,17 +241,10 @@ index f6796b3ba..9a333d646 100644
 +# endif /* HAVE_SUNW_EVP_CIPHER_CTX_GET_UPDATED_IV */
 +#endif /* HAVE_SUNW_EVP_CIPHER_CTX_GET_IV */
  
--#ifndef HAVE_EVP_CIPHER_CTX_SET_IV
-+#ifndef HAVE_SUNW_EVP_CIPHER_CTX_SET_IV
+ #ifndef HAVE_EVP_CIPHER_CTX_SET_IV
  int EVP_CIPHER_CTX_set_iv(EVP_CIPHER_CTX *ctx,
-     const unsigned char *iv, size_t len);
--#endif /* HAVE_EVP_CIPHER_CTX_SET_IV */
-+#endif /* HAVE_SUNW_EVP_CIPHER_CTX_SET_IV */
- 
- #endif /* WITH_OPENSSL */
- #endif /* _OPENSSL_COMPAT_H */
 diff --git a/ssh-pkcs11-client.c b/ssh-pkcs11-client.c
-index 5fa8bf02b..b63efb014 100644
+index b8d1700f0..1f051374c 100644
 --- a/ssh-pkcs11-client.c
 +++ b/ssh-pkcs11-client.c
 @@ -48,7 +48,7 @@
@@ -286,7 +283,7 @@ index 5fa8bf02b..b63efb014 100644
  	EC_KEY_METHOD_free(helper->ec_meth);
  #endif
  	RSA_meth_free(helper->rsa_meth);
-@@ -322,7 +322,7 @@ rsa_finish(RSA *rsa)
+@@ -325,7 +325,7 @@ rsa_finish(RSA *rsa)
  	return 1;
  }
  
@@ -295,7 +292,7 @@ index 5fa8bf02b..b63efb014 100644
  static ECDSA_SIG *
  ecdsa_do_sign(const unsigned char *dgst, int dgst_len, const BIGNUM *inv,
      const BIGNUM *rp, EC_KEY *ec)
-@@ -402,7 +402,7 @@ ecdsa_do_finish(EC_KEY *ec)
+@@ -406,7 +406,7 @@ ecdsa_do_finish(EC_KEY *ec)
  	if (helper->nrsa == 0 && helper->nec == 0)
  		helper_terminate(helper);
  }
@@ -304,25 +301,43 @@ index 5fa8bf02b..b63efb014 100644
  
  /* redirect private key crypto operations to the ssh-pkcs11-helper */
  static void
-@@ -413,7 +413,7 @@ wrap_key(struct helper *helper, struct sshkey *k)
- 		RSA_set_method(k->rsa, helper->rsa_meth);
- 		if (helper->nrsa++ >= INT_MAX)
- 			fatal_f("RSA refcount error");
+@@ -426,7 +426,7 @@ wrap_key(struct helper *helper, struct sshkey *k)
+ 		if (EVP_PKEY_set1_RSA(k->pkey, rsa) != 1)
+ 			fatal_f("EVP_PKEY_set1_RSA failed");
+ 		RSA_free(rsa);
 -#if defined(OPENSSL_HAS_ECC) && defined(HAVE_EC_KEY_METHOD_NEW)
 +#if defined(OPENSSL_HAS_ECC) && defined(HAVE_SUNW_EC_KEY_METHOD_NEW)
  	} else if (k->type == KEY_ECDSA) {
- 		EC_KEY_set_method(k->ecdsa, helper->ec_meth);
- 		if (helper->nec++ >= INT_MAX)
-@@ -487,7 +487,7 @@ pkcs11_start_helper_methods(struct helper *helper)
+ 		if ((ecdsa = EVP_PKEY_get1_EC_KEY(k->pkey)) == NULL)
+ 			fatal_f("no ECDSA key");
+@@ -457,7 +457,7 @@ pkcs11_make_cert(const struct sshkey *priv,
+ 	struct sshkey *ret;
+ 	int r;
+ 	RSA *rsa_priv = NULL, *rsa_cert = NULL;
+-#if defined(OPENSSL_HAS_ECC) && defined(HAVE_EC_KEY_METHOD_NEW)
++#if defined(OPENSSL_HAS_ECC) && defined(HAVE_SUNW_EC_KEY_METHOD_NEW)
+ 	EC_KEY *ec_priv = NULL, *ec_cert = NULL;
+ #endif
+ 
+@@ -489,7 +489,7 @@ pkcs11_make_cert(const struct sshkey *priv,
+ 			fatal_f("EVP_PKEY_set1_RSA failed");
+ 		RSA_free(rsa_priv);
+ 		RSA_free(rsa_cert);
+-#if defined(OPENSSL_HAS_ECC) && defined(HAVE_EC_KEY_METHOD_NEW)
++#if defined(OPENSSL_HAS_ECC) && defined(HAVE_SUNW_EC_KEY_METHOD_NEW)
+ 	} else if (priv->type == KEY_ECDSA) {
+ 		if ((ec_priv = EVP_PKEY_get1_EC_KEY(priv->pkey)) == NULL)
+ 			fatal_f("no EC pkey");
+@@ -528,7 +528,7 @@ pkcs11_start_helper_methods(struct helper *helper)
  {
- 	RSA_METHOD *rsa_meth;
+ 	RSA_METHOD *rsa_meth = NULL;
  	EC_KEY_METHOD *ec_meth = NULL;
 -#if defined(OPENSSL_HAS_ECC) && defined(HAVE_EC_KEY_METHOD_NEW)
 +#if defined(OPENSSL_HAS_ECC) && defined(HAVE_SUNW_EC_KEY_METHOD_NEW)
  	int (*ec_init)(EC_KEY *key);
  	int (*ec_copy)(EC_KEY *dest, const EC_KEY *src);
  	int (*ec_set_group)(EC_KEY *key, const EC_GROUP *grp);
-@@ -504,7 +504,7 @@ pkcs11_start_helper_methods(struct helper *helper)
+@@ -545,7 +545,7 @@ pkcs11_start_helper_methods(struct helper *helper)
  	    &ec_copy, &ec_set_group, &ec_set_private, &ec_set_public);
  	EC_KEY_METHOD_set_init(ec_meth, ec_init, ecdsa_do_finish,
  	    ec_copy, ec_set_group, ec_set_private, ec_set_public);
@@ -331,7 +346,7 @@ index 5fa8bf02b..b63efb014 100644
  
  	if ((rsa_meth = RSA_meth_dup(RSA_get_default_method())) == NULL)
  		fatal_f("RSA_meth_dup failed");
-@@ -545,7 +545,7 @@ pkcs11_start_helper(const char *path)
+@@ -586,7 +586,7 @@ pkcs11_start_helper(const char *path)
  		close(pair[0]);
  		close(pair[1]);
  		RSA_meth_free(helper->rsa_meth);
@@ -341,7 +356,7 @@ index 5fa8bf02b..b63efb014 100644
  #endif
  		free(helper);
 diff --git a/ssh-pkcs11.c b/ssh-pkcs11.c
-index 1e76e8b2b..94d93569a 100644
+index fadf9c9c6..1a595bff6 100644
 --- a/ssh-pkcs11.c
 +++ b/ssh-pkcs11.c
 @@ -79,7 +79,7 @@ struct pkcs11_key {
@@ -375,7 +390,7 @@ index 1e76e8b2b..94d93569a 100644
  
  /* release a wrapped object */
  static void
-@@ -507,7 +507,7 @@ pkcs11_rsa_wrap(struct pkcs11_provider *provider, CK_ULONG slotidx,
+@@ -509,7 +509,7 @@ pkcs11_rsa_wrap(struct pkcs11_provider *provider, CK_ULONG slotidx,
  	return (0);
  }
  
@@ -384,7 +399,7 @@ index 1e76e8b2b..94d93569a 100644
  /* openssl callback doing the actual signing operation */
  static ECDSA_SIG *
  ecdsa_do_sign(const unsigned char *dgst, int dgst_len, const BIGNUM *inv,
-@@ -620,7 +620,7 @@ pkcs11_ecdsa_wrap(struct pkcs11_provider *provider, CK_ULONG slotidx,
+@@ -624,7 +624,7 @@ pkcs11_ecdsa_wrap(struct pkcs11_provider *provider, CK_ULONG slotidx,
  
  	return (0);
  }
@@ -393,7 +408,7 @@ index 1e76e8b2b..94d93569a 100644
  
  /* remove trailing spaces */
  static char *
-@@ -698,7 +698,7 @@ pkcs11_key_included(struct sshkey ***keysp, int *nkeys, struct sshkey *key)
+@@ -702,7 +702,7 @@ pkcs11_key_included(struct sshkey ***keysp, int *nkeys, struct sshkey *key)
  	return (0);
  }
  
@@ -402,7 +417,7 @@ index 1e76e8b2b..94d93569a 100644
  static struct sshkey *
  pkcs11_fetch_ecdsa_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
      CK_OBJECT_HANDLE *obj)
-@@ -821,7 +821,7 @@ fail:
+@@ -828,7 +828,7 @@ fail:
  
  	return (key);
  }
@@ -411,7 +426,7 @@ index 1e76e8b2b..94d93569a 100644
  
  static struct sshkey *
  pkcs11_fetch_rsa_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
-@@ -929,7 +929,7 @@ pkcs11_fetch_x509_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
+@@ -939,7 +939,7 @@ pkcs11_fetch_x509_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
  #endif
  	struct sshkey		*key = NULL;
  	int			 i;
@@ -420,25 +435,16 @@ index 1e76e8b2b..94d93569a 100644
  	int			 nid;
  #endif
  	const u_char		*cp;
-@@ -1018,7 +1018,7 @@ pkcs11_fetch_x509_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
+@@ -1031,7 +1031,7 @@ pkcs11_fetch_x509_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
+ 			fatal("EVP_PKEY_set1_RSA failed");
  		key->type = KEY_RSA;
  		key->flags |= SSHKEY_FLAG_EXT;
- 		rsa = NULL;	/* now owned by key */
 -#if defined(OPENSSL_HAS_ECC) && defined(HAVE_EC_KEY_METHOD_NEW)
 +#if defined(OPENSSL_HAS_ECC) && defined(HAVE_SUNW_EC_KEY_METHOD_NEW)
  	} else if (EVP_PKEY_base_id(evp) == EVP_PKEY_EC) {
  		if (EVP_PKEY_get0_EC_KEY(evp) == NULL) {
  			error("invalid x509; no ec key");
-@@ -1049,7 +1049,7 @@ pkcs11_fetch_x509_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
- 		key->type = KEY_ECDSA;
- 		key->flags |= SSHKEY_FLAG_EXT;
- 		ec = NULL;	/* now owned by key */
--#endif /* OPENSSL_HAS_ECC && HAVE_EC_KEY_METHOD_NEW */
-+#endif /* OPENSSL_HAS_ECC && HAVE_SUNW_EC_KEY_METHOD_NEW */
- 	} else {
- 		error("unknown certificate key type");
- 		goto out;
-@@ -1273,11 +1273,11 @@ pkcs11_fetch_keys(struct pkcs11_provider *p, CK_ULONG slotidx,
+@@ -1289,11 +1289,11 @@ pkcs11_fetch_keys(struct pkcs11_provider *p, CK_ULONG slotidx,
  		case CKK_RSA:
  			key = pkcs11_fetch_rsa_pubkey(p, slotidx, &obj);
  			break;

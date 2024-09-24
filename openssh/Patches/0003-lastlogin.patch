@@ -1,4 +1,4 @@
-From d45eb4ebdcd0081c37beed45f8ab4986ed3db453 Mon Sep 17 00:00:00 2001
+From 53a514604eaf60514d1152f34222565ccd137dcb Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:41 -0700
 Subject: [PATCH 03/33] lastlogin
@@ -9,10 +9,10 @@ Subject: [PATCH 03/33] lastlogin
  1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/sshd_config.5 b/sshd_config.5
-index 1ab0f41d9..5c00dac94 100644
+index dbed44f2a..152066e83 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
-@@ -1670,8 +1670,8 @@ Specifies whether
+@@ -1683,8 +1683,8 @@ Specifies whether
  .Xr sshd 8
  should print the date and time of the last user login when a user logs
  in interactively.
@@ -23,7 +23,7 @@ index 1ab0f41d9..5c00dac94 100644
  .It Cm PrintMotd
  Specifies whether
  .Xr sshd 8
-@@ -2195,7 +2195,8 @@ This file should be writable by root only, but it is recommended
+@@ -2220,7 +2220,8 @@ This file should be writable by root only, but it is recommended
  .El
  .Sh SEE ALSO
  .Xr sftp-server 8 ,

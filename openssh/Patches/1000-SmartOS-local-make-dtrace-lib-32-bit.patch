@@ -1,4 +1,4 @@
-From e439071201d8d027fefa68facd2d6fe1f46c0f58 Mon Sep 17 00:00:00 2001
+From ccd0328bbcb72f18d9f21b5fb93afbcae0310e75 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Tue, 22 Dec 2015 14:30:19 -0800
 Subject: [PATCH 32/33] SmartOS local: make dtrace lib 32-bit
@@ -8,7 +8,7 @@ Subject: [PATCH 32/33] SmartOS local: make dtrace lib 32-bit
  1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index cbbb56b01..21a9d21a0 100644
+index df12043e5..84ee46a59 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -30,6 +30,7 @@ SSHD_SESSION=$(libexecdir)/sshd-session

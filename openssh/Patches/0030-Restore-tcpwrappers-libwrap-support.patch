@@ -1,4 +1,4 @@
-From 35afc7b6c1c5293ee287fc4cbefdf8eb54419093 Mon Sep 17 00:00:00 2001
+From 43f1720bbf6770adc72a203681dc61def3c1aef6 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 16 Sep 2015 10:54:13 -0700
 Subject: [PATCH 28/33] Restore tcpwrappers/libwrap support
@@ -12,7 +12,7 @@ and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
  3 files changed, 93 insertions(+)
 
 diff --git a/configure.ac b/configure.ac
-index 834afb423..c6f3072ca 100644
+index 896ba9003..4eb293d56 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -1672,6 +1672,62 @@ else
@@ -78,7 +78,7 @@ index 834afb423..c6f3072ca 100644
  # Check whether user wants to use ldns
  LDNS_MSG="no"
  AC_ARG_WITH(ldns,
-@@ -5719,6 +5775,7 @@ echo "                       PAM support: $PAM_MSG"
+@@ -5723,6 +5779,7 @@ echo "                       PAM support: $PAM_MSG"
  echo "                   OSF SIA support: $SIA_MSG"
  echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
@@ -87,7 +87,7 @@ index 834afb423..c6f3072ca 100644
  echo "                   libldns support: $LDNS_MSG"
  echo "  Solaris process contract support: $SPC_MSG"
 diff --git a/sshd-session.c b/sshd-session.c
-index d1985b247..df9b97b1d 100644
+index 423e2c64b..25fec4a47 100644
 --- a/sshd-session.c
 +++ b/sshd-session.c
 @@ -110,6 +110,17 @@
@@ -108,7 +108,7 @@ index d1985b247..df9b97b1d 100644
  /* Re-exec fds */
  #define REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
  #define REEXEC_STARTUP_PIPE_FD		(STDERR_FILENO + 2)
-@@ -1280,6 +1291,24 @@ main(int ac, char **av)
+@@ -1282,6 +1293,24 @@ main(int ac, char **av)
  #ifdef SSH_AUDIT_EVENTS
  	audit_connection_from(ssh, remote_ip, remote_port);
  #endif
@@ -134,10 +134,10 @@ index d1985b247..df9b97b1d 100644
  	rdomain = ssh_packet_rdomain_in(ssh);
  
 diff --git a/sshd.8 b/sshd.8
-index c1054fe32..1139acbae 100644
+index 1fa15ef17..2d87447c7 100644
 --- a/sshd.8
 +++ b/sshd.8
-@@ -921,6 +921,12 @@ the user's home directory becomes accessible.
+@@ -925,6 +925,12 @@ the user's home directory becomes accessible.
  This file should be writable only by the user, and need not be
  readable by anyone else.
  .Pp
@@ -150,7 +150,7 @@ index c1054fe32..1139acbae 100644
  .It Pa /etc/hosts.equiv
  This file is for host-based authentication (see
  .Xr ssh 1 ) .
-@@ -1050,6 +1056,7 @@ Each SSHv2 userauth type has its own PAM service name:
+@@ -1054,6 +1060,7 @@ Each SSHv2 userauth type has its own PAM service name:
  .Xr ssh-keygen 1 ,
  .Xr ssh-keyscan 1 ,
  .Xr chroot 2 ,

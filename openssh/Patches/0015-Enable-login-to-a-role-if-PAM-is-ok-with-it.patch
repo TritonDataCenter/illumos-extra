@@ -1,4 +1,4 @@
-From b5c8914c0c28b338c80264e8c3d738450f8ffc4f Mon Sep 17 00:00:00 2001
+From 77cb482b55ec94d392ba1f5a6e806462a1ed9f02 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:38:19 -0700
 Subject: [PATCH 14/33] Enable login to a role if PAM is ok with it
@@ -94,10 +94,10 @@ index eb21479a0..7066e3f94 100644
  	sshbuf_free(b);
  done:
 diff --git a/monitor.c b/monitor.c
-index 4ddaf41c8..af18a4abe 100644
+index b379f1e7b..c9152439c 100644
 --- a/monitor.c
 +++ b/monitor.c
-@@ -395,6 +395,12 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
+@@ -396,6 +396,12 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
  		}
  	}
  
@@ -110,7 +110,7 @@ index 4ddaf41c8..af18a4abe 100644
  	if (!authctxt->valid)
  		fatal_f("authenticated invalid user");
  	if (strcmp(auth_method, "unknown") == 0)
-@@ -599,7 +605,10 @@ monitor_reset_key_state(void)
+@@ -600,7 +606,10 @@ monitor_reset_key_state(void)
  {
  	/* reset state */
  	free(key_blob);
@@ -121,7 +121,7 @@ index 4ddaf41c8..af18a4abe 100644
  	free(hostbased_chost);
  	sshauthopt_free(key_opts);
  	key_blob = NULL;
-@@ -1092,6 +1101,11 @@ mm_answer_pam_account(struct ssh *ssh, int sock, struct sshbuf *m)
+@@ -1102,6 +1111,11 @@ mm_answer_pam_account(struct ssh *ssh, int sock, struct sshbuf *m)
  	if (!options.use_pam)
  		fatal("%s: PAM not enabled", __func__);
  

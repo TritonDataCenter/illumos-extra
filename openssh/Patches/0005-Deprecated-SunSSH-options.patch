@@ -1,4 +1,4 @@
-From 95d4da70491e1e9c2eaf7ebe3a75f4f6a82e2e15 Mon Sep 17 00:00:00 2001
+From 1cbf4527e6128dbbea8d367fbe0143fc28ec5a6e Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:12 -0700
 Subject: [PATCH 04/33] Deprecated SunSSH options
@@ -16,7 +16,7 @@ Subject: [PATCH 04/33] Deprecated SunSSH options
  1 file changed, 18 insertions(+)
 
 diff --git a/readconf.c b/readconf.c
-index 4e3791cb7..98c8bd54c 100644
+index 3d9cc6dbb..e95df5b43 100644
 --- a/readconf.c
 +++ b/readconf.c
 @@ -330,6 +330,24 @@ static struct {

@@ -1,4 +1,4 @@
-From e7fed13de4c5d1d7182b1402166eab082de99580 Mon Sep 17 00:00:00 2001
+From fe3d22f65636ae59164243871f515bdf25e4815b Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 12:19:47 -0700
 Subject: [PATCH 21/33] Add SMF manifest and method, and install them
@@ -12,7 +12,7 @@ Subject: [PATCH 21/33] Add SMF manifest and method, and install them
  create mode 100644 smf/method.sh
 
 diff --git a/Makefile.in b/Makefile.in
-index 6f32a0a0e..de3a37b22 100644
+index 3d9b7dc1e..d634194e6 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -28,6 +28,8 @@ SSHD_SESSION=$(libexecdir)/sshd-session
@@ -213,7 +213,7 @@ index 000000000..a926a281a
 \ No newline at end of file
 diff --git a/smf/method.sh b/smf/method.sh
 new file mode 100644
-index 000000000..f0a6d428a
+index 000000000..d61ba6e34
 --- /dev/null
 +++ b/smf/method.sh
 @@ -0,0 +1,132 @@
