@@ -24,7 +24,7 @@
 # Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
-# Copyright (c) 2010 Joyent Inc.
+# Copyright 2022 Joyent, Inc.
 #
 
 PREFIX=${DESTDIR}/usr
@@ -37,7 +37,7 @@ cd ${VERS}
 
 mkdir -p ${ROOTLIBDIR} ${LIBDIR}
 
-_install D libz.so.1.2.3 ${ROOTLIBDIR}/libz.so.1 755
+_install D libz.so.1.2.12 ${ROOTLIBDIR}/libz.so.1 755
 _install L ../../../lib/${MACH64}/libz.so.1 ${LIBDIR}/libz.so.1
 _install L libz.so.1 ${LIBDIR}/libz.so
 _install L libz.so.1 ${ROOTLIBDIR}/libz.so
