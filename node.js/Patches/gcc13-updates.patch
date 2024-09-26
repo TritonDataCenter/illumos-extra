@@ -1,0 +1,23 @@
+diff -ru a/src/node.cc b/src/node.cc
+--- a/src/node.cc	Tue Sep 24 20:57:12 2024
++++ b/src/node.cc	Tue Sep 24 20:11:35 2024
+@@ -1881,7 +1881,7 @@
+ 
+   node_module_struct *mod;
+   if (uv_dlsym(&lib, symbol, reinterpret_cast<void**>(&mod))) {
+-    char errmsg[1024];
++    char errmsg[1124]; /* Needs to be bigger than "symbol" */
+     snprintf(errmsg, sizeof(errmsg), "Symbol %s not found.", symbol);
+     return ThrowError(errmsg);
+   }
+diff -ru a/src/node_crypto.cc b/src/node_crypto.cc
+--- a/src/node_crypto.cc	Tue Feb 18 18:34:29 2014
++++ b/src/node_crypto.cc	Tue Sep 24 21:27:13 2024
+@@ -787,6 +787,7 @@
+       Finish();
+       return copied;
+     }
++    [[fallthrough]];
+    case kTLSHeader:
+    case kSSLHeader:
+     // >= 5 + frame size bytes for frame parsing
