@@ -11,6 +11,7 @@
 
 #
 # Copyright 2021 Joyent, Inc.
+# Copyright 2024 MNX Cloud, Inc.
 #
 
 #
@@ -26,7 +27,7 @@ BUILD64=yes
 BUILD32=
 
 GCC_VER = 10
-VER = gcc-10.4.0-il-1
+VER = gcc-10.4.0-il-2
 MPFR_VER = mpfr-4.2.0
 GMP_VER = gmp-6.2.1
 MPC_VER = mpc-1.3.1
