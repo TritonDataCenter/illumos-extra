@@ -1,0 +1,18 @@
+--- a/nss/cmd/ecperf/ecperf.c	2016-06-20 17:11:28.000000000 +0000
++++ b/nss/cmd/ecperf/ecperf.c	2024-10-31 11:47:03.297310415 +0000
+@@ -140,6 +140,7 @@
+         }
+         threadData->count++;
+     }
++    threadData->p2 = NULL;
+     return;
+ }
+ 
+@@ -168,6 +169,7 @@
+         }
+         threadData->count++;
+     }
++    threadData->p2 = NULL;
+     return;
+ }
+ 
