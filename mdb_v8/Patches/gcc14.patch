@@ -1,0 +1,11 @@
+--- a/src/mdb_v8.c	2021-11-18 04:24:28.000000000 +0000
++++ b/src/mdb_v8.c	2024-11-04 08:42:27.895692677 +0000
+@@ -4628,7 +4628,7 @@
+ 	if (read_heap_maybesmi(&nargs, funcinfop,
+ 	    V8_OFF_SHAREDFUNCTIONINFO_LENGTH) == 0) {
+ 		uintptr_t argptr;
+-		char arg[10];
++		char arg[25];
+ 
+ 		if (mdb_vread(&argptr, sizeof (argptr),
+ 		    fptr + V8_OFF_FP_ARGS + nargs * sizeof (uintptr_t)) != -1 &&

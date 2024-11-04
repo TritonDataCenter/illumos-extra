@@ -28,6 +28,8 @@ VER =	mdb_v8-1.4.3
 include ../Makefile.defs
 include ../Makefile.targ
 
+PATCHES = Patches/*
+
 CLEANFILES += .unpack
 
 CTF_LIBS = $(VER)/build/ia32/mdb_v8.so \
@@ -66,5 +68,9 @@ $(VER)/GNUMakefile: $(VER).tar.gz
 	-rm -rf $(VER)
 	mkdir -p .unpack
 	gtar x -C .unpack -z --no-same-owner -f $(VER).tar.gz
+	for p in $(PATCHES); do \
+		echo "Applying $$p"; \
+		$(GPATCH) -d .unpack/$(VER) -p$(PATCHSTRIP) < "$$p" || exit 1; \
+	done
 	mv -f .unpack/$(VER) $(VER)
 	-rmdir .unpack
