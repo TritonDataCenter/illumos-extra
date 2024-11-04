@@ -3628,25 +3628,6 @@ diff -urN openlldp-0.4alpha/src/lldp_main.c openlldp-0.4alpha-32/src/lldp_main.c
  }
  
  void cleanupLLDP(struct lldp_port *lldp_port) {
-diff -urN openlldp-0.4alpha/src/lldp_neighbor.c openlldp-0.4alpha-32/src/lldp_neighbor.c
---- openlldp-0.4alpha/src/lldp_neighbor.c	2010-06-08 05:06:29.000000000 +0000
-+++ openlldp-0.4alpha-32/src/lldp_neighbor.c	2013-06-07 20:38:13.752276214 +0000
-@@ -77,6 +77,7 @@
-         debug_printf(DEBUG_NORMAL, "gethostname() failed! retval = %d.\n", retval);
-     }
- 
-+#ifdef linux
-     strcat(lldp_systemname, ".");
- 
-     retval = getdomainname(&lldp_systemname[strlen(lldp_systemname)], 255 - strlen(lldp_systemname));
-@@ -85,6 +86,7 @@
-     {
-         debug_printf(DEBUG_NORMAL, "getdomainname() failed! retval = %d.\n", retval);
-     }
-+#endif
- 
-     debug_printf(DEBUG_NORMAL, "lldp_systemname: %s\n", lldp_systemname);
- 
 diff -urN openlldp-0.4alpha/src/lldp_port.h openlldp-0.4alpha-32/src/lldp_port.h
 --- openlldp-0.4alpha/src/lldp_port.h	2010-06-08 05:06:29.000000000 +0000
 +++ openlldp-0.4alpha-32/src/lldp_port.h	2013-06-07 20:32:54.322527401 +0000
@@ -4261,3 +4242,85 @@ diff -urN openlldp-0.4alpha/src/platform/Makefile.in openlldp-0.4alpha-32/src/pl
  	maintainer-clean-generic mostlyclean mostlyclean-compile \
  	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
  	uninstall-am
+--- openlldp-0.4alpha/src/lldp_neighbor.c	2010-06-08 05:06:29.000000000 +0000
++++ openlldp-0.4alpha-32/src/lldp_neighbor.c	2024-11-04 22:44:35.026005806 +0000
+@@ -23,6 +23,7 @@
+ #include <errno.h>
+ 
+ #include <string.h>
++#include <strings.h>
+ 
+ #include "lldp_port.h"
+ #include "lldp_debug.h"
+@@ -77,6 +78,7 @@
+         debug_printf(DEBUG_NORMAL, "gethostname() failed! retval = %d.\n", retval);
+     }
+ 
++#ifdef linux
+     strcat(lldp_systemname, ".");
+ 
+     retval = getdomainname(&lldp_systemname[strlen(lldp_systemname)], 255 - strlen(lldp_systemname));
+@@ -85,6 +87,7 @@
+     {
+         debug_printf(DEBUG_NORMAL, "getdomainname() failed! retval = %d.\n", retval);
+     }
++#endif
+ 
+     debug_printf(DEBUG_NORMAL, "lldp_systemname: %s\n", lldp_systemname);
+ 
+@@ -118,7 +121,7 @@
+     memset(tmp_buffer, 0x0, 2048);
+     sprintf(buffer, "Interface '%s' has ", lldp_port->if_name);
+ 
+-    strncat(result, buffer, 2048);
++    strncat(result, buffer, 2047);
+ 
+     msap_cache = lldp_port->msap_cache;
+ 
+@@ -130,7 +133,7 @@
+ 
+       sprintf(tmp_buffer, "Neighbor %d:\n", neighbor_count);
+       
+-      strncat(info_buffer, tmp_buffer, 2048);
++      strncat(info_buffer, tmp_buffer, 2047);
+       
+       memset(tmp_buffer, 0x0, 2048);
+ 
+@@ -145,7 +148,7 @@
+ 	  if(tlv_name != NULL) {
+ 	    sprintf(tmp_buffer, "\t%s: ", tlv_name);
+ 
+-	    strncat(info_buffer, tmp_buffer, 2048);
++	    strncat(info_buffer, tmp_buffer, 2047);
+ 
+ 	    //free(tlv_name);    
+ 	    //tlv_name = NULL;
+@@ -157,7 +160,7 @@
+ 	    if(tlv_subtype != NULL) {	    
+ 	      sprintf(tmp_buffer, "\t%s\n", tlv_subtype);
+ 
+-	      strncat(info_buffer, tmp_buffer, 2048);
++	      strncat(info_buffer, tmp_buffer, 2047);
+ 
+ 	      memset(tmp_buffer, 0x0, 2048);
+ 
+@@ -166,7 +169,7 @@
+ 	    }
+ 	  } else {
+ 	    sprintf(tmp_buffer, "\t\tUnknown TLV Type (%d)\n", tlv_list->tlv->type);
+-	    strncat(info_buffer, tmp_buffer, 2048);
++	    strncat(info_buffer, tmp_buffer, 2047);
+ 	  }
+        
+ 	} else {
+@@ -184,8 +187,8 @@
+     memset(buffer, 0x0, 2048);
+     
+     sprintf(buffer, "%d LLDP Neighbors: \n\n", neighbor_count);
+-    strncat(result, buffer, 2048);
+-    strncat(result, info_buffer, 2048);
++    strncat(result, buffer, 2047);
++    strncat(result, info_buffer, 2047);
+  
+     lldp_port = lldp_port->next;
+   }
