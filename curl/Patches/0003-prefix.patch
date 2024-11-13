@@ -1,0 +1,210 @@
+diff -ru a/configure b/configure
+--- a/configure	Wed Nov 13 13:44:03 2024
++++ b/configure	Wed Nov 13 13:48:36 2024
+@@ -24964,7 +24964,7 @@
+     '-llber -lldap' \
+     '-lldapssl -lldapx -lldapsdk' \
+     '-lldapsdk -lldapx -lldapssl' \
+-    '-lldap -llber -lssl -lcrypto'; do
++    '-lldap -llber -lsunw_ssl -lsunw_crypto'; do
+ 
+     if test "$curl_cv_ldap_LIBS" = "unknown"; then
+       if test -z "$x_nlibs"; then
+@@ -26711,14 +26711,14 @@
+     CPPFLAGS="$CPPFLAGS $SSL_CPPFLAGS"
+   LDFLAGS="$LDFLAGS $SSL_LDFLAGS"
+ 
+-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for HMAC_Update in -lcrypto" >&5
+-printf %s "checking for HMAC_Update in -lcrypto... " >&6; }
++  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for HMAC_Update in -lsunw_crypto" >&5
++printf %s "checking for HMAC_Update in -lsunw_crypto... " >&6; }
+ if test ${ac_cv_lib_crypto_HMAC_Update+y}
+ then :
+   printf %s "(cached) " >&6
+ else $as_nop
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lcrypto  $LIBS"
++LIBS="-lsunw_crypto  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -26750,7 +26750,7 @@
+ then :
+ 
+     HAVECRYPTO="yes"
+-    LIBS="-lcrypto $LIBS"
++    LIBS="-lsunw_crypto $LIBS"
+ 
+ else $as_nop
+ 
+@@ -26764,14 +26764,14 @@
+     # Linking previously failed, try extra paths from --with-openssl or
+     # pkg-config.  Use a different function name to avoid reusing the earlier
+     # cached result.
+-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for HMAC_Init_ex in -lcrypto" >&5
+-printf %s "checking for HMAC_Init_ex in -lcrypto... " >&6; }
++    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for HMAC_Init_ex in -lsunw_crypto" >&5
++printf %s "checking for HMAC_Init_ex in -lsunw_crypto... " >&6; }
+ if test ${ac_cv_lib_crypto_HMAC_Init_ex+y}
+ then :
+   printf %s "(cached) " >&6
+ else $as_nop
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lcrypto  $LIBS"
++LIBS="-lsunw_crypto  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -26803,13 +26803,13 @@
+ then :
+ 
+       HAVECRYPTO="yes"
+-      LIBS="-lcrypto $LIBS"
++      LIBS="-lsunw_crypto $LIBS"
+ else $as_nop
+ 
+ 
+             { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking OpenSSL linking with -ldl" >&5
+ printf %s "checking OpenSSL linking with -ldl... " >&6; }
+-      LIBS="-lcrypto $CLEANLIBS -ldl"
++      LIBS="-lsunw_crypto $CLEANLIBS -ldl"
+       cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -26838,7 +26838,7 @@
+ 
+         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking OpenSSL linking with -ldl and -lpthread" >&5
+ printf %s "checking OpenSSL linking with -ldl and -lpthread... " >&6; }
+-        LIBS="-lcrypto $CLEANLIBS -ldl -lpthread"
++        LIBS="-lsunw_crypto $CLEANLIBS -ldl -lpthread"
+         cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -26885,14 +26885,14 @@
+ 
+   if test X"$HAVECRYPTO" = X"yes"; then
+ 
+-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for SSL_connect in -lssl" >&5
+-printf %s "checking for SSL_connect in -lssl... " >&6; }
+-if test ${ac_cv_lib_ssl_SSL_connect+y}
++    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for sunw_SSL_connect in -lsunw_ssl" >&5
++printf %s "checking for sunw_SSL_connect in -lsunw_ssl... " >&6; }
++if test ${ac_cv_lib_ssl_sunw_SSL_connect+y}
+ then :
+   printf %s "(cached) " >&6
+ else $as_nop
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lssl  $LIBS"
++LIBS="-lsunw_ssl  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -26900,10 +26900,10 @@
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char SSL_connect ();
++char sunw_SSL_connect ();
+ int main(void)
+ {
+-return SSL_connect ();
++return sunw_SSL_connect ();
+  ;
+  return 0;
+ }
+@@ -26910,38 +26910,38 @@
+ _ACEOF
+ if ac_fn_c_try_link "$LINENO"
+ then :
+-  ac_cv_lib_ssl_SSL_connect=yes
++  ac_cv_lib_ssl_sunw_SSL_connect=yes
+ else $as_nop
+-  ac_cv_lib_ssl_SSL_connect=no
++  ac_cv_lib_ssl_sunw_SSL_connect=no
+ fi
+ rm -f core conftest.err conftest.$ac_objext conftest.beam \
+     conftest$ac_exeext conftest.$ac_ext
+ LIBS=$ac_check_lib_save_LIBS
+ fi
+-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ssl_SSL_connect" >&5
+-printf "%s\n" "$ac_cv_lib_ssl_SSL_connect" >&6; }
+-if test "x$ac_cv_lib_ssl_SSL_connect" = xyes
++{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ssl_sunw_SSL_connect" >&5
++printf "%s\n" "$ac_cv_lib_ssl_sunw_SSL_connect" >&6; }
++if test "x$ac_cv_lib_ssl_sunw_SSL_connect" = xyes
+ then :
+   printf "%s\n" "#define HAVE_LIBSSL 1" >>confdefs.h
+ 
+-  LIBS="-lssl $LIBS"
++  LIBS="-lsunw_ssl $LIBS"
+ 
+ fi
+ 
+ 
+-    if test "$ac_cv_lib_ssl_SSL_connect" != yes; then
++    if test "$ac_cv_lib_ssl_sunw_SSL_connect" != yes; then
+             { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for ssl with RSAglue/rsaref libs in use" >&5
+ printf %s "checking for ssl with RSAglue/rsaref libs in use... " >&6; };
+       OLIBS=$LIBS
+       LIBS="-lRSAglue -lrsaref $LIBS"
+-      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for SSL_connect in -lssl" >&5
+-printf %s "checking for SSL_connect in -lssl... " >&6; }
+-if test ${ac_cv_lib_ssl_SSL_connect+y}
++      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for sunw_SSL_connect in -lsunw_ssl" >&5
++printf %s "checking for sunw_SSL_connect in -lsunw_ssl... " >&6; }
++if test ${ac_cv_lib_ssl_sunw_SSL_connect+y}
+ then :
+   printf %s "(cached) " >&6
+ else $as_nop
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lssl  $LIBS"
++LIBS="-lsunw_ssl  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -26949,10 +26949,10 @@
+ #ifdef __cplusplus
+ extern "C"
+ #endif
+-char SSL_connect ();
++char sunw_SSL_connect ();
+ int main(void)
+ {
+-return SSL_connect ();
++return sunw_SSL_connect ();
+  ;
+  return 0;
+ }
+@@ -26959,25 +26959,25 @@
+ _ACEOF
+ if ac_fn_c_try_link "$LINENO"
+ then :
+-  ac_cv_lib_ssl_SSL_connect=yes
++  ac_cv_lib_ssl_sunw_SSL_connect=yes
+ else $as_nop
+-  ac_cv_lib_ssl_SSL_connect=no
++  ac_cv_lib_ssl_sunw_SSL_connect=no
+ fi
+ rm -f core conftest.err conftest.$ac_objext conftest.beam \
+     conftest$ac_exeext conftest.$ac_ext
+ LIBS=$ac_check_lib_save_LIBS
+ fi
+-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ssl_SSL_connect" >&5
+-printf "%s\n" "$ac_cv_lib_ssl_SSL_connect" >&6; }
+-if test "x$ac_cv_lib_ssl_SSL_connect" = xyes
++{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ssl_sunw_SSL_connect" >&5
++printf "%s\n" "$ac_cv_lib_ssl_sunw_SSL_connect" >&6; }
++if test "x$ac_cv_lib_ssl_sunw_SSL_connect" = xyes
+ then :
+   printf "%s\n" "#define HAVE_LIBSSL 1" >>confdefs.h
+ 
+-  LIBS="-lssl $LIBS"
++  LIBS="-lsunw_ssl $LIBS"
+ 
+ fi
+ 
+-      if test "$ac_cv_lib_ssl_SSL_connect" != yes; then
++      if test "$ac_cv_lib_ssl_sunw_SSL_connect" != yes; then
+                 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+ printf "%s\n" "no" >&6; }
+         LIBS=$OLIBS
