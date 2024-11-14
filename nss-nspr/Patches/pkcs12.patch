@@ -1,0 +1,21 @@
+--- a/nss/lib/pkcs12/p12e.c	2016-06-20 17:11:28.000000000 +0000
++++ b/nss/lib/pkcs12/p12e.c	2024-10-31 11:34:08.985776010 +0000
+@@ -1642,12 +1642,12 @@
+     sec_pkcs12_encoder_destroy_context(p12enc);
+     if (p12exp->arena != NULL)
+ 	PORT_ArenaRelease(p12exp->arena, mark);
+-	if (salt) {
+-		SECITEM_ZfreeItem(salt, PR_TRUE);
+-	}
+-	if (params) {
+-		PK11_DestroyPBEParams(params);
+-	}
++    if (salt) {
++	SECITEM_ZfreeItem(salt, PR_TRUE);
++    }
++    if (params) {
++	PK11_DestroyPBEParams(params);
++    }
+ 
+     return NULL;
+ }
