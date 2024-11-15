@@ -35,3 +35,5 @@ AUTOCONF_OPTS += \
 
 include ../Makefile.targ
 include ../Makefile.targ.autoconf
+
+PATCHES = Patches/*
