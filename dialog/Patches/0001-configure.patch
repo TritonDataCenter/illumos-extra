@@ -1,0 +1,20 @@
+--- a/configure	2011-10-20 21:27:48.000000000 +0000
++++ b/configure	2024-11-01 21:24:35.301726636 +0000
+@@ -9442,7 +9442,7 @@
+ int
+ main ()
+ {
+-initscr(); tgoto("?", 0,0)
++initscr(); endwin()
+   ;
+   return 0;
+ }
+@@ -10780,7 +10780,7 @@
+ int
+ main ()
+ {
+-initscr(); tgoto("?", 0,0)
++initscr(); endwin()
+   ;
+   return 0;
+ }

@@ -1,0 +1,441 @@
+diff -ruN a/lib/ipmi_fru.c b/lib/ipmi_fru.c
+--- a/lib/ipmi_fru.c	2016-08-28 08:21:55.000000000 +0000
++++ b/lib/ipmi_fru.c	2024-11-02 11:50:12.131861887 +0000
+@@ -66,6 +66,10 @@
+ ipmi_intf_set_max_request_data_size(struct ipmi_intf * intf, uint16_t size);
+ void
+ ipmi_intf_set_max_response_data_size(struct ipmi_intf * intf, uint16_t size);
++uint16_t
++ipmi_intf_get_max_response_data_size(struct ipmi_intf * intf);
++uint16_t
++ipmi_intf_get_max_request_data_size(struct ipmi_intf * intf);
+ 
+ extern int verbose;
+ 
+@@ -88,9 +92,6 @@
+ 											struct fru_info fru, struct fru_header header,
+ 											uint8_t f_type, uint8_t f_index, char *f_string);
+ 
+-static void
+-fru_area_print_multirec_bloc(struct ipmi_intf * intf, struct fru_info * fru,
+-			uint8_t id, uint32_t offset);
+ int
+ read_fru_area(struct ipmi_intf * intf, struct fru_info *fru, uint8_t id,
+ 			uint32_t offset, uint32_t length, uint8_t *frubuf);
+@@ -822,67 +823,6 @@
+ }
+ 
+ 
+-static void
+-fru_area_print_multirec_bloc(struct ipmi_intf * intf, struct fru_info * fru,
+-			uint8_t id, uint32_t offset)
+-{
+-	uint8_t * fru_data = NULL;
+-	uint32_t i;
+-	struct fru_multirec_header * h;
+-	uint32_t last_off, len;
+-
+-	i = last_off = offset;
+-
+-	fru_data = malloc(fru->size + 1);
+-	if (fru_data == NULL) {
+-		lprintf(LOG_ERR, " Out of memory!");
+-		return;
+-	}
+-
+-	memset(fru_data, 0, fru->size + 1);
+-
+-	do {
+-		h = (struct fru_multirec_header *) (fru_data + i);
+-
+-		// read area in (at most) FRU_MULTIREC_CHUNK_SIZE bytes at a time
+-		if ((last_off < (i + sizeof(*h))) || (last_off < (i + h->len)))
+-		{
+-			len = fru->size - last_off;
+-			if (len > FRU_MULTIREC_CHUNK_SIZE)
+-				len = FRU_MULTIREC_CHUNK_SIZE;
+-
+-			if (read_fru_area(intf, fru, id, last_off, len, fru_data) < 0)
+-				break;
+-
+-			last_off += len;
+-		}
+-
+-		//printf("Bloc Numb : %i\n", counter);
+-		printf("Bloc Start: %i\n", i);
+-		printf("Bloc Size : %i\n", h->len);
+-		printf("\n");
+-
+-		i += h->len + sizeof (struct fru_multirec_header);
+-	} while (!(h->format & 0x80));
+-
+-	i = offset;
+-	do {
+-		h = (struct fru_multirec_header *) (fru_data + i);
+-
+-		printf("Bloc Start: %i\n", i);
+-		printf("Bloc Size : %i\n", h->len);
+-		printf("\n");
+-
+-		i += h->len + sizeof (struct fru_multirec_header);
+-	} while (!(h->format & 0x80));
+-
+-	lprintf(LOG_DEBUG ,"Multi-Record area ends at: %i (%xh)",i,i);
+-
+-	free(fru_data);
+-	fru_data = NULL;
+-}
+-
+-
+ /* fru_area_print_chassis  -  Print FRU Chassis Area
+ *
+ * @intf:   ipmi interface
+@@ -959,7 +899,7 @@
+ 	/* read any extra fields */
+ 	while ((fru_data[i] != 0xc1) && (i < fru_len))
+ 	{
+-		int j = i;
++		uint32_t j = i;
+ 		fru_area = get_fru_area_str(fru_data, &i);
+ 		if (fru_area != NULL) {
+ 			if (strlen(fru_area) > 0) {
+@@ -1085,7 +1025,7 @@
+ 	/* read any extra fields */
+ 	while ((fru_data[i] != 0xc1) && (i < fru_len))
+ 	{
+-		int j = i;
++		uint32_t j = i;
+ 		fru_area = get_fru_area_str(fru_data, &i);
+ 		if (fru_area != NULL) {
+ 			if (strlen(fru_area) > 0) {
+@@ -1220,7 +1160,7 @@
+ 	/* read any extra fields */
+ 	while ((fru_data[i] != 0xc1) && (i < fru_len))
+ 	{
+-		int j = i;
++		uint32_t j = i;
+ 		fru_area = get_fru_area_str(fru_data, &i);
+ 		if (fru_area != NULL) {
+ 			if (strlen(fru_area) > 0) {
+@@ -1453,7 +1393,7 @@
+ 	}
+ 
+ 	if( answer == 'y' || answer == 'Y' ){
+-		int i;
++		size_t i;
+ 		unsigned int *holder;
+ 
+ 		holder = malloc(len);
+@@ -1582,6 +1522,9 @@
+ 	int offset = start;
+ 	offset += sizeof(struct fru_multirec_oem_header);
+ 
++	(void) len;
++	(void) h;
++
+ 	if(!badParams){
+ 		/* the 'OEM' field is already checked in caller */
+ 		if( argc > OEM_KONTRON_SUBCOMMAND_ARG_POS ){
+@@ -1867,18 +1810,17 @@
+ 
+ 			uint8_t record_checksum =0;
+ 			uint8_t header_checksum =0;
+-			int index;
+ 
+ 			lprintf(LOG_DEBUG,"Initial record checksum : %x",h->record_checksum);
+ 			lprintf(LOG_DEBUG,"Initial header checksum : %x",h->header_checksum);
+-			for(index=0;index<length;index++){
++			for(int index=0;index<length;index++){
+ 				record_checksum+=  fru_data[start+index];
+ 			}
+ 			/* Update Record checksum */
+ 			h->record_checksum =  ~record_checksum + 1;
+ 
+ 
+-			for(index=0;index<(sizeof(struct fru_multirec_header) -1);index++){
++			for(size_t index=0;index<(sizeof(struct fru_multirec_header) -1);index++){
+ 				uint8_t data= *( (uint8_t *)h+ index);
+ 				header_checksum+=data;
+ 			}
+@@ -1984,18 +1926,17 @@
+ 
+ 		uint8_t record_checksum =0;
+ 		uint8_t header_checksum =0;
+-		int index;
+ 
+ 		lprintf(LOG_DEBUG,"Initial record checksum : %x",h->record_checksum);
+ 		lprintf(LOG_DEBUG,"Initial header checksum : %x",h->header_checksum);
+-		for(index=0;index<length;index++){
++		for(int index=0;index<length;index++){
+ 			record_checksum+=  fru_data[start+index];
+ 		}
+ 		/* Update Record checksum */
+ 		h->record_checksum =  ~record_checksum + 1;
+ 
+ 
+-		for(index=0;index<(sizeof(struct fru_multirec_header) -1);index++){
++		for(size_t index=0;index<(sizeof(struct fru_multirec_header) -1);index++){
+ 			uint8_t data= *( (uint8_t *)h+ index);
+ 			header_checksum+=data;
+ 		}
+@@ -2259,10 +2200,9 @@
+ 			guid_count = fru_data[offset++];
+ 			printf("      GUID count: %2d\n", guid_count);
+ 			for (i = 0 ; i < guid_count; i++ ) {
+-				int j;
+ 				printf("        GUID [%2d]: 0x", i);
+ 
+-				for (j=0; j < sizeof(struct fru_picmgext_guid);
++				for (size_t j=0; j < sizeof(struct fru_picmgext_guid);
+ 						j++) {
+ 					printf("%02x", fru_data[offset+j]);
+ 				}
+@@ -2505,9 +2445,8 @@
+ 				guid_count = fru_data[offset];
+ 				printf("      GUID count: %2d\n", guid_count);
+ 				for (i = 0 ; i < guid_count; i++) {
+-					int j;
+ 					printf("        GUID %2d: ", i);
+-					for (j=0; j < sizeof(struct fru_picmgext_guid);
++					for (size_t j=0; j < sizeof(struct fru_picmgext_guid);
+ 							j++) {
+ 						printf("%02x", fru_data[offset+j]);
+ 						offset += sizeof(struct fru_picmgext_guid);
+@@ -2818,7 +2757,7 @@
+ 							(feature > 1) & 1,
+ 							(feature&1)?"Source":"Receiver");
+ 					printf("            Family:  0x%02x  - AccLVL: 0x%02x\n", family, accuracy);
+-					printf("            FRQ: %-9ld - min: %-9ld - max: %-9ld\n",
++					printf("            FRQ: %-9u - min: %-9u - max: %-9u\n",
+ 							freq, min_freq, max_freq);
+ 				}
+ 				printf("\n");
+@@ -3835,6 +3774,8 @@
+ 	}
+ 
+ 	/* Retreive length */
++#if 0 /* OS-8593 SmartOS */
++	/* The if statements here are never true -Wtautological-compare */
+ 	if (((header.offset.internal * 8) > (header.offset.internal * 8)) &&
+ 		((header.offset.internal * 8) < end))
+ 		end = (header.offset.internal * 8);
+@@ -3850,6 +3791,7 @@
+ 	if (((header.offset.product * 8) > (header.offset.product * 8)) &&
+ 		((header.offset.product * 8) < end))
+ 		end = (header.offset.product * 8);
++#endif
+ 
+ 	*pSize = end - (header.offset.multi * 8);
+ 	*pOffset = (header.offset.multi * 8);
+@@ -4022,6 +3964,8 @@
+ 	end = pFruInfo->size;
+ 
+ 	/* Retreive length */
++#if 0 /* OS-8593 SmartOS */
++	/* The if statements here are never true -Wtautological-compare */
+ 	if (((header.offset.internal * 8) > (header.offset.internal * 8)) &&
+ 		((header.offset.internal * 8) < end))
+ 		end = (header.offset.internal * 8);
+@@ -4037,6 +3981,7 @@
+ 	if (((header.offset.product * 8) > (header.offset.product * 8)) &&
+ 		((header.offset.product * 8) < end))
+ 		end = (header.offset.product * 8);
++#endif
+ 
+ 	*pRetSize = end;
+ 	*pRetLocation = 8 * header.offset.multi;
+@@ -4651,7 +4596,6 @@
+ 	struct fru_header header;
+ 	uint8_t msg_data[4];
+ 	uint8_t checksum;
+-	int i = 0;
+ 	int rc = 1;
+ 	uint8_t *fru_data = NULL;
+ 	uint8_t *fru_area = NULL;
+@@ -4780,7 +4724,7 @@
+ 	f_index= f_index - 0x30;
+ 
+ 	/*Seek to field index */
+-	for (i=0; i <= f_index; i++) {
++	for (uint8_t i=0; i <= f_index; i++) {
+ 		fru_field_offset_tmp = fru_field_offset;
+ 		if (fru_area != NULL) {
+ 			free(fru_area);
+@@ -4803,7 +4747,7 @@
+ 
+ 		checksum = 0;
+ 		/* Calculate Header Checksum */
+-		for (i = 0; i < fru_section_len - 1; i++)
++		for (uint32_t i = 0; i < fru_section_len - 1; i++)
+ 		{
+ 			checksum += fru_data[i];
+ 		}
+@@ -4986,7 +4930,7 @@
+ 		else
+ 			break;
+ 	}
+-	num_byte_change = strlen(f_string) - strlen(fru_area);
++	num_byte_change = strlen(f_string) - strlen((const char *)fru_area);
+ 
+ 	#ifdef DBG_RESIZE_FRU
+ 	printf("Padding Length: %u\n", padding_len);
+@@ -5107,7 +5051,7 @@
+ 					remaining_offset,
+ 					((header.offset.product) * 8) + product_len_new
+ 				);
+-		if(((header.offset.product * 8) + product_len_new - remaining_offset) < 0)
++		if(header.offset.product * 8 + product_len_new < remaining_offset)
+ 		{
+ 			memcpy(
+ 						fru_data_new + (header.offset.product * 8) + product_len_new,
+@@ -5152,12 +5096,12 @@
+ 		memcpy((fru_data_new + fru_field_offset_tmp + 1 + 
+ 			strlen(f_string)),
+ 			(fru_data_old + fru_field_offset_tmp + 1 + 
+-			strlen(fru_area)),
++			strlen((const char *)fru_area)),
+ 		((fru_data_old + header_offset + fru_section_len - 1) -
+ 		(fru_data_old + fru_field_offset_tmp + strlen(f_string) + 1)));
+ 
+ 		/* Add Padding if required */
+-		for(counter = 0; counter < padding_len; counter ++)
++		for(counter = 0; counter < (uint32_t)padding_len; counter ++)
+ 		{
+ 			*(fru_data_new + header_offset + fru_section_len - 1 - 
+ 			  padding_len + counter) = 0;
+diff -ruN a/src/plugins/serial/serial_basic.c b/src/plugins/serial/serial_basic.c
+--- a/src/plugins/serial/serial_basic.c	2016-07-31 06:52:40.000000000 +0000
++++ b/src/plugins/serial/serial_basic.c	2024-11-04 07:51:21.030044706 +0000
+@@ -33,9 +33,7 @@
+ 
+ /* Serial Interface, Basic Mode plugin. */
+ 
+-#if defined HAVE_ALLOCA_H
+ #include <alloca.h>
+-#endif
+ #include <stdio.h>
+ #include <fcntl.h>
+ #include <time.h>
+@@ -150,8 +148,8 @@
+  *	Table of supported baud rates
+  */
+ static const struct {
+-	int baudinit;
+-	int baudrate;
++	unsigned baudinit;
++	unsigned baudrate;
+ } rates[] = {
+ 	{ B2400, 2400 },
+ 	{ B9600, 9600 },
+@@ -203,7 +201,7 @@
+ 	struct termios ti;
+ 	unsigned int rate = 9600;
+ 	char *p;
+-	int i;
++	size_t i;
+ 
+ 	if (!intf->devfile) {
+ 		lprintf(LOG_ERR, "Serial device is not specified");
+@@ -582,7 +580,7 @@
+ 		rv = serial_bm_parse_buffer(recv_ctx->buffer,
+ 				recv_ctx->buffer_size, &parse_ctx);
+ 
+-		if (rv < recv_ctx->buffer_size) {
++		if (rv < (int)recv_ctx->buffer_size) {
+ 			/* move non-parsed part of the buffer to the beginning */
+ 			memmove(recv_ctx->buffer, recv_ctx->buffer + rv,
+ 					recv_ctx->buffer_size - rv);
+@@ -613,7 +611,7 @@
+ 	uint8_t * data = msg, seq;
+ 	struct ipmb_msg_hdr * hdr = (struct ipmb_msg_hdr *) msg;
+ 	struct ipmi_send_message_rq * inner_rq = NULL, * outer_rq = NULL;
+-	int bridging_level;
++	size_t bridging_level;
+ 
+ 	/* acquire bridging level */
+ 	if (intf->target_addr && intf->target_addr != intf->my_addr) {
+@@ -831,6 +829,7 @@
+ 	clock_t start, tm;
+ 	int rv, netFn, rqSeq;
+ 
++	(void) max_len;
+ 	start = clock();
+ 
+ 	do {
+@@ -885,7 +884,7 @@
+ 		tm = clock() - start;
+ 
+ 		tm /= CLOCKS_PER_SEC;
+-	} while (tm < intf->ssn_params.timeout);
++	} while (tm < (clock_t)intf->ssn_params.timeout);
+ 
+ 	return 0;
+ }
+diff -ruN a/src/plugins/serial/serial_terminal.c b/src/plugins/serial/serial_terminal.c
+--- a/src/plugins/serial/serial_terminal.c	2016-06-08 19:30:53.000000000 +0000
++++ b/src/plugins/serial/serial_terminal.c	2024-11-04 07:51:42.760201355 +0000
+@@ -33,9 +33,7 @@
+ 
+ /* Serial Interface, Terminal Mode plugin. */
+ 
+-#if defined HAVE_ALLOCA_H
+ #include <alloca.h>
+-#endif
+ #include <stdio.h>
+ #include <fcntl.h>
+ #include <unistd.h>
+@@ -127,8 +125,8 @@
+  *	Table of supported baud rates
+  */
+ static const struct {
+-	int baudinit;
+-	int baudrate;
++	unsigned baudinit;
++	unsigned baudrate;
+ } rates[] = {
+ 	{ B2400, 2400 },
+ 	{ B9600, 9600 },
+@@ -150,7 +148,7 @@
+ 	struct termios ti;
+ 	unsigned int rate = 9600;
+ 	char *p;
+-	int i;
++	size_t i;
+ 
+ 	if (!intf->devfile) {
+ 		lprintf(LOG_ERR, "Serial device is not specified");
+@@ -474,7 +472,7 @@
+ 	struct serial_term_hdr * term_hdr = (struct serial_term_hdr *) msg;
+ 	struct ipmi_send_message_rq * outer_rq = NULL;
+ 	struct ipmi_send_message_rq * inner_rq = NULL;
+-	int bridging_level;
++	size_t bridging_level;
+ 
+ 	/* acquire bridging level */
+ 	if (intf->target_addr && intf->target_addr != intf->my_addr) {
+@@ -636,7 +634,7 @@
+ 
+ 	/* body */
+ 	for (i = 0; i < msg_len; i++) {
+-		buf += sprintf( buf, "%02x", msg[i]);
++		buf += sprintf((char *)buf, "%02x", msg[i]);
+ 	}
+ 
+ 	/* stop character */
+@@ -728,6 +726,7 @@
+ 	clock_t start, tm;
+ 	int rv, netFn, rqSeq;
+ 
++	(void) max_len;
+ 	start = clock();
+ 
+ 	do {
+@@ -774,7 +773,7 @@
+ 		tm = clock() - start;
+ 
+ 		tm /= CLOCKS_PER_SEC;
+-	} while (tm < intf->ssn_params.timeout);
++	} while (tm < (clock_t)intf->ssn_params.timeout);
+ 
+ 	return 0;
+ }
