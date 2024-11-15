@@ -1,0 +1,11 @@
+--- binutils-2.34/binutils/Makefile.am	2020-01-18 15:55:47.000000000 +0000
++++ binutils-2.34-32strap/binutils/Makefile.am	2024-11-14 14:48:09.031007390 +0000
+@@ -33,7 +33,7 @@
+ YACC = `if [ -f ../bison/bison ]; then echo ../bison/bison -y -L$(srcdir)/../bison/; else echo @YACC@; fi`
+ YFLAGS = -d
+ LEX = `if [ -f ../flex/flex ]; then echo ../flex/flex; else echo @LEX@; fi`
+-LEXLIB = @LEXLIB@
++LEXLIB = # @LEXLIB@
+ 
+ # Automake 1.10+ disables lex and yacc output file regeneration if
+ # maintainer mode is disabled.  Avoid this.
