@@ -1,0 +1,18 @@
+--- a/lib/memset_explicit.c	2023-01-01 13:39:11.000000000 +0000
++++ b/lib/memset_explicit.c	2024-11-01 19:32:28.993075042 +0000
+@@ -14,13 +14,10 @@
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
+ 
+-#include <config.h>
+-
+-/* memset_s need this define */
+-#if HAVE_MEMSET_S
++/* memset_s needs this define before config.h */
+ # define __STDC_WANT_LIB_EXT1__ 1
+-#endif
+ 
++#include <config.h>
+ #include <string.h>
+ 
+ /* Set S's bytes to C, where S has LEN bytes.  The compiler will not
