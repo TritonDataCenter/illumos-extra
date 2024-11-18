@@ -22,14 +22,14 @@
 # Copyright 2024 MNX Cloud, Inc.
 #
 
-VER =	curl-8.10.0
+VER =	curl-8.11.0
 
 include ../Makefile.defs
 
 TARBALL =		$(VER).tar.bz2
 TARBALL_COMPRESS =	-j
 
-AUTOCONF_OPTS +=	--with-ssl=$(DESTDIR)/usr --without-libpsl
+AUTOCONF_OPTS += --with-openssl=$(DESTDIR)/usr --without-libpsl
 
 PATCHES =	Patches/*
 
