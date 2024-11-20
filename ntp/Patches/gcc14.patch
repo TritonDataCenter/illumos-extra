@@ -1,0 +1,22 @@
+--- lib/isc/unix/ifiter_ioctl.c_orig	2015-03-28 21:21:26.000000000 +0000
++++ lib/isc/unix/ifiter_ioctl.c	2024-11-04 19:12:34.891744598 +0000
+@@ -557,7 +557,7 @@
+ 	memcpy(&lifreq.lifr_addr, &iter->current.address.type.in6,
+ 	       sizeof(iter->current.address.type.in6));
+ 
+-	if (isc_ioctl(iter->socket, SIOCGLIFADDR, &lifreq) < 0) {
++	if (isc_ioctl(iter->socket, SIOCGLIFADDR, (char *)&lifreq) < 0) {
+ 		isc__strerror(errno, strbuf, sizeof(strbuf));
+ 		UNEXPECTED_ERROR(__FILE__, __LINE__,
+ 				 "%s: getting interface address: %s",
+--- sntp/m4/openldap-thread-check.m4	2015-09-21 08:06:08.000000000 +0000
++++ sntp/m4/openldap-thread-check.m4	2024-11-04 21:24:51.168165279 +0000
+@@ -265,7 +265,7 @@
+ #ifndef NULL
+ #define NULL (void*)0
+ #endif
+-]], [[pthread_detach(NULL);]])],[ol_cv_func_pthread_detach=yes],[ol_cv_func_pthread_detach=no])
++]], [[pthread_detach(0);]])],[ol_cv_func_pthread_detach=yes],[ol_cv_func_pthread_detach=no])
+ 			])
+ 
+ 			if test $ol_cv_func_pthread_detach = no ; then

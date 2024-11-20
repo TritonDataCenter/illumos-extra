@@ -1,0 +1,39 @@
+diff -ruN a/crypto/bio/b_sock.c b/crypto/bio/b_sock.c
+--- a/crypto/bio/b_sock.c	2019-12-20 13:02:41.000000000 +0000
++++ b/crypto/bio/b_sock.c	2024-10-30 12:24:47.327491619 +0000
+@@ -114,7 +114,7 @@
+ } ghbn_cache[GHBN_NUM];
+ # endif
+ 
+-static int get_ip(const char *str, unsigned char *ip);
++static int get_ip(const char *str, unsigned char ip[4]);
+ # if 0
+ static void ghbn_free(struct hostent *a);
+ static struct hostent *ghbn_dup(struct hostent *a);
+
+diff -ruN a/ssl/s3_cbc.c b/ssl/s3_cbc.c
+--- a/ssl/s3_cbc.c	2019-12-20 13:02:41.000000000 +0000
++++ b/ssl/s3_cbc.c	2024-10-30 17:36:22.783824446 +0000
+@@ -663,7 +663,8 @@
+             }
+             overhang = header_length - md_block_size;
+             md_transform(md_state.c, header);
+-            memcpy(first_block, header + md_block_size, overhang);
++            memcpy(first_block, (void *)((uintptr_t)header + md_block_size),
++		overhang);
+             memcpy(first_block + overhang, data, md_block_size - overhang);
+             md_transform(md_state.c, first_block);
+             for (i = 1; i < k / md_block_size - 1; i++)
+
+diff -ruN a/ssl/t1_lib.c b/ssl/t1_lib.c
+--- a/ssl/t1_lib.c	2019-12-20 13:02:41.000000000 +0000
++++ b/ssl/t1_lib.c	2024-10-31 10:03:38.669806445 +0000
+@@ -3926,7 +3926,7 @@
+     for (i = 0, sigptr = c->shared_sigalgs;
+          i < c->shared_sigalgslen; i++, sigptr++) {
+         idx = tls12_get_pkey_idx(sigptr->rsign);
+-        if (s->cert->pkeys[idx].privatekey) {
++        if (idx > 0 && s->cert->pkeys[idx].privatekey) {
+             ERR_set_mark();
+             if (EVP_PKEY_get_default_digest_nid(s->cert->pkeys[idx].privatekey,
+                                                 &mandatory_mdnid) == 2 &&
