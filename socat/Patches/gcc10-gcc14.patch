@@ -34,3 +34,14 @@ diff -ru a/fdname.c b/fdname.c
  #elif HAVE_GETPROTOBYNUMBER
     protoentp = getprotobynumber(proto);
     strncpy(protoname, protoentp->p_name, sizeof(protoname));
+diff -ru a/sysincludes.h b/sysincludes.h
+--- a/sysincludes.h	Sun Jan  3 13:23:22 2021
++++ b/sysincludes.h	Thu Nov 21 17:57:37 2024
+@@ -162,6 +162,7 @@
+ #endif
+ #if HAVE_SYS_STROPTS_H
+ #include <sys/stropts.h>	/* SunOS I_PUSH ... */
++#include <stropts.h>		/* SunOS isastream() ... */
+ #endif
+ #if HAVE_REGEX_H
+ #include <regex.h>
