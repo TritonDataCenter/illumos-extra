@@ -1,0 +1,37 @@
+diff -ru a/auth-pam.c b/auth-pam.c
+--- a/auth-pam.c	Thu Nov 21 15:36:29 2024
++++ b/auth-pam.c	Thu Nov 21 15:35:00 2024
+@@ -69,7 +69,11 @@
+ 
+ /* OpenGroup RFC86.0 and XSSO specify no "const" on arguments */
+ #ifdef PAM_SUN_CODEBASE
+-# define sshpam_const		/* Solaris, HP-UX, SunOS */
++# ifdef __illumos__
++#   define sshpam_const const	/* illumos */
++# else
++#   define sshpam_const		/* Solaris, HP-UX, SunOS */
++# endif
+ #else
+ # define sshpam_const	const	/* LinuxPAM, OpenPAM, AIX */
+ #endif
+diff -ru a/scp.c b/scp.c
+--- a/scp.c	Thu Sep 19 18:20:48 2024
++++ b/scp.c	Thu Nov 21 15:40:25 2024
+@@ -207,7 +207,7 @@
+ }
+ 
+ static void
+-suspone(int pid, int signo)
++suspone(pid_t pid, int signo)
+ {
+ 	int status;
+ 
+@@ -1016,7 +1016,7 @@
+ 
+ static struct sftp_conn *
+ do_sftp_connect(char *host, char *user, int port, char *sftp_direct,
+-   int *reminp, int *remoutp, int *pidp)
++   int *reminp, int *remoutp, pid_t *pidp)
+ {
+ 	if (sftp_direct == NULL) {
+ 		if (do_cmd(ssh_program, host, user, port, 1, "sftp",
