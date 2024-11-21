@@ -1,0 +1,22 @@
+--- a/lib/readline/rlprivate.h	2022-08-12 01:35:16.000000000 +0000
++++ b/lib/readline/rlprivate.h	2024-11-21 15:04:52.301688525 +0000
+@@ -407,7 +419,7 @@
+ #ifdef _MINIX
+ extern void _rl_output_character_function (int);
+ #else
+-extern int _rl_output_character_function (int);
++extern int _rl_output_character_function (char);
+ #endif
+ extern void _rl_cr (void);
+ extern void _rl_output_some_chars (const char *, int);
+--- a/lib/readline/terminal.c	2022-04-05 17:44:17.000000000 +0000
++++ b/lib/readline/terminal.c	2024-11-21 15:05:16.236642766 +0000
+@@ -699,7 +703,7 @@
+ }
+ #else /* !_MINIX */
+ int
+-_rl_output_character_function (int c)
++_rl_output_character_function (char c)
+ {
+   return putc (c, _rl_out_stream);
+ }

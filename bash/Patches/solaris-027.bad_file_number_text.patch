@@ -1,0 +1,27 @@
+# Solaris says 'Bad file number' instead of 'Bad file descriptor' on Linux.
+# Make sure the test finds what it expects
+#
+# Not suitable for upstream
+
+--- a/tests/redir.right	2016-11-28 04:38:00.494117081 -0800
++++ b/tests/redir.right	2016-11-28 04:36:49.995612525 -0800
+@@ -64,7 +64,7 @@ f
+ typeset -f f
+ 
+ # make sure it was closed
+-read -u 5 foo 2>&1 | grep -q 'invalid file descriptor'
++read -u 5 foo 2>&1 | grep -q 'invalid file number'
+ echo after read
+ 
+ exec 5<&0
+--- a/tests/redir5.sub	2018-10-08 17:56:14.000000000 +0000
++++ b/tests/redir5.sub	2019-02-02 13:09:26.849690646 +0000
+@@ -17,7 +17,7 @@ f
+ typeset -f f
+ 
+ # make sure it was closed
+-read -u 5 foo 2>&1 | grep -q 'invalid file descriptor' 
++read -u 5 foo 2>&1 | grep -q 'invalid file number' 
+ echo after read
+ 
+ exec 5<&0

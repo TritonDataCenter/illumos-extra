@@ -1,0 +1,26 @@
+# There seems to be problem with bash
+#
+# $ bash -c 'bash -i i; bash -i i'
+# bash -c 'bash -i i; bash -i i'
+# bash: i: No such file or directory
+#
+# [1]+  Stopped                 bash -c 'bash -i i; bash -i i'
+#
+# I found out because the tests were stopped in the middle. It was caused by
+# having 'cd /somewhere' in my ~/.bashrc. The tests were being stopped in
+# read-test, exactly in read2.sub when 'read -t 2 a < /dev/tty' was executed.
+# This workaround stops the tests to be stopped in the middle.
+#
+# reported to bug-bash@gnu.org
+
+--- a/tests/execscript	2016-12-08 00:40:18.000000000 +0000
++++ b/tests/execscript.new	2019-02-02 12:39:16.486640339 +0000
+@@ -108,7 +108,7 @@ ${THIS_SH} ./exec6.sub
+ # checks for properly deciding what constitutes an executable file
+ ${THIS_SH} ./exec7.sub
+ 
+-${THIS_SH} -i ${PWD}/exec8.sub
++${THIS_SH} --rcfile /dev/null -i ${PWD}/exec8.sub
+ 
+ ${THIS_SH} ./exec9.sub
+ 
