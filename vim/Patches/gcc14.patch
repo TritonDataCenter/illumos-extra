@@ -1,0 +1,26 @@
+diff -ru a/src/osdef.sh b/src/osdef.sh
+--- a/src/osdef.sh	Fri Sep  6 15:24:45 2024
++++ b/src/osdef.sh	Thu Nov 21 19:51:36 2024
+@@ -35,7 +35,8 @@
+ #include "os_unixx.h"	/* bring in header files for os_unix.c */
+ 
+ #ifdef HAVE_TERMCAP_H
+-# include <termcap.h>	/* only for term.c */
++/* # include <termcap.h> */	/* only for term.c */
++# include <../xpg4/include/termcap.h> /* XXX SmartOS use the xpg4 version now */
+ #endif
+ 
+ #ifdef HAVE_FCNTL_H
+diff -ru a/src/term.c b/src/term.c
+--- a/src/term.c	Fri Sep  6 15:24:45 2024
++++ b/src/term.c	Thu Nov 21 19:52:19 2024
+@@ -30,7 +30,8 @@
+ #  include <termios.h>	    // seems to be required for some Linux
+ # endif
+ # ifdef HAVE_TERMCAP_H
+-#  include <termcap.h>
++/* #  include <termcap.h> */
++#  include <../xpg4/include/termcap.h> /* XXX SmartOS - Use xpg4 now. */
+ # endif
+ 
+ /*
