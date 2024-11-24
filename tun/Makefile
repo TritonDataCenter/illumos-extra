@@ -25,7 +25,7 @@ VER = tun-1.3
 
 include ../Makefile.defs
 
-PATCHES = Patches/configure.diff
+PATCHES = Patches/*
 
 BUILD32 =
 BUILD64 = yes
