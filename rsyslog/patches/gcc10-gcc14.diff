@@ -33,3 +33,14 @@ diff -ru a/tools/omfile.h b/tools/omfile.h
  #endif /* #ifndef OMFILE_H_INCLUDED */
  /* vi:set ai:
   */
+diff -ru a/configure b/configure
+--- a/configure	Thu Mar 15 06:27:37 2012
++++ b/configure	Thu Nov 21 16:26:59 2024
+@@ -13018,6 +13018,7 @@
+ /* end confdefs.h.  */
+ /* Thanks to Paul Eggert for this test.  */
+ $ac_includes_default
++#include <unistd.h>
+ #include <sys/wait.h>
+ #ifdef HAVE_VFORK_H
+ # include <vfork.h>

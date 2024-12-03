@@ -1,0 +1,21 @@
+diff -ru a/tun.c b/tun.c
+--- a/tun.c	Mon Aug 13 12:38:42 2012
++++ b/tun.c	Thu Nov 21 18:11:04 2024
+@@ -54,7 +54,7 @@
+ static	int  tundetach(dev_info_t *, ddi_detach_cmd_t);
+ static	int  tuninfo(dev_info_t *, ddi_info_cmd_t, void *, void **);
+ static	int  tunopen(queue_t *, dev_t *, int, int, cred_t *);
+-static	int  tunclose(queue_t *);
++static	int  tunclose(queue_t *, int, cred_t *);
+ static	int  tunwput(queue_t *wq, mblk_t *mb);
+ static	int  tunwsrv(queue_t *wq);
+ 
+@@ -296,7 +296,7 @@
+   return rc;
+ }
+ 
+-static int tunclose(queue_t *rq)
++static int tunclose(queue_t *rq, int flag __unused, cred_t *cr __unused)
+ {
+   struct tunstr **prev, *tmp, *str=(struct tunstr *)rq->q_ptr;
+   struct tunppa *ppa;

@@ -1,0 +1,11 @@
+diff -ru a/utmp.c b/utmp.c
+--- a/utmp.c	Tue Aug 15 20:29:26 2023
++++ b/utmp.c	Thu Nov 21 17:39:54 2024
+@@ -28,6 +28,7 @@
+ 
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <signal.h>
+ #include <fcntl.h>
+ 
+ #include "config.h"

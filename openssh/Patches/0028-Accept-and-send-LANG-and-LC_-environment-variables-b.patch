@@ -215,7 +215,16 @@ diff --git a/sshd.c b/sshd.c
 index df76dc78c..cec560408 100644
 --- a/sshd.c
 +++ b/sshd.c
-@@ -1410,6 +1410,8 @@ main(int ac, char **av)
+@@ -100,6 +100,8 @@
+ 
+ extern char *__progname;
+ 
++extern void fill_early_default_server_options(ServerOptions *);
++
+ /* Server configuration options. */
+ ServerOptions options;
+ 
+@@ -1410,6 +1412,8 @@ main(int ac, char **av)
  	if (strcasecmp(config_file_name, "none") != 0)
  		load_server_config(config_file_name, cfg);
  

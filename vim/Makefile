@@ -28,7 +28,7 @@ VER =	vim91
 
 include ../Makefile.defs
 
-PATCHES = Patches/defaults.vim
+PATCHES = Patches/*
 
 BUILD32 =
 BUILD64 = yes
