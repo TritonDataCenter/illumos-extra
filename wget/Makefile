@@ -11,9 +11,10 @@
 
 #
 # Copyright 2021, Joyent, Inc.
+# Copyright 2024 MNX Cloud, Inc.
 #
 
-VER =			wget-1.21.2
+VER =			wget-1.25.0
 
 include ../Makefile.defs
 
