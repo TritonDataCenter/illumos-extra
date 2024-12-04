@@ -1,7 +1,7 @@
-diff -ur bash-4.1.orig/shell.c bash-4.1/shell.c
---- bash-4.1.orig/shell.c	2009-11-19 15:05:54.000000000 +0000
-+++ bash-4.1/shell.c	2014-09-26 17:32:15.075625442 +0000
-@@ -229,6 +229,6 @@
+diff -ruN a/shell.c b/shell.c
+--- a/shell.c	2022-03-04 22:13:00.000000000 +0000
++++ b/shell.c	2024-11-21 14:58:02.408512324 +0000
+@@ -236,7 +236,7 @@
  #else
  int posixly_correct = 0;	/* Non-zero means posix.2 superset. */
  #endif
@@ -9,7 +9,8 @@ diff -ur bash-4.1.orig/shell.c bash-4.1/shell.c
 +int import_functions = 0;	/* Import functions from environment */
  /* Some long-winded argument names.  These are obviously new. */
  #define Int 1
-@@ -248,6 +248,7 @@
+ #define Charp 2
+@@ -257,6 +257,7 @@
    { "help", Int, &want_initial_help, (char **)0x0 },
    { "init-file", Charp, (int *)0x0, &bashrc_file },
    { "login", Int, &make_login_shell, (char **)0x0 },
@@ -17,20 +18,19 @@ diff -ur bash-4.1.orig/shell.c bash-4.1/shell.c
    { "noediting", Int, &no_line_editing, (char **)0x0 },
    { "noprofile", Int, &no_profile, (char **)0x0 },
    { "norc", Int, &no_rc, (char **)0x0 },
-diff -ur bash-4.1.orig/variables.c bash-4.1/variables.c
---- bash-4.1.orig/variables.c	2014-09-26 17:30:13.517119943 +0000
-+++ bash-4.1/variables.c	2014-09-26 17:33:07.686094771 +0000
-@@ -109,7 +109,8 @@
+diff -ruN a/variables.c b/variables.c
+--- a/variables.c	2022-07-18 21:31:35.000000000 +0000
++++ b/variables.c	2024-11-21 14:58:46.140981394 +0000
+@@ -113,6 +113,7 @@
+ /* Variables used here and defined in other files. */
  extern time_t shell_start_time;
- extern int assigning_in_environment;
- extern int executing_builtin;
- extern int funcnest_max;
+ extern struct timeval shellstart;
 +extern int import_functions;
  
- #if defined (READLINE)
- extern int no_line_editing;
-@@ -354,7 +354,7 @@
- 
+ /* The list of shell variables that the user has created at the global
+    scope, or that came from the environment. */
+@@ -394,7 +395,7 @@
+ #if defined (FUNCTION_IMPORT)
        /* If exported function, define it now.  Don't import functions from
  	 the environment in privileged mode. */
 -      if (privmode == 0 && read_but_dont_execute == 0 && 

@@ -1,0 +1,26 @@
+# solaris is compiled with  --enable-xpg-echo-default=yes which makes some
+# tests fail. Should we use printf '%s\n' "..." instead?
+#
+# Reported on bug-bash@gnu.org
+
+--- a/tests/exp5.sub	2016-12-05 22:42:48.000000000 +0000
++++ b/tests/exp5.sub	2019-02-02 12:31:51.417537626 +0000
+@@ -1,6 +1,6 @@
+ # expansions involving patterns
+ var='[hello'
+-echo "${var//[/}"
++echo -E "${var//[/}"
+ 
+ red='\[\e[0;31m\]'
+ printf "%s\n" "${red//\\[\\e/}"
+@@ -10,8 +10,8 @@ foo="${red//\\[\\e/}"
+ # foo == [0;31m\]
+ printf "%s\n" "${foo//[0;31m\\/}"
+ 
+-echo "${var//[]/}"
+-echo "${red//[]/}"
++echo -E "${var//[]/}"
++echo -E "${red//[]/}"
+ 
+ v=hello
+ foo='[:alpha:]'
