@@ -1,0 +1,62 @@
+diff -ru a/deflate.c b/deflate.c
+--- a/deflate.c	Sun Jul 17 22:27:31 2005
++++ b/deflate.c	Wed Mar 30 22:07:47 2022
+@@ -532,19 +532,22 @@
+ local void flush_pending(strm)
+     z_streamp strm;
+ {
+-    unsigned len = strm->state->pending;
++    unsigned len;
++    deflate_state *s = strm->state;
+ 
++    _tr_flush_bits(s);
++    len = s->pending;
+     if (len > strm->avail_out) len = strm->avail_out;
+     if (len == 0) return;
+ 
+-    zmemcpy(strm->next_out, strm->state->pending_out, len);
++    zmemcpy(strm->next_out, s->pending_out, len);
+     strm->next_out  += len;
+-    strm->state->pending_out  += len;
++    s->pending_out  += len;
+     strm->total_out += len;
+     strm->avail_out  -= len;
+-    strm->state->pending -= len;
+-    if (strm->state->pending == 0) {
+-        strm->state->pending_out = strm->state->pending_buf;
++    s->pending -= len;
++    if (s->pending == 0) {
++        s->pending_out = s->pending_buf;
+     }
+ }
+ 
+diff -ru a/deflate.h b/deflate.h
+--- a/deflate.h	Sun May 29 11:55:22 2005
++++ b/deflate.h	Wed Mar 30 22:08:34 2022
+@@ -283,6 +283,7 @@
+ int  _tr_tally        OF((deflate_state *s, unsigned dist, unsigned lc));
+ void _tr_flush_block  OF((deflate_state *s, charf *buf, ulg stored_len,
+                           int eof));
++void _tr_flush_bits   OF((deflate_state *s));
+ void _tr_align        OF((deflate_state *s));
+ void _tr_stored_block OF((deflate_state *s, charf *buf, ulg stored_len,
+                           int eof));
+diff -ru a/trees.c b/trees.c
+--- a/trees.c	Sun Jun 12 20:34:41 2005
++++ b/trees.c	Wed Mar 30 22:07:47 2022
+@@ -879,6 +879,15 @@
+ }
+ 
+ /* ===========================================================================
++ * Flush the bits in the bit buffer to pending output (leaves at most 7 bits)
++ */
++void ZLIB_INTERNAL _tr_flush_bits(s)
++    deflate_state *s;
++{
++    bi_flush(s);
++}
++
++/* ===========================================================================
+  * Send one empty static block to give enough lookahead for inflate.
+  * This takes 10 bits, of which 7 may remain in the bit buffer.
+  * The current inflate code requires 9 bits of lookahead. If the
