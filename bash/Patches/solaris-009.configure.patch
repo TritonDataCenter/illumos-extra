@@ -1,0 +1,49 @@
+--- a/configure.ac	2017-05-08 03:23:15.044220076 +0200
++++ b/configure.ac	2017-05-08 03:23:59.219546840 +0200
+@@ -57,6 +57,12 @@
+ opt_curses=no
+ opt_with_installed_readline=no
+ 
++ac_cv_func_tgetent=yes
++ac_cv_lib_termcap_tgetent=no
++ac_cv_lib_curses_tgetent=no
++ac_cv_lib_ncurses_tgetent=yes
++bash_cv_termcap_lib=libcurses
++
+ #htmldir=
+ 
+ dnl some systems should be configured without the bash malloc by default
+@@ -499,10 +499,10 @@ if test "$opt_static_link" = yes; then
+ 	prefer_shared=no
+ 	# if we're using gcc, add `-static' to LDFLAGS, except on Solaris >= 2
+ 	if test "$GCC" = "yes"; then
+-		STATIC_LD="-static" 
++		STATIC_LD="" 
+ 		case "$host_os" in
+ 		solaris2*|linux*)	;;
+-		*)		LDFLAGS="$LDFLAGS -static" ;;	# XXX experimental
++		*)		LDFLAGS="$LDFLAGS" ;;	# XXX experimental
+ 		esac
+ 	fi
+ fi
+@@ -508,7 +514,7 @@
+ 	CC_FOR_BUILD=${CC_FOR_BUILD-"gcc"}
+ 	CPPFLAGS_FOR_BUILD=${CPPFLAGS_FOR_BUILD-""}
+ 	LDFLAGS_FOR_BUILD=${LDFLAGS_FOR_BUILD-""}
+-	CFLAGS_FOR_BUILD=${CFLAGS_FOR_BUILD="-g"}
++	CFLAGS_FOR_BUILD=${CFLAGS_FOR_BUILD=""}
+-	BASE_CFLAGS_FOR_BUILD=${BASE_CFLAGS_FOR_BUILD="-g"}
++	BASE_CFLAGS_FOR_BUILD=${BASE_CFLAGS_FOR_BUILD=""}
+ 	LIBS_FOR_BUILD=${LIBS_FOR_BUILD-""}
+ fi
+ 
+@@ -1088,7 +1094,8 @@
+ solaris2.5*)	LOCAL_CFLAGS="-DSunOS5 -DSOLARIS" ;;
+ solaris2.8*)	LOCAL_CFLAGS=-DSOLARIS  ;;
+ solaris2.9*)	LOCAL_CFLAGS=-DSOLARIS  ;;
+-solaris2.10*)	LOCAL_CFLAGS=-DSOLARIS  ;;
++solaris2.10*)	LOCAL_CFLAGS="-DSOLARIS -lsocket -lnsl -lgen" ;;
++solaris2.11*)	LOCAL_CFLAGS="-DSOLARIS -lsocket -lnsl -lgen -lcurses" ;;
+ solaris2*)	LOCAL_CFLAGS=-DSOLARIS ;;
+ lynxos*)	LOCAL_CFLAGS=-DRECYCLES_PIDS ;;
+ linux*)		LOCAL_LDFLAGS=-rdynamic		 # allow dynamic loading
