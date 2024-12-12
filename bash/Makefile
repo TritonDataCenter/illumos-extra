@@ -21,7 +21,7 @@
 # Copyright (c) 2012, Joyent Inc.  All rights reserved.
 #
 
-VER =	bash-4.3.30
+VER =	bash-5.2
 
 include ../Makefile.defs
 
