@@ -1,3 +1,10 @@
+SMARTOS_0.1 {
+    global:
+	gzopen64 ;
+	gzseek64 ;
+	gztell64 ;
+} SUNW_1.2;
+
 SUNW_1.2 {
     global:
 	deflateTune ;
