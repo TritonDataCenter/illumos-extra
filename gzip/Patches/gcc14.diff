@@ -1,0 +1,11 @@
+diff -ru a/configure b/configure
+--- a/configure	2024-11-28 16:05:58.084683085 +0000
++++ b/configure	2024-12-18 22:59:58.227908832 +0000
+@@ -3012,6 +3012,7 @@
+ #line $LINENO "configure"
+ #include "confdefs.h"
+ #include <ctype.h>
++#include <stdlib.h>
+ #if ((' ' & 0x0FF) == 0x020)
+ # define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
+ # define TOUPPER(c) (ISLOWER(c) ? 'A' + ((c) - 'a') : (c))
