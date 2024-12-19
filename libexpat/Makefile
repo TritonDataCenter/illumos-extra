@@ -19,6 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2024 MNX Cloud, Inc.
 #
 
 VER =	expat-2.0.1
