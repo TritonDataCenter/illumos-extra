@@ -37,9 +37,7 @@ CFLAGS +=	-g -fPIC
 AUTOCONF_ENV += \
 	INSTALL="/usr/ucb/install -c"
 
-PATCHES = \
-	CVE-2009-3560.patch \
-	CVE-2009-3720.patch
+PATCHES = Patches/*
 
 include ../Makefile.targ
 
