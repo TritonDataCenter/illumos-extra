@@ -34,8 +34,9 @@ CFLAGS +=	-g $(CPPFLAGS)
 PARALLEL =
 
 PATCHES += \
-	nm-loc.patch \
-	runpath.patch
+	Patches/nm-loc.patch \
+	Patches/runpath.patch \
+	Patches/gcc14-fixes.diff
 
 AUTOCONF_ENV += \
 	INSTALL="/usr/ucb/install -c" \

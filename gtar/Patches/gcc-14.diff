@@ -1,0 +1,29 @@
+diff -ru a/configure b/configure
+--- a/configure	2010-03-10 12:52:13.000000000 +0000
++++ b/configure	2024-12-19 00:16:03.948960946 +0000
+@@ -20333,6 +20333,7 @@
+ 
+        #include <stdlib.h>
+        #include <errno.h>
++       #include <string.h>
+ 
+ int
+ main ()
+@@ -40617,6 +40618,7 @@
+ cat >>conftest.$ac_ext <<_ACEOF
+ /* end confdefs.h.  */
+ #include <stdio.h>
++#include <unistd.h>
+ 
+ int
+ main ()
+@@ -40955,9 +40957,7 @@
+ cat >>conftest.$ac_ext <<_ACEOF
+ /* end confdefs.h.  */
+ #include <stdlib.h>
+-#if HAVE_SYS_LOADAVG_H
+ # include <sys/loadavg.h>
+-#endif
+ #if HAVE_RANDOM_H
+ # include <random.h>
+ #endif

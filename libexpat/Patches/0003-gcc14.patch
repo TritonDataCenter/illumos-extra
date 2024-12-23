@@ -1,0 +1,35 @@
+diff -ru a/configure b/configure
+--- a/configure	Tue Jun  5 14:19:38 2007
++++ b/configure	Thu Dec 19 14:12:07 2024
+@@ -4329,6 +4329,7 @@
+ cat >>conftest.$ac_ext <<_ACEOF
+ /* end confdefs.h.  */
+ #include <ctype.h>
++#include <stdlib.h>
+ #if ((' ' & 0x0FF) == 0x020)
+ # define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
+ # define TOUPPER(c) (ISLOWER(c) ? 'A' + ((c) - 'a') : (c))
+@@ -19524,6 +19525,7 @@
+ cat >>conftest.$ac_ext <<_ACEOF
+ /* end confdefs.h.  */
+ #include <ctype.h>
++#include <stdlib.h>
+ #if ((' ' & 0x0FF) == 0x020)
+ # define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
+ # define TOUPPER(c) (ISLOWER(c) ? 'A' + ((c) - 'a') : (c))
+@@ -19598,6 +19600,7 @@
+ /* end confdefs.h.  */
+ #include <sys/types.h>
+ #include <sys/param.h>
++#include <endian.h>
+ int
+ main ()
+ {
+@@ -19640,6 +19643,7 @@
+ /* end confdefs.h.  */
+ #include <sys/types.h>
+ #include <sys/param.h>
++#include <endian.h>
+ int
+ main ()
+ {

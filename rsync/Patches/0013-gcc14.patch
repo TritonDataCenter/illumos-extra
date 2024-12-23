@@ -1,15 +1,40 @@
-diff -ru a/configure.sh b/configure.sh
---- a/configure.sh	Mon Dec 21 15:20:53 2015
-+++ b/configure.sh	Thu Nov 21 16:13:44 2024
-@@ -4479,6 +4479,7 @@
+--- a/configure.sh	Fri Dec 20 15:39:46 2024
++++ b/configure.sh	Fri Dec 20 15:41:47 2024
+@@ -4479,6 +4479,9 @@
  
  #define _FILE_OFFSET_BITS 64
  #include <stdio.h>
 +#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
  #include <fcntl.h>
  #include <sys/types.h>
  #include <sys/wait.h>
-@@ -5685,6 +5686,7 @@
+@@ -5180,6 +5183,7 @@
+       cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ #include <sys/types.h>
++#include <endian.h>
+ 	     #include <sys/param.h>
+ 
+ int
+@@ -5227,6 +5231,7 @@
+       cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ #include <limits.h>
++#include <endian.h>
+ 
+ int
+ main ()
+@@ -5244,6 +5249,7 @@
+ 	 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ #include <limits.h>
++#include <endian.h>
+ 
+ int
+ main ()
+@@ -5685,6 +5691,7 @@
  #elif defined MAJOR_IN_SYSMACROS
  #include <sys/sysmacros.h>
  #endif
@@ -17,7 +42,7 @@ diff -ru a/configure.sh b/configure.sh
  
  int main(void)
  {
-@@ -7903,7 +7905,7 @@
+@@ -7903,7 +7910,7 @@
  #endif
  #include <stdlib.h>
  #include <errno.h>
@@ -26,7 +51,13 @@ diff -ru a/configure.sh b/configure.sh
  	char const *dangling_symlink = "conftest.dangle";
  	unlink(dangling_symlink);
  	if (symlink("conftest.no-such", dangling_symlink) < 0) abort();
-@@ -7947,7 +7949,7 @@
+@@ -7941,13 +7948,11 @@
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+-#if HAVE_UNISTD_H
+ # include <unistd.h>
+-#endif
  #include <stdlib.h>
  #include <errno.h>
  #define FILENAME "conftest.dangle"
@@ -35,7 +66,16 @@ diff -ru a/configure.sh b/configure.sh
  	unlink(FILENAME);
  	if (symlink("conftest.no-such", FILENAME) < 0) abort();
  	unlink(FILENAME "2");
-@@ -7991,7 +7993,7 @@
+@@ -7985,13 +7990,13 @@
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+-#if HAVE_UNISTD_H
+-# include <unistd.h>
+-#endif
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <unistd.h>
  #include <stdlib.h>
  #include <errno.h>
  #define FILENAME "conftest.fifi"
@@ -44,7 +84,7 @@ diff -ru a/configure.sh b/configure.sh
  	unlink(FILENAME);
  	if (mkfifo(FILENAME, 0777) < 0) abort();
  	unlink(FILENAME "2");
-@@ -8031,8 +8033,9 @@
+@@ -8031,8 +8036,9 @@
  
  #include <sys/types.h>
  #include <sys/socket.h>
@@ -55,7 +95,7 @@ diff -ru a/configure.sh b/configure.sh
         int fd[2];
         exit((socketpair(AF_UNIX, SOCK_STREAM, 0, fd) != -1) ? 0 : 1);
  }
-@@ -8264,7 +8267,8 @@
+@@ -8264,7 +8270,8 @@
  /* end confdefs.h.  */
  #include <sys/types.h>
  #include <dirent.h>
@@ -65,7 +105,7 @@ diff -ru a/configure.sh b/configure.sh
  if (di && di->d_name[-2] == '.' && di->d_name[-1] == 0 &&
  di->d_name[0] == 0) exit(0); exit(1);}
  _ACEOF
-@@ -8296,6 +8300,7 @@
+@@ -8296,6 +8303,7 @@
  /* end confdefs.h.  */
  #include <sys/types.h>
  #include <utime.h>
@@ -73,7 +113,7 @@ diff -ru a/configure.sh b/configure.sh
  int
  main ()
  {
-@@ -8329,6 +8334,7 @@
+@@ -8329,6 +8337,7 @@
  /* end confdefs.h.  */
  #include <sys/time.h>
  #include <unistd.h>
@@ -81,7 +121,7 @@ diff -ru a/configure.sh b/configure.sh
  int
  main ()
  {
-@@ -8337,6 +8343,7 @@
+@@ -8337,6 +8346,7 @@
    return 0;
  }
  _ACEOF
@@ -89,15 +129,17 @@ diff -ru a/configure.sh b/configure.sh
  if ac_fn_c_try_compile "$LINENO"; then :
    rsync_cv_HAVE_GETTIMEOFDAY_TZ=yes
  else
-@@ -8366,6 +8373,7 @@
+@@ -8366,6 +8376,9 @@
  
  #include <sys/types.h>
  #include <stdarg.h>
 +#include <stdlib.h>
++#include <string.h>
++#include <stdio.h>
  void foo(const char *format, ...) {
         va_list ap;
         int len;
-@@ -8380,7 +8388,7 @@
+@@ -8380,7 +8393,7 @@
  
         exit(0);
  }
@@ -106,7 +148,7 @@ diff -ru a/configure.sh b/configure.sh
  
  _ACEOF
  if ac_fn_c_try_run "$LINENO"; then :
-@@ -8417,7 +8425,7 @@
+@@ -8417,7 +8430,7 @@
  #include <sys/types.h>
  #include <sys/stat.h>
  #include <unistd.h>
@@ -115,22 +157,23 @@ diff -ru a/configure.sh b/configure.sh
    struct stat st;
    char tpl[20]="/tmp/test.XXXXXX";
    int fd = mkstemp(tpl);
-@@ -8470,7 +8478,7 @@
+@@ -8470,7 +8483,8 @@
  #include <stdio.h>
  #include <sys/stat.h>
  #include <errno.h>
 -main() { int rc, ec; char *fn = "fifo-test";
++#include <unistd.h>
 +int main() { int rc, ec; char *fn = "fifo-test";
  unlink(fn); rc = mknod(fn,S_IFIFO,0600); ec = errno; unlink(fn);
  if (rc) {printf("(%d %d) ",rc,ec); return ec;}
  return 0;}
-@@ -8508,7 +8516,7 @@
+@@ -8508,7 +8522,8 @@
  #include <stdio.h>
  #include <sys/stat.h>
  #include <errno.h>
 -main() { int rc, ec; char *fn = "sock-test";
++#include <unistd.h>
 +int main() { int rc, ec; char *fn = "sock-test";
  unlink(fn); rc = mknod(fn,S_IFSOCK,0600); ec = errno; unlink(fn);
  if (rc) {printf("(%d %d) ",rc,ec); return ec;}
  return 0;}
-Only in b: configure.sh~
