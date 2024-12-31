@@ -33,10 +33,7 @@ AUTOCONF_OPTS += \
 CFLAGS +=	-g $(CPPFLAGS)
 PARALLEL =
 
-PATCHES += \
-	Patches/nm-loc.patch \
-	Patches/runpath.patch \
-	Patches/gcc14-fixes.diff
+PATCHES += Patches/*
 
 AUTOCONF_ENV += \
 	INSTALL="/usr/ucb/install -c" \
