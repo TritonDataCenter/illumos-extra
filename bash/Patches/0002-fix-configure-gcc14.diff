@@ -1,7 +1,18 @@
-Common subdirectories: a/builtins and b/builtins
+diff -ru a/builtins/command.def b/builtins/command.def
+--- a/builtins/command.def	2009-07-02 15:18:10.000000000 +0000
++++ b/builtins/command.def	2024-12-18 21:42:07.904851452 +0000
+@@ -59,6 +59,8 @@
+ #if defined (_CS_PATH) && defined (HAVE_CONFSTR) && !HAVE_DECL_CONFSTR
+ extern size_t confstr __P((int, char *, size_t));
+ #endif
++/* XXX SmartOS - confstr isn't defined in spite of above!!! Fix! */
++extern size_t confstr(int, char *, size_t);
+ 
+ extern int subshell_environment;
+ 
 diff -ru a/configure b/configure
---- a/configure	Thu Nov 21 12:41:03 2024
-+++ b/configure	Thu Nov 21 12:58:04 2024
+--- a/configure	2014-02-11 17:38:00.000000000 +0000
++++ b/configure	2024-12-18 21:55:06.212621240 +0000
 @@ -5284,10 +5284,12 @@
  /* end confdefs.h.  */
  
@@ -15,7 +26,19 @@ diff -ru a/configure b/configure
  main()
  {
  	FILE *fp;
-@@ -11264,6 +11266,7 @@
+@@ -10144,8 +10146,9 @@
+ int
+ main ()
+ {
+-int main() { long double r; char *foo, bar; r = strtold(foo, &bar);}
+-  ;
++  long double r;
++  char *foo = "3.14", *bar;
++  r = strtold(foo, &bar);
+   return 0;
+ }
+ _ACEOF
+@@ -11264,6 +11267,7 @@
  #include <locale.h>
  #include <wchar.h>
  
@@ -23,7 +46,7 @@ diff -ru a/configure b/configure
  main(c, v)
  int     c;
  char    **v;
-@@ -12662,9 +12665,11 @@
+@@ -12662,9 +12666,11 @@
  #ifdef HAVE_LOCALE_H
  #include <locale.h>
  #endif
@@ -35,7 +58,7 @@ diff -ru a/configure b/configure
  main(c, v)
  int	c;
  char	*v[];
-@@ -12723,6 +12728,8 @@
+@@ -12723,6 +12729,8 @@
  
  #include <sys/types.h>
  #include <fcntl.h>
@@ -44,7 +67,7 @@ diff -ru a/configure b/configure
  main()
  {
    int fd1, fd2, fl;
-@@ -12774,6 +12781,8 @@
+@@ -12774,6 +12782,8 @@
  #ifdef HAVE_UNISTD_H
  #  include <unistd.h>
  #endif
@@ -53,7 +76,7 @@ diff -ru a/configure b/configure
  main()
  {
  # ifdef GETPGRP_VOID
-@@ -12984,6 +12993,7 @@
+@@ -12984,12 +12994,14 @@
  
  #include <sys/types.h>
  #include <signal.h>
@@ -61,7 +84,6 @@ diff -ru a/configure b/configure
  #ifdef HAVE_UNISTD_H
  #include <unistd.h>
  #endif
-@@ -12990,6 +13000,7 @@
  #if !HAVE_DECL_SYS_SIGLIST
  extern char *sys_siglist[];
  #endif
@@ -69,7 +91,7 @@ diff -ru a/configure b/configure
  main()
  {
  char *msg = sys_siglist[2];
-@@ -13071,6 +13082,8 @@
+@@ -13071,6 +13083,8 @@
  #ifndef UNDER_SYS_SIGLIST_DECLARED
  extern char *_sys_siglist[];
  #endif
@@ -78,7 +100,7 @@ diff -ru a/configure b/configure
  main()
  {
  char *msg = (char *)_sys_siglist[2];
-@@ -13475,6 +13488,8 @@
+@@ -13475,6 +13489,8 @@
  #include <sys/types.h>
  #include <sys/time.h>
  #include <sys/resource.h>
@@ -87,7 +109,7 @@ diff -ru a/configure b/configure
  main()
  {
  #ifdef HAVE_QUAD_T
-@@ -14002,6 +14017,7 @@
+@@ -14002,6 +14018,7 @@
  
  #include <sys/wait.h>
  
@@ -95,7 +117,15 @@ diff -ru a/configure b/configure
  main(c, v)
       int c;
       char **v;
-@@ -14314,6 +14330,7 @@
+@@ -14275,6 +14292,7 @@
+ /* end confdefs.h.  */
+ #include <sys/types.h>
+ #include <signal.h>
++#include <string.h>
+ int
+ main ()
+ {
+@@ -14314,6 +14332,7 @@
  /* end confdefs.h.  */
  
  #include <stdio.h>
@@ -103,7 +133,7 @@ diff -ru a/configure b/configure
  #include <sys/types.h>
  #include <fcntl.h>
  #ifdef HAVE_UNISTD_H
-@@ -14333,6 +14350,7 @@
+@@ -14333,6 +14352,7 @@
  #  include <ndir.h>
  # endif
  #endif /* HAVE_DIRENT_H */
@@ -111,16 +141,17 @@ diff -ru a/configure b/configure
  main()
  {
  DIR *dir;
-@@ -14384,6 +14402,8 @@
+@@ -14384,6 +14404,9 @@
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
 +#include <stdlib.h>
++#include <ulimit.h>
 +int
  main()
  {
  long maxfds = ulimit(4, 0L);
-@@ -14461,6 +14481,8 @@
+@@ -14461,6 +14484,8 @@
  {
  return "42";
  }
@@ -129,7 +160,7 @@ diff -ru a/configure b/configure
  main()
  {
  char *s;
-@@ -14512,7 +14534,9 @@
+@@ -14512,7 +14537,9 @@
  #ifdef HAVE_UNISTD_H
  #include <unistd.h>
  #endif
@@ -139,7 +170,7 @@ diff -ru a/configure b/configure
  main()
  {
  	char	*xpwd;
-@@ -14567,7 +14591,9 @@
+@@ -14567,7 +14594,9 @@
  #include <sys/types.h>
  #include <signal.h>
  #include <setjmp.h>
@@ -149,17 +180,18 @@ diff -ru a/configure b/configure
  main()
  {
  #if !defined (_POSIX_VERSION) || !defined (HAVE_POSIX_SIGNALS)
-@@ -14636,7 +14662,9 @@
+@@ -14636,7 +14665,10 @@
  #if defined (HAVE_LOCALE_H)
  #include <locale.h>
  #endif
 +#include <stdlib.h>
++#include <string.h>
  
 +int
  main(c, v)
  int     c;
  char    *v[];
-@@ -14706,7 +14734,9 @@
+@@ -14706,7 +14738,9 @@
  /* end confdefs.h.  */
  
  #include <stdio.h>
@@ -169,7 +201,7 @@ diff -ru a/configure b/configure
  main()
  {
    int n;
-@@ -14785,7 +14815,9 @@
+@@ -14785,7 +14819,9 @@
    va_end (args);
    return n;
  }
@@ -179,7 +211,7 @@ diff -ru a/configure b/configure
  main()
  {
    int n;
-@@ -14945,6 +14977,7 @@
+@@ -14945,6 +14981,7 @@
  
  #include <stdio.h>
  #include <string.h>
@@ -187,7 +219,7 @@ diff -ru a/configure b/configure
  
  int
  main()
-@@ -14991,6 +15024,7 @@
+@@ -14991,6 +15028,7 @@
  else
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
@@ -195,7 +227,7 @@ diff -ru a/configure b/configure
  
  #include <signal.h>
  #ifdef HAVE_UNISTD_H
-@@ -15026,6 +15060,7 @@
+@@ -15026,6 +15064,7 @@
    nsigint++;
  }
  
@@ -203,7 +235,7 @@ diff -ru a/configure b/configure
  main()
  {
  	nsigint = 0;
-@@ -15077,8 +15112,10 @@
+@@ -15077,8 +15116,10 @@
  #include <unistd.h>
  #endif
  #include <signal.h>
@@ -214,18 +246,20 @@ diff -ru a/configure b/configure
  main()
  {
  /* signal type */
-@@ -15150,8 +15187,10 @@
+@@ -15150,9 +15191,11 @@
  #ifdef HAVE_UNISTD_H
  #include <unistd.h>
  #endif
 +#include <stdlib.h>
++#include <stdio.h>
  
  /* Add more tests in here as appropriate. */
-+int
- main()
+-main()
++int main()
  {
  int fd, err;
-@@ -15350,6 +15389,8 @@
+ 
+@@ -15350,6 +15393,8 @@
  #ifndef errno
  extern int errno;
  #endif
@@ -234,7 +268,7 @@ diff -ru a/configure b/configure
  main()
  {
  	int	x;
-@@ -15464,7 +15505,9 @@
+@@ -15464,7 +15509,9 @@
  #ifndef NSIG
  #  define NSIG 64
  #endif
@@ -245,8 +279,8 @@ diff -ru a/configure b/configure
  {
    int n_sigs = 2 * NSIG;
 diff -ru a/execute_cmd.c b/execute_cmd.c
---- a/execute_cmd.c	Thu Nov 21 13:09:19 2024
-+++ b/execute_cmd.c	Thu Nov 21 13:09:48 2024
+--- a/execute_cmd.c	2014-10-01 19:57:42.000000000 +0000
++++ b/execute_cmd.c	2024-12-18 21:42:07.910316437 +0000
 @@ -2061,6 +2061,7 @@
  void
  coproc_pidchk (pid, status)
@@ -255,23 +289,9 @@ diff -ru a/execute_cmd.c b/execute_cmd.c
  {
    struct coproc *cp;
  
-Common subdirectories: a/lib and b/lib
-diff -ru a/builtins/command.def b/builtins/command.def
---- a/builtins/command.def	Thu Nov 21 13:16:59 2024
-+++ b/builtins/command.def	Thu Nov 21 13:23:50 2024
-@@ -59,6 +59,8 @@
- #if defined (_CS_PATH) && defined (HAVE_CONFSTR) && !HAVE_DECL_CONFSTR
- extern size_t confstr __P((int, char *, size_t));
- #endif
-+/* XXX SmartOS - confstr isn't defined in spite of above!!! Fix! */
-+extern size_t confstr(int, char *, size_t);
- 
- extern int subshell_environment;
- 
-Common subdirectories: a/lib/readline and b/lib/readline
 diff -ru a/lib/readline/tcap.h b/lib/readline/tcap.h
---- a/lib/readline/tcap.h	Thu Nov 21 13:31:02 2024
-+++ b/lib/readline/tcap.h	Thu Nov 21 13:34:35 2024
+--- a/lib/readline/tcap.h	2009-01-04 21:32:34.000000000 +0000
++++ b/lib/readline/tcap.h	2024-12-18 21:42:07.910886503 +0000
 @@ -30,7 +30,7 @@
  #  if defined (__linux__) && !defined (SPEED_T_IN_SYS_TYPES)
  #    include "rltty.h"

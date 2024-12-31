@@ -28,10 +28,7 @@ include ../Makefile.defs
 BINDIR =	$(DESTDIR)/usr/bin
 MANDIR =	$(DESTDIR)/usr/share/man/man1
 
-PATCHES = \
-	gzip-6294656-6283819-diff \
-	gzip-security-diff \
-	gzip.c-message-diff
+PATCHES = Patches/*
 
 AUTOCONF_OPTS += \
 	--mandir=/usr/share/man

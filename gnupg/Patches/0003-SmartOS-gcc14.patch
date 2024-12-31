@@ -1,0 +1,30 @@
+diff -ru a/configure b/configure
+--- a/configure	2018-06-11 11:47:57.000000000 +0000
++++ b/configure	2024-12-16 10:27:42.887027649 +0000
+@@ -14561,7 +14561,8 @@
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+-main () {
++#include <stdlib.h>
++int main () {
+               /* Are we little or big endian?  From Harbison&Steele.  */
+               union
+               {
+@@ -16442,6 +16443,7 @@
+              #include <sys/types.h>
+              #include <sys/ipc.h>
+              #include <sys/shm.h>
++             #include <stdlib.h>
+              int main()
+              {
+                int id;
+@@ -16757,7 +16759,7 @@
+ 
+ #include <unistd.h>
+ #include <regex.h>
+-main() { regex_t blah ; regmatch_t p; p.rm_eo = p.rm_eo; return regcomp(&blah, "foo.*bar", REG_NOSUB) || regexec (&blah, "foobar", 0, NULL, 0); }
++int main() { regex_t blah ; regmatch_t p; p.rm_eo = p.rm_eo; return regcomp(&blah, "foo.*bar", REG_NOSUB) || regexec (&blah, "foobar", 0, NULL, 0); }
+ _ACEOF
+ if ac_fn_c_try_run "$LINENO"; then :
+   gnupg_cv_regex_broken=no

@@ -1,5 +1,5 @@
---- lib/isc/unix/ifiter_ioctl.c_orig	2015-03-28 21:21:26.000000000 +0000
-+++ lib/isc/unix/ifiter_ioctl.c	2024-11-04 19:12:34.891744598 +0000
+--- lib/isc/unix/ifiter_ioctl.c_orig	Sat Mar 28 17:21:26 2015
++++ lib/isc/unix/ifiter_ioctl.c	Wed Dec 18 17:58:23 2024
 @@ -557,7 +557,7 @@
  	memcpy(&lifreq.lifr_addr, &iter->current.address.type.in6,
  	       sizeof(iter->current.address.type.in6));
@@ -9,8 +9,18 @@
  		isc__strerror(errno, strbuf, sizeof(strbuf));
  		UNEXPECTED_ERROR(__FILE__, __LINE__,
  				 "%s: getting interface address: %s",
---- sntp/m4/openldap-thread-check.m4	2015-09-21 08:06:08.000000000 +0000
-+++ sntp/m4/openldap-thread-check.m4	2024-11-04 21:24:51.168165279 +0000
+--- sntp/libopts/m4/libopts.m4_orig	Tue Mar  3 18:41:29 2020
++++ sntp/libopts/m4/libopts.m4	Wed Dec 18 17:59:43 2024
+@@ -262,6 +262,7 @@
+   AC_CACHE_VAL([libopts_cv_run_pathfind],[
+   AC_RUN_IFELSE([AC_LANG_SOURCE([@%:@include <string.h>
+ @%:@include <stdlib.h>
++@%:@include <libgen.h>
+ int main (int argc, char ** argv) {
+    char * pz = pathfind( getenv( "PATH" ), "sh", "x" );
+    return (pz == 0) ? 1 : 0;
+--- sntp/m4/openldap-thread-check.m4_orig	Mon Sep 21 04:06:08 2015
++++ sntp/m4/openldap-thread-check.m4	Wed Dec 18 17:58:23 2024
 @@ -265,7 +265,7 @@
  #ifndef NULL
  #define NULL (void*)0

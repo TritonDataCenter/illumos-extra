@@ -1,0 +1,19 @@
+diff -ru a/configure b/configure
+--- a/configure	2023-08-29 16:37:00.000000000 +0000
++++ b/configure	2024-12-14 21:06:16.539597642 +0000
+@@ -65821,6 +65821,7 @@
+ #endif
+ #include <unistd.h>
+ #include <errno.h>
++#include <string.h>
+ 
+ 
+ $gl_mda_defines
+@@ -69422,6 +69423,7 @@
+ #endif
+ #include <unistd.h>
+ #include <errno.h>
++#include <string.h>
+ 
+ 
+ $gl_mda_defines

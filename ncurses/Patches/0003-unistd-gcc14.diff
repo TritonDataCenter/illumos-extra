@@ -1,0 +1,29 @@
+--- a/configure	Fri Dec 20 14:59:26 2024
++++ b/configure	Fri Dec 20 15:01:24 2024
+@@ -5988,9 +5988,7 @@
+ 
+ #include <sys/types.h>
+ #include <sys/stat.h>
+-#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
+-#endif
+ int main()
+ {
+ 	int fail = 0;
+@@ -13456,7 +13454,7 @@
+ ;;
+ esac
+ 
+-echo "$as_me:13459: checking for working mkstemp" >&5
++echo "$as_me:13459: checking for working mkstemp" >&6
+ echo $ECHO_N "checking for working mkstemp... $ECHO_C" >&6
+ if test "${cf_cv_func_mkstemp+set}" = set; then
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+@@ -13532,6 +13530,7 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
++#include <unistd.h>
+ #include <sys/stat.h>
+ int main()
+ {
