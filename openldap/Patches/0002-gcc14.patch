@@ -1,0 +1,84 @@
+diff -ru a/configure b/configure
+--- a/configure	Wed Feb  8 13:49:18 2023
++++ b/configure	Wed Dec 18 17:34:33 2024
+@@ -15303,6 +15303,7 @@
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ #include <ctype.h>
++#include <stdlib.h>
+ #ifndef HAVE_EBCDIC
+ #	define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
+ #	define TOUPPER(c) (ISLOWER(c) ? 'A' + ((c) - 'a') : (c))
+@@ -16271,6 +16272,8 @@
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
++#include <sys/epoll.h> /* Why not in confdefs?!? */
++#include <stdlib.h> /* Why not in confdefs?!? */
+ int main(int argc, char **argv)
+ {
+ 	int epfd = epoll_create(256);
+@@ -16368,6 +16371,10 @@
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
++#include <sys/types.h> /* Why are these four not in confdefs.h ? */
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <stdlib.h>
+ int main(int argc, char **argv)
+ {
+ 	int devpollfd = open("/dev/poll", /* O_RDWR */ 2);
+@@ -16651,6 +16658,8 @@
+ #include <sys/types.h>
+ #include <regex.h>
+ static char *pattern, *string;
++
++int
+ main()
+ {
+ 	int rc;
+@@ -21024,7 +21033,7 @@
+ int
+ main ()
+ {
+-pthread_detach(NULL);
++pthread_detach(0);
+   ;
+   return 0;
+ }
+@@ -23734,6 +23743,8 @@
+ /* end confdefs.h.  */
+ 
+ #include <ctype.h>
++#include <stdlib.h>
++int
+ main()
+ {
+ 	if ('C' == toupper('C'))
+diff -ru a/libraries/libldap/thr_posix.c b/libraries/libldap/thr_posix.c
+--- a/libraries/libldap/thr_posix.c	Wed Feb  8 13:49:18 2023
++++ b/libraries/libldap/thr_posix.c	Wed Dec 18 17:31:20 2024
+@@ -39,6 +39,10 @@
+ #include "ldap_thr_debug.h"	 /* May rename the symbols defined below */
+ #include <signal.h>			 /* For pthread_kill() */
+ 
++#if defined(HAVE_THR_YIELD)
++#include <thread.h>
++#endif
++
+ extern int ldap_int_stackguard;
+ 
+ #if HAVE_PTHREADS < 6
+diff -ru a/libraries/libldap/thr_thr.c b/libraries/libldap/thr_thr.c
+--- a/libraries/libldap/thr_thr.c	Wed Feb  8 13:49:18 2023
++++ b/libraries/libldap/thr_thr.c	Wed Dec 18 17:31:20 2024
+@@ -22,6 +22,8 @@
+ #define LDAP_THREAD_IMPLEMENTATION
+ #include "ldap_thr_debug.h"	 /* May rename the symbols defined below */
+ 
++#include <thread.h>
++
+ /*******************
+  *                 *
+  * Solaris Threads *

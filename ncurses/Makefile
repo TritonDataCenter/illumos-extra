@@ -46,9 +46,7 @@ AUTOCONF_ENV.64 +=	CONFIG_SHELL=/bin/bash
 LDFLAGS +=	-R/usr/gnu/lib
 LDFLAGS.64 +=	-R/usr/gnu/lib/amd64
 
-PATCHES = \
-	ncurses-01-widec.diff \
-	ncurses-02-rpath.diff
+PATCHES = Patches/*
 
 USRDIR =	$(DESTDIR)/usr
 

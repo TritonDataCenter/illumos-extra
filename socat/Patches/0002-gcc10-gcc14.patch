@@ -45,3 +45,36 @@ diff -ru a/sysincludes.h b/sysincludes.h
  #endif
  #if HAVE_REGEX_H
  #include <regex.h>
+diff -ru a/configure b/configure
+--- a/configure Sun Jan  3 13:23:22 2021
++++ b/configure Wed Dec 18 11:58:10 2024
+@@ -7136,11 +7136,12 @@
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ #include <sys/socket.h>
++#include <stdio.h>
+ int
+ main ()
+ {
+-int i=CMSG_DATA(0)
+-  ;
++unsigned char *cp=CMSG_DATA(0);
++(void) printf("cp is %p\n", cp);
+   return 0;
+ }
+ _ACEOF
+@@ -7151,11 +7152,12 @@
+ /* end confdefs.h.  */
+ #define _XPG4_2 1
+ #include <sys/socket.h>
++#include <stdio.h>
+ int
+ main ()
+ {
+-int i=CMSG_DATA(0)
+-  ;
++unsigned char *cp=CMSG_DATA(0);
++(void) printf("cp is %p\n", cp);
+   return 0;
+ }
+ _ACEOF

@@ -19,6 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2024 MNX Cloud, Inc.
 #
 
 VER =	expat-2.0.1
@@ -37,9 +38,7 @@ CFLAGS +=	-g -fPIC
 AUTOCONF_ENV += \
 	INSTALL="/usr/ucb/install -c"
 
-PATCHES = \
-	CVE-2009-3560.patch \
-	CVE-2009-3720.patch
+PATCHES = Patches/*
 
 include ../Makefile.targ
 

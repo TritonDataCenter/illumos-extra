@@ -35,6 +35,8 @@ AUTOCONF_OPTS += \
 TARBALL =		$(VER).tar.bz2
 TARBALL_COMPRESS =	-j
 
+PATCHES = Patches/*
+
 include ../Makefile.targ
 
 all: all_autoconf
