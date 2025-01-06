@@ -1,0 +1,46 @@
+diff -ru a/plugins/ommail/ommail.c b/plugins/ommail/ommail.c
+--- a/plugins/ommail/ommail.c	2012-03-15 06:10:55.000000000 -0400
++++ b/plugins/ommail/ommail.c	2021-11-18 09:21:53.000000000 -0500
+@@ -201,7 +201,7 @@
+ 
+ BEGINdbgPrintInstInfo
+ CODESTARTdbgPrintInstInfo
+-	printf("mail"); /* TODO: extend! */
++	printf("mail (pData = 0x%p", pData ); /* TODO: extend! */
+ ENDdbgPrintInstInfo
+ 
+ 
+diff -ru a/plugins/omprog/omprog.c b/plugins/omprog/omprog.c
+--- a/plugins/omprog/omprog.c	2012-03-15 06:10:55.000000000 -0400
++++ b/plugins/omprog/omprog.c	2021-11-18 09:22:33.000000000 -0500
+@@ -82,6 +82,7 @@
+ 
+ BEGINdbgPrintInstInfo
+ CODESTARTdbgPrintInstInfo
++	printf("omprog (pData = 0x%p", pData ); /* TODO: extend! */
+ ENDdbgPrintInstInfo
+ 
+ 
+diff -ru a/tools/omfile.h b/tools/omfile.h
+--- a/tools/omfile.h	2012-03-12 10:27:19.000000000 -0400
++++ b/tools/omfile.h	2021-11-18 09:10:24.000000000 -0500
+@@ -31,7 +31,7 @@
+  * other way to have the functionality (well, one way would be to go through the
+  * globals, but that seems not yet justified. -- rgerhards, 2010-03-01
+  */
+-uchar	*pszFileDfltTplName;
++extern uchar	*pszFileDfltTplName;
+ #endif /* #ifndef OMFILE_H_INCLUDED */
+ /* vi:set ai:
+  */
+diff -ru a/configure b/configure
+--- a/configure	Thu Mar 15 06:27:37 2012
++++ b/configure	Thu Nov 21 16:26:59 2024
+@@ -13018,6 +13018,7 @@
+ /* end confdefs.h.  */
+ /* Thanks to Paul Eggert for this test.  */
+ $ac_includes_default
++#include <unistd.h>
+ #include <sys/wait.h>
+ #ifdef HAVE_VFORK_H
+ # include <vfork.h>

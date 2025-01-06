@@ -1,0 +1,162 @@
+diff -ru a/configure.ac b/configure.ac
+--- a/configure.ac	Sun Nov 10 13:54:57 2024
++++ b/configure.ac	Wed Dec 18 10:40:20 2024
+@@ -30,10 +30,10 @@
+ dnl Process this file with autoconf to produce a configure script.
+ dnl
+ 
+-dnl Error if AX_CODE_COVERAGE if missing (like on the 1.21 release).
+-m4_pattern_forbid([^_?AX_])
+-m4_pattern_allow([AX_CHECK_GNU_MAKE_HEADLINE])
+-m4_pattern_allow([_AX_CODE_COVERAGE_GCOV_PROG_WITH])
++dnl XXX SmartOS NO Error if AX_CODE_COVERAGE is missing (like on the 1.21 release).
++dnl m4_pattern_forbid([^_?AX_])
++dnl m4_pattern_allow([AX_CHECK_GNU_MAKE_HEADLINE])
++dnl m4_pattern_allow([_AX_CODE_COVERAGE_GCOV_PROG_WITH])
+ 
+ AC_INIT([wget],[m4_esyscmd(build-aux/git-version-gen .tarball-version)],[bug-wget@gnu.org])
+ AC_PREREQ([2.64])
+@@ -336,7 +336,7 @@
+ AM_ICONV
+ gl_INIT
+ 
+-AX_CODE_COVERAGE
++dnl AX_CODE_COVERAGE
+ 
+ dnl
+ dnl Checks for library functions.
+@@ -519,18 +519,6 @@
+ ])
+ 
+ AS_IF([test x"$with_ssl" = xopenssl], [
+-  if [test x"$with_libssl_prefix" = x]; then
+-    PKG_CHECK_MODULES([OPENSSL], [openssl], [
+-      AC_MSG_NOTICE([compiling in support for SSL via OpenSSL])
+-      ssl_library="openssl"
+-      LIBS="$OPENSSL_LIBS $LIBS"
+-      CFLAGS="$OPENSSL_CFLAGS -DHAVE_LIBSSL $CFLAGS"
+-      LIBSSL=" " # ntlm check below wants this
+-      AC_CHECK_FUNCS([RAND_egd])
+-      AC_DEFINE([HAVE_LIBSSL], [1], [Define if using openssl.])
+-      ssl_found=yes
+-    ])
+-  fi
+   if [test x"$ssl_found" != xyes]; then
+     dnl As of this writing (OpenSSL 0.9.6), the libcrypto shared library
+     dnl doesn't record its dependency on libdl, so we need to make sure
+@@ -566,8 +554,8 @@
+     esac
+ 
+     AS_IF([test x$ssl_found != xyes], [
+-      dnl Now actually check for -lssl if it wasn't already found
+-      AC_LIB_HAVE_LINKFLAGS([ssl], [crypto], [
++      dnl Now actually check for -lsunw_ssl if it wasn't already found
++      AC_LIB_HAVE_LINKFLAGS([sunw_ssl], [sunw_crypto], [
+ #include <openssl/ssl.h>
+ #include <openssl/x509.h>
+ #include <openssl/err.h>
+@@ -576,10 +564,31 @@
+ #include <openssl/md4.h>
+ #include <openssl/md5.h>
+       ], [SSL_library_init ()])
++
++      LIBSSL="$LIBSUNW_SSL"
++      LIBCRYPTO="$LIBSUNW_CRYPTO"
++      HAVE_LIBSSL="$HAVE_LIBSUNW_SSL"
++      HAVE_LIBCRYPTO="$HAVE_LIBSUNW_CRYPTO"
++      LTLIBSSL="$LTLIBSUNW_SSL"
++      LTLIBCRYPTO="$LTLIBSUNW_CRYPTO"
++
++      AC_SUBST(HAVE_LIBSSL)
++      AC_SUBST(HAVE_LIBCRYPTO)
++      AC_SUBST(LIBSSL)
++      AC_SUBST(LIBCRYPTO)
++      AC_SUBST(LTLIBSSL)
++      AC_SUBST(LTLIBCRYPTO)
++
+       if test x"$LIBSSL" != x
+       then
++        AC_DEFINE([HAVE_LIBSSL], 1, [SSL])
++        AC_DEFINE([HAVE_LIBCRYPTO], 1, [CRYPTO])
++      fi
++
++      if test x"$LIBSSL" != x
++      then
+         ssl_found=yes
+-        AC_MSG_NOTICE([compiling in support for SSL via OpenSSL])
++        AC_MSG_NOTICE([compiling in support for SSL via OpenSSL (sunw)])
+         ssl_library="openssl"
+         LIBS="$LIBSSL $LIBS"
+         AC_CHECK_FUNCS([RAND_egd])
+@@ -928,29 +937,6 @@
+     ])
+ 
+   have_gpg=no
+-  AS_IF([test x"$with_metalink" = xyes], [
+-    dnl
+-    dnl Check for GPGME
+-    dnl
+-    PKG_CHECK_MODULES([GPGME], gpgme, [
+-      LIBS="$LIBS $GPGME_LIBS"
+-      CFLAGS="$GPGME_CFLAGS $CFLAGS"
+-      AC_DEFINE([HAVE_GPGME], [1], [Define if GPGME is available.])
+-      have_gpg=yes
+-    ], [
+-      m4_ifdef([AM_PATH_GPGME], [
+-        AM_PATH_GPGME([], [
+-          # Put libgpgme to the end of the library list since it introduces a -L linker flags.
+-          # That -L might break the build if there are two different version of
+-          # a library (e.g. GnuTLS) in /usr/local and in the system directory.
+-          LIBS="$LIBS $GPGME_LIBS"
+-          CFLAGS="$GPGME_CFLAGS $CFLAGS"
+-          AC_DEFINE([HAVE_GPGME], [1], [Define if GPGME is available.])
+-          have_gpg=yes
+-        ])
+-      ])
+-    ])
+-  ])
+ ])
+ 
+ dnl
+diff -ru a/doc/Makefile.am b/doc/Makefile.am
+--- a/doc/Makefile.am	Mon Mar 11 18:59:02 2024
++++ b/doc/Makefile.am	Wed Dec 18 10:40:20 2024
+@@ -39,7 +39,7 @@
+ 
+ man_MANS = $(MAN)
+ 
+-all: wget.info @COMMENT_IF_NO_POD2MAN@$(MAN)
++all: @COMMENT_IF_NO_POD2MAN@$(MAN)
+ 
+ everything: all wget_us.ps wget_a4.ps wget_toc.html
+ 
+@@ -46,7 +46,6 @@
+ $(SAMPLERCTEXI): $(srcdir)/sample.wgetrc
+ 	sed s/@/@@/g $? > $@
+ 
+-info_TEXINFOS = wget.texi
+ wget_TEXINFOS = fdl.texi sample.wgetrc.munged_for_texi_inclusion
+ 
+ EXTRA_DIST = sample.wgetrc \
+diff -ru a/m4/pselect.m4 b/m4/pselect.m4
+--- a/m4/pselect.m4	Sun Nov 10 16:27:18 2024
++++ b/m4/pselect.m4	Wed Dec 18 10:59:44 2024
+@@ -39,6 +39,7 @@
+ #endif
+ #include <unistd.h>
+ #include <errno.h>
++#include <string.h>
+ ]GL_MDA_DEFINES],
+ [[
+   fd_set set;
+diff -ru a/m4/select.m4 b/m4/select.m4
+--- a/m4/select.m4	Sun Nov 10 16:27:18 2024
++++ b/m4/select.m4	Wed Dec 18 10:54:41 2024
+@@ -62,6 +62,7 @@
+ #endif
+ #include <unistd.h>
+ #include <errno.h>
++#include <string.h>
+ ]GL_MDA_DEFINES],
+ [[
+   fd_set set;

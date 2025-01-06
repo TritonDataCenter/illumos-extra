@@ -11,6 +11,7 @@
 
 #
 # Copyright 2022 Joyent, Inc.
+# Copyright 2024 MNX Cloud, Inc.
 #
 
 #
@@ -23,7 +24,7 @@
 # 3. From one directory up, run tar cvzf mdb_v8-<ver>.tar.gz mdb_v8-<ver>
 #
 
-VER =	mdb_v8-1.4.3
+VER =	mdb_v8-1.4.4
 
 include ../Makefile.defs
 include ../Makefile.targ

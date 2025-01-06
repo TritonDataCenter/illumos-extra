@@ -1,0 +1,303 @@
+diff -ru a/builtins/command.def b/builtins/command.def
+--- a/builtins/command.def	2009-07-02 15:18:10.000000000 +0000
++++ b/builtins/command.def	2024-12-18 21:42:07.904851452 +0000
+@@ -59,6 +59,8 @@
+ #if defined (_CS_PATH) && defined (HAVE_CONFSTR) && !HAVE_DECL_CONFSTR
+ extern size_t confstr __P((int, char *, size_t));
+ #endif
++/* XXX SmartOS - confstr isn't defined in spite of above!!! Fix! */
++extern size_t confstr(int, char *, size_t);
+ 
+ extern int subshell_environment;
+ 
+diff -ru a/configure b/configure
+--- a/configure	2014-02-11 17:38:00.000000000 +0000
++++ b/configure	2024-12-18 21:55:06.212621240 +0000
+@@ -5284,10 +5284,12 @@
+ /* end confdefs.h.  */
+ 
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <readline/readline.h>
+ 
+ extern int rl_gnu_readline_p;
+ 
++int
+ main()
+ {
+ 	FILE *fp;
+@@ -10144,8 +10146,9 @@
+ int
+ main ()
+ {
+-int main() { long double r; char *foo, bar; r = strtold(foo, &bar);}
+-  ;
++  long double r;
++  char *foo = "3.14", *bar;
++  r = strtold(foo, &bar);
+   return 0;
+ }
+ _ACEOF
+@@ -11264,6 +11267,7 @@
+ #include <locale.h>
+ #include <wchar.h>
+ 
++int
+ main(c, v)
+ int     c;
+ char    **v;
+@@ -12662,9 +12666,11 @@
+ #ifdef HAVE_LOCALE_H
+ #include <locale.h>
+ #endif
++#include <stdlib.h>
+ #include <stdio.h>
+ #include <ctype.h>
+ 
++int
+ main(c, v)
+ int	c;
+ char	*v[];
+@@ -12723,6 +12729,8 @@
+ 
+ #include <sys/types.h>
+ #include <fcntl.h>
++#include <stdlib.h>
++int
+ main()
+ {
+   int fd1, fd2, fl;
+@@ -12774,6 +12782,8 @@
+ #ifdef HAVE_UNISTD_H
+ #  include <unistd.h>
+ #endif
++#include <stdlib.h>
++int
+ main()
+ {
+ # ifdef GETPGRP_VOID
+@@ -12984,12 +12994,14 @@
+ 
+ #include <sys/types.h>
+ #include <signal.h>
++#include <stdlib.h>
+ #ifdef HAVE_UNISTD_H
+ #include <unistd.h>
+ #endif
+ #if !HAVE_DECL_SYS_SIGLIST
+ extern char *sys_siglist[];
+ #endif
++int
+ main()
+ {
+ char *msg = sys_siglist[2];
+@@ -13071,6 +13083,8 @@
+ #ifndef UNDER_SYS_SIGLIST_DECLARED
+ extern char *_sys_siglist[];
+ #endif
++#include <stdlib.h>
++int
+ main()
+ {
+ char *msg = (char *)_sys_siglist[2];
+@@ -13475,6 +13489,8 @@
+ #include <sys/types.h>
+ #include <sys/time.h>
+ #include <sys/resource.h>
++#include <stdlib.h>
++int
+ main()
+ {
+ #ifdef HAVE_QUAD_T
+@@ -14002,6 +14018,7 @@
+ 
+ #include <sys/wait.h>
+ 
++int
+ main(c, v)
+      int c;
+      char **v;
+@@ -14275,6 +14292,7 @@
+ /* end confdefs.h.  */
+ #include <sys/types.h>
+ #include <signal.h>
++#include <string.h>
+ int
+ main ()
+ {
+@@ -14314,6 +14332,7 @@
+ /* end confdefs.h.  */
+ 
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <sys/types.h>
+ #include <fcntl.h>
+ #ifdef HAVE_UNISTD_H
+@@ -14333,6 +14352,7 @@
+ #  include <ndir.h>
+ # endif
+ #endif /* HAVE_DIRENT_H */
++int
+ main()
+ {
+ DIR *dir;
+@@ -14384,6 +14404,9 @@
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
++#include <stdlib.h>
++#include <ulimit.h>
++int
+ main()
+ {
+ long maxfds = ulimit(4, 0L);
+@@ -14461,6 +14484,8 @@
+ {
+ return "42";
+ }
++#include <stdlib.h>
++int
+ main()
+ {
+ char *s;
+@@ -14512,7 +14537,9 @@
+ #ifdef HAVE_UNISTD_H
+ #include <unistd.h>
+ #endif
++#include <stdlib.h>
+ 
++int
+ main()
+ {
+ 	char	*xpwd;
+@@ -14567,7 +14594,9 @@
+ #include <sys/types.h>
+ #include <signal.h>
+ #include <setjmp.h>
++#include <stdlib.h>
+ 
++int
+ main()
+ {
+ #if !defined (_POSIX_VERSION) || !defined (HAVE_POSIX_SIGNALS)
+@@ -14636,7 +14665,10 @@
+ #if defined (HAVE_LOCALE_H)
+ #include <locale.h>
+ #endif
++#include <stdlib.h>
++#include <string.h>
+ 
++int
+ main(c, v)
+ int     c;
+ char    *v[];
+@@ -14706,7 +14738,9 @@
+ /* end confdefs.h.  */
+ 
+ #include <stdio.h>
++#include <stdlib.h>
+ 
++int
+ main()
+ {
+   int n;
+@@ -14785,7 +14819,9 @@
+   va_end (args);
+   return n;
+ }
++#include <stdlib.h>
+ 
++int
+ main()
+ {
+   int n;
+@@ -14945,6 +14981,7 @@
+ 
+ #include <stdio.h>
+ #include <string.h>
++#include <stdlib.h>
+ 
+ int
+ main()
+@@ -14991,6 +15028,7 @@
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
++#include <stdlib.h>
+ 
+ #include <signal.h>
+ #ifdef HAVE_UNISTD_H
+@@ -15026,6 +15064,7 @@
+   nsigint++;
+ }
+ 
++int
+ main()
+ {
+ 	nsigint = 0;
+@@ -15077,8 +15116,10 @@
+ #include <unistd.h>
+ #endif
+ #include <signal.h>
++#include <stdlib.h>
+ 
+ /* Add more tests in here as appropriate. */
++int
+ main()
+ {
+ /* signal type */
+@@ -15150,9 +15191,11 @@
+ #ifdef HAVE_UNISTD_H
+ #include <unistd.h>
+ #endif
++#include <stdlib.h>
++#include <stdio.h>
+ 
+ /* Add more tests in here as appropriate. */
+-main()
++int main()
+ {
+ int fd, err;
+ 
+@@ -15350,6 +15393,8 @@
+ #ifndef errno
+ extern int errno;
+ #endif
++#include <stdlib.h>
++int
+ main()
+ {
+ 	int	x;
+@@ -15464,7 +15509,9 @@
+ #ifndef NSIG
+ #  define NSIG 64
+ #endif
++#include <stdlib.h>
+ 
++int
+ main ()
+ {
+   int n_sigs = 2 * NSIG;
+diff -ru a/execute_cmd.c b/execute_cmd.c
+--- a/execute_cmd.c	2014-10-01 19:57:42.000000000 +0000
++++ b/execute_cmd.c	2024-12-18 21:42:07.910316437 +0000
+@@ -2061,6 +2061,7 @@
+ void
+ coproc_pidchk (pid, status)
+      pid_t pid;
++     int status; /* XXX SmartOS - gcc14 requirement */
+ {
+   struct coproc *cp;
+ 
+diff -ru a/lib/readline/tcap.h b/lib/readline/tcap.h
+--- a/lib/readline/tcap.h	2009-01-04 21:32:34.000000000 +0000
++++ b/lib/readline/tcap.h	2024-12-18 21:42:07.910886503 +0000
+@@ -30,7 +30,7 @@
+ #  if defined (__linux__) && !defined (SPEED_T_IN_SYS_TYPES)
+ #    include "rltty.h"
+ #  endif
+-#  include <termcap.h>
++#  include <../xpg4/include/termcap.h> /* XXX SmartOS, use xpg4!!! */
+ #else
+ 
+ /* On Solaris2, sys/types.h #includes sys/reg.h, which #defines PC.

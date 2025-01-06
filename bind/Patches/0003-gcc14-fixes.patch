@@ -1,0 +1,78 @@
+diff -ru a/configure b/configure
+--- a/configure	2014-11-21 01:56:37.000000000 +0000
++++ b/configure	2024-12-14 11:23:55.544908183 +0000
+@@ -17640,6 +17640,7 @@
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+ #include <arpa/inet.h>
++int
+ main() {
+ char a[16],b[64]; return(inet_ntop(AF_INET6, a, b, sizeof(b)) == (char*)0);}
+ _ACEOF
+@@ -17661,8 +17662,7 @@
+ 
+ 
+ # On NetBSD 1.4.2 and maybe others, inet_pton() incorrectly accepts
+-# addresses with less than four octets, like "1.2.3".  Also leading
+-# zeros should also be rejected.
++# addresses with less than four octets, like "1.2.3".
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for working inet_pton with IPv6 support" >&5
+ $as_echo_n "checking for working inet_pton with IPv6 support... " >&6; }
+@@ -17680,8 +17680,8 @@
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+ #include <arpa/inet.h>
++int
+ main() { char a[16]; return (inet_pton(AF_INET, "1.2.3", a) == 1 ? 1 :
+-			     inet_pton(AF_INET, "1.2.3.04", a) == 1 ? 1 :
+ 			     (inet_pton(AF_INET6, "::1.2.3.4", a) != 1)); }
+ _ACEOF
+ if ac_fn_c_try_run "$LINENO"; then :
+@@ -18393,7 +18393,7 @@
+ int
+ main ()
+ {
+- char buf[2]; return(*sprintf(buf,"x"));
++ char buf[2]; return(sprintf(buf,"x"));
+   ;
+   return 0;
+ }
+@@ -18496,6 +18496,10 @@
+ /* end confdefs.h.  */
+ 
+ #include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++int
+ main() {
+ 	long long int j = 0;
+ 	char buf[100];
+@@ -18778,6 +18782,8 @@
+ #include <sys/types.h>
+ #include <sys/time.h>
+ #include <sys/resource.h>
++#include <stdlib.h>
++int
+ main() { struct rlimit r; exit(!(sizeof(r.rlim_cur) == sizeof(int)));}
+ _ACEOF
+ if ac_fn_c_try_run "$LINENO"; then :
+@@ -18795,6 +18801,8 @@
+ #include <sys/types.h>
+ #include <sys/time.h>
+ #include <sys/resource.h>
++#include <stdlib.h>
++int
+ main() { struct rlimit r; exit(!(sizeof(r.rlim_cur) == sizeof(long int)));}
+ _ACEOF
+ if ac_fn_c_try_run "$LINENO"; then :
+@@ -18812,6 +18820,8 @@
+ #include <sys/types.h>
+ #include <sys/time.h>
+ #include <sys/resource.h>
++#include <stdlib.h>
++int
+ main() { struct rlimit r; exit((!sizeof(r.rlim_cur) == sizeof(long long int)));}
+ _ACEOF
+ if ac_fn_c_try_run "$LINENO"; then :

@@ -9,7 +9,7 @@
 /cpp/cpp.o*
 /cpp/y.tab.c
 /cpp/y.tab.o*
-/curl/curl-8.10.0-32
+/curl/curl-8.11.0-32
 /dialog/dialog-1.1-20111020-32
 /g11n/proto/
 /g11n/src/lib/iconv/common/amd64/
@@ -47,7 +47,7 @@
 /libz/zlib-1.2.3-64*
 /make/.unpack32
 /make/usr-32*
-/mdb_v8/mdb_v8-1.4.3
+/mdb_v8/mdb_v8-1.4.4
 /ncurses/ncurses-5.7-32
 /ncurses/ncurses-5.7-64
 /node.js/genversionjs

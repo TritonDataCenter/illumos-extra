@@ -1,0 +1,32 @@
+From f7bd7bb5122a69fae3cdd7bf9cdbb45e7183313f Mon Sep 17 00:00:00 2001
+From: Robert Mustacchi <rm@joyent.com>
+Date: Sat, 16 Mar 2013 00:56:04 +0000
+Subject: [PATCH] Fix nm location
+
+---
+ util/mksymtbl.pl |    6 +++++-
+ 1 files changed, 5 insertions(+), 1 deletions(-)
+
+diff --git a/util/mksymtbl.pl b/util/mksymtbl.pl
+index 9908a53..31351f4 100755
+--- a/util/mksymtbl.pl
++++ b/util/mksymtbl.pl
+@@ -44,10 +44,14 @@ if ($options{'o'}) {
+ $nm_prog = "nm";
+ $ostype = `uname -s`;
+ chop($ostype);
+-if ($ostype eq "SunOS" || $ostype eq "HP-UX") {
++if ($ostype eq "HP-UX") {
+ 	$nm_prog = "/usr/ccs/bin/nm -x"
+ }
+ 
++if ($ostype eq "SunOS") {
++	$nm_prog = "/usr/bin/nm -x"
++}
++
+ if ($options{'i'}) {
+ 	open(SYMBOLS, $options{'i'}) || die "failed to open $options{'i'}";
+ } else {
+-- 
+1.7.7.2
+

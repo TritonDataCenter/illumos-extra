@@ -1,0 +1,120 @@
+diff -ru a/configure b/configure
+--- a/configure	Tue Aug 15 20:30:56 2023
++++ b/configure	Thu Nov 21 17:37:29 2024
+@@ -5401,7 +5401,7 @@
+ main (void)
+ {
+ 
+-    tgetent((char *)0, (char *)0);
++    tgetent(NULL, NULl);
+ 
+   ;
+   return 0;
+@@ -5428,7 +5428,7 @@
+ #ifdef __hpux
+ __sorry_hpux_libcurses_is_totally_broken_in_10_10();
+ #else
+-tgetent((char *)0, (char *)0);
++tgetent(NULL, NULL);
+ #endif
+ 
+   ;
+@@ -5452,7 +5452,7 @@
+ main (void)
+ {
+ 
+-    tgetent((char *)0, (char *)0);
++    tgetent(NULL, NULL);
+ 
+   ;
+   return 0;
+@@ -5475,7 +5475,7 @@
+ main (void)
+ {
+ 
+-    tgetent((char *)0, (char *)0);
++    tgetent(NULL, NULL);
+ 
+   ;
+   return 0;
+@@ -5498,7 +5498,7 @@
+ main (void)
+ {
+ 
+-    tgetent((char *)0, (char *)0);
++    tgetent(NULL, NULL);
+ 
+   ;
+   return 0;
+@@ -5521,7 +5521,7 @@
+ main (void)
+ {
+ 
+-    tgetent((char *)0, (char *)0);
++    tgetent(NULL, NULL);
+ 
+   ;
+   return 0;
+@@ -5544,7 +5544,7 @@
+ main (void)
+ {
+ 
+-    tgetent((char *)0, (char *)0);
++    tgetent(NULL, NULL);
+ 
+   ;
+   return 0;
+@@ -5567,7 +5567,7 @@
+ main (void)
+ {
+ 
+-    tgetent((char *)0, (char *)0);
++    tgetent(NULL, NULL);
+ 
+   ;
+   return 0;
+@@ -6036,7 +6036,7 @@
+ int
+ main (void)
+ {
+-int x = DEAD_PROCESS; pututline((struct utmp *)0); getutent();
++int x = DEAD_PROCESS; pututline(NULL); getutent();
+   ;
+   return 0;
+ }
+@@ -6068,7 +6068,7 @@
+ int
+ main (void)
+ {
+-int x = DEAD_PROCESS; pututline((struct utmp *)0); getutent();
++int x = DEAD_PROCESS; pututline(NULL); getutent();
+   ;
+   return 0;
+ }
+@@ -6146,7 +6146,7 @@
+ main (void)
+ {
+ 
+-    getloadavg((double *)0, 0);
++    getloadavg(NULL, 0);
+   ;
+   return 0;
+ }
+@@ -6170,7 +6170,7 @@
+ main (void)
+ {
+ 
+-    getloadavg((double *)0, 0);
++    getloadavg(NULL, 0);
+   ;
+   return 0;
+ }
+@@ -7223,7 +7223,7 @@
+ int
+ main (void)
+ {
+-putenv((char *)0);unsetenv((char *)0);
++putenv(NULL);unsetenv(NULL);
+   ;
+   return 0;
+ }
