@@ -34,7 +34,7 @@ AUTOCONF_OPTS += --with-included-popt \
 BUILD32 =
 BUILD64 = yes
 
-# PATCHES =	Patches/*
+PATCHES =	Patches/*
 
 include ../Makefile.targ
 

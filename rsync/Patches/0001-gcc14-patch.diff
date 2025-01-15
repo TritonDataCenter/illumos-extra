@@ -1,0 +1,135 @@
+diff -ru a/syscall.c b/syscall.c
+--- a/syscall.c	Tue Jan 14 13:30:32 2025
++++ b/syscall.c	Tue Jan 14 18:03:04 2025
+@@ -775,7 +775,8 @@
+ 		if (next_fd == -1) {
+ 			goto cleanup;
+ 		}
+-		if (dirfd != AT_FDCWD) close(dirfd);
++		/* XXX SmartOS - illumos AT_FDCWD is unsigned (0xffd19553) */
++		if (dirfd != (int)AT_FDCWD) close(dirfd);
+ 		dirfd = next_fd;
+ 	}
+ 
+@@ -784,7 +785,8 @@
+ 
+ cleanup:
+ 	free(path_copy);
+-	if (dirfd != AT_FDCWD) {
++	/* XXX SmartOS - illumos AT_FDCWD is unsigned (0xffd19553) */
++	if (dirfd != (int)AT_FDCWD) {
+ 		close(dirfd);
+ 	}
+ 	return retfd;
+diff -ru a/lib/sysxattrs.c b/lib/sysxattrs.c
+--- a/lib/sysxattrs.c	Sat Jan 15 20:21:01 2022
++++ b/lib/sysxattrs.c	Tue Jan 14 20:07:14 2025
+@@ -157,16 +157,19 @@
+ 	if (fstat(attrfd, &sb) < 0)
+ 		ret = -1;
+ 	else if (sb.st_size > SSIZE_MAX) {
++		/* XXX SmartOS - the above check makes the following... */
+ 		errno = ERANGE;
+ 		ret = -1;
+ 	} else if (buflen == 0)
+ 		ret = sb.st_size;
+-	else if (sb.st_size > buflen) {
++	else if (sb.st_size > (ssize_t)buflen) {
++		/* ... cast, and check, right above here safe. */
+ 		errno = ERANGE;
+ 		ret = -1;
+ 	} else {
+ 		size_t bufpos;
+-		for (bufpos = 0; bufpos < sb.st_size; ) {
++		/* XXX SmartOS -- same reason I can cast sb.st_size too. */
++		for (bufpos = 0; bufpos < (size_t)sb.st_size; ) {
+ 			ssize_t cnt = read(attrfd, (char*)buf + bufpos, sb.st_size - bufpos);
+ 			if (cnt <= 0) {
+ 				if (cnt < 0 && errno == EINTR)
+diff -ru a/popt/findme.c b/popt/findme.c
+--- a/popt/findme.c	Wed Nov  8 19:57:55 2006
++++ b/popt/findme.c	Tue Jan 14 20:08:17 2025
+@@ -8,6 +8,7 @@
+ 
+ #include "system.h"
+ #include "findme.h"
++#include <alloca.h>	/* XXX SmartOS for alloca() below. */
+ 
+ const char * findProgramPath(const char * argv0)
+ {
+diff -ru a/popt/popt.c b/popt/popt.c
+--- a/popt/popt.c	Mon Apr  8 01:31:36 2024
++++ b/popt/popt.c	Tue Jan 14 20:16:24 2025
+@@ -535,7 +535,8 @@
+     }
+ #endif
+ 
+-    rc = execvp(argv[0], (char *const *)argv);
++    /* XXX SmartOS - rc ignored, we don't use setuid variants above. */
++    (void) execvp(argv[0], (char *const *)argv);
+ 
+     /* only reached on execvp() failure */
+     con->execFail = xstrdup(argv[0]);
+@@ -914,7 +915,8 @@
+     return 0;
+ }
+ 
+-static long long poptRandomValue(long long limit)
++/* XXX SmartOS - ignore parameter, this function's a NOP for us anyway. */
++static long long poptRandomValue(long long limit __unused)
+ {
+ #if defined(HAVE_SRANDOM)
+     static int seed = 1;
+diff -ru a/popt/poptconfig.c b/popt/poptconfig.c
+--- a/popt/poptconfig.c	Mon Apr  8 01:31:36 2024
++++ b/popt/poptconfig.c	Tue Jan 14 20:22:45 2025
+@@ -138,7 +138,8 @@
+     if ((nb = lseek(fdno, 0, SEEK_END)) == (off_t)-1
+      || (uintmax_t)nb >= SIZE_MAX
+      || lseek(fdno, 0, SEEK_SET) == (off_t)-1
+-     || (b = calloc(sizeof(*b), (size_t)nb + 1)) == NULL
++     /* XXX SmartOS - gcc14 is super picky about calloc() semantics... swap. */
++     || (b = calloc((size_t)nb + 1, sizeof (*b))) == NULL
+      || read(fdno, (char *)b, (size_t)nb) != (ssize_t)nb)
+     {
+ 	int oerrno = errno;
+@@ -437,7 +438,6 @@
+ int poptReadDefaultConfig(poptContext con, UNUSED(int useEnv))
+ {
+     char * home;
+-    struct stat sb;
+     int rc = 0;		/* assume success */
+ 
+     if (con->appName == NULL) goto exit;
+@@ -446,6 +446,8 @@
+     if (rc) goto exit;
+ 
+ #if defined(HAVE_GLOB_H)
++    /* XXX SmartOS - move "sb" here since we don't have glob.h it seems... */
++    struct stat sb;
+     if (!stat(POPT_SYSCONFDIR "/popt.d", &sb) && S_ISDIR(sb.st_mode)) {
+ 	const char ** av = NULL;
+ 	int ac = 0;
+diff -ru a/popt/popthelp.c b/popt/popthelp.c
+--- a/popt/popthelp.c	Mon Apr  8 01:31:36 2024
++++ b/popt/popthelp.c	Tue Jan 14 20:20:11 2025
+@@ -93,7 +93,8 @@
+  * @param fp           FILE
+  * @return             no. of columns 
+  */ 
+-static size_t maxColumnWidth(FILE *fp)
++/* XXX SmartOS - for us we just return a constant. */
++static size_t maxColumnWidth(FILE *fp __unused)
+ {   
+     size_t maxcols = _POPTHELP_MAXLINE;
+ #if defined(TIOCGWINSZ)
+@@ -206,7 +207,8 @@
+ singleOptionDefaultValue(size_t lineLength,
+ 		const struct poptOption * opt,
+ 		/* FIX: i18n macros disabled with lclint */
+-		const char * translation_domain)
++		/* XXX SmartOS - D_() is a NOP, so translation_domain is too. */
++		const char * translation_domain __unused)
+ {
+     const char * defstr = D_(translation_domain, "default");
+     char * le = malloc(4*lineLength + 1);
