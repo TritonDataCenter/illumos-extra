@@ -19,16 +19,20 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2025 MNX Cloud, Inc.
 #
 
-VER =	rsync-3.1.2
+VER =	rsync-3.4.1
 
 include ../Makefile.defs
 
 AUTOCONF_ENV += \
 	LD_OPTIONS="-M $(BASE)/mapfile_noexstk"
-AUTOCONF_OPTS += \
-	--with-included-popt
+AUTOCONF_OPTS += --with-included-popt \
+	--disable-zstd --disable-lz4 --disable-xxhash --disable-openssl
+
+BUILD32 =
+BUILD64 = yes
 
 PATCHES =	Patches/*
 
@@ -37,4 +41,4 @@ include ../Makefile.targ
 all: all_autoconf
 
 install: all
-	VERDIR=$(VER.32) ksh93 ./install-sfw
+	VERDIR=$(VER.64) ksh93 ./install-sfw
