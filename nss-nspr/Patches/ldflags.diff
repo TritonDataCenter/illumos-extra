@@ -1,17 +1,26 @@
-From 418135dcb6e1a9fc7e1b4b59a32f42959a9b7123 Mon Sep 17 00:00:00 2001
-From: John Levon <john.levon@joyent.com>
-Date: Thu, 15 Nov 2018 22:09:47 +0000
-Subject: [PATCH] Apply $LDFLAGS when building shared libraries
-
----
- nss/coreconf/SunOS5.mk | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/nss/coreconf/SunOS5.mk b/nss/coreconf/SunOS5.mk
-index ce9e2cb..84e2093 100644
---- a/nss/coreconf/SunOS5.mk
-+++ b/nss/coreconf/SunOS5.mk
-@@ -79,7 +79,7 @@ endif
+diff -ru a/nss/cmd/shlibsign/sign.sh b/nss/cmd/shlibsign/sign.sh
+--- a/nss/cmd/shlibsign/sign.sh	Mon Jun 20 13:11:28 2016
++++ b/nss/cmd/shlibsign/sign.sh	Thu Jan 30 18:39:24 2025
+@@ -37,6 +37,15 @@
+     export LIBPATH
+     SHLIB_PATH=${1}/lib:${4}:$SHLIB_PATH
+     export SHLIB_PATH
++    # XXX SmartOS - Add non-strap libraries if we aren't building strap.
++    if [[ "$STRAP" == "" ]]; then
++	if [[ "$USE_64" == "1" ]]; then
++            LD_LIBRARY_PATH=${DESTDIR}/lib/64:${DESTDIR}/usr/lib/64:$LD_LIBRARY_PATH
++	else
++            LD_LIBRARY_PATH=${DESTDIR}/lib:${DESTDIR}/usr/lib:$LD_LIBRARY_PATH
++	fi
++	export LD_LIBRARY_PATH
++    fi
+     LD_LIBRARY_PATH=${1}/lib:${4}:$LD_LIBRARY_PATH
+     export LD_LIBRARY_PATH
+     DYLD_LIBRARY_PATH=${1}/lib:${4}:$DYLD_LIBRARY_PATH
+diff -ru a/nss/coreconf/SunOS5.mk b/nss/coreconf/SunOS5.mk
+--- a/nss/coreconf/SunOS5.mk	Mon Jun 20 13:11:28 2016
++++ b/nss/coreconf/SunOS5.mk	Thu Jan 30 17:48:06 2025
+@@ -79,7 +79,7 @@
  # Purify doesn't like -MDupdate
  NOMD_OS_CFLAGS += $(DSO_CFLAGS) $(OS_DEFINES) $(SOL_CFLAGS)
  
@@ -20,6 +29,3 @@ index ce9e2cb..84e2093 100644
  ifdef NS_USE_GCC
  ifeq (GNU,$(findstring GNU,$(shell `$(CC) -print-prog-name=ld` -v 2>&1)))
  	GCC_USE_GNU_LD = 1
--- 
-2.14.1
-
