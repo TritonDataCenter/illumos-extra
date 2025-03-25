@@ -19,10 +19,10 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2012, Joyent, Inc.  All rights reserved.
-# Copyright 2024 MNX Cloud, Inc.
+# Copyright 2025 MNX Cloud, Inc.
 #
 
-VER =	expat-2.0.1
+VER =	expat-2.7.0
 
 include ../Makefile.defs
 
@@ -38,7 +38,7 @@ CFLAGS +=	-g -fPIC
 AUTOCONF_ENV += \
 	INSTALL="/usr/ucb/install -c"
 
-PATCHES = Patches/*
+# PATCHES = Patches/*
 
 include ../Makefile.targ
 
