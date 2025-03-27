@@ -37,8 +37,8 @@
 /idnkit/idnkit-2.3-32strap
 /ipmitool/ipmitool-1.8.18-32
 /less/less-661-64
-/libexpat/expat-2.0.1-32*
-/libexpat/expat-2.0.1-64*
+/libexpat/expat-2.7.0-32*
+/libexpat/expat-2.7.0-64*
 /libidn/libidn-1.11-32*
 /libidn2/libidn2-2.3.4-32
 /libxml/libxml2-2.7.6-32*
