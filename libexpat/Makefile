@@ -22,7 +22,7 @@
 # Copyright 2025 MNX Cloud, Inc.
 #
 
-VER =	expat-2.7.0
+VER =	expat-2.7.1
 
 include ../Makefile.defs
 
