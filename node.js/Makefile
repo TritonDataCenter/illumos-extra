@@ -56,6 +56,11 @@ CXXFLAGS += -fno-delete-null-pointer-checks
 CXXFLAGS += -Wno-cast-function-type
 
 #
+# binutils 2.41 and later don't disassemble bss sections at all.
+#
+CXXFLAGS += -fno-zero-initialized-in-bss
+
+#
 # Node's build system is super broken.  If we pass it LIBS at configure time,
 # it ignores it.  If we pass it LIBS at make time, it completely replaces all
 # libraries, including those the build system itself would normally add.
