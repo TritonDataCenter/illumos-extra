@@ -19,6 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright 2021 Joyent, Inc.
+# Copyright 2024 MNX Cloud, Inc.
 #
 
 MAJOR_VER =	0.10
