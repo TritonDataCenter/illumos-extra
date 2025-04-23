@@ -19,6 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright 2021 Joyent, Inc.
+# Copyright 2024 MNX Cloud, Inc.
 #
 
 MAJOR_VER =	0.10
@@ -54,6 +55,11 @@ CXXFLAGS += -fno-delete-null-pointer-checks
 # gcc10 doesn't like the NODE_MODULE() function cast.
 #
 CXXFLAGS += -Wno-cast-function-type
+
+#
+# binutils 2.41 and later don't disassemble bss sections at all.
+#
+CXXFLAGS += -fno-zero-initialized-in-bss
 
 #
 # Node's build system is super broken.  If we pass it LIBS at configure time,
