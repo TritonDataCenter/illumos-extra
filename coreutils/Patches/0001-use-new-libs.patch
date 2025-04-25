@@ -1,0 +1,16 @@
+diff -ru a/Makefile.in b/Makefile.in
+--- a/Makefile.in	Tue Aug 29 10:22:37 2023
++++ b/Makefile.in	Mon Aug 19 16:44:39 2024
+@@ -27789,8 +27789,10 @@
+ 	  && t=$*.td							\
+ 	  && rm -rf $$t							\
+ 	  && $(MKDIR_P) $$t						\
+-	  && (cd $$t && $(LN_S) '$(abs_top_builddir)/src/'$$prog$(EXEEXT) \
+-				$$argv$(EXEEXT))			\
++	  && (cd $$t && (echo "#!/bin/bash" &&				\
++		echo "export LD_LIBRARY_PATH=`echo $(abs_top_builddir) | sed 's/projects\/illumos-extra\/coreutils\/coreutils.*-64$$/proto\/lib\/64/g'`" && \
++		echo '$(abs_top_builddir)/src/'$$prog$(EXEEXT) '$$@' )	\
++			> $$argv$(EXEEXT) && chmod 0755 $$argv$(EXTEXT) ) \
+ 	&& : $${SOURCE_DATE_EPOCH=`cat $(srcdir)/.timestamp 2>/dev/null || :`} \
+ 	&& : $${TZ=UTC0} && export TZ					\
+ 	&& export SOURCE_DATE_EPOCH && $(run_help2man)			\
