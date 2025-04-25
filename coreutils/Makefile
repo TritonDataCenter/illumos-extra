@@ -36,8 +36,6 @@ include ../Makefile.targ
 AUTOCONF_ENV.64 += FORCE_UNSAFE_CONFIGURE=1
 OVERRIDES.64 += FORCE_UNSAFE_CONFIGURE=1
 
-PATCHES = Patches/*
-
 all: all_autoconf
 
 install: all
