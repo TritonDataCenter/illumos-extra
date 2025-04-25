@@ -19,10 +19,10 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2012, Joyent, Inc.  All rights reserved.
-# Copyright 2024 MNX Cloud, Inc.
+# Copyright 2025 MNX Cloud, Inc.
 #
 
-VER =	coreutils-9.4
+VER =	coreutils-9.7
 
 include ../Makefile.defs
 
