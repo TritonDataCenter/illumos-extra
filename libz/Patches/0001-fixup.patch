@@ -1,0 +1,163 @@
+diff -ru a/Makefile.in d/Makefile.in
+--- a/Makefile.in	Sun Mar 27 19:39:42 2022
++++ d/Makefile.in	Wed Mar 30 16:07:52 2022
+@@ -204,77 +204,77 @@
+ 
+ adler32.lo: $(SRCDIR)adler32.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+-	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/adler32.o $(SRCDIR)adler32.c
++	$(CC) $(SFLAGS) $(ZINC) -fPIC -c -o objs/adler32.o $(SRCDIR)adler32.c
+ 	-@mv objs/adler32.o $@
+ 
+ crc32.lo: $(SRCDIR)crc32.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+-	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/crc32.o $(SRCDIR)crc32.c
++	$(CC) $(SFLAGS) $(ZINC) -fPIC -c -o objs/crc32.o $(SRCDIR)crc32.c
+ 	-@mv objs/crc32.o $@
+ 
+ deflate.lo: $(SRCDIR)deflate.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+-	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/deflate.o $(SRCDIR)deflate.c
++	$(CC) $(SFLAGS) $(ZINC) -fPIC -c -o objs/deflate.o $(SRCDIR)deflate.c
+ 	-@mv objs/deflate.o $@
+ 
+ infback.lo: $(SRCDIR)infback.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+-	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/infback.o $(SRCDIR)infback.c
++	$(CC) $(SFLAGS) $(ZINC) -fPIC -c -o objs/infback.o $(SRCDIR)infback.c
+ 	-@mv objs/infback.o $@
+ 
+ inffast.lo: $(SRCDIR)inffast.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+-	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/inffast.o $(SRCDIR)inffast.c
++	$(CC) $(SFLAGS) $(ZINC) -fPIC -c -o objs/inffast.o $(SRCDIR)inffast.c
+ 	-@mv objs/inffast.o $@
+ 
+ inflate.lo: $(SRCDIR)inflate.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+-	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/inflate.o $(SRCDIR)inflate.c
++	$(CC) $(SFLAGS) $(ZINC) -fPIC -c -o objs/inflate.o $(SRCDIR)inflate.c
+ 	-@mv objs/inflate.o $@
+ 
+ inftrees.lo: $(SRCDIR)inftrees.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+-	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/inftrees.o $(SRCDIR)inftrees.c
++	$(CC) $(SFLAGS) $(ZINC) -fPIC -c -o objs/inftrees.o $(SRCDIR)inftrees.c
+ 	-@mv objs/inftrees.o $@
+ 
+ trees.lo: $(SRCDIR)trees.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+-	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/trees.o $(SRCDIR)trees.c
++	$(CC) $(SFLAGS) $(ZINC) -fPIC -c -o objs/trees.o $(SRCDIR)trees.c
+ 	-@mv objs/trees.o $@
+ 
+ zutil.lo: $(SRCDIR)zutil.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+-	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/zutil.o $(SRCDIR)zutil.c
++	$(CC) $(SFLAGS) $(ZINC) -fPIC -c -o objs/zutil.o $(SRCDIR)zutil.c
+ 	-@mv objs/zutil.o $@
+ 
+ compress.lo: $(SRCDIR)compress.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+-	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/compress.o $(SRCDIR)compress.c
++	$(CC) $(SFLAGS) $(ZINC) -fPIC -c -o objs/compress.o $(SRCDIR)compress.c
+ 	-@mv objs/compress.o $@
+ 
+ uncompr.lo: $(SRCDIR)uncompr.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+-	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/uncompr.o $(SRCDIR)uncompr.c
++	$(CC) $(SFLAGS) $(ZINC) -fPIC -c -o objs/uncompr.o $(SRCDIR)uncompr.c
+ 	-@mv objs/uncompr.o $@
+ 
+ gzclose.lo: $(SRCDIR)gzclose.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+-	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/gzclose.o $(SRCDIR)gzclose.c
++	$(CC) $(SFLAGS) $(ZINC) -fPIC -c -o objs/gzclose.o $(SRCDIR)gzclose.c
+ 	-@mv objs/gzclose.o $@
+ 
+ gzlib.lo: $(SRCDIR)gzlib.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+-	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/gzlib.o $(SRCDIR)gzlib.c
++	$(CC) $(SFLAGS) $(ZINC) -fPIC -c -o objs/gzlib.o $(SRCDIR)gzlib.c
+ 	-@mv objs/gzlib.o $@
+ 
+ gzread.lo: $(SRCDIR)gzread.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+-	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/gzread.o $(SRCDIR)gzread.c
++	$(CC) $(SFLAGS) $(ZINC) -fPIC -c -o objs/gzread.o $(SRCDIR)gzread.c
+ 	-@mv objs/gzread.o $@
+ 
+ gzwrite.lo: $(SRCDIR)gzwrite.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+-	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/gzwrite.o $(SRCDIR)gzwrite.c
++	$(CC) $(SFLAGS) $(ZINC) -fPIC -c -o objs/gzwrite.o $(SRCDIR)gzwrite.c
+ 	-@mv objs/gzwrite.o $@
+ 
+ 
+diff -ru a/configure d/configure
+--- a/configure	Sun Mar 27 19:39:42 2022
++++ d/configure	Wed Mar 30 16:16:30 2022
+@@ -301,30 +307,13 @@
+              CFLAGS=${CFLAGS-"-O3"}
+              LDSHARED=${LDSHARED-"cc -dy -KPIC -G"} ;;
+   SunOS\ 5* | solaris*)
+-         LDSHARED=${LDSHARED-"cc -G -h libz$shared_ext.$VER1"}
+-         SFLAGS=${CFLAGS-"-fast -KPIC"}
+-         CFLAGS=${CFLAGS-"-fast"}
++	 # XXX SmartOS - rewhack this WHOLE thing for SmartOS only.
++	 SFLAGS="-O3"
+          if test $build64 -eq 1; then
+-             # old versions of SunPRO/Workshop/Studio don't support -m64,
+-             # but newer ones do.  Check for it.
+-             flag64=`$CC -flags | egrep -- '^-m64'`
+-             if test x"$flag64" != x"" ; then
+-                 CFLAGS="${CFLAGS} -m64"
+-                 SFLAGS="${SFLAGS} -m64"
+-             else
+-                 case `(uname -m || echo unknown) 2>/dev/null` in
+-                   i86*)
+-                     SFLAGS="$SFLAGS -xarch=amd64"
+-                     CFLAGS="$CFLAGS -xarch=amd64" ;;
+-                   *)
+-                     SFLAGS="$SFLAGS -xarch=v9"
+-                     CFLAGS="$CFLAGS -xarch=v9" ;;
+-                 esac
+-             fi
++		 LDSHARED="${CC} -shared"
++	 else
++		 LDSHARED="${CC} -shared"
+          fi
+-         if test -n "$ZINC"; then
+-             ZINC='-I- -I. -I$(SRCDIR)'
+-         fi
+          ;;
+   SunOS\ 4*) SFLAGS=${CFLAGS-"-O2 -PIC"}
+              CFLAGS=${CFLAGS-"-O2"}
+@@ -418,25 +407,8 @@
+ 
+ echo >> configure.log
+ 
+-# see if shared library build supported
+-cat > $test.c <<EOF
+-extern int getchar();
+-int hello() {return getchar();}
+-EOF
+-if test $shared -eq 1; then
+-  echo Checking for shared library support... | tee -a configure.log
+-  # we must test in two steps (cc then ld), required at least on SunOS 4.x
+-  if try $CC -w -c $SFLAGS $test.c &&
+-     try $LDSHARED $SFLAGS -o $test$shared_ext $test.o; then
+-    echo Building shared library $SHAREDLIBV with $CC. | tee -a configure.log
+-  elif test -z "$old_cc" -a -z "$old_cflags"; then
+-    echo No shared library support. | tee -a configure.log
+-    shared=0;
+-  else
+-    echo 'No shared library support; try without defining CC and CFLAGS' | tee -a configure.log
+-    shared=0;
+-  fi
+-fi
++# XXX SmartOS - nuked entire shared-library check in configure.
++
+ if test $shared -eq 0; then
+   LDSHARED="$CC"
+   ALL="static"
