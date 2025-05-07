@@ -1,7 +1,7 @@
-From a2e92cd2c32c0f23ccb36f0d6554ec99227c956b Mon Sep 17 00:00:00 2001
+From bfab8958d5ecd04ee082104cbc7af332b1a953b5 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:19 -0700
-Subject: [PATCH 02/33] PAM Support
+Subject: [PATCH 02/34] PAM Support
 
 #
 # To comply to the Solaris PAM policy, the UsePAM option is changed to be
@@ -15,10 +15,10 @@ Subject: [PATCH 02/33] PAM Support
  1 file changed, 14 insertions(+)
 
 diff --git a/servconf.c b/servconf.c
-index 89b8413e8..9473714f3 100644
+index f7bc92377..d389c247f 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -297,7 +297,13 @@ fill_default_server_options(ServerOptions *options)
+@@ -299,7 +299,13 @@ fill_default_server_options(ServerOptions *options)
  
  	/* Portable-specific options */
  	if (options->use_pam == -1)
@@ -32,7 +32,7 @@ index 89b8413e8..9473714f3 100644
  	if (options->pam_service_name == NULL)
  		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
  
-@@ -1345,8 +1351,16 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -1389,8 +1395,16 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  	switch (opcode) {
  	/* Portable-specific options */
  	case sUsePAM:
@@ -50,5 +50,5 @@ index 89b8413e8..9473714f3 100644
  		charptr = &options->pam_service_name;
  		arg = argv_next(&ac, &av);
 -- 
-2.34.1
+2.48.1
 

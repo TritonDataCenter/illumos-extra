@@ -1,7 +1,7 @@
-From fe3d22f65636ae59164243871f515bdf25e4815b Mon Sep 17 00:00:00 2001
+From c3ae428c53b7d9cb4c4e498160c265cc3d8811c2 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 12:19:47 -0700
-Subject: [PATCH 21/33] Add SMF manifest and method, and install them
+Subject: [PATCH 21/34] Add SMF manifest and method, and install them
 
 ---
  Makefile.in      |   6 ++
@@ -12,10 +12,10 @@ Subject: [PATCH 21/33] Add SMF manifest and method, and install them
  create mode 100644 smf/method.sh
 
 diff --git a/Makefile.in b/Makefile.in
-index 3d9b7dc1e..d634194e6 100644
+index 6ff82e38f..223866b69 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -28,6 +28,8 @@ SSHD_SESSION=$(libexecdir)/sshd-session
+@@ -28,6 +28,8 @@ SSHD_AUTH=$(libexecdir)/sshd-auth
  SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
  SSH_SK_HELPER=$(libexecdir)/ssh-sk-helper
  ROOTDLIBDIR64=$(DESTDIR)/usr/lib/dtrace/64
@@ -24,7 +24,7 @@ index 3d9b7dc1e..d634194e6 100644
  PRIVSEP_PATH=@PRIVSEP_PATH@
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
-@@ -456,6 +458,10 @@ install-files:
+@@ -489,6 +491,10 @@ install-files:
  	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
  	$(INSTALL) -m 644 ssh-sk-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8
  	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d
@@ -350,5 +350,5 @@ index 000000000..d61ba6e34
 +
 +exit $?
 -- 
-2.34.1
+2.48.1
 

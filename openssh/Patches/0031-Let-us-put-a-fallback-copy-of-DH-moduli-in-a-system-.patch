@@ -1,8 +1,8 @@
-From 352c6d8753d681ccc29de1051c69eb27a7832293 Mon Sep 17 00:00:00 2001
-From: Alex Wilson <alex.wilson@joyent.com>
-Date: Thu, 15 Oct 2015 16:02:37 -0700
-Subject: [PATCH 29/33] Let us put a fallback copy of DH moduli in a system
- path
+From b1242de367ad3614016c22155120acd6d8077b27 Mon Sep 17 00:00:00 2001
+From: Dan McDonald <danmcd@mnx.io>
+Date: Wed, 7 May 2025 13:47:14 -0400
+Subject: [PATCH 29/34] [PATCH 29/33] Let us put a fallback copy of DH moduli
+ in a system path
 
 Live distributions like SmartOS can't keep and update default
 config in directories like /etc/ssh very easily, so we should
@@ -15,18 +15,18 @@ that if we can't find one in the SSHKEYDIR.
  3 files changed, 34 insertions(+), 13 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 4e5fa7f1a..df12043e5 100644
+index 925488ab8..8d5664d59 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -18,6 +18,7 @@ top_srcdir=@top_srcdir@
- abs_top_srcdir=@abs_top_srcdir@
- abs_top_builddir=@abs_top_builddir@
+@@ -37,6 +37,7 @@ TEST_SHELL=@TEST_SHELL@
+ BUILDDIR=@abs_top_builddir@
+ SK_STANDALONE=@SK_STANDALONE@
  keydir=@keydir@
 +modulidir=@modulidir@
  
- DESTDIR=
- VPATH=@srcdir@
-@@ -187,8 +188,8 @@ PATHSUBS	= \
+ PATHS= -DSSHDIR=\"$(sysconfdir)\" \
+ 	-D_PATH_SSH_PROGRAM=\"$(SSH_PROGRAM)\" \
+@@ -203,8 +204,8 @@ PATHSUBS	= \
  	-e 's|/etc/ssh/ssh_host_rsa_key|$(keydir)/ssh_host_rsa_key|g' \
  	-e 's|/etc/ssh/ssh_host_ed25519_key|$(keydir)/ssh_host_ed25519_key|g' \
  	-e 's|/var/run/sshd.pid|$(piddir)/sshd.pid|g' \
@@ -37,7 +37,7 @@ index 4e5fa7f1a..df12043e5 100644
  	-e 's|/etc/ssh/sshrc|$(sysconfdir)/sshrc|g' \
  	-e 's|/usr/X11R6/bin/xauth|$(XAUTH_PATH)|g' \
  	-e 's|/var/empty|$(PRIVSEP_PATH)|g' \
-@@ -464,6 +465,8 @@ install-files:
+@@ -497,6 +498,8 @@ install-files:
  	$(INSTALL) -m 555 smf/method.sh $(SMFMETHODDIR)/sshd
  	$(INSTALL) -m 444 smf/manifest.xml $(SMFNETMANIDIR)/ssh.xml
  	mkdir -p $(DESTDIR)$(keydir)
@@ -46,7 +46,7 @@ index 4e5fa7f1a..df12043e5 100644
  
  install-sysconf:
  	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
-@@ -477,16 +480,6 @@ install-sysconf:
+@@ -510,16 +513,6 @@ install-sysconf:
  	else \
  		echo "$(DESTDIR)$(sysconfdir)/sshd_config already exists, install will not overwrite"; \
  	fi
@@ -64,10 +64,10 @@ index 4e5fa7f1a..df12043e5 100644
  host-key: ssh-keygen$(EXEEXT)
  	@if [ -z "$(DESTDIR)" ] ; then \
 diff --git a/configure.ac b/configure.ac
-index 4eb293d56..2b404b015 100644
+index 1d4c07a4e..25d57e7c2 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -5424,6 +5424,21 @@ AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
+@@ -5496,6 +5496,21 @@ AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
  	[Specify location of SSH host keys])
  AC_SUBST([keydir])
  
@@ -90,7 +90,7 @@ index 4eb293d56..2b404b015 100644
  dnl allow user to disable some login recording features
  AC_ARG_ENABLE([lastlog],
 diff --git a/dh.c b/dh.c
-index ce2eb4725..0b157d646 100644
+index 168dea1dd..7e9282548 100644
 --- a/dh.c
 +++ b/dh.c
 @@ -33,6 +33,7 @@
@@ -123,5 +123,5 @@ index ce2eb4725..0b157d646 100644
  
  static int
 -- 
-2.34.1
+2.48.1
 

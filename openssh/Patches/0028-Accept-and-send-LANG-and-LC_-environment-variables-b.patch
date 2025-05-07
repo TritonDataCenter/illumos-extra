@@ -1,16 +1,24 @@
-From baeb17eb76772a2dbbcc4d52a22ddfc405276db1 Mon Sep 17 00:00:00 2001
+From 5b7045f4915a54f723169505b32de210c7a923b7 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 4 Sep 2015 11:04:30 -0700
-Subject: [PATCH 29/34] Accept LANG and LC_* environment variables from clients
+Subject: [PATCH 26/34] Accept LANG and LC_* environment variables from clients
  by default
 
 This preserves most of the old SunSSH locale negotiation
 behaviour (at least the parts that are most commonly used).
+---
+ servconf.c    | 30 ++++++++++++++++++++++++++++++
+ servconf.h    |  1 +
+ session.c     | 25 +++++++++++++++++++++++--
+ sshd_config   |  4 ++++
+ sshd_config.5 | 15 ++++++++++++++-
+ 5 files changed, 72 insertions(+), 3 deletions(-)
 
-diff -ru a/servconf.c b/servconf.c
---- a/servconf.c	Mon Dec  9 08:28:23 2024
-+++ b/servconf.c	Mon Dec  9 08:28:47 2024
-@@ -201,6 +201,7 @@
+diff --git a/servconf.c b/servconf.c
+index 42e1b4b06..6a98accbd 100644
+--- a/servconf.c
++++ b/servconf.c
+@@ -202,6 +202,7 @@ initialize_server_options(ServerOptions *options)
  	options->client_alive_count_max = -1;
  	options->num_authkeys_files = 0;
  	options->num_accept_env = 0;
@@ -18,7 +26,7 @@ diff -ru a/servconf.c b/servconf.c
  	options->num_setenv = 0;
  	options->permit_tun = -1;
  	options->permitted_opens = NULL;
-@@ -544,6 +545,32 @@
+@@ -546,6 +547,32 @@ fill_default_server_options(ServerOptions *options)
  		options->max_sessions = DEFAULT_SESSIONS_MAX;
  	if (options->use_dns == -1)
  		options->use_dns = 0;
@@ -51,7 +59,7 @@ diff -ru a/servconf.c b/servconf.c
  	if (options->client_alive_interval == -1)
  		options->client_alive_interval = 0;
  	if (options->client_alive_count_max == -1)
-@@ -2358,9 +2385,12 @@
+@@ -2402,9 +2429,12 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  			if (*arg == '\0' || strchr(arg, '=') != NULL)
  				fatal("%s line %d: Invalid environment name.",
  				    filename, linenum);
@@ -64,10 +72,11 @@ diff -ru a/servconf.c b/servconf.c
  			opt_array_append(filename, linenum, keyword,
  			    &options->accept_env, &options->num_accept_env,
  			    arg);
-diff -ru a/servconf.h b/servconf.h
---- a/servconf.h	Mon Dec  9 08:28:19 2024
-+++ b/servconf.h	Mon Dec  9 08:28:47 2024
-@@ -182,6 +182,7 @@
+diff --git a/servconf.h b/servconf.h
+index 3f19b91d0..4c4a8a79f 100644
+--- a/servconf.h
++++ b/servconf.h
+@@ -182,6 +182,7 @@ typedef struct {
  	char   **subsystem_args;
  
  	u_int num_accept_env;
@@ -75,13 +84,15 @@ diff -ru a/servconf.h b/servconf.h
  	char   **accept_env;
  	u_int num_setenv;
  	char   **setenv;
-diff -ru a/session.c b/session.c
---- a/session.c	Mon Dec  9 08:28:19 2024
-+++ b/session.c	Mon Dec  9 08:31:22 2024
-@@ -831,6 +831,18 @@
+diff --git a/session.c b/session.c
+index 2ef4804f3..cb2a8b6be 100644
+--- a/session.c
++++ b/session.c
+@@ -830,6 +830,18 @@ check_quietlogin(Session *s, const char *command)
+ 	return 0;
  }
  
- /*
++/*
 + * If the given environment variable is set in the daemon's environment,
 + * push it into the new child as well. If it is unset, do nothing.
 + */
@@ -93,11 +104,10 @@ diff -ru a/session.c b/session.c
 +		child_set_env(envp, envsizep, name, value);
 +}
 +
-+/*
+ /*
   * Reads environment variables from the given file and adds/overrides them
   * into the environment.  If the file does not exist, this does nothing.
-  * Otherwise, it must consist of empty lines, comments (line starts with '#')
-@@ -1014,6 +1026,16 @@
+@@ -1014,6 +1026,16 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
  	ssh_gssapi_do_child(&env, &envsize);
  #endif
  
@@ -114,7 +124,7 @@ diff -ru a/session.c b/session.c
  	/* Set basic environment. */
  	for (i = 0; i < s->num_env; i++)
  		child_set_env(&env, &envsize, s->env[i].name, s->env[i].val);
-@@ -1057,8 +1079,7 @@
+@@ -1057,8 +1079,7 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
  	/* Normal systems set SHELL by default. */
  	child_set_env(&env, &envsize, "SHELL", shell);
  
@@ -124,10 +134,11 @@ diff -ru a/session.c b/session.c
  
  #ifdef PER_SESSION_XAUTHFILE
          if (s->auth_file != NULL)
-diff -ru a/sshd_config b/sshd_config
---- a/sshd_config	Mon Dec  9 08:28:21 2024
-+++ b/sshd_config	Mon Dec  9 08:28:47 2024
-@@ -26,6 +26,10 @@
+diff --git a/sshd_config b/sshd_config
+index 9c7ebe3b7..8e7a3bc4d 100644
+--- a/sshd_config
++++ b/sshd_config
+@@ -26,6 +26,10 @@ Port 22
  SyslogFacility AUTH
  LogLevel INFO
  
@@ -138,10 +149,11 @@ diff -ru a/sshd_config b/sshd_config
  # Authentication:
  
  #LoginGraceTime 2m
-diff -ru a/sshd_config.5 b/sshd_config.5
---- a/sshd_config.5	Mon Dec  9 08:28:23 2024
-+++ b/sshd_config.5	Mon Dec  9 08:28:47 2024
-@@ -86,7 +86,20 @@
+diff --git a/sshd_config.5 b/sshd_config.5
+index c6cfdeb2c..2d92287da 100644
+--- a/sshd_config.5
++++ b/sshd_config.5
+@@ -86,7 +86,20 @@ directives.
  Be warned that some environment variables could be used to bypass restricted
  user environments.
  For this reason, care should be taken in the use of this directive.
@@ -163,3 +175,6 @@ diff -ru a/sshd_config.5 b/sshd_config.5
  .It Cm AddressFamily
  Specifies which address family should be used by
  .Xr sshd 8 .
+-- 
+2.48.1
+

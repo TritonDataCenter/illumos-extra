@@ -1,7 +1,7 @@
-From 43f1720bbf6770adc72a203681dc61def3c1aef6 Mon Sep 17 00:00:00 2001
-From: Alex Wilson <alex.wilson@joyent.com>
-Date: Wed, 16 Sep 2015 10:54:13 -0700
-Subject: [PATCH 28/33] Restore tcpwrappers/libwrap support
+From 8ba73d88b674c8219e28209ea347d9ef32c0419b Mon Sep 17 00:00:00 2001
+From: Dan McDonald <danmcd@mnx.io>
+Date: Wed, 7 May 2025 13:44:40 -0400
+Subject: [PATCH 28/34] [PATCH 28/33] Restore tcpwrappers/libwrap support
 
 This reverts commit f9696566fb41320820f3b257ab564fa321bb3751
 and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
@@ -12,10 +12,10 @@ and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
  3 files changed, 93 insertions(+)
 
 diff --git a/configure.ac b/configure.ac
-index 896ba9003..4eb293d56 100644
+index c4da9e659..1d4c07a4e 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1672,6 +1672,62 @@ else
+@@ -1706,6 +1706,62 @@ else
  	AC_MSG_RESULT([no])
  fi
  
@@ -78,7 +78,7 @@ index 896ba9003..4eb293d56 100644
  # Check whether user wants to use ldns
  LDNS_MSG="no"
  AC_ARG_WITH(ldns,
-@@ -5723,6 +5779,7 @@ echo "                       PAM support: $PAM_MSG"
+@@ -5795,6 +5851,7 @@ echo "                       PAM support: $PAM_MSG"
  echo "                   OSF SIA support: $SIA_MSG"
  echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
@@ -87,10 +87,10 @@ index 896ba9003..4eb293d56 100644
  echo "                   libldns support: $LDNS_MSG"
  echo "  Solaris process contract support: $SPC_MSG"
 diff --git a/sshd-session.c b/sshd-session.c
-index 423e2c64b..25fec4a47 100644
+index e276081e9..df4cdb330 100644
 --- a/sshd-session.c
 +++ b/sshd-session.c
-@@ -110,6 +110,17 @@
+@@ -109,6 +109,17 @@
  #include "srclimit.h"
  #include "dh.h"
  
@@ -107,8 +107,8 @@ index 423e2c64b..25fec4a47 100644
 +
  /* Re-exec fds */
  #define REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
- #define REEXEC_STARTUP_PIPE_FD		(STDERR_FILENO + 2)
-@@ -1282,6 +1293,24 @@ main(int ac, char **av)
+ #define REEXEC_CONFIG_PASS_FD		(STDERR_FILENO + 2)
+@@ -1237,6 +1248,24 @@ main(int ac, char **av)
  #ifdef SSH_AUDIT_EVENTS
  	audit_connection_from(ssh, remote_ip, remote_port);
  #endif
@@ -159,5 +159,5 @@ index 1fa15ef17..2d87447c7 100644
  .Xr moduli 5 ,
  .Xr sshd_config 5 ,
 -- 
-2.34.1
+2.48.1
 

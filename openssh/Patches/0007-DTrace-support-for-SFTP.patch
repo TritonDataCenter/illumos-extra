@@ -1,7 +1,7 @@
-From 835177b5bd7330749f8ebec6d2be5238106cdba6 Mon Sep 17 00:00:00 2001
-From: oracle <solaris@oracle.com>
-Date: Mon, 3 Aug 2015 14:35:43 -0700
-Subject: [PATCH 06/33] DTrace support for SFTP
+From a0db7cefdd05d7bf9d283aa61c5487e29d294579 Mon Sep 17 00:00:00 2001
+From: Dan McDonald <danmcd@mnx.io>
+Date: Wed, 7 May 2025 13:15:28 -0400
+Subject: [PATCH 06/34] [PATCH 06/33] DTrace support for SFTP
 
 ---
  Makefile.in          | 22 +++++++++++--
@@ -15,18 +15,18 @@ Subject: [PATCH 06/33] DTrace support for SFTP
  create mode 100644 sftp_provider_impl.h
 
 diff --git a/Makefile.in b/Makefile.in
-index 090ca48cd..5dabd5e94 100644
+index 20bca9fa6..69ee1421a 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -27,6 +27,7 @@ SSH_KEYSIGN=$(libexecdir)/ssh-keysign
- SSHD_SESSION=$(libexecdir)/sshd-session
+@@ -27,6 +27,7 @@ SSHD_SESSION=$(libexecdir)/sshd-session
+ SSHD_AUTH=$(libexecdir)/sshd-auth
  SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
  SSH_SK_HELPER=$(libexecdir)/ssh-sk-helper
 +ROOTDLIBDIR64=$(DESTDIR)/usr/lib/dtrace/64
  PRIVSEP_PATH=@PRIVSEP_PATH@
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
-@@ -105,6 +106,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
+@@ -108,6 +109,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
  	monitor_fdpass.o rijndael.o ssh-dss.o ssh-ecdsa.o ssh-ecdsa-sk.o \
  	ssh-ed25519-sk.o ssh-rsa.o dh.o \
  	msg.o progressmeter.o dns.o entropy.o gss-genr.o umac.o umac128.o \
@@ -35,15 +35,15 @@ index 090ca48cd..5dabd5e94 100644
  	poly1305.o chacha.o cipher-chachapoly.o cipher-chachapoly-libcrypto.o \
  	ssh-ed25519.o digest-openssl.o digest-libc.o \
 @@ -139,7 +141,7 @@ SSHD_SESSION_OBJS=sshd-session.o auth-rhosts.o auth-passwd.o \
- 	sftp-server.o sftp-common.o \
- 	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
- 	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-pledge.o \
--	sandbox-solaris.o uidswap.o $(SKOBJS)
-+	sandbox-solaris.o uidswap.o sftp_provider.o $(SKOBJS)
+ 	monitor.o monitor_wrap.o auth-krb5.o \
+ 	auth2-gss.o gss-serv.o gss-serv-krb5.o \
+ 	loginrec.o auth-pam.o auth-shadow.o auth-sia.o \
+-	sftp-server.o sftp-common.o \
++	sftp-server.o sftp-common.o sftp_provider.o \
+ 	uidswap.o platform-listen.o $(SKOBJS)
  
- SFTP_CLIENT_OBJS=sftp-common.o sftp-client.o sftp-glob.o
- 
-@@ -159,7 +161,7 @@ SKHELPER_OBJS=	ssh-sk-helper.o ssh-sk.o sk-usbhid.o
+ SSHD_AUTH_OBJS=sshd-auth.o \
+@@ -175,7 +177,7 @@ SKHELPER_OBJS=	ssh-sk-helper.o ssh-sk.o sk-usbhid.o
  
  SSHKEYSCAN_OBJS=ssh-keyscan.o $(SKOBJS)
  
@@ -52,7 +52,7 @@ index 090ca48cd..5dabd5e94 100644
  
  SFTP_OBJS=	sftp.o sftp-usergroup.o progressmeter.o $(SFTP_CLIENT_OBJS)
  
-@@ -275,9 +277,22 @@ $(CONFIGFILES): $(CONFIGFILES_IN)
+@@ -304,9 +306,22 @@ $(CONFIGFILES): $(CONFIGFILES_IN) Makefile
  moduli:
  	echo
  
@@ -76,7 +76,7 @@ index 090ca48cd..5dabd5e94 100644
  	rm -f regress/check-perm$(EXEEXT)
  	rm -f regress/mkdtemp$(EXEEXT)
  	rm -f regress/unittests/test_helper/*.a
-@@ -440,6 +455,7 @@ install-files:
+@@ -473,6 +488,7 @@ install-files:
  	$(INSTALL) -m 644 ssh-keysign.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
  	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
  	$(INSTALL) -m 644 ssh-sk-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8
@@ -365,5 +365,5 @@ index 000000000..4b18e6ec5
 +
 +#endif /* _SFTP_PROVIDER_IMPL_H */
 -- 
-2.34.1
+2.48.1
 
