@@ -1,7 +1,7 @@
-From dc61a062515cac69ddcaec83c2455a2f186c1a1c Mon Sep 17 00:00:00 2001
+From d63560b1e7426f22948299b06f3c54660c9ad75c Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:31:53 -0700
-Subject: [PATCH 01/33] Skip config check
+Subject: [PATCH 01/34] Skip config check
 
 #
 # This change is to remove some misleading error messages when running
@@ -15,10 +15,10 @@ Subject: [PATCH 01/33] Skip config check
  1 file changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 4243006b0..090ca48cd 100644
+index 4617cebcd..20bca9fa6 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -393,7 +393,16 @@ install-nokeys: $(CONFIGFILES) $(MANPAGES) $(TARGETS) install-files install-sysc
+@@ -425,7 +425,16 @@ install-nokeys: $(CONFIGFILES) $(MANPAGES) $(TARGETS) install-files install-sysc
  install-nosysconf: $(CONFIGFILES) $(MANPAGES) $(TARGETS) install-files
  
  check-config:
@@ -37,5 +37,5 @@ index 4243006b0..090ca48cd 100644
  install-files:
  	$(MKDIR_P) $(DESTDIR)$(bindir)
 -- 
-2.34.1
+2.48.1
 

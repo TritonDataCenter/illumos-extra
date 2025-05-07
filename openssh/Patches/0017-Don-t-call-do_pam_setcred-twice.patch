@@ -1,7 +1,7 @@
-From 435f58edd160074197671d94dff34df4894929eb Mon Sep 17 00:00:00 2001
+From 6b83a854a349260a1b50110e68112bea2b2f71ab Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:38:41 -0700
-Subject: [PATCH 16/33] Don't call do_pam_setcred twice
+Subject: [PATCH 16/34] Don't call do_pam_setcred twice
 
 # This issue has been raised with the upstream OpenSSH community:
 #
@@ -43,5 +43,5 @@ index 4c4fe57ea..8cc3a154c 100644
  	 * PAM credentials may take the form of supplementary groups.
  	 * These will have been wiped by the above initgroups() call.
 -- 
-2.34.1
+2.48.1
 

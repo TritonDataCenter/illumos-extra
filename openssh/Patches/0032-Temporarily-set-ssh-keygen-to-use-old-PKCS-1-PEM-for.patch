@@ -1,7 +1,7 @@
-From dffd8ba48a20745efd87e652c972db40c5bc5cfe Mon Sep 17 00:00:00 2001
+From 94d766bb4c96d99a238c10845320d0b583701e75 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Tue, 16 Jul 2019 13:43:14 -0700
-Subject: [PATCH 30/33] Temporarily set ssh-keygen to use old PKCS#1 PEM format
+Subject: [PATCH 30/34] Temporarily set ssh-keygen to use old PKCS#1 PEM format
 
 SDC and its users have a lot of scripts and tools which expect
 ssh-keygen to produce the old private key format.
@@ -16,7 +16,7 @@ to the new format, otherwise old.
  2 files changed, 33 insertions(+), 10 deletions(-)
 
 diff --git a/ssh-keygen.1 b/ssh-keygen.1
-index 06f0555a4..b3fdca441 100644
+index 00246a861..d8b594d66 100644
 --- a/ssh-keygen.1
 +++ b/ssh-keygen.1
 @@ -279,12 +279,12 @@ If
@@ -73,7 +73,7 @@ index 06f0555a4..b3fdca441 100644
  Provides the (old) passphrase.
  .It Fl p
 diff --git a/ssh-keygen.c b/ssh-keygen.c
-index f7fc88d45..3333c9f65 100644
+index 8060e104d..efe3f984d 100644
 --- a/ssh-keygen.c
 +++ b/ssh-keygen.c
 @@ -157,7 +157,8 @@ static char *pkcs11provider = NULL;
@@ -108,7 +108,7 @@ index f7fc88d45..3333c9f65 100644
  	if (private->type != KEY_ED25519 && private->type != KEY_XMSS &&
  	    private_key_format != SSHKEY_PRIVATE_OPENSSH) {
  		error("Comments are only supported for keys stored in "
-@@ -3487,11 +3496,13 @@ main(int argc, char **argv)
+@@ -3491,11 +3500,13 @@ main(int argc, char **argv)
  			if (strcasecmp(optarg, "PKCS8") == 0) {
  				convert_format = FMT_PKCS8;
  				private_key_format = SSHKEY_PRIVATE_PKCS8;
@@ -122,7 +122,7 @@ index f7fc88d45..3333c9f65 100644
  				break;
  			}
  			fatal("Unsupported conversion format \"%s\"", optarg);
-@@ -3499,7 +3510,8 @@ main(int argc, char **argv)
+@@ -3503,7 +3514,8 @@ main(int argc, char **argv)
  			cert_principals = optarg;
  			break;
  		case 'o':
@@ -132,7 +132,7 @@ index f7fc88d45..3333c9f65 100644
  			break;
  		case 'p':
  			change_passphrase = 1;
-@@ -3968,6 +3980,10 @@ main(int argc, char **argv)
+@@ -3972,6 +3984,10 @@ main(int argc, char **argv)
  		snprintf(comment, sizeof comment, "%s@%s", pw->pw_name, hostname);
  	}
  
@@ -144,5 +144,5 @@ index f7fc88d45..3333c9f65 100644
  	if ((r = sshkey_save_private(private, identity_file, passphrase,
  	    comment, private_key_format, openssh_format_cipher, rounds)) != 0) {
 -- 
-2.34.1
+2.48.1
 

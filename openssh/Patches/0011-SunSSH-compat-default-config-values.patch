@@ -1,7 +1,7 @@
-From 8fdcb97e916d26d115483162e1f76c39bf424345 Mon Sep 17 00:00:00 2001
+From 49866312a7fd79ec313bc3a8e8cae7808e8ee732 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:22 -0700
-Subject: [PATCH 10/33] SunSSH compat default config values
+Subject: [PATCH 10/34] SunSSH compat default config values
 
 Some options in OpenSSH have different default values from those in SunSSH.
 To make the transition smoother from SunSSH to OpenSSH, we change default
@@ -21,10 +21,10 @@ upstream.
  4 files changed, 25 insertions(+), 6 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
-index 3b5d9886c..01e123c4a 100644
+index 96c62745b..2be99b8ae 100644
 --- a/readconf.c
 +++ b/readconf.c
-@@ -2756,7 +2756,11 @@ fill_default_options(Options * options)
+@@ -2843,7 +2843,11 @@ fill_default_options(Options * options)
  	if (options->forward_x11 == -1)
  		options->forward_x11 = 0;
  	if (options->forward_x11_trusted == -1)
@@ -36,7 +36,7 @@ index 3b5d9886c..01e123c4a 100644
  	if (options->forward_x11_timeout == -1)
  		options->forward_x11_timeout = 1200;
  	/*
-@@ -2783,7 +2787,11 @@ fill_default_options(Options * options)
+@@ -2870,7 +2874,11 @@ fill_default_options(Options * options)
  	if (options->pubkey_authentication == -1)
  		options->pubkey_authentication = SSH_PUBKEY_AUTH_ALL;
  	if (options->gss_authentication == -1)
@@ -49,10 +49,10 @@ index 3b5d9886c..01e123c4a 100644
  		options->gss_deleg_creds = 0;
  	if (options->password_authentication == -1)
 diff --git a/servconf.c b/servconf.c
-index ee5b88fde..a0ee8d186 100644
+index 01c02851f..034dce316 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -363,7 +363,11 @@ fill_default_server_options(ServerOptions *options)
+@@ -365,7 +365,11 @@ fill_default_server_options(ServerOptions *options)
  	if (options->print_lastlog == -1)
  		options->print_lastlog = 1;
  	if (options->x11_forwarding == -1)
@@ -64,7 +64,7 @@ index ee5b88fde..a0ee8d186 100644
  	if (options->x11_display_offset == -1)
  		options->x11_display_offset = 10;
  	if (options->x11_use_localhost == -1)
-@@ -399,7 +403,11 @@ fill_default_server_options(ServerOptions *options)
+@@ -401,7 +405,11 @@ fill_default_server_options(ServerOptions *options)
  	if (options->kerberos_get_afs_token == -1)
  		options->kerberos_get_afs_token = 0;
  	if (options->gss_authentication == -1)
@@ -77,10 +77,10 @@ index ee5b88fde..a0ee8d186 100644
  		options->gss_cleanup_creds = 1;
  	if (options->gss_strict_acceptor == -1)
 diff --git a/ssh_config.5 b/ssh_config.5
-index fad544d0a..790a526a7 100644
+index f35ee6eed..8a0b67308 100644
 --- a/ssh_config.5
 +++ b/ssh_config.5
-@@ -918,6 +918,9 @@ Furthermore, the
+@@ -956,6 +956,9 @@ Furthermore, the
  token used for the session will be set to expire after 20 minutes.
  Remote clients will be refused access after this time.
  .Pp
@@ -90,7 +90,7 @@ index fad544d0a..790a526a7 100644
  See the X11 SECURITY extension specification for full details on
  the restrictions imposed on untrusted clients.
  .It Cm GatewayPorts
-@@ -944,8 +947,8 @@ The default is
+@@ -982,8 +985,8 @@ The default is
  .Pa /etc/ssh/ssh_known_hosts2 .
  .It Cm GSSAPIAuthentication
  Specifies whether user authentication based on GSSAPI is allowed.
@@ -102,7 +102,7 @@ index fad544d0a..790a526a7 100644
  Forward (delegate) credentials to the server.
  The default is
 diff --git a/sshd_config.5 b/sshd_config.5
-index a5d7381d4..f522960d7 100644
+index 550d3b01d..a6f6d2f11 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
 @@ -732,8 +732,8 @@ The default is
@@ -116,7 +116,7 @@ index a5d7381d4..f522960d7 100644
  .It Cm GSSAPICleanupCredentials
  Specifies whether to automatically destroy the user's credentials cache
  on logout.
-@@ -2062,8 +2062,8 @@ The argument must be
+@@ -2074,8 +2074,8 @@ The argument must be
  .Cm yes
  or
  .Cm no .
@@ -128,5 +128,5 @@ index a5d7381d4..f522960d7 100644
  When X11 forwarding is enabled, there may be additional exposure to
  the server and to client displays if the
 -- 
-2.34.1
+2.48.1
 
