@@ -1,19 +1,19 @@
-From 92e7125cedf431c84ea27e3a1b892588a9c9b18d Mon Sep 17 00:00:00 2001
-From: Alex Wilson <alex.wilson@joyent.com>
-Date: Wed, 5 Aug 2015 12:25:15 -0700
-Subject: [PATCH 20/33] Try to create privsep chroot dir if it doesn't exist
- yet
+From 616d099d76aa8cee478eb8f0f43fc00f902de6f7 Mon Sep 17 00:00:00 2001
+From: Dan McDonald <danmcd@mnx.io>
+Date: Wed, 7 May 2025 13:27:36 -0400
+Subject: [PATCH 20/34] [PATCH 20/33] Try to create privsep chroot dir if it
+ doesn't exist yet
 
 ---
- sshd-session.c | 26 ++++++++++++++++++++++++++
+ sshd-auth.c | 26 ++++++++++++++++++++++++++
  1 file changed, 26 insertions(+)
 
-diff --git a/sshd-session.c b/sshd-session.c
-index fe0152ed1..423e2c64b 100644
---- a/sshd-session.c
-+++ b/sshd-session.c
-@@ -303,6 +303,32 @@ privsep_preauth_child(void)
- 
+diff --git a/sshd-auth.c b/sshd-auth.c
+index 30eecd8a4..4af0249d9 100644
+--- a/sshd-auth.c
++++ b/sshd-auth.c
+@@ -189,6 +189,32 @@ privsep_child_demote(void)
+ #endif
  	/* Demote the child */
  	if (privsep_chroot) {
 +		struct stat st;
@@ -46,5 +46,5 @@ index fe0152ed1..423e2c64b 100644
  		if (chroot(_PATH_PRIVSEP_CHROOT_DIR) == -1)
  			fatal("chroot(\"%s\"): %s", _PATH_PRIVSEP_CHROOT_DIR,
 -- 
-2.34.1
+2.48.1
 
