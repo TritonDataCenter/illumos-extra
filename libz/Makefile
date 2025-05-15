@@ -20,10 +20,10 @@
 #
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
-# Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2022 Joyent, Inc.
 #
 
-VER =	zlib-1.2.3
+VER =	zlib-1.2.12
 
 include ../Makefile.defs
 
@@ -41,6 +41,10 @@ AUTOCONF_LDFLAGS.64 =
 
 AUTOCONF_CC =		CC="$(GCC.32) $(CPPFLAGS)"
 AUTOCONF_CC.64 =	CC="$(GCC.64) $(CPPFLAGS)"
+
+# And with 1.2.12, zlib needs even more help.
+
+PATCHES = Patches/*
 
 #
 # LDFLAGS is used by zlib's build system to build programs, not the library
