@@ -69,8 +69,8 @@ ifeq ($(STRAP),strap)
 	LDSHARED_FLAGS.64 += $(SYSLIBDIRS:%=-R$(DESTDIR)/%/64)
 endif
 
-LDFLAGS +=	-L. -lz -lc
-LDFLAGS.64 +=	-L. -lz -lc
+LDFLAGS +=	-L. -lc
+LDFLAGS.64 +=	-L. -lc
 
 OVERRIDES = \
 	LDSHARED="$(GCC.32) $(LDSHARED_FLAGS.32) $(LDSHARED_LIBS)" \
