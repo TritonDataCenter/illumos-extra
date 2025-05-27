@@ -21,9 +21,10 @@
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 # Copyright (c) 2013, Joyent, Inc.  All rights reserved.
+# Copyright 2025 MNX Cloud, Inc.
 #
 
-VER =	libxml2-2.7.6
+VER =	libxml2-2.13.8
 
 include ../Makefile.defs
 
@@ -50,7 +51,7 @@ AUTOCONF_OPTS += \
 	--without-python \
 	--enable-symbol-versioning=$(BASE)/mapfile
 
-PATCHES =	Patches/*
+#PATCHES =	Patches/*
 
 include ../Makefile.targ
 

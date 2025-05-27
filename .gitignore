@@ -41,8 +41,8 @@
 /libexpat/expat-2.7.1-64*
 /libidn/libidn-1.11-32*
 /libidn2/libidn2-2.3.4-32
-/libxml/libxml2-2.7.6-32*
-/libxml/libxml2-2.7.6-64*
+/libxml/libxml2-2.13.8-32*
+/libxml/libxml2-2.13.8-64*
 /libz/zlib-1.2.3-32*
 /libz/zlib-1.2.3-64*
 /make/.unpack32
