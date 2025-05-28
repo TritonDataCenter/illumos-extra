@@ -49,6 +49,7 @@ CPPFLAGS +=	\
 AUTOCONF_OPTS += \
 	--with-threads \
 	--without-python \
+	--with-legacy \
 	--enable-symbol-versioning=$(BASE)/mapfile
 
 #PATCHES =	Patches/*
