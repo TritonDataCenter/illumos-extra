@@ -28,29 +28,39 @@ VER =	libxml2-2.13.8
 
 include ../Makefile.defs
 
+#
+# libxml's configure is special, and it breaks horribly if this
+# stuff is set.
+#
+AUTOCONF_CFLAGS =
+AUTOCONF_CFLAGS.64 =
+AUTOCONF_LDFLAGS =
+AUTOCONF_LDFLAGS.64 =
+
+AUTOCONF_CC =		CC="$(GCC.32) $(CPPFLAGS)"
+AUTOCONF_CC.64 =	CC="$(GCC.64) $(CPPFLAGS)"
+
+
+# Uggh, will this work?!?
+FROB_SENTINEL.32 = (cd $(VER.32); env - PATH=$(PATH) autoreconf -fi)
+FROB_SENTINEL.64 = (cd $(VER.64); env - PATH=$(PATH) autoreconf -fi)
+
 BUILD64 =	yes
 
-LIBXML2_LDFLAGS = \
-	-Wl,-zdefs \
-	-Wl,-ztext \
-	-Wl,-zcombreloc
+LIBXML2_LDFLAGS =  -Wl,-zdefs -Wl,-ztext -Wl,-zcombreloc -M ../mapfile
 
 LDFLAGS +=	$(LIBXML2_LDFLAGS)
 LDFLAGS.64 +=	$(LIBXML2_LDFLAGS)
 
-LIBS +=	\
-	-lpthread \
-	-lc
+LIBS +=	-lpthread -lc
 
-CPPFLAGS +=	\
-	-D_FILE_OFFSET_BITS=64 \
-	-D_LARGEFILE_SOURCE
+CPPFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 
 AUTOCONF_OPTS += \
 	--with-threads \
 	--without-python \
 	--with-legacy \
-	--enable-symbol-versioning=$(BASE)/mapfile
+	--with-aix-soname=svr4
 
 #PATCHES =	Patches/*
 

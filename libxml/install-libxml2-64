@@ -40,6 +40,7 @@ source ../install.subr
 mkdir -p $PREFIX
 mkdir -p $LIBDIR
 mkdir -p $ROOTLIBDIR
+mkdir -p $BINDIR
 
 cd ${VERS}
 
@@ -47,5 +48,8 @@ _install D .libs/libxml2.so ${ROOTLIBDIR}/libxml2.so.2 555
 _install L ../../../lib/amd64/libxml2.so.2 ${LIBDIR}/libxml2.so.2
 _install L libxml2.so.2 ${ROOTLIBDIR}/libxml2.so
 _install L libxml2.so.2 ${LIBDIR}/libxml2.so
+
+_install E .libs/xmlcatalog ${BINDIR}/xmlcatalog 555
+_install E .libs/xmllint ${BINDIR}/xmllint 555
 
 exit 0
