@@ -34,6 +34,7 @@ VERS=${1}
 PREFIX=${DESTDIR}/usr
 LIBDIR=${PREFIX}/lib/amd64
 ROOTLIBDIR=${DESTDIR}/lib/amd64
+BINDIR=${PREFIX}/bin
 
 source ../install.subr
 

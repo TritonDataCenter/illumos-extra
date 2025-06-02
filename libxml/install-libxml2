@@ -64,7 +64,6 @@ _install N doc/xmlcatalog.1 ${MANDIR}/xmlcatalog.1 555
 cd include/libxml
 
 for i in \
-	DOCBparser.h	\
 	HTMLparser.h	\
 	HTMLtree.h	\
 	SAX.h		\
