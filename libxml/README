@@ -1,0 +1,14 @@
+Starting with 2.13.8, we're pulling source tarfiles from the GNOME project's
+
+	https://gitlab.gnome.org/GNOME/libxml2/-/releases
+
+We're pulling the .tar.gz file from the appropriate release, and running a
+full `autoreconf -fi` on it. This matches what other illumos distros do, and
+even in the strap build it works.
+
+Because we're pulling it from their gitlab, we're using their git tag v2.13.8
+in VER.  The official releases have autoconf already run, and decompress
+bigger than the source-only tarfiles we pull from the above site.
+
+If the source of tarfiles changes, or other tarfile-related changes occur,
+this README should be updated.

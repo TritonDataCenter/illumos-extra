@@ -24,7 +24,7 @@
 # Copyright 2025 MNX Cloud, Inc.
 #
 
-VER =	libxml2-2.13.8
+VER =	libxml2-v2.13.8
 
 include ../Makefile.defs
 
