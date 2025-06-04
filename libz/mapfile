@@ -3,6 +3,7 @@ SMARTOS_0.1 {
 	gzopen64 ;
 	gzseek64 ;
 	gztell64 ;
+	inflateReset2 ;
 } SUNW_1.2;
 
 SUNW_1.2 {
