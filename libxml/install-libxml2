@@ -25,6 +25,7 @@
 # Use is subject to license terms.
 #
 # Copyright (c) 2011 Joyent Inc., All rights reserved.
+# Copyright 2025 MNX Cloud, Inc.
 #
 
 set -o errexit

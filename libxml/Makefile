@@ -29,8 +29,8 @@ VER =	libxml2-v2.13.8
 include ../Makefile.defs
 
 #
-# libxml's configure is special, and it breaks horribly if this
-# stuff is set.
+# libxml's configure, derived from a run of autoconf breaks horribly if these
+# variables are set to anything.
 #
 AUTOCONF_CFLAGS =
 AUTOCONF_CFLAGS.64 =
@@ -41,7 +41,10 @@ AUTOCONF_CC =		CC="$(GCC.32) $(CPPFLAGS)"
 AUTOCONF_CC.64 =	CC="$(GCC.64) $(CPPFLAGS)"
 
 
-# Uggh, will this work?!?
+#
+# Use the FROB_SENTINEL to run autoreconf, which is why the AUTOCONF_*FLAGS*
+# here are blanked out..
+#
 FROB_SENTINEL.32 = (cd $(VER.32); env - PATH=$(PATH) autoreconf -fi)
 FROB_SENTINEL.64 = (cd $(VER.64); env - PATH=$(PATH) autoreconf -fi)
 
