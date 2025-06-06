@@ -21,9 +21,10 @@
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 # Copyright (c) 2012, Joyent, Inc.  All rights reserved.
+# Copyright 2025 MNX Cloud, Inc.
 #
 
-VER =	zlib-1.2.3
+VER =	zlib-1.3.1
 
 include ../Makefile.defs
 
@@ -68,8 +69,8 @@ ifeq ($(STRAP),strap)
 	LDSHARED_FLAGS.64 += $(SYSLIBDIRS:%=-R$(DESTDIR)/%/64)
 endif
 
-LDFLAGS +=	-L. -lz -lc
-LDFLAGS.64 +=	-L. -lz -lc
+LDFLAGS +=	-L. -lc
+LDFLAGS.64 +=	-L. -lc
 
 OVERRIDES = \
 	LDSHARED="$(GCC.32) $(LDSHARED_FLAGS.32) $(LDSHARED_LIBS)" \

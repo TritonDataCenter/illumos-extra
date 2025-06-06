@@ -25,6 +25,7 @@
 # Use is subject to license terms.
 #
 # Copyright (c) 2011 Joyent Inc., All rights reserved.
+# Copyright 2025 MNX Cloud, Inc.
 #
 
 set -o errexit
@@ -35,7 +36,6 @@ PREFIX=${DESTDIR}/usr
 LIBDIR=${PREFIX}/lib
 ROOTLIBDIR=${DESTDIR}/lib
 INCDIR=${PREFIX}/include/libxml2/libxml
-BINDIR=${PREFIX}/bin
 SHAREDIR=${PREFIX}/share
 MANDIR=${PREFIX}/share/man/man1
 ACLOCALDIR=${SHAREDIR}/aclocal
@@ -44,7 +44,6 @@ mkdir -p $PREFIX
 mkdir -p $LIBDIR
 mkdir -p $ROOTLIBDIR
 mkdir -p $INCDIR
-mkdir -p $BINDIR
 mkdir -p $SHAREDIR
 mkdir -p $MANDIR
 mkdir -p $ACLOCALDIR
@@ -58,20 +57,14 @@ _install L ../../lib/libxml2.so.2 ${LIBDIR}/libxml2.so.2
 _install L libxml2.so.2 ${ROOTLIBDIR}/libxml2.so
 _install L libxml2.so.2 ${LIBDIR}/libxml2.so
 
-_install E .libs/xmlcatalog ${BINDIR}/xmlcatalog 555
-_install S xml2-config ${BINDIR}/xml2-config 555
-_install E .libs/xmllint ${BINDIR}/xmllint 555
-
 _install N libxml.m4 ${ACLOCALDIR}/libxml.m4 444
 
-_install N xml2-config.1 ${MANDIR}/xml2-config.1 555
 _install N doc/xmllint.1 ${MANDIR}/xmllint.1 555
 _install N doc/xmlcatalog.1 ${MANDIR}/xmlcatalog.1 555
 
 cd include/libxml
 
 for i in \
-	DOCBparser.h	\
 	HTMLparser.h	\
 	HTMLtree.h	\
 	SAX.h		\

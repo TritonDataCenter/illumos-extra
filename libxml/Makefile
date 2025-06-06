@@ -21,36 +21,51 @@
 # Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 # Copyright (c) 2013, Joyent, Inc.  All rights reserved.
+# Copyright 2025 MNX Cloud, Inc.
 #
 
-VER =	libxml2-2.7.6
+VER =	libxml2-v2.13.8
 
 include ../Makefile.defs
 
+#
+# libxml's configure, derived from a run of autoconf breaks horribly if these
+# variables are set to anything.
+#
+AUTOCONF_CFLAGS =
+AUTOCONF_CFLAGS.64 =
+AUTOCONF_LDFLAGS =
+AUTOCONF_LDFLAGS.64 =
+
+AUTOCONF_CC =		CC="$(GCC.32) $(CPPFLAGS)"
+AUTOCONF_CC.64 =	CC="$(GCC.64) $(CPPFLAGS)"
+
+
+#
+# Use the FROB_SENTINEL to run autoreconf, which is why the AUTOCONF_*FLAGS*
+# here are blanked out..
+#
+FROB_SENTINEL.32 = (cd $(VER.32); env - PATH=$(PATH) autoreconf -fi)
+FROB_SENTINEL.64 = (cd $(VER.64); env - PATH=$(PATH) autoreconf -fi)
+
 BUILD64 =	yes
 
-LIBXML2_LDFLAGS = \
-	-Wl,-zdefs \
-	-Wl,-ztext \
-	-Wl,-zcombreloc
+LIBXML2_LDFLAGS =  -Wl,-zdefs -Wl,-ztext -Wl,-zcombreloc -M ../mapfile
 
 LDFLAGS +=	$(LIBXML2_LDFLAGS)
 LDFLAGS.64 +=	$(LIBXML2_LDFLAGS)
 
-LIBS +=	\
-	-lpthread \
-	-lc
+LIBS +=	-lpthread -lc
 
-CPPFLAGS +=	\
-	-D_FILE_OFFSET_BITS=64 \
-	-D_LARGEFILE_SOURCE
+CPPFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 
 AUTOCONF_OPTS += \
 	--with-threads \
 	--without-python \
-	--enable-symbol-versioning=$(BASE)/mapfile
+	--with-legacy \
+	--with-aix-soname=svr4
 
-PATCHES =	Patches/*
+#PATCHES =	Patches/*
 
 include ../Makefile.targ
 
