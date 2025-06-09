@@ -1,7 +1,6 @@
-diff -ru a/configure b/configure
---- a/configure	Wed Nov 13 13:44:03 2024
-+++ b/configure	Wed Nov 13 13:48:36 2024
-@@ -24964,7 +24964,7 @@
+--- a/configure	Fri May 23 13:27:35 2025
++++ b/configure	Fri May 23 13:30:04 2025
+@@ -24663,7 +24663,7 @@
      '-llber -lldap' \
      '-lldapssl -lldapx -lldapsdk' \
      '-lldapsdk -lldapx -lldapssl' \
@@ -10,9 +9,9 @@ diff -ru a/configure b/configure
  
      if test "$curl_cv_ldap_LIBS" = "unknown"; then
        if test -z "$x_nlibs"; then
-@@ -26711,14 +26711,14 @@
-     CPPFLAGS="$CPPFLAGS $SSL_CPPFLAGS"
+@@ -26409,14 +26409,14 @@
    LDFLAGS="$LDFLAGS $SSL_LDFLAGS"
+   LDFLAGSPC="$LDFLAGSPC $SSL_LDFLAGS"
  
 -  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for HMAC_Update in -lcrypto" >&5
 -printf %s "checking for HMAC_Update in -lcrypto... " >&6; }
@@ -28,7 +27,7 @@ diff -ru a/configure b/configure
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26750,7 +26750,7 @@
+@@ -26447,7 +26447,7 @@
  then :
  
      HAVECRYPTO="yes"
@@ -37,7 +36,7 @@ diff -ru a/configure b/configure
  
  else $as_nop
  
-@@ -26764,14 +26764,14 @@
+@@ -26462,14 +26462,14 @@
      # Linking previously failed, try extra paths from --with-openssl or
      # pkg-config.  Use a different function name to avoid reusing the earlier
      # cached result.
@@ -55,7 +54,7 @@ diff -ru a/configure b/configure
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26803,13 +26803,13 @@
+@@ -26500,13 +26500,13 @@
  then :
  
        HAVECRYPTO="yes"
@@ -71,7 +70,7 @@ diff -ru a/configure b/configure
        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26838,7 +26838,7 @@
+@@ -26534,7 +26534,7 @@
  
          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking OpenSSL linking with -ldl and -lpthread" >&5
  printf %s "checking OpenSSL linking with -ldl and -lpthread... " >&6; }
@@ -80,7 +79,7 @@ diff -ru a/configure b/configure
          cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26885,14 +26885,14 @@
+@@ -26581,14 +26581,14 @@
  
    if test X"$HAVECRYPTO" = X"yes"; then
  
@@ -99,7 +98,7 @@ diff -ru a/configure b/configure
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26900,10 +26900,10 @@
+@@ -26596,47 +26596,47 @@
  #ifdef __cplusplus
  extern "C"
  #endif
@@ -109,10 +108,8 @@ diff -ru a/configure b/configure
  {
 -return SSL_connect ();
 +return sunw_SSL_connect ();
-  ;
-  return 0;
+   return 0;
  }
-@@ -26910,38 +26910,38 @@
  _ACEOF
  if ac_fn_c_try_link "$LINENO"
  then :
@@ -162,7 +159,7 @@ diff -ru a/configure b/configure
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26949,10 +26949,10 @@
+@@ -26644,34 +26644,34 @@
  #ifdef __cplusplus
  extern "C"
  #endif
@@ -172,10 +169,8 @@ diff -ru a/configure b/configure
  {
 -return SSL_connect ();
 +return sunw_SSL_connect ();
-  ;
-  return 0;
+   return 0;
  }
-@@ -26959,25 +26959,25 @@
  _ACEOF
  if ac_fn_c_try_link "$LINENO"
  then :
