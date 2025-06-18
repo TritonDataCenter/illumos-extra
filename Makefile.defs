@@ -105,8 +105,8 @@ SUN_MAKE=$(STRAPPROTO)/usr/bin/dmake
 # flags as well as the generic flags later on.
 #
 # Also, for non-strap, provide ASLR enablement like illumos does for software
-# that would benefit. It too need only be for non-strap builds so define it
-# below.
+# that would benefit. We define it in the not-strap check below because we
+# only need it for what we actually ship.
 #
 ifneq ($(STRAP),strap)
 	GENLDFLAGS = -Wl,-zassert-deflib -Wl,-zfatal-warnings
