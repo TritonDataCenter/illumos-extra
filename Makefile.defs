@@ -12,6 +12,7 @@
 #
 # Copyright 2020 Joyent, Inc.
 # Copyright 2024 MNX Cloud, Inc.
+# Copyright 2025 Edgecast Cloud LLC.
 #
 
 BASE =		$(PWD)
@@ -103,8 +104,13 @@ SUN_MAKE=$(STRAPPROTO)/usr/bin/dmake
 # Because of bugs in ntp, we need to be able to refer to the target specific
 # flags as well as the generic flags later on.
 #
+# Also, for non-strap, provide ASLR enablement like illumos does for software
+# that would benefit. We define it in the not-strap check below because we
+# only need it for what we actually ship.
+#
 ifneq ($(STRAP),strap)
 	GENLDFLAGS = -Wl,-zassert-deflib -Wl,-zfatal-warnings
+	ZASLR = -Wl,-zaslr
 endif
 T32_LDFLAGS =	$(SYSLIBDIRS:%=-L$(DESTDIR)/%)
 T64_LDFLAGS =	$(SYSLIBDIRS:%=-L$(DESTDIR)/%/64)

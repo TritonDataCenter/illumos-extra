@@ -21,6 +21,7 @@
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2021 Joyent, Inc.
 # Copyright 2025 MNX Cloud, Inc.
+# Copyright 2025 Edgecast Cloud LLC.
 #
 
 # NOTE: The original tarball is named openssh-10.0p1.tar.gz.
@@ -85,6 +86,7 @@ CFLAGS += \
 	-I$(DESTDIR)/usr/include/kerberosv5
 
 LDFLAGS +=	-B direct -z nolazyload
+LDFLAGS += $(ZASLR)
 
 CTF_PROGRAMS_USR_BIN = \
 	ssh \
