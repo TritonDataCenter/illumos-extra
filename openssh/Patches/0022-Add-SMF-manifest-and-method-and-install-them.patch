@@ -40,7 +40,7 @@ new file mode 100644
 index 000000000..a926a281a
 --- /dev/null
 +++ b/smf/manifest.xml
-@@ -0,0 +1,169 @@
+@@ -0,0 +1,171 @@
 +<?xml version="1.0"?>
 +<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
 +<!--
@@ -153,7 +153,9 @@ index 000000000..a926a281a
 +		type='method'
 +		name='start'
 +		exec='/lib/svc/method/sshd start'
-+		timeout_seconds='60'/>
++		timeout_seconds='60'>
++		<method_context security_flags='aslr' />
++	</exec_method>
 +
 +	<exec_method
 +		type='method'
