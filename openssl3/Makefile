@@ -21,9 +21,10 @@
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2022 Joyent, Inc.
 # Copyright 2025 MNX Cloud, Inc.
+# Copyright 2025 Edgecast Cloud LLC.
 #
 
-VER = openssl-3.0.16
+VER = openssl-3.0.17
 LIBVER =	3
 
 include ../Makefile.defs
