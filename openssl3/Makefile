@@ -24,7 +24,7 @@
 # Copyright 2026 Edgecast Cloud LLC.
 #
 
-VER = openssl-3.0.21
+VER = openssl-3.5.2
 LIBVER =	3
 
 include ../Makefile.defs
