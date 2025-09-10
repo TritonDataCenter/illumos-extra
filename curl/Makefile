@@ -20,9 +20,10 @@
 #
 # Copyright 2015, Joyent, Inc.
 # Copyright 2025 MNX Cloud, Inc.
+# Copyright 2025 Edgecast Cloud LLC.
 #
 
-VER =	curl-8.14.1
+VER =	curl-8.16.0
 
 include ../Makefile.defs
 
