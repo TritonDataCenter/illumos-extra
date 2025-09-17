@@ -1,15 +1,6 @@
---- a/configure	Fri May 23 13:27:35 2025
-+++ b/configure	Fri May 23 13:30:04 2025
-@@ -24663,7 +24663,7 @@
-     '-llber -lldap' \
-     '-lldapssl -lldapx -lldapsdk' \
-     '-lldapsdk -lldapx -lldapssl' \
--    '-lldap -llber -lssl -lcrypto'; do
-+    '-lldap -llber -lsunw_ssl -lsunw_crypto'; do
- 
-     if test "$curl_cv_ldap_LIBS" = "unknown"; then
-       if test -z "$x_nlibs"; then
-@@ -26409,14 +26409,14 @@
+--- a/configure	Wed Sep 10 08:52:02 2025
++++ b/configure	Wed Sep 10 09:58:02 2025
+@@ -26029,14 +26029,14 @@
    LDFLAGS="$LDFLAGS $SSL_LDFLAGS"
    LDFLAGSPC="$LDFLAGSPC $SSL_LDFLAGS"
  
@@ -27,7 +18,7 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26447,7 +26447,7 @@
+@@ -26067,7 +26067,7 @@
  then :
  
      HAVECRYPTO="yes"
@@ -36,7 +27,7 @@
  
  else $as_nop
  
-@@ -26462,14 +26462,14 @@
+@@ -26082,14 +26082,14 @@
      # Linking previously failed, try extra paths from --with-openssl or
      # pkg-config.  Use a different function name to avoid reusing the earlier
      # cached result.
@@ -54,7 +45,7 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26500,13 +26500,13 @@
+@@ -26120,13 +26120,13 @@
  then :
  
        HAVECRYPTO="yes"
@@ -70,7 +61,7 @@
        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26534,7 +26534,7 @@
+@@ -26154,7 +26154,7 @@
  
          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking OpenSSL linking with -ldl and -lpthread" >&5
  printf %s "checking OpenSSL linking with -ldl and -lpthread... " >&6; }
@@ -79,7 +70,7 @@
          cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26581,14 +26581,14 @@
+@@ -26201,14 +26201,14 @@
  
    if test X"$HAVECRYPTO" = X"yes"; then
  
@@ -98,7 +89,7 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26596,47 +26596,47 @@
+@@ -26216,47 +26216,47 @@
  #ifdef __cplusplus
  extern "C"
  #endif
@@ -159,7 +150,7 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26644,34 +26644,34 @@
+@@ -26264,34 +26264,34 @@
  #ifdef __cplusplus
  extern "C"
  #endif
@@ -203,3 +194,12 @@
                  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
  printf "%s\n" "no" >&6; }
          LIBS=$OLIBS
+@@ -29739,7 +29739,7 @@
+     '-llber -lldap' \
+     '-lldapssl -lldapx -lldapsdk' \
+     '-lldapsdk -lldapx -lldapssl' \
+-    '-lldap -llber -lssl -lcrypto'; do
++    '-lldap -llber -lsunw_ssl -lsunw_crypto'; do
+ 
+     if test "$curl_cv_ldap_LIBS" = "unknown"; then
+       if test -z "$x_nlibs"; then
