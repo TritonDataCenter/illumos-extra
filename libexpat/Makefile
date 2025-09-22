@@ -20,9 +20,10 @@
 #
 # Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 # Copyright 2025 MNX Cloud, Inc.
+# Copyright 2025 Edgecast Cloud LLC.
 #
 
-VER =	expat-2.7.1
+VER =	expat-2.7.2
 
 include ../Makefile.defs
 
