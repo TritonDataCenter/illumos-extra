@@ -1,4 +1,4 @@
-From 5b7045f4915a54f723169505b32de210c7a923b7 Mon Sep 17 00:00:00 2001
+From 408dc19d8c364eebb4e60e13235bfb4939813882 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 4 Sep 2015 11:04:30 -0700
 Subject: [PATCH 26/34] Accept LANG and LC_* environment variables from clients
@@ -15,10 +15,10 @@ behaviour (at least the parts that are most commonly used).
  5 files changed, 72 insertions(+), 3 deletions(-)
 
 diff --git a/servconf.c b/servconf.c
-index 42e1b4b06..6a98accbd 100644
+index eb7ac1b8d..c00994617 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -202,6 +202,7 @@ initialize_server_options(ServerOptions *options)
+@@ -200,6 +200,7 @@ initialize_server_options(ServerOptions *options)
  	options->client_alive_count_max = -1;
  	options->num_authkeys_files = 0;
  	options->num_accept_env = 0;
@@ -26,7 +26,7 @@ index 42e1b4b06..6a98accbd 100644
  	options->num_setenv = 0;
  	options->permit_tun = -1;
  	options->permitted_opens = NULL;
-@@ -546,6 +547,32 @@ fill_default_server_options(ServerOptions *options)
+@@ -540,6 +541,32 @@ fill_default_server_options(ServerOptions *options)
  		options->max_sessions = DEFAULT_SESSIONS_MAX;
  	if (options->use_dns == -1)
  		options->use_dns = 0;
@@ -59,7 +59,7 @@ index 42e1b4b06..6a98accbd 100644
  	if (options->client_alive_interval == -1)
  		options->client_alive_interval = 0;
  	if (options->client_alive_count_max == -1)
-@@ -2402,9 +2429,12 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2392,9 +2419,12 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  			if (*arg == '\0' || strchr(arg, '=') != NULL)
  				fatal("%s line %d: Invalid environment name.",
  				    filename, linenum);
@@ -85,10 +85,10 @@ index 3f19b91d0..4c4a8a79f 100644
  	u_int num_setenv;
  	char   **setenv;
 diff --git a/session.c b/session.c
-index 2ef4804f3..cb2a8b6be 100644
+index f27e9cfde..a18d19b24 100644
 --- a/session.c
 +++ b/session.c
-@@ -830,6 +830,18 @@ check_quietlogin(Session *s, const char *command)
+@@ -792,6 +792,18 @@ check_quietlogin(Session *s, const char *command)
  	return 0;
  }
  
@@ -107,7 +107,7 @@ index 2ef4804f3..cb2a8b6be 100644
  /*
   * Reads environment variables from the given file and adds/overrides them
   * into the environment.  If the file does not exist, this does nothing.
-@@ -1014,6 +1026,16 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
+@@ -976,6 +988,16 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
  	ssh_gssapi_do_child(&env, &envsize);
  #endif
  
@@ -124,7 +124,7 @@ index 2ef4804f3..cb2a8b6be 100644
  	/* Set basic environment. */
  	for (i = 0; i < s->num_env; i++)
  		child_set_env(&env, &envsize, s->env[i].name, s->env[i].val);
-@@ -1057,8 +1079,7 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
+@@ -1019,8 +1041,7 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
  	/* Normal systems set SHELL by default. */
  	child_set_env(&env, &envsize, "SHELL", shell);
  
@@ -135,7 +135,7 @@ index 2ef4804f3..cb2a8b6be 100644
  #ifdef PER_SESSION_XAUTHFILE
          if (s->auth_file != NULL)
 diff --git a/sshd_config b/sshd_config
-index 9c7ebe3b7..8e7a3bc4d 100644
+index 1c6d890df..a3e63c424 100644
 --- a/sshd_config
 +++ b/sshd_config
 @@ -26,6 +26,10 @@ Port 22
@@ -150,7 +150,7 @@ index 9c7ebe3b7..8e7a3bc4d 100644
  
  #LoginGraceTime 2m
 diff --git a/sshd_config.5 b/sshd_config.5
-index c6cfdeb2c..2d92287da 100644
+index 2b2b952af..4de2a89d2 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
 @@ -86,7 +86,20 @@ directives.
@@ -176,5 +176,5 @@ index c6cfdeb2c..2d92287da 100644
  Specifies which address family should be used by
  .Xr sshd 8 .
 -- 
-2.48.1
+2.50.1
 

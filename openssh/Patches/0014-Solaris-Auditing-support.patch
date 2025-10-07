@@ -1,4 +1,4 @@
-From 120bf4c90f2d90be93513cdea980f1caab7d6e20 Mon Sep 17 00:00:00 2001
+From edc83d07bfdabf78fd970b004e9fb1de10e70f2f Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:37:01 -0700
 Subject: [PATCH 13/34] Solaris Auditing support
@@ -19,7 +19,7 @@ Subject: [PATCH 13/34] Solaris Auditing support
  create mode 100644 audit-solaris.c
 
 diff --git a/INSTALL b/INSTALL
-index 3ad1659f3..f241eb48e 100644
+index 56e351af6..1a146bc7c 100644
 --- a/INSTALL
 +++ b/INSTALL
 @@ -105,9 +105,13 @@ http://www.gnu.org/software/automake/
@@ -52,11 +52,11 @@ index 3ad1659f3..f241eb48e 100644
  --with-pam enables PAM support. If PAM support is compiled in, it must
  also be enabled in sshd_config (refer to the UsePAM directive).
 diff --git a/Makefile.in b/Makefile.in
-index 69ee1421a..fadc5012f 100644
+index 58661d63f..aa30c63e7 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -132,7 +132,7 @@ SSHDOBJS=sshd.o \
- 	$(SKOBJS)
+@@ -125,7 +125,7 @@ SSHDOBJS=sshd.o \
+ 	$(P11OBJS) $(SKOBJS)
  
  SSHD_SESSION_OBJS=sshd-session.o auth-rhosts.o auth-passwd.o \
 -	audit.o audit-bsm.o audit-linux.o platform.o \
@@ -64,7 +64,7 @@ index 69ee1421a..fadc5012f 100644
  	sshpty.o sshlogin.o servconf.o serverloop.o \
  	auth.o auth2.o auth2-methods.o auth-options.o session.o \
  	auth2-chall.o groupaccess.o \
-@@ -152,7 +152,7 @@ SSHD_AUTH_OBJS=sshd-auth.o \
+@@ -145,7 +145,7 @@ SSHD_AUTH_OBJS=sshd-auth.o \
  	auth2-none.o auth2-passwd.o auth2-pubkey.o auth2-pubkeyfile.o \
  	auth2-gss.o gss-serv.o gss-serv-krb5.o \
  	monitor_wrap.o auth-krb5.o \
@@ -99,7 +99,7 @@ index 4edf9d1f5..77fac619f 100644
  Platforms using PAM
  -------------------
 diff --git a/audit-bsm.c b/audit-bsm.c
-index ccfcf6f7f..42cbc1273 100644
+index 4bce22c37..16d498c1a 100644
 --- a/audit-bsm.c
 +++ b/audit-bsm.c
 @@ -348,7 +348,7 @@ bsm_audit_bad_login(const char *what)
@@ -112,10 +112,10 @@ index ccfcf6f7f..42cbc1273 100644
  	AuditInfoTermID *tid = &ssh_bsm_tid;
  	char buf[1024];
 diff --git a/audit-linux.c b/audit-linux.c
-index 3fcbe5c53..3c12bc916 100644
+index 954eabe27..c44ef8a79 100644
 --- a/audit-linux.c
 +++ b/audit-linux.c
-@@ -71,7 +71,7 @@ linux_audit_record_event(int uid, const char *username, const char *hostname,
+@@ -73,7 +73,7 @@ linux_audit_record_event(int uid, const char *username, const char *hostname,
  /* Below is the sshd audit API code */
  
  void
@@ -733,10 +733,10 @@ index 38cb5ad31..dd6f6d0a1 100644
  void	audit_session_open(struct logininfo *);
  void	audit_session_close(struct logininfo *);
 diff --git a/configure.ac b/configure.ac
-index 24f64ad98..781054009 100644
+index dd6fba156..ecf90ef9f 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1853,7 +1853,7 @@ AC_ARG_WITH([wtmpdb],
+@@ -1922,7 +1922,7 @@ AC_ARG_WITH([wtmpdb],
  
  AUDIT_MODULE=none
  AC_ARG_WITH([audit],
@@ -745,7 +745,7 @@ index 24f64ad98..781054009 100644
  	[
  	  AC_MSG_CHECKING([for supported audit module])
  	  case "$withval" in
-@@ -1890,6 +1890,13 @@ AC_ARG_WITH([audit],
+@@ -1959,6 +1959,13 @@ AC_ARG_WITH([audit],
  		SSHDLIBS="$SSHDLIBS -laudit"
  		AC_DEFINE([USE_LINUX_AUDIT], [1], [Use Linux audit module])
  		;;
@@ -760,10 +760,10 @@ index 24f64ad98..781054009 100644
  		AUDIT_MODULE=debug
  		AC_MSG_RESULT([debug])
 diff --git a/defines.h b/defines.h
-index d2baeb940..848c25fdd 100644
+index a1bd6fad3..1aea5d258 100644
 --- a/defines.h
 +++ b/defines.h
-@@ -757,6 +757,11 @@ struct winsize {
+@@ -764,6 +764,11 @@ struct winsize {
  # define CUSTOM_SSH_AUDIT_EVENTS
  #endif
  
@@ -776,10 +776,10 @@ index d2baeb940..848c25fdd 100644
  #  define __func__ __FUNCTION__
  #elif !defined(HAVE___func__)
 diff --git a/sshd-session.c b/sshd-session.c
-index 9a44a27ed..e276081e9 100644
+index 5e0c4b34e..2e1b99dc4 100644
 --- a/sshd-session.c
 +++ b/sshd-session.c
-@@ -1235,7 +1235,7 @@ main(int ac, char **av)
+@@ -1213,7 +1213,7 @@ main(int ac, char **av)
  	remote_ip = ssh_remote_ipaddr(ssh);
  
  #ifdef SSH_AUDIT_EVENTS
@@ -788,7 +788,7 @@ index 9a44a27ed..e276081e9 100644
  #endif
  
  	rdomain = ssh_packet_rdomain_in(ssh);
-@@ -1317,7 +1317,7 @@ main(int ac, char **av)
+@@ -1295,7 +1295,7 @@ main(int ac, char **av)
  	if (options.routing_domain != NULL)
  		set_process_rdomain(ssh, options.routing_domain);
  
@@ -797,7 +797,7 @@ index 9a44a27ed..e276081e9 100644
  	audit_event(ssh, SSH_AUTH_SUCCESS);
  #endif
  
-@@ -1348,6 +1348,10 @@ bail_storecred: ;
+@@ -1326,6 +1326,10 @@ bail_storecred: ;
  		do_pam_session(ssh);
  	}
  #endif
@@ -809,5 +809,5 @@ index 9a44a27ed..e276081e9 100644
  	/*
  	 * In privilege separation, we fork another child and prepare
 -- 
-2.48.1
+2.50.1
 

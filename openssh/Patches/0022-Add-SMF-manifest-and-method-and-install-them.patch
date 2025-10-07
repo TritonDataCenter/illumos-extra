@@ -1,4 +1,4 @@
-From c3ae428c53b7d9cb4c4e498160c265cc3d8811c2 Mon Sep 17 00:00:00 2001
+From f47cd7af149b4116f668fe682373a333dc0cd4be Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 12:19:47 -0700
 Subject: [PATCH 21/34] Add SMF manifest and method, and install them
@@ -12,7 +12,7 @@ Subject: [PATCH 21/34] Add SMF manifest and method, and install them
  create mode 100644 smf/method.sh
 
 diff --git a/Makefile.in b/Makefile.in
-index 6ff82e38f..223866b69 100644
+index aa30c63e7..d58c03e10 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -28,6 +28,8 @@ SSHD_AUTH=$(libexecdir)/sshd-auth
@@ -24,7 +24,7 @@ index 6ff82e38f..223866b69 100644
  PRIVSEP_PATH=@PRIVSEP_PATH@
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
-@@ -489,6 +491,10 @@ install-files:
+@@ -481,6 +483,10 @@ install-files:
  	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
  	$(INSTALL) -m 644 ssh-sk-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8
  	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d
@@ -40,7 +40,7 @@ new file mode 100644
 index 000000000..a926a281a
 --- /dev/null
 +++ b/smf/manifest.xml
-@@ -0,0 +1,171 @@
+@@ -0,0 +1,169 @@
 +<?xml version="1.0"?>
 +<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
 +<!--
@@ -153,9 +153,7 @@ index 000000000..a926a281a
 +		type='method'
 +		name='start'
 +		exec='/lib/svc/method/sshd start'
-+		timeout_seconds='60'>
-+		<method_context security_flags='aslr' />
-+	</exec_method>
++		timeout_seconds='60'/>
 +
 +	<exec_method
 +		type='method'
@@ -218,7 +216,7 @@ new file mode 100644
 index 000000000..d61ba6e34
 --- /dev/null
 +++ b/smf/method.sh
-@@ -0,0 +1,132 @@
+@@ -0,0 +1,130 @@
 +#!/sbin/sh
 +#
 +# Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
@@ -234,7 +232,7 @@ index 000000000..d61ba6e34
 +KEYGEN="/usr/bin/ssh-keygen -q"
 +PIDFILE=/var/run/sshd.pid
 +
-+# Checks to see if RSA, and DSA host keys are available
++# Checks to see if RSA or other type host keys are available
 +# if any of these keys are not present, the respective keys are created.
 +create_key_if_configured()
 +{
@@ -307,7 +305,6 @@ index 000000000..d61ba6e34
 +	# sysidconfig/sys-unconfig arguments (-c and -u)
 +'-c')
 +	create_host_key rsa
-+#	create_host_key dsa
 +	create_host_key ecdsa
 +	create_host_key ed25519
 +	;;
@@ -331,7 +328,6 @@ index 000000000..d61ba6e34
 +	# the install media).
 +	#
 +	create_host_key rsa
-+#	create_host_key dsa
 +	create_host_key ecdsa
 +	create_host_key ed25519
 +
@@ -352,5 +348,5 @@ index 000000000..d61ba6e34
 +
 +exit $?
 -- 
-2.48.1
+2.50.1
 

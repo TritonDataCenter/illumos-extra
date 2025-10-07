@@ -24,11 +24,7 @@
 # Copyright 2025 Edgecast Cloud LLC.
 #
 
-# NOTE: The original tarball is named openssh-10.0p1.tar.gz.
-# We untarred it, renamed the expanded directory to p2, and the tarball as such.
-# This whole NOTE will be removed when name-of-tarball matches the code, likely
-# 10.0p3 or 10.1p1.
-VER =	openssh-10.0p2
+VER =	openssh-10.1p1
 
 include ../Makefile.defs
 

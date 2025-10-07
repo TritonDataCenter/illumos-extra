@@ -1,4 +1,4 @@
-From 2d24e36baf54b67f851972ab3779c96a9ade8d16 Mon Sep 17 00:00:00 2001
+From 8276228cb8998b798d640e967fff4d2bb1d1e141 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Tue, 22 Dec 2015 14:30:19 -0800
 Subject: [PATCH 33/34] SmartOS local: make dtrace lib 32-bit
@@ -8,10 +8,10 @@ Subject: [PATCH 33/34] SmartOS local: make dtrace lib 32-bit
  1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 8d5664d59..bfb3daba8 100644
+index 3d69f84f8..8952ef7e8 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -28,6 +28,7 @@ SSHD_AUTH=$(libexecdir)/sshd-auth
+@@ -30,6 +30,7 @@ SSHD_AUTH=$(libexecdir)/sshd-auth
  SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
  SSH_SK_HELPER=$(libexecdir)/ssh-sk-helper
  ROOTDLIBDIR64=$(DESTDIR)/usr/lib/dtrace/64
@@ -19,7 +19,7 @@ index 8d5664d59..bfb3daba8 100644
  SMFMETHODDIR=$(DESTDIR)/lib/svc/method
  SMFNETMANIDIR=$(DESTDIR)/lib/svc/manifest/network
  PRIVSEP_PATH=@PRIVSEP_PATH@
-@@ -316,7 +317,7 @@ sftp_provider.h: $(srcdir)/sftp_provider.d
+@@ -308,7 +309,7 @@ sftp_provider.h: $(srcdir)/sftp_provider.d
  	    -o $(srcdir)/sftp_provider.h
  
  sftp_provider.o: sftp_provider.d sftp_provider.h sftp-server.o
@@ -28,7 +28,7 @@ index 8d5664d59..bfb3daba8 100644
  	    sftp-server.o -o sftp_provider.o
  
  # special case for sftp-server.o, it includes sftp_provider.h
-@@ -492,7 +493,7 @@ install-files:
+@@ -484,7 +485,7 @@ install-files:
  	$(INSTALL) -m 644 ssh-keysign.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
  	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
  	$(INSTALL) -m 644 ssh-sk-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8
@@ -38,5 +38,5 @@ index 8d5664d59..bfb3daba8 100644
  	$(srcdir)/mkinstalldirs $(SMFNETMANIDIR)
  	$(INSTALL) -m 555 smf/method.sh $(SMFMETHODDIR)/sshd
 -- 
-2.48.1
+2.50.1
 

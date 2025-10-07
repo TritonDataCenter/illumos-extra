@@ -1,6 +1,6 @@
-From 28163c3c880644eb07e8a7f97f1c1b1c43d8f981 Mon Sep 17 00:00:00 2001
-From: Dan McDonald <danmcd@mnx.io>
-Date: Wed, 7 May 2025 10:21:00 -0400
+From d688ea362dd32b2534a56fb0bda6c0a77c5be0cf Mon Sep 17 00:00:00 2001
+From: Dan McDonald <danmcd@edgecast.io>
+Date: Mon, 6 Oct 2025 16:29:57 -0400
 Subject: [PATCH 32/34] gcc14 fixes for illumos
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH 32/34] gcc14 fixes for illumos
  2 files changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/auth-pam.c b/auth-pam.c
-index 22a77bab4..b713e209c 100644
+index 4efb1976d..db6b8da34 100644
 --- a/auth-pam.c
 +++ b/auth-pam.c
 @@ -69,7 +69,11 @@
@@ -26,10 +26,10 @@ index 22a77bab4..b713e209c 100644
  # define sshpam_const	const	/* LinuxPAM, OpenPAM, AIX */
  #endif
 diff --git a/scp.c b/scp.c
-index 57c242ffc..2b9d6821f 100644
+index c5f573cc1..d8f07b4ed 100644
 --- a/scp.c
 +++ b/scp.c
-@@ -207,7 +207,7 @@ killchild(int signo)
+@@ -191,7 +191,7 @@ killchild(int signo)
  }
  
  static void
@@ -38,7 +38,7 @@ index 57c242ffc..2b9d6821f 100644
  {
  	int status;
  
-@@ -1017,7 +1017,7 @@ brace_expand(const char *pattern, char ***patternsp, size_t *npatternsp)
+@@ -1001,7 +1001,7 @@ brace_expand(const char *pattern, char ***patternsp, size_t *npatternsp)
  
  static struct sftp_conn *
  do_sftp_connect(char *host, char *user, int port, char *sftp_direct,
@@ -48,5 +48,5 @@ index 57c242ffc..2b9d6821f 100644
  	if (sftp_direct == NULL) {
  		if (do_cmd(ssh_program, host, user, port, 1, "sftp",
 -- 
-2.48.1
+2.50.1
 

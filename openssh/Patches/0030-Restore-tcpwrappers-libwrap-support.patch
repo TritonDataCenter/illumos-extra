@@ -1,7 +1,7 @@
-From 8ba73d88b674c8219e28209ea347d9ef32c0419b Mon Sep 17 00:00:00 2001
-From: Dan McDonald <danmcd@mnx.io>
-Date: Wed, 7 May 2025 13:44:40 -0400
-Subject: [PATCH 28/34] [PATCH 28/33] Restore tcpwrappers/libwrap support
+From ca324e078cda2dd3586e3d90a3bb0aab5b3cca2c Mon Sep 17 00:00:00 2001
+From: Alex Wilson <alex.wilson@joyent.com>
+Date: Wed, 16 Sep 2015 10:54:13 -0700
+Subject: [PATCH 28/34] Restore tcpwrappers/libwrap support
 
 This reverts commit f9696566fb41320820f3b257ab564fa321bb3751
 and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
@@ -12,10 +12,10 @@ and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
  3 files changed, 93 insertions(+)
 
 diff --git a/configure.ac b/configure.ac
-index c4da9e659..1d4c07a4e 100644
+index 71fb7571b..a116a6c63 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1706,6 +1706,62 @@ else
+@@ -1775,6 +1775,62 @@ else
  	AC_MSG_RESULT([no])
  fi
  
@@ -78,7 +78,7 @@ index c4da9e659..1d4c07a4e 100644
  # Check whether user wants to use ldns
  LDNS_MSG="no"
  AC_ARG_WITH(ldns,
-@@ -5795,6 +5851,7 @@ echo "                       PAM support: $PAM_MSG"
+@@ -5875,6 +5931,7 @@ echo "                       PAM support: $PAM_MSG"
  echo "                   OSF SIA support: $SIA_MSG"
  echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
@@ -87,10 +87,10 @@ index c4da9e659..1d4c07a4e 100644
  echo "                   libldns support: $LDNS_MSG"
  echo "  Solaris process contract support: $SPC_MSG"
 diff --git a/sshd-session.c b/sshd-session.c
-index e276081e9..df4cdb330 100644
+index 2e1b99dc4..124e41cd0 100644
 --- a/sshd-session.c
 +++ b/sshd-session.c
-@@ -109,6 +109,17 @@
+@@ -103,6 +103,17 @@
  #include "srclimit.h"
  #include "dh.h"
  
@@ -108,7 +108,7 @@ index e276081e9..df4cdb330 100644
  /* Re-exec fds */
  #define REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
  #define REEXEC_CONFIG_PASS_FD		(STDERR_FILENO + 2)
-@@ -1237,6 +1248,24 @@ main(int ac, char **av)
+@@ -1215,6 +1226,24 @@ main(int ac, char **av)
  #ifdef SSH_AUDIT_EVENTS
  	audit_connection_from(ssh, remote_ip, remote_port);
  #endif
@@ -134,7 +134,7 @@ index e276081e9..df4cdb330 100644
  	rdomain = ssh_packet_rdomain_in(ssh);
  
 diff --git a/sshd.8 b/sshd.8
-index 1fa15ef17..2d87447c7 100644
+index 1777f7820..21bfd6579 100644
 --- a/sshd.8
 +++ b/sshd.8
 @@ -925,6 +925,12 @@ the user's home directory becomes accessible.
@@ -159,5 +159,5 @@ index 1fa15ef17..2d87447c7 100644
  .Xr moduli 5 ,
  .Xr sshd_config 5 ,
 -- 
-2.48.1
+2.50.1
 

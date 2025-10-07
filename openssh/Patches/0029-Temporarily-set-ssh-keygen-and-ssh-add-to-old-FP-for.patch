@@ -1,4 +1,4 @@
-From 47dd70e4c3aed520ad859d214b66f9c93c2bc3f9 Mon Sep 17 00:00:00 2001
+From 6654541193b336e8646ac18d70d8c36fe2ad7b1e Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 9 Sep 2015 10:36:05 -0700
 Subject: [PATCH 27/34] Temporarily set ssh-keygen and ssh-add to old FP format
@@ -13,7 +13,7 @@ same output until we have migrated everything over.
  2 files changed, 29 insertions(+), 7 deletions(-)
 
 diff --git a/ssh-add.c b/ssh-add.c
-index 0035cb84a..fbde41c3c 100644
+index 2d5bec89c..0b5cc7cb5 100644
 --- a/ssh-add.c
 +++ b/ssh-add.c
 @@ -54,6 +54,7 @@
@@ -21,10 +21,10 @@ index 0035cb84a..fbde41c3c 100644
  #include <unistd.h>
  #include <limits.h>
 +#include <assert.h>
+ #include <time.h>
  
  #include "xmalloc.h"
- #include "ssh.h"
-@@ -91,7 +92,8 @@ static char *default_files[] = {
+@@ -90,7 +91,8 @@ static char *default_files[] = {
  	NULL
  };
  
@@ -34,7 +34,7 @@ index 0035cb84a..fbde41c3c 100644
  
  /* Default lifetime (0 == forever) */
  static int lifetime = 0;
-@@ -531,7 +533,7 @@ test_key(int agent_fd, const char *filename)
+@@ -516,7 +518,7 @@ test_key(int agent_fd, const char *filename)
  static int
  list_identities(int agent_fd, int do_fp)
  {
@@ -42,8 +42,8 @@ index 0035cb84a..fbde41c3c 100644
 +	char *fp, *fpp;
  	int r;
  	struct ssh_identitylist *idlist;
- 	u_int32_t left;
-@@ -549,8 +551,13 @@ list_identities(int agent_fd, int do_fp)
+ 	size_t i;
+@@ -533,8 +535,13 @@ list_identities(int agent_fd, int do_fp)
  		if (do_fp) {
  			fp = sshkey_fingerprint(idlist->keys[i],
  			    fingerprint_hash, SSH_FP_DEFAULT);
@@ -58,7 +58,7 @@ index 0035cb84a..fbde41c3c 100644
  			    sshkey_type(idlist->keys[i]));
  			free(fp);
  		} else {
-@@ -856,6 +863,7 @@ main(int argc, char **argv)
+@@ -876,6 +883,7 @@ main(int argc, char **argv)
  			break;
  		case 'E':
  			fingerprint_hash = ssh_digest_alg_by_name(optarg);
@@ -67,10 +67,10 @@ index 0035cb84a..fbde41c3c 100644
  				fatal("Invalid hash algorithm \"%s\"", optarg);
  			break;
 diff --git a/ssh-keygen.c b/ssh-keygen.c
-index 89c3ed287..8060e104d 100644
+index 3c582a83a..287b2118f 100644
 --- a/ssh-keygen.c
 +++ b/ssh-keygen.c
-@@ -42,6 +42,7 @@
+@@ -39,6 +39,7 @@
  #include <limits.h>
  #include <locale.h>
  #include <time.h>
@@ -78,7 +78,7 @@ index 89c3ed287..8060e104d 100644
  
  #include "xmalloc.h"
  #include "sshkey.h"
-@@ -91,7 +92,8 @@ static int print_fingerprint = 0;
+@@ -87,7 +88,8 @@ static int print_fingerprint = 0;
  static int print_bubblebabble = 0;
  
  /* Hash algorithm to use for fingerprints. */
@@ -88,7 +88,7 @@ index 89c3ed287..8060e104d 100644
  
  /* The identity file name, given on the command line or entered by the user. */
  static char identity_file[PATH_MAX];
-@@ -883,6 +885,7 @@ do_download(struct passwd *pw)
+@@ -802,6 +804,7 @@ do_download(struct passwd *pw)
  	enum sshkey_fp_rep rep;
  	int fptype;
  	char *fp, *ra, **comments = NULL;
@@ -96,7 +96,7 @@ index 89c3ed287..8060e104d 100644
  
  	fptype = print_bubblebabble ? SSH_DIGEST_SHA1 : fingerprint_hash;
  	rep =    print_bubblebabble ? SSH_FP_BUBBLEBABBLE : SSH_FP_DEFAULT;
-@@ -898,8 +901,13 @@ do_download(struct passwd *pw)
+@@ -817,8 +820,13 @@ do_download(struct passwd *pw)
  			    SSH_FP_RANDOMART);
  			if (fp == NULL || ra == NULL)
  				fatal_f("sshkey_fingerprint fail");
@@ -111,7 +111,7 @@ index 89c3ed287..8060e104d 100644
  			if (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
  				printf("%s\n", ra);
  			free(ra);
-@@ -939,7 +947,7 @@ try_read_key(char **cpp)
+@@ -858,7 +866,7 @@ try_read_key(char **cpp)
  static void
  fingerprint_one_key(const struct sshkey *public, const char *comment)
  {
@@ -120,7 +120,7 @@ index 89c3ed287..8060e104d 100644
  	enum sshkey_fp_rep rep;
  	int fptype;
  
-@@ -949,7 +957,12 @@ fingerprint_one_key(const struct sshkey *public, const char *comment)
+@@ -868,7 +876,12 @@ fingerprint_one_key(const struct sshkey *public, const char *comment)
  	ra = sshkey_fingerprint(public, fingerprint_hash, SSH_FP_RANDOMART);
  	if (fp == NULL || ra == NULL)
  		fatal_f("sshkey_fingerprint failed");
@@ -134,7 +134,7 @@ index 89c3ed287..8060e104d 100644
  	    comment ? comment : "no comment", sshkey_type(public));
  	if (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
  		printf("%s\n", ra);
-@@ -3442,6 +3455,7 @@ main(int argc, char **argv)
+@@ -3350,6 +3363,7 @@ main(int argc, char **argv)
  			break;
  		case 'E':
  			fingerprint_hash = ssh_digest_alg_by_name(optarg);
@@ -143,5 +143,5 @@ index 89c3ed287..8060e104d 100644
  				fatal("Invalid hash algorithm \"%s\"", optarg);
  			break;
 -- 
-2.48.1
+2.50.1
 

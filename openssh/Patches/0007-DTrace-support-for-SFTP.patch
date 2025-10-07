@@ -1,7 +1,7 @@
-From a0db7cefdd05d7bf9d283aa61c5487e29d294579 Mon Sep 17 00:00:00 2001
-From: Dan McDonald <danmcd@mnx.io>
-Date: Wed, 7 May 2025 13:15:28 -0400
-Subject: [PATCH 06/34] [PATCH 06/33] DTrace support for SFTP
+From fde855749de12c84cdbf1a1e4d15807c22ee846c Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:35:43 -0700
+Subject: [PATCH 06/34] DTrace support for SFTP
 
 ---
  Makefile.in          | 22 +++++++++++--
@@ -15,7 +15,7 @@ Subject: [PATCH 06/34] [PATCH 06/33] DTrace support for SFTP
  create mode 100644 sftp_provider_impl.h
 
 diff --git a/Makefile.in b/Makefile.in
-index 20bca9fa6..69ee1421a 100644
+index 6e2553cea..58661d63f 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -27,6 +27,7 @@ SSHD_SESSION=$(libexecdir)/sshd-session
@@ -26,33 +26,33 @@ index 20bca9fa6..69ee1421a 100644
  PRIVSEP_PATH=@PRIVSEP_PATH@
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
-@@ -108,6 +109,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
- 	monitor_fdpass.o rijndael.o ssh-dss.o ssh-ecdsa.o ssh-ecdsa-sk.o \
+@@ -99,6 +100,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
+ 	monitor_fdpass.o rijndael.o ssh-ecdsa.o ssh-ecdsa-sk.o \
  	ssh-ed25519-sk.o ssh-rsa.o dh.o \
- 	msg.o progressmeter.o dns.o entropy.o gss-genr.o umac.o umac128.o \
+ 	msg.o dns.o entropy.o gss-genr.o umac.o umac128.o \
 +	sftp_provider.o \
- 	ssh-pkcs11.o smult_curve25519_ref.o \
+ 	smult_curve25519_ref.o \
  	poly1305.o chacha.o cipher-chachapoly.o cipher-chachapoly-libcrypto.o \
  	ssh-ed25519.o digest-openssl.o digest-libc.o \
-@@ -139,7 +141,7 @@ SSHD_SESSION_OBJS=sshd-session.o auth-rhosts.o auth-passwd.o \
- 	monitor.o monitor_wrap.o auth-krb5.o \
- 	auth2-gss.o gss-serv.o gss-serv-krb5.o \
+@@ -147,7 +149,7 @@ SSHD_AUTH_OBJS=sshd-auth.o \
  	loginrec.o auth-pam.o auth-shadow.o auth-sia.o \
+ 	sandbox-null.o sandbox-rlimit.o sandbox-darwin.o \
+ 	sandbox-seccomp-filter.o sandbox-capsicum.o  sandbox-solaris.o \
 -	sftp-server.o sftp-common.o \
 +	sftp-server.o sftp-common.o sftp_provider.o \
- 	uidswap.o platform-listen.o $(SKOBJS)
+ 	uidswap.o $(P11OBJS) $(SKOBJS)
  
- SSHD_AUTH_OBJS=sshd-auth.o \
-@@ -175,7 +177,7 @@ SKHELPER_OBJS=	ssh-sk-helper.o ssh-sk.o sk-usbhid.o
+ SFTP_CLIENT_OBJS=sftp-common.o sftp-client.o sftp-glob.o
+@@ -168,7 +170,7 @@ SKHELPER_OBJS=	ssh-sk-helper.o ssh-sk.o sk-usbhid.o
  
- SSHKEYSCAN_OBJS=ssh-keyscan.o $(SKOBJS)
+ SSHKEYSCAN_OBJS=ssh-keyscan.o $(P11OBJS) $(SKOBJS)
  
 -SFTPSERVER_OBJS=sftp-common.o sftp-server.o sftp-server-main.o
 +SFTPSERVER_OBJS=sftp-common.o sftp-server.o sftp-server-main.o sftp_provider.o
  
  SFTP_OBJS=	sftp.o sftp-usergroup.o progressmeter.o $(SFTP_CLIENT_OBJS)
  
-@@ -304,9 +306,22 @@ $(CONFIGFILES): $(CONFIGFILES_IN) Makefile
+@@ -296,9 +298,22 @@ $(CONFIGFILES): $(CONFIGFILES_IN) Makefile
  moduli:
  	echo
  
@@ -76,7 +76,7 @@ index 20bca9fa6..69ee1421a 100644
  	rm -f regress/check-perm$(EXEEXT)
  	rm -f regress/mkdtemp$(EXEEXT)
  	rm -f regress/unittests/test_helper/*.a
-@@ -473,6 +488,7 @@ install-files:
+@@ -465,6 +480,7 @@ install-files:
  	$(INSTALL) -m 644 ssh-keysign.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
  	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
  	$(INSTALL) -m 644 ssh-sk-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8
@@ -85,10 +85,10 @@ index 20bca9fa6..69ee1421a 100644
  install-sysconf:
  	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
 diff --git a/sftp-server.c b/sftp-server.c
-index a4abb9f7c..305679dc8 100644
+index 777821acd..52c607a24 100644
 --- a/sftp-server.c
 +++ b/sftp-server.c
-@@ -56,6 +56,9 @@
+@@ -52,6 +52,9 @@
  
  #include "sftp.h"
  #include "sftp-common.h"
@@ -98,7 +98,7 @@ index a4abb9f7c..305679dc8 100644
  
  char *sftp_realpath(const char *, char *); /* sftp-realpath.c */
  
-@@ -803,6 +806,7 @@ process_read(u_int32_t id)
+@@ -799,6 +802,7 @@ process_read(u_int32_t id)
  	u_int32_t len;
  	int r, handle, fd, ret, status = SSH2_FX_FAILURE;
  	u_int64_t off;
@@ -106,7 +106,7 @@ index a4abb9f7c..305679dc8 100644
  
  	if ((r = get_handle(iqueue, &handle)) != 0 ||
  	    (r = sshbuf_get_u64(iqueue, &off)) != 0 ||
-@@ -832,7 +836,16 @@ process_read(u_int32_t id)
+@@ -828,7 +832,16 @@ process_read(u_int32_t id)
  	if (len == 0) {
  		/* weird, but not strictly disallowed */
  		ret = 0;
@@ -124,7 +124,7 @@ index a4abb9f7c..305679dc8 100644
  		status = errno_to_portable(errno);
  		error_f("read \"%.100s\": %s", handle_to_name(handle),
  		    strerror(errno));
-@@ -857,14 +870,16 @@ process_write(u_int32_t id)
+@@ -853,14 +866,16 @@ process_write(u_int32_t id)
  	size_t len;
  	int r, handle, fd, ret, status;
  	u_char *data;
@@ -142,7 +142,7 @@ index a4abb9f7c..305679dc8 100644
  	fd = handle_to_fd(handle);
  
  	if (fd < 0)
-@@ -877,7 +892,13 @@ process_write(u_int32_t id)
+@@ -873,7 +888,13 @@ process_write(u_int32_t id)
  			    strerror(errno));
  		} else {
  /* XXX ATOMICIO ? */
@@ -365,5 +365,5 @@ index 000000000..4b18e6ec5
 +
 +#endif /* _SFTP_PROVIDER_IMPL_H */
 -- 
-2.48.1
+2.50.1
 
