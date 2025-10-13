@@ -1,4 +1,4 @@
-From 795d721023c9482176bb6bd7598c528cee99b1bb Mon Sep 17 00:00:00 2001
+From 29ed781ce6d6a43bea51822eb7c1ed0a1062b3ca Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:13 -0700
 Subject: [PATCH 08/34] PAM conversation fix
@@ -8,10 +8,10 @@ Subject: [PATCH 08/34] PAM conversation fix
  1 file changed, 36 insertions(+)
 
 diff --git a/auth-pam.c b/auth-pam.c
-index 13c0a792e..b24ada304 100644
+index 5dee7601b..ca17aedcb 100644
 --- a/auth-pam.c
 +++ b/auth-pam.c
-@@ -1279,11 +1279,13 @@ free_pam_environment(char **env)
+@@ -1302,11 +1302,13 @@ free_pam_environment(char **env)
  	free(env);
  }
  
@@ -25,7 +25,7 @@ index 13c0a792e..b24ada304 100644
  static int
  sshpam_passwd_conv(int n, sshpam_const struct pam_message **msg,
      struct pam_response **resp, void *data)
-@@ -1305,12 +1307,24 @@ sshpam_passwd_conv(int n, sshpam_const struct pam_message **msg,
+@@ -1328,12 +1330,24 @@ sshpam_passwd_conv(int n, sshpam_const struct pam_message **msg,
  	for (i = 0; i < n; ++i) {
  		switch (PAM_MSG_MEMBER(msg, i, msg_style)) {
  		case PAM_PROMPT_ECHO_OFF:
@@ -50,7 +50,7 @@ index 13c0a792e..b24ada304 100644
  		case PAM_ERROR_MSG:
  		case PAM_TEXT_INFO:
  			len = strlen(PAM_MSG_MEMBER(msg, i, msg));
-@@ -1347,6 +1361,9 @@ static struct pam_conv passwd_conv = { sshpam_passwd_conv, NULL };
+@@ -1370,6 +1384,9 @@ static struct pam_conv passwd_conv = { sshpam_passwd_conv, NULL };
  int
  sshpam_auth_passwd(Authctxt *authctxt, const char *password)
  {
@@ -60,7 +60,7 @@ index 13c0a792e..b24ada304 100644
  	int flags = (options.permit_empty_passwd == 0 ?
  	    PAM_DISALLOW_NULL_AUTHTOK : 0);
  	char *fake = NULL;
-@@ -1367,6 +1384,15 @@ sshpam_auth_passwd(Authctxt *authctxt, const char *password)
+@@ -1390,6 +1407,15 @@ sshpam_auth_passwd(Authctxt *authctxt, const char *password)
  	    options.permit_root_login != PERMIT_YES))
  		sshpam_password = fake = fake_password(password);
  
@@ -76,8 +76,8 @@ index 13c0a792e..b24ada304 100644
  	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
  	    (const void *)&passwd_conv);
  	if (sshpam_err != PAM_SUCCESS)
-@@ -1380,6 +1406,16 @@ sshpam_auth_passwd(Authctxt *authctxt, const char *password)
- 	free(fake);
+@@ -1405,6 +1431,16 @@ sshpam_auth_passwd(Authctxt *authctxt, const char *password)
+ 		sshpam_err = check_pam_user(authctxt);
  	if (sshpam_err == PAM_MAXTRIES)
  		sshpam_set_maxtries_reached(1);
 +
@@ -94,5 +94,5 @@ index 13c0a792e..b24ada304 100644
  		debug("PAM: password authentication accepted for %.100s",
  		    authctxt->user);
 -- 
-2.48.1
+2.50.1
 

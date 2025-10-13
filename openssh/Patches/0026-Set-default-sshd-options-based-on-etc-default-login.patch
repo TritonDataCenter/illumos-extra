@@ -1,4 +1,4 @@
-From 8d1820d537417cd552fb9587d074ea7f15784914 Mon Sep 17 00:00:00 2001
+From da7f1732db9436f1f9736390e8d43a7bebbf8c30 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 24 Aug 2015 18:57:27 -0700
 Subject: [PATCH 25/34] Set default sshd options based on /etc/default/login
@@ -10,11 +10,11 @@ Subject: [PATCH 25/34] Set default sshd options based on /etc/default/login
  3 files changed, 76 insertions(+), 1 deletion(-)
 
 diff --git a/pathnames.h b/pathnames.h
-index 1c10ea63d..3c3bb9c4c 100644
+index d3e842fba..cd62899a2 100644
 --- a/pathnames.h
 +++ b/pathnames.h
-@@ -48,6 +48,7 @@
- #define _PATH_HOST_XMSS_KEY_FILE	SSHKEYDIR "/ssh_host_xmss_key"
+@@ -45,6 +45,7 @@
+ #define _PATH_HOST_ED25519_KEY_FILE	SSHKEYDIR "/ssh_host_ed25519_key"
  #define _PATH_HOST_RSA_KEY_FILE		SSHKEYDIR "/ssh_host_rsa_key"
  #define _PATH_DH_MODULI			SSHKEYDIR "/moduli"
 +#define _PATH_DEFAULT_LOGIN		ETCDIR "/default/login"
@@ -22,7 +22,7 @@ index 1c10ea63d..3c3bb9c4c 100644
  #define _PATH_DH_PRIMES			SSHDIR "/primes"
  
 diff --git a/servconf.c b/servconf.c
-index 451882fa1..42e1b4b06 100644
+index 3ba89d3ff..eb7ac1b8d 100644
 --- a/servconf.c
 +++ b/servconf.c
 @@ -36,6 +36,7 @@
@@ -31,9 +31,9 @@ index 451882fa1..42e1b4b06 100644
  #include <stdarg.h>
 +#include <deflt.h>
  #include <errno.h>
- #ifdef HAVE_UTIL_H
  #include <util.h>
-@@ -238,6 +239,64 @@ option_clear_or_none(const char *o)
+ #ifdef USE_SYSTEM_GLOB
+@@ -236,6 +237,64 @@ option_clear_or_none(const char *o)
  	return o == NULL || strcasecmp(o, "none") == 0;
  }
  
@@ -98,7 +98,7 @@ index 451882fa1..42e1b4b06 100644
  static void
  assemble_algorithms(ServerOptions *o)
  {
-@@ -325,6 +384,8 @@ fill_default_server_options(ServerOptions *options)
+@@ -323,6 +382,8 @@ fill_default_server_options(ServerOptions *options)
  		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
  #endif
  
@@ -108,10 +108,10 @@ index 451882fa1..42e1b4b06 100644
  	if (options->num_host_key_files == 0) {
  		/* fill default hostkeys for protocols */
 diff --git a/sshd_config.5 b/sshd_config.5
-index a6f6d2f11..c6cfdeb2c 100644
+index ee9e18e5c..2b2b952af 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
-@@ -1349,7 +1349,13 @@ Specifies the maximum number of authentication attempts permitted per
+@@ -1348,7 +1348,13 @@ Specifies the maximum number of authentication attempts permitted per
  connection.
  Once the number of failures reaches half this value,
  additional failures are logged.
@@ -126,7 +126,7 @@ index a6f6d2f11..c6cfdeb2c 100644
  .It Cm MaxSessions
  Specifies the maximum number of open shell, login or subsystem (e.g. sftp)
  sessions permitted per network connection.
-@@ -1411,6 +1417,13 @@ When password authentication is allowed, it specifies whether the
+@@ -1410,6 +1416,13 @@ When password authentication is allowed, it specifies whether the
  server allows login to accounts with empty password strings.
  The default is
  .Cm no .
@@ -141,5 +141,5 @@ index a6f6d2f11..c6cfdeb2c 100644
  Specifies the addresses/ports on which a remote TCP port forwarding may listen.
  The listen specification must be one of the following forms:
 -- 
-2.48.1
+2.50.1
 
