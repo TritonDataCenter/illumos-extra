@@ -1,6 +1,6 @@
---- a/configure	Wed Sep 10 08:52:02 2025
-+++ b/configure	Wed Sep 10 09:58:02 2025
-@@ -26029,14 +26029,14 @@
+--- a/configure	Wed Nov  5 15:23:14 2025
++++ b/configure	Wed Nov  5 15:29:34 2025
+@@ -26122,14 +26122,14 @@
    LDFLAGS="$LDFLAGS $SSL_LDFLAGS"
    LDFLAGSPC="$LDFLAGSPC $SSL_LDFLAGS"
  
@@ -18,7 +18,7 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26067,7 +26067,7 @@
+@@ -26160,7 +26160,7 @@
  then :
  
      HAVECRYPTO="yes"
@@ -27,7 +27,7 @@
  
  else $as_nop
  
-@@ -26082,14 +26082,14 @@
+@@ -26175,14 +26175,14 @@
      # Linking previously failed, try extra paths from --with-openssl or
      # pkg-config.  Use a different function name to avoid reusing the earlier
      # cached result.
@@ -45,7 +45,7 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26120,13 +26120,13 @@
+@@ -26213,13 +26213,13 @@
  then :
  
        HAVECRYPTO="yes"
@@ -61,7 +61,7 @@
        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26154,7 +26154,7 @@
+@@ -26247,7 +26247,7 @@
  
          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking OpenSSL linking with -ldl and -lpthread" >&5
  printf %s "checking OpenSSL linking with -ldl and -lpthread... " >&6; }
@@ -70,7 +70,7 @@
          cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26201,14 +26201,14 @@
+@@ -26294,14 +26294,14 @@
  
    if test X"$HAVECRYPTO" = X"yes"; then
  
@@ -89,7 +89,7 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26216,47 +26216,47 @@
+@@ -26309,35 +26309,35 @@
  #ifdef __cplusplus
  extern "C"
  #endif
@@ -129,72 +129,12 @@
  fi
  
  
--    if test "$ac_cv_lib_ssl_SSL_connect" != yes; then
-+    if test "$ac_cv_lib_ssl_sunw_SSL_connect" != yes; then
-             { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for ssl with RSAglue/rsaref libs in use" >&5
- printf %s "checking for ssl with RSAglue/rsaref libs in use... " >&6; };
-       OLIBS=$LIBS
-       LIBS="-lRSAglue -lrsaref $LIBS"
--      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for SSL_connect in -lssl" >&5
--printf %s "checking for SSL_connect in -lssl... " >&6; }
--if test ${ac_cv_lib_ssl_SSL_connect+y}
-+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for sunw_SSL_connect in -lsunw_ssl" >&5
-+printf %s "checking for sunw_SSL_connect in -lsunw_ssl... " >&6; }
-+if test ${ac_cv_lib_ssl_sunw_SSL_connect+y}
- then :
-   printf %s "(cached) " >&6
- else $as_nop
-   ac_check_lib_save_LIBS=$LIBS
--LIBS="-lssl  $LIBS"
-+LIBS="-lsunw_ssl  $LIBS"
- cat confdefs.h - <<_ACEOF >conftest.$ac_ext
- /* end confdefs.h.  */
- 
-@@ -26264,34 +26264,34 @@
- #ifdef __cplusplus
- extern "C"
- #endif
--char SSL_connect ();
-+char sunw_SSL_connect ();
- int main(void)
- {
--return SSL_connect ();
-+return sunw_SSL_connect ();
-   return 0;
- }
- _ACEOF
- if ac_fn_c_try_link "$LINENO"
- then :
--  ac_cv_lib_ssl_SSL_connect=yes
-+  ac_cv_lib_ssl_sunw_SSL_connect=yes
- else $as_nop
--  ac_cv_lib_ssl_SSL_connect=no
-+  ac_cv_lib_ssl_sunw_SSL_connect=no
- fi
- rm -f core conftest.err conftest.$ac_objext conftest.beam \
-     conftest$ac_exeext conftest.$ac_ext
- LIBS=$ac_check_lib_save_LIBS
- fi
--{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ssl_SSL_connect" >&5
--printf "%s\n" "$ac_cv_lib_ssl_SSL_connect" >&6; }
--if test "x$ac_cv_lib_ssl_SSL_connect" = xyes
-+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ssl_sunw_SSL_connect" >&5
-+printf "%s\n" "$ac_cv_lib_ssl_sunw_SSL_connect" >&6; }
-+if test "x$ac_cv_lib_ssl_sunw_SSL_connect" = xyes
- then :
-   printf "%s\n" "#define HAVE_LIBSSL 1" >>confdefs.h
- 
--  LIBS="-lssl $LIBS"
-+  LIBS="-lsunw_ssl $LIBS"
- 
- fi
- 
--      if test "$ac_cv_lib_ssl_SSL_connect" != yes; then
-+      if test "$ac_cv_lib_ssl_sunw_SSL_connect" != yes; then
-                 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
- printf "%s\n" "no" >&6; }
-         LIBS=$OLIBS
-@@ -29739,7 +29739,7 @@
+-    if test "$ac_cv_lib_ssl_SSL_connect" = yes; then
++    if test "$ac_cv_lib_ssl_sunw_SSL_connect" = yes; then
+                    for ac_header in openssl/x509.h openssl/rsa.h openssl/crypto.h openssl/pem.h openssl/ssl.h openssl/err.h
+ do :
+   as_ac_Header=`printf "%s\n" "ac_cv_header_$ac_header" | $as_tr_sh`
+@@ -29965,7 +29965,7 @@
      '-llber -lldap' \
      '-lldapssl -lldapx -lldapsdk' \
      '-lldapsdk -lldapx -lldapssl' \
