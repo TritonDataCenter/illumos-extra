@@ -1,6 +1,18 @@
 --- coreutils-9.7/configure     Wed Apr  9 06:45:23 2025
-+++ coreutils-9.7-64/configure  Tue Dec  2 14:27:01 2025
-@@ -64689,6 +64689,11 @@
++++ coreutils-9.7-64/configure  Tue Dec  2 16:05:50 2025
+@@ -64682,6 +64682,11 @@
+ else case e in #(
+   e) cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
++/*
++ * XXX SmartOS - illumos wants this defined for memset_s usage.a
++ * May need to include it elsewhere in source too.
++ */
++#define __STDC_WANT_LIB_EXT1__ 1
+ #include <string.h>
+               #include <stddef.h>
+ 
+@@ -64689,6 +64694,11 @@
  main (void)
  {
  
