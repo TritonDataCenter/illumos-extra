@@ -1,6 +1,6 @@
 --- coreutils-9.7/configure     Wed Apr  9 06:45:23 2025
-+++ coreutils-9.7-64/configure  Tue Dec  2 16:05:50 2025
-@@ -64682,6 +64682,11 @@
++++ coreutils-9.7-64/configure  Tue Dec  2 17:36:57 2025
+@@ -64682,7 +64682,13 @@
  else case e in #(
    e) cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
@@ -10,9 +10,11 @@
 + */
 +#define __STDC_WANT_LIB_EXT1__ 1
  #include <string.h>
++#include <stdlib.h>
                #include <stddef.h>
  
-@@ -64689,6 +64694,11 @@
+ int
+@@ -64689,6 +64695,11 @@
  main (void)
  {
  
