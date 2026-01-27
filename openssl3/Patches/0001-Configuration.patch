@@ -1,7 +1,7 @@
 diff -ru a/Configurations/10-main.conf b/Configurations/10-main.conf
---- a/Configurations/10-main.conf	2021-09-07 07:46:32.000000000 -0400
-+++ b/Configurations/10-main.conf	2021-11-16 10:49:18.000000000 -0500
-@@ -210,7 +210,7 @@
+--- a/Configurations/10-main.conf	Tue Jan 27 09:09:55 2026
++++ b/Configurations/10-main.conf	Tue Jan 27 15:22:07 2026
+@@ -213,7 +213,7 @@
          inherit_from     => [ "BASE_unix" ],
          template         => 1,
          lib_cppflags     => "-DFILIO_H",
@@ -10,7 +10,7 @@ diff -ru a/Configurations/10-main.conf b/Configurations/10-main.conf
          dso_scheme       => "dlfcn",
          thread_scheme    => "pthreads",
      },
-@@ -238,8 +238,10 @@
+@@ -241,8 +241,10 @@
          CC               => "gcc",
          CFLAGS           => add_before(picker(default => "-Wall",
                                                debug   => "-O0 -g",
@@ -23,7 +23,7 @@ diff -ru a/Configurations/10-main.conf b/Configurations/10-main.conf
          lib_cppflags     => add("-DL_ENDIAN"),
          ex_libs          => add(threads("-pthread")),
          bn_ops           => "BN_LLONG",
-@@ -261,7 +263,7 @@
+@@ -264,7 +266,7 @@
          CC               => "gcc",
          CFLAGS           => add_before(picker(default => "-Wall",
                                                debug   => "-O0 -g",
@@ -32,7 +32,7 @@ diff -ru a/Configurations/10-main.conf b/Configurations/10-main.conf
          cflags           => add_before("-m64", threads("-pthread")),
          lib_cppflags     => add("-DL_ENDIAN"),
          ex_libs          => add(threads("-pthread")),
-@@ -272,6 +274,27 @@
+@@ -275,7 +277,28 @@
          shared_ldflag    => add_before("-shared -static-libgcc"),
          multilib         => "/64",
      },
@@ -42,7 +42,7 @@ diff -ru a/Configurations/10-main.conf b/Configurations/10-main.conf
 +    # is NOT intended to be used by user programs like libc, etc.  In
 +    # SmartOS, if a user program wants OpenSSL, they need to use one provided
 +    # by pkgsrc or themselves.
-+
+ 
 +    "smartos-x86-gcc" => {
 +        inherit_from     => [ "solaris-x86-gcc" ],
 +	shlib_variant    => "-smartos",
@@ -57,16 +57,16 @@ diff -ru a/Configurations/10-main.conf b/Configurations/10-main.conf
 +	shlib_variant    => "-smartos",
 +	multilib         => "/amd64",
 +    },
- 
++
  #### Solaris x86 with Sun C setups
      # There used to be solaris-x86-cc target, but it was removed,
-Only in b/Configurations: 10-main.conf~
+     # primarily because vendor assembler can't assemble our modules
 diff -ru a/crypto/bio/bio_sock.c b/crypto/bio/bio_sock.c
---- a/crypto/bio/bio_sock.c	2021-09-07 07:46:32.000000000 -0400
-+++ b/crypto/bio/bio_sock.c	2021-11-16 10:47:36.000000000 -0500
-@@ -350,7 +350,12 @@
+--- a/crypto/bio/bio_sock.c	Tue Jan 27 09:09:55 2026
++++ b/crypto/bio/bio_sock.c	Tue Jan 27 15:22:07 2026
+@@ -353,7 +353,12 @@
      ERR_raise(ERR_LIB_BIO, ERR_R_PASSED_INVALID_ARGUMENT);
- # endif
+ #endif
  
 -    return (ret == 0);
 +    /*
@@ -79,8 +79,8 @@ diff -ru a/crypto/bio/bio_sock.c b/crypto/bio/bio_sock.c
  
  int BIO_sock_info(int sock,
 diff -ru a/crypto/perlasm/x86_64-xlate.pl b/crypto/perlasm/x86_64-xlate.pl
---- a/crypto/perlasm/x86_64-xlate.pl	2021-09-07 07:46:32.000000000 -0400
-+++ b/crypto/perlasm/x86_64-xlate.pl	2021-11-16 10:47:36.000000000 -0500
+--- a/crypto/perlasm/x86_64-xlate.pl	Tue Jan 27 09:09:55 2026
++++ b/crypto/perlasm/x86_64-xlate.pl	Tue Jan 27 15:22:07 2026
 @@ -73,7 +73,7 @@
  my $gas=1;	$gas=0 if ($output =~ /\.asm$/);
  my $elf=1;	$elf=0 if (!$gas);
@@ -90,7 +90,7 @@ diff -ru a/crypto/perlasm/x86_64-xlate.pl b/crypto/perlasm/x86_64-xlate.pl
  my $decor=".L";
  
  my $masmref=8 + 50727*2**-32;	# 8.00.50727 shipped with VS2005
-@@ -803,6 +803,7 @@
+@@ -808,6 +808,7 @@
  				    }
  				    $$line =~ s/\@abi\-omnipotent/\@function/;
  				    $$line =~ s/\@function.*/\@function/;
@@ -98,7 +98,7 @@ diff -ru a/crypto/perlasm/x86_64-xlate.pl b/crypto/perlasm/x86_64-xlate.pl
  				    last;
  				  };
  		/\.asciz/   && do { if ($$line =~ /^"(.*)"$/) {
-@@ -816,6 +817,9 @@
+@@ -821,6 +822,9 @@
  				    $$line =~ s/\.L/$decor/g;
  				    last;
  				  };
@@ -108,7 +108,7 @@ diff -ru a/crypto/perlasm/x86_64-xlate.pl b/crypto/perlasm/x86_64-xlate.pl
  	    }
  
  	    if ($gas) {
-@@ -849,6 +853,7 @@
+@@ -854,6 +858,7 @@
  		} elsif ($dir =~ /\.hidden/) {
  		    if    ($flavour eq "macosx")  { $self->{value} = ".private_extern\t$prefix$$line"; }
  		    elsif ($flavour eq "mingw64") { $self->{value} = ""; }
@@ -117,9 +117,9 @@ diff -ru a/crypto/perlasm/x86_64-xlate.pl b/crypto/perlasm/x86_64-xlate.pl
  		    $self->{value} = "$dir\t$prefix$$line";
  		    $self->{value} =~ s|,([0-9]+),([0-9]+)$|",$1,".log($2)/log(2)|e if ($flavour eq "macosx");
 diff -ru a/crypto/perlasm/x86asm.pl b/crypto/perlasm/x86asm.pl
---- a/crypto/perlasm/x86asm.pl	2021-09-07 07:46:32.000000000 -0400
-+++ b/crypto/perlasm/x86asm.pl	2021-11-16 10:47:36.000000000 -0500
-@@ -183,6 +183,7 @@
+--- a/crypto/perlasm/x86asm.pl	Tue Jan 27 09:09:55 2026
++++ b/crypto/perlasm/x86asm.pl	Tue Jan 27 15:22:07 2026
+@@ -185,6 +185,7 @@
  
  sub ::islabel		# see is argument is a known label
  { my $i;
@@ -128,8 +128,8 @@ diff -ru a/crypto/perlasm/x86asm.pl b/crypto/perlasm/x86asm.pl
    $label{$_[0]};	# can be undef
  }
 diff -ru a/crypto/perlasm/x86gas.pl b/crypto/perlasm/x86gas.pl
---- a/crypto/perlasm/x86gas.pl	2021-09-07 07:46:32.000000000 -0400
-+++ b/crypto/perlasm/x86gas.pl	2021-11-16 10:47:36.000000000 -0500
+--- a/crypto/perlasm/x86gas.pl	Tue Jan 27 09:09:55 2026
++++ b/crypto/perlasm/x86gas.pl	Tue Jan 27 15:22:07 2026
 @@ -12,7 +12,7 @@
  *out=\@::out;
  
@@ -140,33 +140,33 @@ diff -ru a/crypto/perlasm/x86gas.pl b/crypto/perlasm/x86gas.pl
  $initseg="";
  
 diff -ru a/include/internal/cryptlib.h b/include/internal/cryptlib.h
---- a/include/internal/cryptlib.h	2021-09-07 07:46:32.000000000 -0400
-+++ b/include/internal/cryptlib.h	2021-11-16 10:47:36.000000000 -0500
+--- a/include/internal/cryptlib.h	Tue Jan 27 09:09:55 2026
++++ b/include/internal/cryptlib.h	Tue Jan 27 15:22:22 2026
 @@ -85,7 +85,7 @@
- # define DECIMAL_SIZE(type)      ((sizeof(type)*8+2)/3+1)
- # define HEX_SIZE(type)          (sizeof(type)*2)
+ #define DECIMAL_SIZE(type) ((sizeof(type) * 8 + 2) / 3 + 1)
+ #define HEX_SIZE(type) (sizeof(type) * 2)
  
 -void OPENSSL_cpuid_setup(void);
-+extern void OPENSSL_cpuid_setup(void);
- #if defined(__i386)   || defined(__i386__)   || defined(_M_IX86) || \
-     defined(__x86_64) || defined(__x86_64__) || \
-     defined(_M_AMD64) || defined(_M_X64)
++external void OPENSSL_cpuid_setup(void);
+ #if defined(__i386) || defined(__i386__) || defined(_M_IX86) || defined(__x86_64) || defined(__x86_64__) || defined(_M_AMD64) || defined(_M_X64)
+ extern unsigned int OPENSSL_ia32cap_P[];
+ #endif
 diff -ru a/include/openssl/configuration.h.in b/include/openssl/configuration.h.in
---- a/include/openssl/configuration.h.in	2021-09-07 07:46:32.000000000 -0400
-+++ b/include/openssl/configuration.h.in	2021-11-16 10:47:36.000000000 -0500
-@@ -46,6 +46,9 @@
-     "";
+--- a/include/openssl/configuration.h.in	Tue Jan 27 09:09:55 2026
++++ b/include/openssl/configuration.h.in	Tue Jan 27 15:22:07 2026
+@@ -48,6 +48,9 @@
  -}
+ /* clang-format on */
  
 +/* XXX SmartOS - include here for symbol remapping... */
 +#include <openssl/sunw_prefix.h>
 +
  /* Generate 80386 code? */
+ /* clang-format off */
  {- $config{processor} eq "386" ? "# define" : "# undef" -} I386_ONLY
- 
 diff -ru a/test/provider_internal_test.c b/test/provider_internal_test.c
---- a/test/provider_internal_test.c	2021-09-07 07:46:32.000000000 -0400
-+++ b/test/provider_internal_test.c	2021-11-16 10:47:36.000000000 -0500
+--- a/test/provider_internal_test.c	Tue Jan 27 09:09:55 2026
++++ b/test/provider_internal_test.c	Tue Jan 27 15:22:07 2026
 @@ -12,6 +12,15 @@
  #include "internal/provider.h"
  #include "testutil.h"
@@ -184,8 +184,8 @@ diff -ru a/test/provider_internal_test.c b/test/provider_internal_test.c
  
  static char buf[256];
 diff -ru a/test/provider_test.c b/test/provider_test.c
---- a/test/provider_test.c	2021-09-07 07:46:32.000000000 -0400
-+++ b/test/provider_test.c	2021-11-16 10:47:36.000000000 -0500
+--- a/test/provider_test.c	Tue Jan 27 09:09:55 2026
++++ b/test/provider_test.c	Tue Jan 27 15:22:07 2026
 @@ -11,6 +11,15 @@
  #include <openssl/provider.h>
  #include "testutil.h"
@@ -203,9 +203,9 @@ diff -ru a/test/provider_test.c b/test/provider_test.c
  
  static char buf[256];
 diff -ru a/util/mkdef.pl b/util/mkdef.pl
---- a/util/mkdef.pl	2021-09-07 07:46:32.000000000 -0400
-+++ b/util/mkdef.pl	2021-11-16 10:47:36.000000000 -0500
-@@ -268,7 +268,7 @@
+--- a/util/mkdef.pl	Tue Jan 27 09:09:55 2026
++++ b/util/mkdef.pl	Tue Jan 27 15:22:07 2026
+@@ -272,7 +272,7 @@
      global:
  _____
          }
