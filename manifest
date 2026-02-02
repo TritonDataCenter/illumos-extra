@@ -157,12 +157,12 @@ f usr/share/man/man1/less.1 0444 root bin
 f usr/share/man/man1/lessecho.1 0444 root bin
 f usr/share/man/man1/lesskey.1 0444 root bin
 # libexpat
-s usr/lib/amd64/libexpat.so.0=libexpat.so.1.11.1
-f usr/lib/amd64/libexpat.so.1.11.1 0555 root bin
-s usr/lib/amd64/libexpat.so.1=libexpat.so.1.11.1
-s usr/lib/libexpat.so.0=libexpat.so.1.11.1
-f usr/lib/libexpat.so.1.11.1 0555 root bin
-s usr/lib/libexpat.so.1=libexpat.so.1.11.1
+s usr/lib/amd64/libexpat.so.0=libexpat.so.1.11.2
+f usr/lib/amd64/libexpat.so.1.11.2 0555 root bin
+s usr/lib/amd64/libexpat.so.1=libexpat.so.1.11.2
+s usr/lib/libexpat.so.0=libexpat.so.1.11.2
+f usr/lib/libexpat.so.1.11.2 0555 root bin
+s usr/lib/libexpat.so.1=libexpat.so.1.11.2
 # libidn
 f usr/lib/libidn.so.11.5.40 0755 root bin
 s usr/lib/libidn.so.11=libidn.so.11.5.40
