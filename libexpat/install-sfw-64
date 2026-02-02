@@ -38,9 +38,9 @@ mkdir -p ${LIBDIR} ${INCDIR}
 
 cd ${VERS}
 
-_install D lib/.libs/libexpat.so.1.11.1 ${LIBDIR}/libexpat.so.1.11.1 555
-_install L libexpat.so.1.11.1 ${LIBDIR}/libexpat.so
-_install L libexpat.so.1.11.1 ${LIBDIR}/libexpat.so.1
-_install L libexpat.so.1.11.1 ${LIBDIR}/libexpat.so.0
+_install D lib/.libs/libexpat.so.1.11.2 ${LIBDIR}/libexpat.so.1.11.2 555
+_install L libexpat.so.1.11.2 ${LIBDIR}/libexpat.so
+_install L libexpat.so.1.11.2 ${LIBDIR}/libexpat.so.1
+_install L libexpat.so.1.11.2 ${LIBDIR}/libexpat.so.0
 
 exit 0
