@@ -691,10 +691,6 @@ f usr/share/vim/vim92/autoload/hcl.vim 0444 root bin
 f usr/share/vim/vim92/autoload/htmlcomplete.vim 0444 root bin
 f usr/share/vim/vim92/autoload/javascriptcomplete.vim 0444 root bin
 f usr/share/vim/vim92/autoload/modula2.vim 0444 root bin
-f usr/share/vim/vim92/autoload/netrw.vim 0444 root bin
-f usr/share/vim/vim92/autoload/netrwFileHandlers.vim 0444 root bin
-f usr/share/vim/vim92/autoload/netrwSettings.vim 0444 root bin
-f usr/share/vim/vim92/autoload/netrw_gitignore.vim 0444 root bin
 f usr/share/vim/vim92/autoload/paste.vim 0444 root bin
 f usr/share/vim/vim92/autoload/phpcomplete.vim 0444 root bin
 f usr/share/vim/vim92/autoload/python.vim 0444 root bin
@@ -979,7 +975,6 @@ f usr/share/vim/vim92/doc/starting.txt 0444 root bin
 f usr/share/vim/vim92/doc/syntax.txt 0444 root bin
 f usr/share/vim/vim92/doc/tabpage.txt 0444 root bin
 f usr/share/vim/vim92/doc/tags 0444 root bin
-f usr/share/vim/vim92/doc/tags-ru 0444 root bin
 f usr/share/vim/vim92/doc/tagsrch.txt 0444 root bin
 f usr/share/vim/vim92/doc/term.txt 0444 root bin
 f usr/share/vim/vim92/doc/terminal.txt 0444 root bin
@@ -987,7 +982,6 @@ f usr/share/vim/vim92/doc/testing.txt 0444 root bin
 f usr/share/vim/vim92/doc/textprop.txt 0444 root bin
 f usr/share/vim/vim92/doc/tips.txt 0444 root bin
 f usr/share/vim/vim92/doc/todo.txt 0444 root bin
-f usr/share/vim/vim92/doc/uganda.rux 0444 root bin
 f usr/share/vim/vim92/doc/uganda.txt 0444 root bin
 f usr/share/vim/vim92/doc/undo.txt 0444 root bin
 f usr/share/vim/vim92/doc/userfunc.txt 0444 root bin
@@ -1196,7 +1190,6 @@ f usr/share/vim/vim92/ftplugin/java.vim 0444 root bin
 f usr/share/vim/vim92/ftplugin/javacc.vim 0444 root bin
 f usr/share/vim/vim92/ftplugin/javascript.vim 0444 root bin
 f usr/share/vim/vim92/ftplugin/javascriptreact.vim 0444 root bin
-f usr/share/vim/vim92/ftplugin/jj.vim 0444 root bin
 f usr/share/vim/vim92/ftplugin/jproperties.vim 0444 root bin
 f usr/share/vim/vim92/ftplugin/jq.vim 0444 root bin
 f usr/share/vim/vim92/ftplugin/json.vim 0444 root bin
@@ -1675,7 +1668,6 @@ f usr/share/vim/vim92/pack/dist/opt/editorconfig/doc/editorconfig.txt 0444 root 
 f usr/share/vim/vim92/pack/dist/opt/editorconfig/doc/tags 0444 root bin
 d usr/share/vim/vim92/pack/dist/opt/editorconfig/ftdetect 0555 root bin
 f usr/share/vim/vim92/pack/dist/opt/editorconfig/ftdetect/editorconfig.vim 0444 root bin
-f usr/share/vim/vim92/pack/dist/opt/editorconfig/mkzip.sh 0444 root bin
 d usr/share/vim/vim92/pack/dist/opt/editorconfig/plugin 0555 root bin
 f usr/share/vim/vim92/pack/dist/opt/editorconfig/plugin/editorconfig.vim 0444 root bin
 d usr/share/vim/vim92/pack/dist/opt/justify 0555 root bin
@@ -2057,7 +2049,6 @@ f usr/share/vim/vim92/syntax/javascript.vim 0444 root bin
 f usr/share/vim/vim92/syntax/javascriptreact.vim 0444 root bin
 f usr/share/vim/vim92/syntax/jess.vim 0444 root bin
 f usr/share/vim/vim92/syntax/jgraph.vim 0444 root bin
-f usr/share/vim/vim92/syntax/jj.vim 0444 root bin
 f usr/share/vim/vim92/syntax/jovial.vim 0444 root bin
 f usr/share/vim/vim92/syntax/jproperties.vim 0444 root bin
 f usr/share/vim/vim92/syntax/jq.vim 0444 root bin
@@ -2171,7 +2162,6 @@ f usr/share/vim/vim92/syntax/natural.vim 0444 root bin
 f usr/share/vim/vim92/syntax/ncf.vim 0444 root bin
 f usr/share/vim/vim92/syntax/neomuttrc.vim 0444 root bin
 f usr/share/vim/vim92/syntax/netrc.vim 0444 root bin
-f usr/share/vim/vim92/syntax/netrw.vim 0444 root bin
 f usr/share/vim/vim92/syntax/nginx.vim 0444 root bin
 f usr/share/vim/vim92/syntax/ninja.vim 0444 root bin
 f usr/share/vim/vim92/syntax/nix.vim 0444 root bin
