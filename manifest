@@ -951,7 +951,6 @@ f usr/share/vim/vim92/doc/pattern.txt 0444 root bin
 f usr/share/vim/vim92/doc/pi_getscript.txt 0444 root bin
 f usr/share/vim/vim92/doc/pi_gzip.txt 0444 root bin
 f usr/share/vim/vim92/doc/pi_logipat.txt 0444 root bin
-f usr/share/vim/vim92/doc/pi_netrw.txt 0444 root bin
 f usr/share/vim/vim92/doc/pi_paren.txt 0444 root bin
 f usr/share/vim/vim92/doc/pi_spec.txt 0444 root bin
 f usr/share/vim/vim92/doc/pi_tar.txt 0444 root bin
@@ -1700,7 +1699,6 @@ f usr/share/vim/vim92/plugin/gzip.vim 0444 root bin
 f usr/share/vim/vim92/plugin/logiPat.vim 0444 root bin
 f usr/share/vim/vim92/plugin/manpager.vim 0444 root bin
 f usr/share/vim/vim92/plugin/matchparen.vim 0444 root bin
-f usr/share/vim/vim92/plugin/netrwPlugin.vim 0444 root bin
 f usr/share/vim/vim92/plugin/rrhelper.vim 0444 root bin
 f usr/share/vim/vim92/plugin/spellfile.vim 0444 root bin
 f usr/share/vim/vim92/plugin/tarPlugin.vim 0444 root bin
