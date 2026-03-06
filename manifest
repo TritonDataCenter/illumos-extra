@@ -763,6 +763,7 @@ f usr/share/vim/vim92/colors/zellner.vim 0444 root bin
 d usr/share/vim/vim92/compiler 0555 root bin
 f usr/share/vim/vim92/compiler/README.txt 0444 root bin
 f usr/share/vim/vim92/compiler/ant.vim 0444 root bin
+f usr/share/vim/vim92/compiler/bash.vim 0444 root bin
 f usr/share/vim/vim92/compiler/bcc.vim 0444 root bin
 f usr/share/vim/vim92/compiler/bdf.vim 0444 root bin
 f usr/share/vim/vim92/compiler/cargo.vim 0444 root bin
