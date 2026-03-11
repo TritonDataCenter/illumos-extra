@@ -23,7 +23,7 @@
 # Copyright 2026 Edgecast Cloud LLC.
 #
 
-VER =	curl-8.18.0
+VER =	curl-8.19.0
 
 include ../Makefile.defs
 
