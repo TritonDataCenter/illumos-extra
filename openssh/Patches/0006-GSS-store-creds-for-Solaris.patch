@@ -1,4 +1,4 @@
-From 99c4e1667f7aff13e9dbdb54a33762773ea70110 Mon Sep 17 00:00:00 2001
+From 8bc5f647d8c1dd52cd910415c5501d38aa8ac5bf Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:34 -0700
 Subject: [PATCH 05/34] GSS store creds for Solaris
@@ -6,16 +6,16 @@ Subject: [PATCH 05/34] GSS store creds for Solaris
 ---
  configure.ac    |  3 +++
  gss-serv-krb5.c |  7 ++++++-
- gss-serv.c      | 51 +++++++++++++++++++++++++++++++++++++++++++++++++
+ gss-serv.c      | 56 ++++++++++++++++++++++++++++++++++++++++++++-----
  servconf.c      |  4 ++++
- sshd-session.c  | 14 ++++++++++++++
- 5 files changed, 78 insertions(+), 1 deletion(-)
+ sshd-session.c  | 14 +++++++++++++
+ 5 files changed, 78 insertions(+), 6 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 3eb6d4697..dd6fba156 100644
+index a8e9df66b..b0f1c3c58 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1254,6 +1254,9 @@ if (setsockopt(s, IPPROTO_IP, IP_TOS, &one, sizeof(one)) == -1)
+@@ -1283,6 +1283,9 @@ if (setsockopt(s, IPPROTO_IP, IP_TOS, &one, sizeof(one)) == -1)
  		],
  	)
  	TEST_SHELL=$SHELL	# let configure find us a capable shell
@@ -26,7 +26,7 @@ index 3eb6d4697..dd6fba156 100644
  *-*-sunos4*)
  	CPPFLAGS="$CPPFLAGS -DSUNOS4"
 diff --git a/gss-serv-krb5.c b/gss-serv-krb5.c
-index a151bc1e4..6a6af04e6 100644
+index 4caac337c..46dbe3607 100644
 --- a/gss-serv-krb5.c
 +++ b/gss-serv-krb5.c
 @@ -109,7 +109,7 @@ ssh_gssapi_krb5_userok(ssh_gssapi_client *client, char *name)
@@ -59,10 +59,10 @@ index a151bc1e4..6a6af04e6 100644
  
  #endif /* KRB5 */
 diff --git a/gss-serv.c b/gss-serv.c
-index b0e9c3b49..53963e4b8 100644
+index f9ae303b5..db1ecd221 100644
 --- a/gss-serv.c
 +++ b/gss-serv.c
-@@ -44,6 +44,7 @@
+@@ -45,6 +45,7 @@
  #include "channels.h"
  #include "session.h"
  #include "misc.h"
@@ -70,7 +70,7 @@ index b0e9c3b49..53963e4b8 100644
  #include "servconf.h"
  
  #include "ssh-gss.h"
-@@ -320,22 +321,72 @@ ssh_gssapi_getclient(Gssctxt *ctx, ssh_gssapi_client *client)
+@@ -321,27 +322,72 @@ ssh_gssapi_getclient(Gssctxt *ctx, ssh_gssapi_client *client)
  void
  ssh_gssapi_cleanup_creds(void)
  {
@@ -135,19 +135,24 @@ index b0e9c3b49..53963e4b8 100644
 +		sshbuf_free(b);
 +	}
 +#else	/* #ifdef USE_GSS_STORE_CRED */
- 	if (gssapi_client.mech && gssapi_client.mech->storecreds) {
- 		(*gssapi_client.mech->storecreds)(&gssapi_client);
- 	} else
- 		debug("ssh_gssapi_storecreds: Not a GSSAPI mechanism");
+ 	if (options.gss_deleg_creds == 0) {
+ 		debug_f("delegate credential is disabled, doing nothing");
+ 		return;
+ 	}
+-
+-	if (gssapi_client.mech && gssapi_client.mech->storecreds) {
+-		(*gssapi_client.mech->storecreds)(&gssapi_client);
+-	} else
+-		debug("ssh_gssapi_storecreds: Not a GSSAPI mechanism");
 +#endif	/* #ifdef USE_GSS_STORE_CRED */
  }
  
  /* This allows GSSAPI methods to do things to the child's environment based
 diff --git a/servconf.c b/servconf.c
-index d8f9b1562..101a22ca6 100644
+index 0f169c83d..fc787d22a 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -652,7 +652,11 @@ static struct {
+@@ -655,8 +655,12 @@ static struct {
  	{ "afstokenpassing", sUnsupported, SSHCFG_GLOBAL },
  #ifdef GSSAPI
  	{ "gssapiauthentication", sGssAuthentication, SSHCFG_ALL },
@@ -155,15 +160,16 @@ index d8f9b1562..101a22ca6 100644
 +	{ "gssapicleanupcredentials", sUnsupported, SSHCFG_GLOBAL },
 +#else /* USE_GSS_STORE_CRED */
  	{ "gssapicleanupcredentials", sGssCleanupCreds, SSHCFG_GLOBAL },
+ 	{ "gssapidelegatecredentials", sGssDelegateCreds, SSHCFG_GLOBAL },
 +#endif /* USE_GSS_STORE_CRED */
  	{ "gssapistrictacceptorcheck", sGssStrictAcceptor, SSHCFG_GLOBAL },
  #else
  	{ "gssapiauthentication", sUnsupported, SSHCFG_ALL },
 diff --git a/sshd-session.c b/sshd-session.c
-index 8979f743b..5e0c4b34e 100644
+index e9a488d08..8f5cce4b3 100644
 --- a/sshd-session.c
 +++ b/sshd-session.c
-@@ -1301,9 +1301,23 @@ main(int ac, char **av)
+@@ -1269,9 +1269,23 @@ main(int ac, char **av)
  
  #ifdef GSSAPI
  	if (options.gss_authentication) {

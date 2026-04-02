@@ -1,4 +1,4 @@
-From 8c6424c0eaf32ba70e30d962b47ee8badffd0210 Mon Sep 17 00:00:00 2001
+From 6aabe8de7e3d5842cb5eccc01ffd8f10d88e4a99 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:31:53 -0700
 Subject: [PATCH 01/34] Skip config check
@@ -15,10 +15,10 @@ Subject: [PATCH 01/34] Skip config check
  1 file changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 760fbaa5b..6e2553cea 100644
+index 2aac879c1..bcf6757f5 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -417,7 +417,16 @@ install-nokeys: $(CONFIGFILES) $(MANPAGES) $(TARGETS) install-files install-sysc
+@@ -418,7 +418,16 @@ install-nokeys: $(CONFIGFILES) $(MANPAGES) $(TARGETS) install-files install-sysc
  install-nosysconf: $(CONFIGFILES) $(MANPAGES) $(TARGETS) install-files
  
  check-config:

@@ -1,4 +1,4 @@
-From 8a13f2152cb6b5f9a6258ae089499843426fd8ea Mon Sep 17 00:00:00 2001
+From 4a6c08647c1170493be3cbd3a591b8ef40ec00fa Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 5 Aug 2015 12:25:15 -0700
 Subject: [PATCH 20/34] Try to create privsep chroot dir if it doesn't exist
@@ -9,10 +9,10 @@ Subject: [PATCH 20/34] Try to create privsep chroot dir if it doesn't exist
  1 file changed, 26 insertions(+)
 
 diff --git a/sshd-auth.c b/sshd-auth.c
-index 9c31515de..0545ac9f7 100644
+index 76350a2a3..e21f0e7c8 100644
 --- a/sshd-auth.c
 +++ b/sshd-auth.c
-@@ -187,6 +187,32 @@ privsep_child_demote(void)
+@@ -186,6 +186,32 @@ privsep_child_demote(void)
  #endif
  	/* Demote the child */
  	if (privsep_chroot) {

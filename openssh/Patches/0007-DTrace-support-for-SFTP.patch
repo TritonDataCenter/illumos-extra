@@ -1,4 +1,4 @@
-From fde855749de12c84cdbf1a1e4d15807c22ee846c Mon Sep 17 00:00:00 2001
+From 29cc05115aaf8aa706b5e2541131566492472cc3 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:43 -0700
 Subject: [PATCH 06/34] DTrace support for SFTP
@@ -15,7 +15,7 @@ Subject: [PATCH 06/34] DTrace support for SFTP
  create mode 100644 sftp_provider_impl.h
 
 diff --git a/Makefile.in b/Makefile.in
-index 6e2553cea..58661d63f 100644
+index bcf6757f5..3980fc554 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -27,6 +27,7 @@ SSHD_SESSION=$(libexecdir)/sshd-session
@@ -42,13 +42,13 @@ index 6e2553cea..58661d63f 100644
 +	sftp-server.o sftp-common.o sftp_provider.o \
  	uidswap.o $(P11OBJS) $(SKOBJS)
  
- SFTP_CLIENT_OBJS=sftp-common.o sftp-client.o sftp-glob.o
-@@ -168,7 +170,7 @@ SKHELPER_OBJS=	ssh-sk-helper.o ssh-sk.o sk-usbhid.o
+ SFTP_CLIENT_OBJS=sftp-common.o sftp-client.o sftp-glob.o ssherr-nolibcrypto.o
+@@ -168,7 +170,7 @@ SKHELPER_OBJS=	ssh-sk-helper.o ssh-sk.o sk-usbhid.o ssherr-nolibcrypto.o
  
  SSHKEYSCAN_OBJS=ssh-keyscan.o $(P11OBJS) $(SKOBJS)
  
--SFTPSERVER_OBJS=sftp-common.o sftp-server.o sftp-server-main.o
-+SFTPSERVER_OBJS=sftp-common.o sftp-server.o sftp-server-main.o sftp_provider.o
+-SFTPSERVER_OBJS=sftp-common.o sftp-server.o sftp-server-main.o ssherr-nolibcrypto.o
++SFTPSERVER_OBJS=sftp-common.o sftp-server.o sftp-server-main.o ssherr-nolibcrypto.o sftp_provider.o
  
  SFTP_OBJS=	sftp.o sftp-usergroup.o progressmeter.o $(SFTP_CLIENT_OBJS)
  
@@ -76,7 +76,7 @@ index 6e2553cea..58661d63f 100644
  	rm -f regress/check-perm$(EXEEXT)
  	rm -f regress/mkdtemp$(EXEEXT)
  	rm -f regress/unittests/test_helper/*.a
-@@ -465,6 +480,7 @@ install-files:
+@@ -466,6 +481,7 @@ install-files:
  	$(INSTALL) -m 644 ssh-keysign.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
  	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
  	$(INSTALL) -m 644 ssh-sk-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8
@@ -85,10 +85,10 @@ index 6e2553cea..58661d63f 100644
  install-sysconf:
  	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
 diff --git a/sftp-server.c b/sftp-server.c
-index 777821acd..52c607a24 100644
+index ebdb31d32..f15105e0b 100644
 --- a/sftp-server.c
 +++ b/sftp-server.c
-@@ -52,6 +52,9 @@
+@@ -48,6 +48,9 @@
  
  #include "sftp.h"
  #include "sftp-common.h"
@@ -98,15 +98,15 @@ index 777821acd..52c607a24 100644
  
  char *sftp_realpath(const char *, char *); /* sftp-realpath.c */
  
-@@ -799,6 +802,7 @@ process_read(u_int32_t id)
- 	u_int32_t len;
+@@ -795,6 +798,7 @@ process_read(uint32_t id)
+ 	uint32_t len;
  	int r, handle, fd, ret, status = SSH2_FX_FAILURE;
- 	u_int64_t off;
+ 	uint64_t off;
 +	char *fpath;
  
  	if ((r = get_handle(iqueue, &handle)) != 0 ||
  	    (r = sshbuf_get_u64(iqueue, &off)) != 0 ||
-@@ -828,7 +832,16 @@ process_read(u_int32_t id)
+@@ -824,7 +828,16 @@ process_read(uint32_t id)
  	if (len == 0) {
  		/* weird, but not strictly disallowed */
  		ret = 0;
@@ -124,7 +124,7 @@ index 777821acd..52c607a24 100644
  		status = errno_to_portable(errno);
  		error_f("read \"%.100s\": %s", handle_to_name(handle),
  		    strerror(errno));
-@@ -853,14 +866,16 @@ process_write(u_int32_t id)
+@@ -849,14 +862,16 @@ process_write(uint32_t id)
  	size_t len;
  	int r, handle, fd, ret, status;
  	u_char *data;
@@ -142,7 +142,7 @@ index 777821acd..52c607a24 100644
  	fd = handle_to_fd(handle);
  
  	if (fd < 0)
-@@ -873,7 +888,13 @@ process_write(u_int32_t id)
+@@ -869,7 +884,13 @@ process_write(uint32_t id)
  			    strerror(errno));
  		} else {
  /* XXX ATOMICIO ? */

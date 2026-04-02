@@ -1,4 +1,4 @@
-From 8bc4a20e983a1ea6dc71fbf0437d10bf7d31cc89 Mon Sep 17 00:00:00 2001
+From b77ad849b42bf362b6cbd54e230729b71677f259 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 21 Aug 2015 18:47:46 -0700
 Subject: [PATCH 24/34] Don't use krb5-config to check for GSSAPI on Illumos
@@ -8,10 +8,10 @@ Subject: [PATCH 24/34] Don't use krb5-config to check for GSSAPI on Illumos
  1 file changed, 21 insertions(+), 35 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index f17dfef16..71fb7571b 100644
+index 5a1cc90e6..150611e69 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4906,19 +4906,17 @@ AC_ARG_WITH([kerberos5],
+@@ -4987,19 +4987,17 @@ AC_ARG_WITH([kerberos5],
  		AC_DEFINE([KRB5], [1], [Define if you want Kerberos 5 support])
  		KRB5_MSG="yes"
  
@@ -41,7 +41,7 @@ index f17dfef16..71fb7571b 100644
  			CPPFLAGS="$CPPFLAGS $K5CFLAGS"
  
  			AC_MSG_CHECKING([for gssapi support])
-@@ -4967,29 +4965,17 @@ AC_ARG_WITH([kerberos5],
+@@ -5048,29 +5046,17 @@ AC_ARG_WITH([kerberos5],
  				AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ #include <krb5.h>
  					]], [[ char *tmp = heimdal_version; ]])],
  					[ AC_MSG_RESULT([yes])

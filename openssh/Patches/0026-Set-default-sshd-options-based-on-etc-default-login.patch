@@ -1,4 +1,4 @@
-From da7f1732db9436f1f9736390e8d43a7bebbf8c30 Mon Sep 17 00:00:00 2001
+From 92b536433e6f4b62992ccf481a4e1c0524ea1f82 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 24 Aug 2015 18:57:27 -0700
 Subject: [PATCH 25/34] Set default sshd options based on /etc/default/login
@@ -10,7 +10,7 @@ Subject: [PATCH 25/34] Set default sshd options based on /etc/default/login
  3 files changed, 76 insertions(+), 1 deletion(-)
 
 diff --git a/pathnames.h b/pathnames.h
-index d3e842fba..cd62899a2 100644
+index 93b9b3860..c66da7ddb 100644
 --- a/pathnames.h
 +++ b/pathnames.h
 @@ -45,6 +45,7 @@
@@ -22,18 +22,18 @@ index d3e842fba..cd62899a2 100644
  #define _PATH_DH_PRIMES			SSHDIR "/primes"
  
 diff --git a/servconf.c b/servconf.c
-index 3ba89d3ff..eb7ac1b8d 100644
+index b63dd7ef4..15993a28e 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -36,6 +36,7 @@
+@@ -37,6 +37,7 @@
  #include <unistd.h>
  #include <limits.h>
  #include <stdarg.h>
 +#include <deflt.h>
  #include <errno.h>
  #include <util.h>
- #ifdef USE_SYSTEM_GLOB
-@@ -236,6 +237,64 @@ option_clear_or_none(const char *o)
+ 
+@@ -234,6 +235,64 @@ option_clear_or_none(const char *o)
  	return o == NULL || strcasecmp(o, "none") == 0;
  }
  
@@ -98,7 +98,7 @@ index 3ba89d3ff..eb7ac1b8d 100644
  static void
  assemble_algorithms(ServerOptions *o)
  {
-@@ -323,6 +382,8 @@ fill_default_server_options(ServerOptions *options)
+@@ -321,6 +380,8 @@ fill_default_server_options(ServerOptions *options)
  		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
  #endif
  
@@ -108,10 +108,10 @@ index 3ba89d3ff..eb7ac1b8d 100644
  	if (options->num_host_key_files == 0) {
  		/* fill default hostkeys for protocols */
 diff --git a/sshd_config.5 b/sshd_config.5
-index ee9e18e5c..2b2b952af 100644
+index 8f2778d6a..738646ecc 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
-@@ -1348,7 +1348,13 @@ Specifies the maximum number of authentication attempts permitted per
+@@ -1368,7 +1368,13 @@ Specifies the maximum number of authentication attempts permitted per
  connection.
  Once the number of failures reaches half this value,
  additional failures are logged.
@@ -126,7 +126,7 @@ index ee9e18e5c..2b2b952af 100644
  .It Cm MaxSessions
  Specifies the maximum number of open shell, login or subsystem (e.g. sftp)
  sessions permitted per network connection.
-@@ -1410,6 +1416,13 @@ When password authentication is allowed, it specifies whether the
+@@ -1430,6 +1436,13 @@ When password authentication is allowed, it specifies whether the
  server allows login to accounts with empty password strings.
  The default is
  .Cm no .

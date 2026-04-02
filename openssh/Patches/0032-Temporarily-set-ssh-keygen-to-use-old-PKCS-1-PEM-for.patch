@@ -1,4 +1,4 @@
-From 7da941818677b4208f3b06741473d4667fc43a36 Mon Sep 17 00:00:00 2001
+From 388a00f6c5d20033af8167a6f892799029934407 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Tue, 16 Jul 2019 13:43:14 -0700
 Subject: [PATCH 30/34] Temporarily set ssh-keygen to use old PKCS#1 PEM format
@@ -16,7 +16,7 @@ to the new format, otherwise old.
  2 files changed, 33 insertions(+), 10 deletions(-)
 
 diff --git a/ssh-keygen.1 b/ssh-keygen.1
-index 7ceb1db95..6aa510fa0 100644
+index c5f3f7410..a1ecb9c94 100644
 --- a/ssh-keygen.1
 +++ b/ssh-keygen.1
 @@ -279,12 +279,12 @@ If
@@ -73,7 +73,7 @@ index 7ceb1db95..6aa510fa0 100644
  Provides the (old) passphrase.
  .It Fl p
 diff --git a/ssh-keygen.c b/ssh-keygen.c
-index 287b2118f..6137c84a2 100644
+index 6ae495163..38f6c6dcf 100644
 --- a/ssh-keygen.c
 +++ b/ssh-keygen.c
 @@ -153,7 +153,8 @@ static char *pkcs11provider = NULL;
@@ -108,7 +108,7 @@ index 287b2118f..6137c84a2 100644
  	if (private->type != KEY_ED25519 &&
  	    private_key_format != SSHKEY_PRIVATE_OPENSSH) {
  		error("Comments are only supported for keys stored in "
-@@ -3399,11 +3408,13 @@ main(int argc, char **argv)
+@@ -3401,11 +3410,13 @@ main(int argc, char **argv)
  			if (strcasecmp(optarg, "PKCS8") == 0) {
  				convert_format = FMT_PKCS8;
  				private_key_format = SSHKEY_PRIVATE_PKCS8;
@@ -122,7 +122,7 @@ index 287b2118f..6137c84a2 100644
  				break;
  			}
  			fatal("Unsupported conversion format \"%s\"", optarg);
-@@ -3411,7 +3422,8 @@ main(int argc, char **argv)
+@@ -3413,7 +3424,8 @@ main(int argc, char **argv)
  			cert_principals = optarg;
  			break;
  		case 'o':
@@ -132,7 +132,7 @@ index 287b2118f..6137c84a2 100644
  			break;
  		case 'p':
  			change_passphrase = 1;
-@@ -3885,6 +3897,10 @@ main(int argc, char **argv)
+@@ -3896,6 +3908,10 @@ main(int argc, char **argv)
  		snprintf(comment, sizeof comment, "%s@%s", pw->pw_name, hostname);
  	}
  

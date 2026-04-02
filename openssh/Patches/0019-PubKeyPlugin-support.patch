@@ -1,4 +1,4 @@
-From c73113f0e6367a31ad54dea7cb5fd97859a644c5 Mon Sep 17 00:00:00 2001
+From 3a722a592a735e123b4b79bee83e8464d2c0cd2b Mon Sep 17 00:00:00 2001
 From: Travis Paul <travis.paul@mnx.io>
 Date: Thu, 30 Nov 2023 19:18:37 +0000
 Subject: [PATCH 18/34] PubKeyPlugin support
@@ -7,13 +7,13 @@ This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called
 into to check public keys for authentication.
 ---
- auth2-pubkey.c | 86 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ auth2-pubkey.c | 91 ++++++++++++++++++++++++++++++++++++++++++++++++++
  servconf.c     | 15 ++++++++-
  servconf.h     |  1 +
- 3 files changed, 101 insertions(+), 1 deletion(-)
+ 3 files changed, 106 insertions(+), 1 deletion(-)
 
 diff --git a/auth2-pubkey.c b/auth2-pubkey.c
-index 15ad3000c..3ccdfc4b6 100644
+index e446ef412..6573c22d4 100644
 --- a/auth2-pubkey.c
 +++ b/auth2-pubkey.c
 @@ -23,6 +23,12 @@
@@ -29,15 +29,20 @@ index 15ad3000c..3ccdfc4b6 100644
  
  #include "includes.h"
  
-@@ -39,6 +45,7 @@
+@@ -40,6 +46,12 @@
  #include <time.h>
  #include <unistd.h>
  #include <limits.h>
 +#include <dlfcn.h>
- #ifdef USE_SYSTEM_GLOB
- # include <glob.h>
- #else
-@@ -77,6 +84,10 @@
++#ifdef USE_SYSTEM_GLOB
++# include <glob.h>
++#else
++# include "openbsd-compat/glob.h"
++#endif
+ 
+ #include "xmalloc.h"
+ #include "ssh.h"
+@@ -73,6 +85,10 @@
  extern ServerOptions options;
  extern struct authmethod_cfg methodcfg_pubkey;
  
@@ -48,7 +53,7 @@ index 15ad3000c..3ccdfc4b6 100644
  static char *
  format_key(const struct sshkey *key)
  {
-@@ -786,6 +797,76 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
+@@ -783,6 +799,76 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
  	return found_key;
  }
  
@@ -125,7 +130,7 @@ index 15ad3000c..3ccdfc4b6 100644
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -860,6 +941,11 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
+@@ -857,6 +943,11 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
  	sshauthopt_free(opts);
  	opts = NULL;
  
@@ -138,10 +143,10 @@ index 15ad3000c..3ccdfc4b6 100644
  	    remote_host, conn_id, rdomain, &opts)) != 0)
  		goto out;
 diff --git a/servconf.c b/servconf.c
-index c77e7bffb..3a15faa50 100644
+index cf1451fe3..bd1414459 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -615,7 +615,7 @@ typedef enum {
+@@ -618,7 +618,7 @@ typedef enum {
  	sExposeAuthInfo, sRDomain, sPubkeyAuthOptions, sSecurityKeyProvider,
  	sRequiredRSASize, sChannelTimeout, sUnusedConnectionTimeout,
  	sSshdSessionPath, sSshdAuthPath, sRefuseConnection,
@@ -150,7 +155,7 @@ index c77e7bffb..3a15faa50 100644
  } ServerOpCodes;
  
  #define SSHCFG_GLOBAL		0x01	/* allowed in main section of config */
-@@ -821,6 +821,7 @@ static struct {
+@@ -826,6 +826,7 @@ static struct {
  	{ "sshdsessionpath", sSshdSessionPath, SSHCFG_GLOBAL },
  	{ "sshdauthpath", sSshdAuthPath, SSHCFG_GLOBAL },
  	{ "refuseconnection", sRefuseConnection, SSHCFG_ALL },
@@ -158,7 +163,7 @@ index c77e7bffb..3a15faa50 100644
  	{ NULL, sBadOption, 0 }
  };
  
-@@ -2837,6 +2838,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2870,6 +2871,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  			options->pam_service_prefix = xstrdup(arg);
  		break;
  
@@ -178,11 +183,11 @@ index c77e7bffb..3a15faa50 100644
  	case sIgnore:
  	case sUnsupported:
 diff --git a/servconf.h b/servconf.h
-index b8ea5c421..3f19b91d0 100644
+index 901a5433c..b8b375229 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -251,6 +251,7 @@ typedef struct {
- 	u_int64_t timing_secret;
+@@ -252,6 +252,7 @@ typedef struct {
+ 	uint64_t timing_secret;
  	char   *sk_provider;
  	int	required_rsa_size;	/* minimum size of RSA keys */
 +	char   *pubkey_plugin;
