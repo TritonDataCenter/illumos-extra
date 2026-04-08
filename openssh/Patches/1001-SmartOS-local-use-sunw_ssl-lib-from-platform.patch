@@ -1,4 +1,4 @@
-From e51ec6d3a2cacbc13fc5a8b05f5ea85d982f39bc Mon Sep 17 00:00:00 2001
+From af4aa79e25c13ca2819ad35e4eb32be9d0df0744 Mon Sep 17 00:00:00 2001
 From: Dan McDonald <danmcd@mnx.io>
 Date: Thu, 10 Aug 2023 18:11:52 -0400
 Subject: [PATCH 34/34] SmartOS local: use sunw_ssl lib from platform

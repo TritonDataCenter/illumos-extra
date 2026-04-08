@@ -1,4 +1,4 @@
-From be32fa812492b50fa1ca75b1158a6a2e12b9f5a2 Mon Sep 17 00:00:00 2001
+From 799efb3a00769917e6694dfb59cde0a76e1e27bc Mon Sep 17 00:00:00 2001
 From: Dan McDonald <danmcd@edgecast.io>
 Date: Mon, 6 Oct 2025 16:29:57 -0400
 Subject: [PATCH 32/34] gcc14 fixes for illumos

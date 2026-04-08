@@ -1,4 +1,4 @@
-From e032e58a3458b024c7b926220601c9ffe764bdcc Mon Sep 17 00:00:00 2001
+From 3614b2d0ac04bf38f742515384d87fb58db601ae Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Tue, 22 Dec 2015 14:30:19 -0800
 Subject: [PATCH 33/34] SmartOS local: make dtrace lib 32-bit
