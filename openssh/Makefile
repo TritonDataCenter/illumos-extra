@@ -21,10 +21,10 @@
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2021 Joyent, Inc.
 # Copyright 2025 MNX Cloud, Inc.
-# Copyright 2025 Edgecast Cloud LLC.
+# Copyright 2026 Edgecast Cloud LLC.
 #
 
-VER =	openssh-10.2p1
+VER =	openssh-10.3p1
 
 include ../Makefile.defs
 

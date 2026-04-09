@@ -1,4 +1,4 @@
-From ca324e078cda2dd3586e3d90a3bb0aab5b3cca2c Mon Sep 17 00:00:00 2001
+From bcb6d151bf5622340630cfc4264e9db372eeef40 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 16 Sep 2015 10:54:13 -0700
 Subject: [PATCH 28/34] Restore tcpwrappers/libwrap support
@@ -12,10 +12,10 @@ and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
  3 files changed, 93 insertions(+)
 
 diff --git a/configure.ac b/configure.ac
-index 71fb7571b..a116a6c63 100644
+index 150611e69..4e40fd44a 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1775,6 +1775,62 @@ else
+@@ -1836,6 +1836,62 @@ else
  	AC_MSG_RESULT([no])
  fi
  
@@ -78,7 +78,7 @@ index 71fb7571b..a116a6c63 100644
  # Check whether user wants to use ldns
  LDNS_MSG="no"
  AC_ARG_WITH(ldns,
-@@ -5875,6 +5931,7 @@ echo "                       PAM support: $PAM_MSG"
+@@ -5958,6 +6014,7 @@ echo "                       PAM support: $PAM_MSG"
  echo "                   OSF SIA support: $SIA_MSG"
  echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
@@ -87,10 +87,10 @@ index 71fb7571b..a116a6c63 100644
  echo "                   libldns support: $LDNS_MSG"
  echo "  Solaris process contract support: $SPC_MSG"
 diff --git a/sshd-session.c b/sshd-session.c
-index 2e1b99dc4..124e41cd0 100644
+index a4b5afc09..e4a76a4aa 100644
 --- a/sshd-session.c
 +++ b/sshd-session.c
-@@ -103,6 +103,17 @@
+@@ -96,6 +96,17 @@
  #include "srclimit.h"
  #include "dh.h"
  
@@ -108,7 +108,7 @@ index 2e1b99dc4..124e41cd0 100644
  /* Re-exec fds */
  #define REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
  #define REEXEC_CONFIG_PASS_FD		(STDERR_FILENO + 2)
-@@ -1215,6 +1226,24 @@ main(int ac, char **av)
+@@ -1187,6 +1198,24 @@ main(int ac, char **av)
  #ifdef SSH_AUDIT_EVENTS
  	audit_connection_from(ssh, remote_ip, remote_port);
  #endif

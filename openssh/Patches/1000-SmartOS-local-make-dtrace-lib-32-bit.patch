@@ -1,4 +1,4 @@
-From 8276228cb8998b798d640e967fff4d2bb1d1e141 Mon Sep 17 00:00:00 2001
+From 3614b2d0ac04bf38f742515384d87fb58db601ae Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Tue, 22 Dec 2015 14:30:19 -0800
 Subject: [PATCH 33/34] SmartOS local: make dtrace lib 32-bit
@@ -8,7 +8,7 @@ Subject: [PATCH 33/34] SmartOS local: make dtrace lib 32-bit
  1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 3d69f84f8..8952ef7e8 100644
+index 44cb9d2aa..35579eafe 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -30,6 +30,7 @@ SSHD_AUTH=$(libexecdir)/sshd-auth
@@ -28,7 +28,7 @@ index 3d69f84f8..8952ef7e8 100644
  	    sftp-server.o -o sftp_provider.o
  
  # special case for sftp-server.o, it includes sftp_provider.h
-@@ -484,7 +485,7 @@ install-files:
+@@ -485,7 +486,7 @@ install-files:
  	$(INSTALL) -m 644 ssh-keysign.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
  	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
  	$(INSTALL) -m 644 ssh-sk-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8

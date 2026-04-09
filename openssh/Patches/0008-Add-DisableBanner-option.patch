@@ -1,4 +1,4 @@
-From 58e5e30f64af9e40f9000131b31b6b19217c3df9 Mon Sep 17 00:00:00 2001
+From 0f136001a68d408d564667ff34bc1bb8d216b238 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:00 -0700
 Subject: [PATCH 07/34] Add DisableBanner option
@@ -11,10 +11,10 @@ Subject: [PATCH 07/34] Add DisableBanner option
  4 files changed, 75 insertions(+), 4 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
-index f7c268e8c..87e497f41 100644
+index 20fb8588b..78cfa70b5 100644
 --- a/readconf.c
 +++ b/readconf.c
-@@ -164,6 +164,9 @@ typedef enum {
+@@ -156,6 +156,9 @@ typedef enum {
  	oHashKnownHosts,
  	oTunnel, oTunnelDevice,
  	oLocalCommand, oPermitLocalCommand, oRemoteCommand,
@@ -24,7 +24,7 @@ index f7c268e8c..87e497f41 100644
  	oVisualHostKey,
  	oKexAlgorithms, oIPQoS, oRequestTTY, oSessionType, oStdinNull,
  	oForkAfterAuthentication, oIgnoreUnknown, oProxyUseFdpass,
-@@ -290,6 +293,9 @@ static struct {
+@@ -282,6 +285,9 @@ static struct {
  	{ "controlpersist", oControlPersist },
  	{ "hashknownhosts", oHashKnownHosts },
  	{ "include", oInclude },
@@ -34,7 +34,7 @@ index f7c268e8c..87e497f41 100644
  	{ "tunnel", oTunnel },
  	{ "tunneldevice", oTunnelDevice },
  	{ "localcommand", oLocalCommand },
-@@ -1141,6 +1147,17 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
+@@ -1134,6 +1140,17 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
  	return -1;
  }
  
@@ -52,7 +52,7 @@ index f7c268e8c..87e497f41 100644
  /*
   * Processes a single option line as used in the configuration files. This
   * only sets those values that have not already been set.
-@@ -2445,6 +2462,13 @@ parse_pubkey_algos:
+@@ -2465,6 +2482,13 @@ parse_pubkey_algos:
  		intptr = &options->enable_escape_commandline;
  		goto parse_flag;
  
@@ -66,7 +66,7 @@ index f7c268e8c..87e497f41 100644
  	case oRequiredRSASize:
  		intptr = &options->required_rsa_size;
  		goto parse_int;
-@@ -2800,6 +2824,9 @@ initialize_options(Options * options)
+@@ -2820,6 +2844,9 @@ initialize_options(Options * options)
  	options->stdin_null = -1;
  	options->fork_after_authentication = -1;
  	options->proxy_use_fdpass = -1;
@@ -76,7 +76,7 @@ index f7c268e8c..87e497f41 100644
  	options->ignored_unknown = NULL;
  	options->num_canonical_domains = 0;
  	options->num_permitted_cnames = 0;
-@@ -3005,6 +3032,10 @@ fill_default_options(Options * options)
+@@ -3026,6 +3053,10 @@ fill_default_options(Options * options)
  		options->canonicalize_fallback_local = 1;
  	if (options->canonicalize_hostname == -1)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
@@ -88,10 +88,10 @@ index f7c268e8c..87e497f41 100644
  		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
  #ifdef ENABLE_SK_INTERNAL
 diff --git a/readconf.h b/readconf.h
-index 942149f9a..588a4c197 100644
+index dbcb41725..b05c3613f 100644
 --- a/readconf.h
 +++ b/readconf.h
-@@ -189,6 +189,9 @@ typedef struct {
+@@ -190,6 +190,9 @@ typedef struct {
  	char	*version_addendum;
  
  	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
@@ -101,7 +101,7 @@ index 942149f9a..588a4c197 100644
  }       Options;
  
  #define SSH_PUBKEY_AUTH_NO	0x00
-@@ -237,6 +240,13 @@ typedef struct {
+@@ -238,6 +241,13 @@ typedef struct {
  const char *kex_default_pk_alg(void);
  char	*ssh_connection_hash(const char *thishost, const char *host,
      const char *portstr, const char *user, const char *jump_host);
@@ -116,7 +116,7 @@ index 942149f9a..588a4c197 100644
  int      fill_default_options(Options *);
  void	 fill_default_options_for_canonicalization(Options *);
 diff --git a/ssh_config.5 b/ssh_config.5
-index f7066cbaa..acc695627 100644
+index b459b0449..895e71708 100644
 --- a/ssh_config.5
 +++ b/ssh_config.5
 @@ -748,6 +748,14 @@ If set to a time in seconds, or a time in any of the formats documented in
@@ -135,10 +135,10 @@ index f7066cbaa..acc695627 100644
  Specifies that a TCP port on the local machine be forwarded
  over the secure channel, and the application
 diff --git a/sshconnect2.c b/sshconnect2.c
-index b3679c9d7..1c1db753e 100644
+index 478a9a52f..5cdd4de1c 100644
 --- a/sshconnect2.c
 +++ b/sshconnect2.c
-@@ -82,6 +82,10 @@
+@@ -78,6 +78,10 @@
  /* import */
  extern Options options;
  
@@ -149,9 +149,9 @@ index b3679c9d7..1c1db753e 100644
  /*
   * SSH2 key exchange
   */
-@@ -568,16 +572,34 @@ input_userauth_error(int type, u_int32_t seq, struct ssh *ssh)
+@@ -569,16 +573,34 @@ input_userauth_error(int type, uint32_t seq, struct ssh *ssh)
  static int
- input_userauth_banner(int type, u_int32_t seq, struct ssh *ssh)
+ input_userauth_banner(int type, uint32_t seq, struct ssh *ssh)
  {
 -	char *msg = NULL;
 +	char *msg = NULL; /* Placeholder diff */

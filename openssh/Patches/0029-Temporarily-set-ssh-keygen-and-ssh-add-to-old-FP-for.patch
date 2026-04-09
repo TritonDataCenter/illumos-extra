@@ -1,4 +1,4 @@
-From 6654541193b336e8646ac18d70d8c36fe2ad7b1e Mon Sep 17 00:00:00 2001
+From 778fadbde776c38c31884d18e9a07cba2a5335ad Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 9 Sep 2015 10:36:05 -0700
 Subject: [PATCH 27/34] Temporarily set ssh-keygen and ssh-add to old FP format
@@ -13,7 +13,7 @@ same output until we have migrated everything over.
  2 files changed, 29 insertions(+), 7 deletions(-)
 
 diff --git a/ssh-add.c b/ssh-add.c
-index 2d5bec89c..0b5cc7cb5 100644
+index 1e9eddf90..d06df391f 100644
 --- a/ssh-add.c
 +++ b/ssh-add.c
 @@ -54,6 +54,7 @@
@@ -34,7 +34,7 @@ index 2d5bec89c..0b5cc7cb5 100644
  
  /* Default lifetime (0 == forever) */
  static int lifetime = 0;
-@@ -516,7 +518,7 @@ test_key(int agent_fd, const char *filename)
+@@ -531,7 +533,7 @@ test_key(int agent_fd, const char *filename)
  static int
  list_identities(int agent_fd, int do_fp)
  {
@@ -43,7 +43,7 @@ index 2d5bec89c..0b5cc7cb5 100644
  	int r;
  	struct ssh_identitylist *idlist;
  	size_t i;
-@@ -533,8 +535,13 @@ list_identities(int agent_fd, int do_fp)
+@@ -548,8 +550,13 @@ list_identities(int agent_fd, int do_fp)
  		if (do_fp) {
  			fp = sshkey_fingerprint(idlist->keys[i],
  			    fingerprint_hash, SSH_FP_DEFAULT);
@@ -58,7 +58,7 @@ index 2d5bec89c..0b5cc7cb5 100644
  			    sshkey_type(idlist->keys[i]));
  			free(fp);
  		} else {
-@@ -876,6 +883,7 @@ main(int argc, char **argv)
+@@ -863,6 +870,7 @@ main(int argc, char **argv)
  			break;
  		case 'E':
  			fingerprint_hash = ssh_digest_alg_by_name(optarg);
@@ -67,7 +67,7 @@ index 2d5bec89c..0b5cc7cb5 100644
  				fatal("Invalid hash algorithm \"%s\"", optarg);
  			break;
 diff --git a/ssh-keygen.c b/ssh-keygen.c
-index 3c582a83a..287b2118f 100644
+index 584d5a899..6ae495163 100644
 --- a/ssh-keygen.c
 +++ b/ssh-keygen.c
 @@ -39,6 +39,7 @@
@@ -134,7 +134,7 @@ index 3c582a83a..287b2118f 100644
  	    comment ? comment : "no comment", sshkey_type(public));
  	if (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
  		printf("%s\n", ra);
-@@ -3350,6 +3363,7 @@ main(int argc, char **argv)
+@@ -3352,6 +3365,7 @@ main(int argc, char **argv)
  			break;
  		case 'E':
  			fingerprint_hash = ssh_digest_alg_by_name(optarg);

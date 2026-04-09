@@ -1,4 +1,4 @@
-From 755ab84c7079335bc35952f1bae7cc22bb2510e2 Mon Sep 17 00:00:00 2001
+From af4aa79e25c13ca2819ad35e4eb32be9d0df0744 Mon Sep 17 00:00:00 2001
 From: Dan McDonald <danmcd@mnx.io>
 Date: Thu, 10 Aug 2023 18:11:52 -0400
 Subject: [PATCH 34/34] SmartOS local: use sunw_ssl lib from platform
@@ -6,14 +6,14 @@ Subject: [PATCH 34/34] SmartOS local: use sunw_ssl lib from platform
 ---
  cipher-chachapoly-libcrypto.c        |  4 +-
  cipher-chachapoly.c                  |  4 +-
- configure.ac                         | 56 ++++++++++++++--------------
+ configure.ac                         | 65 +++++++++++++++-------------
  digest-openssl.c                     |  6 +--
- openbsd-compat/libressl-api-compat.c | 16 ++++----
+ openbsd-compat/libressl-api-compat.c | 16 +++----
  openbsd-compat/openssl-compat.h      | 10 ++---
- 6 files changed, 48 insertions(+), 48 deletions(-)
+ 6 files changed, 55 insertions(+), 50 deletions(-)
 
 diff --git a/cipher-chachapoly-libcrypto.c b/cipher-chachapoly-libcrypto.c
-index e8d20c288..2ebd699c4 100644
+index 73214e6a7..577323a69 100644
 --- a/cipher-chachapoly-libcrypto.c
 +++ b/cipher-chachapoly-libcrypto.c
 @@ -20,7 +20,7 @@
@@ -24,8 +24,8 @@ index e8d20c288..2ebd699c4 100644
 +#if defined(HAVE_SUNW_EVP_CHACHA20) && !defined(HAVE_BROKEN_CHACHA20)
  
  #include <sys/types.h>
- #include <stdarg.h> /* needed for log.h */
-@@ -162,4 +162,4 @@ chachapoly_get_length(struct chachapoly_ctx *ctx,
+ #include <string.h>
+@@ -160,4 +160,4 @@ chachapoly_get_length(struct chachapoly_ctx *ctx,
  	*plenp = PEEK_U32(buf);
  	return 0;
  }
@@ -51,23 +51,38 @@ index 4471fe2d2..010de2d38 100644
 -#endif /* !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
 +#endif /* !defined(HAVE_SUNW_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
 diff --git a/configure.ac b/configure.ac
-index c8939029c..b9a0e3d58 100644
+index f311aecab..36f0ddbb9 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3020,9 +3020,9 @@ AC_ARG_WITH([ssl-engine],
+@@ -3081,14 +3081,14 @@ AC_ARG_WITH([ssl-engine],
  
  nocrypto_saved_LIBS="$LIBS"
  if test "x$openssl" = "xyes" ; then
 -	LIBS="-lcrypto $LIBS"
 -	CHANNELLIBS="-lcrypto $CHANNELLIBS"
--	AC_TRY_LINK_FUNC([RAND_add], ,
+-	AC_TRY_LINK_FUNC([RAND_add], , [
 +	LIBS="-L /usr/lib:${DESTDIR}/usr/lib -lsunw_crypto $LIBS"
 +	CHANNELLIBS="-L /usr/lib:${DESTDIR}/usr/lib -lsunw_crypto $CHANNELLIBS"
-+	AC_TRY_LINK_FUNC([sunw_RAND_add], ,
- 	    [AC_MSG_ERROR([*** working libcrypto not found, check config.log])])
- 	AC_CHECK_HEADER([openssl/opensslv.h], ,
- 	    [AC_MSG_ERROR([*** OpenSSL headers missing - please install first or check config.log ***])])
-@@ -3210,24 +3210,24 @@ if test "x$openssl" = "xyes" ; then
++	AC_TRY_LINK_FUNC([sunw_RAND_add], , [
+ 	    # As of early 2026, BoringSSL libcrypto needs -lstdc++ for
+ 	    # destructors so try that before giving up.
+ 	    LIBS="$LIBS -lstdc++"
+ 	    CHANNELLIBS="$CHANNELLIBS -lstdc++"
+-	    AC_TRY_LINK_FUNC([RAND_add], , [
++	    AC_TRY_LINK_FUNC([sunw_RAND_add], , [
+ 		AC_MSG_ERROR([*** working libcrypto not found, check config.log])
+ 	    ])
+ 	])
+@@ -3133,7 +3133,7 @@ if test "x$openssl" = "xyes" ; then
+ 	)
+ 
+ 	# Determining OpenSSL library version is version dependent.
+-	AC_CHECK_FUNCS([OpenSSL_version OpenSSL_version_num])
++	AC_CHECK_FUNCS([sunw_OpenSSL_version sunw_OpenSSL_version_num])
+ 
+ 	# Determine OpenSSL library version
+ 	AC_MSG_CHECKING([OpenSSL library version])
+@@ -3278,31 +3278,31 @@ if test "x$openssl" = "xyes" ; then
  	)
  
  	AC_CHECK_FUNCS([ \
@@ -97,17 +112,6 @@ index c8939029c..b9a0e3d58 100644
 +		sunw_RSA_get_default_method \
  	])
  
- 	# OpenSSL_add_all_algorithms may be a macro.
--	AC_CHECK_FUNC(OpenSSL_add_all_algorithms,
-+	AC_CHECK_FUNC(sunw_OpenSSL_add_all_algorithms,
- 	    AC_DEFINE(HAVE_OPENSSL_ADD_ALL_ALGORITHMS, 1, [as a function]),
--	    AC_CHECK_DECL(OpenSSL_add_all_algorithms,
-+	    AC_CHECK_DECL(sunw_OpenSSL_add_all_algorithms,
- 		AC_DEFINE(HAVE_OPENSSL_ADD_ALL_ALGORITHMS, 1, [as a macro]), ,
- 		[[#include <openssl/evp.h>]]
- 	    )
-@@ -3235,15 +3235,15 @@ if test "x$openssl" = "xyes" ; then
- 
  	# LibreSSL/OpenSSL API differences
  	AC_CHECK_FUNCS([ \
 -		EC_POINT_get_affine_coordinates \
@@ -131,7 +135,7 @@ index c8939029c..b9a0e3d58 100644
  	])
  
  	if test "x$openssl_engine" = "xyes" ; then
-@@ -3302,7 +3302,7 @@ if test "x$openssl" = "xyes" ; then
+@@ -3361,7 +3361,7 @@ if test "x$openssl" = "xyes" ; then
  	)
  
  	# Check for various EVP support in OpenSSL
@@ -140,7 +144,7 @@ index c8939029c..b9a0e3d58 100644
  
  	# Check complete ECC support in OpenSSL
  	AC_MSG_CHECKING([whether OpenSSL has NID_X9_62_prime256v1])
-@@ -3382,7 +3382,7 @@ if test "x$openssl" = "xyes" ; then
+@@ -3441,7 +3441,7 @@ if test "x$openssl" = "xyes" ; then
  	if test x$enable_nistp256 = x1 || test x$enable_nistp384 = x1 || \
  	    test x$enable_nistp521 = x1; then
  		AC_DEFINE(OPENSSL_HAS_ECC, [1], [OpenSSL has ECC])
@@ -149,6 +153,29 @@ index c8939029c..b9a0e3d58 100644
  		openssl_ecc=yes
  	else
  		openssl_ecc=no
+@@ -3473,8 +3473,8 @@ if test "x$openssl" = "xyes" ; then
+ 	fi
+ 
+ 	# Check libcrypto ED25519 support
+-	AC_CHECK_FUNCS([EVP_PKEY_get_raw_public_key])
+-	AC_CHECK_FUNCS([EVP_PKEY_get_raw_private_key])
++	AC_CHECK_FUNCS([sunw_EVP_PKEY_get_raw_public_key])
++	AC_CHECK_FUNCS([sunw_EVP_PKEY_get_raw_private_key])
+ 	AC_MSG_CHECKING([whether OpenSSL has ED25519 support])
+ 	AC_LINK_IFELSE(
+ 		[AC_LANG_PROGRAM([[
+@@ -3487,6 +3487,11 @@ if test "x$openssl" = "xyes" ; then
+ 		]], [[
+ 		unsigned char buf[64];
+ 		memset(buf, 0, sizeof(buf));
++		/* XXX SmartOS for some reason our OpenSSL 3.0 doesn't work
++		 * Induce a compiler fail to have this say no and make OpenSSH
++		 * use its internal ed25519. See ed25519-openssl.c if you think
++		 * you can make platform OpenSSL 3.0 work with this. */
++		bogus(); /* Will make compiler barf. */
+ 		exit(EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, NULL,
+ 		    buf, sizeof(buf)) == NULL);
+ 		]])],
 diff --git a/digest-openssl.c b/digest-openssl.c
 index e073a807b..c0bf66d68 100644
 --- a/digest-openssl.c
@@ -224,10 +251,10 @@ index 59be17397..543e11f85 100644
  
  #endif /* WITH_OPENSSL */
 diff --git a/openbsd-compat/openssl-compat.h b/openbsd-compat/openssl-compat.h
-index d07928b17..e13972239 100644
+index 42e2e2833..f27abaf6e 100644
 --- a/openbsd-compat/openssl-compat.h
 +++ b/openbsd-compat/openssl-compat.h
-@@ -75,14 +75,14 @@ void ssh_libcrypto_init(void);
+@@ -75,14 +75,14 @@ int ssh_libcrypto_init(void);
  # endif
  #endif
  

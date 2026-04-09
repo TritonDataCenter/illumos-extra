@@ -1,4 +1,4 @@
-From aabf21b5fd55059ae8582a07773164dd942fda84 Mon Sep 17 00:00:00 2001
+From ff24666d0f4638e1cab60f28fa699bf70426d7e8 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:12 -0700
 Subject: [PATCH 04/34] Deprecated SunSSH options
@@ -16,10 +16,10 @@ Subject: [PATCH 04/34] Deprecated SunSSH options
  1 file changed, 18 insertions(+)
 
 diff --git a/readconf.c b/readconf.c
-index d99205944..f7c268e8c 100644
+index 10cbd04ba..20fb8588b 100644
 --- a/readconf.c
 +++ b/readconf.c
-@@ -329,6 +329,24 @@ static struct {
+@@ -321,6 +321,24 @@ static struct {
  	{ "refuseconnection", oRefuseConnection },
  	{ "warnweakcrypto", oWarnWeakCrypto },
  

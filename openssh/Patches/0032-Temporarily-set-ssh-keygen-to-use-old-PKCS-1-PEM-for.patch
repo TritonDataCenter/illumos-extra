@@ -1,4 +1,4 @@
-From 7da941818677b4208f3b06741473d4667fc43a36 Mon Sep 17 00:00:00 2001
+From 5b199107bcb9b51f1afadd6494fa137be4304c6b Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Tue, 16 Jul 2019 13:43:14 -0700
 Subject: [PATCH 30/34] Temporarily set ssh-keygen to use old PKCS#1 PEM format
@@ -12,11 +12,11 @@ we are generating a key with a passphrase, we will default
 to the new format, otherwise old.
 ---
  ssh-keygen.1 | 23 +++++++++++++++--------
- ssh-keygen.c | 20 ++++++++++++++++++--
- 2 files changed, 33 insertions(+), 10 deletions(-)
+ ssh-keygen.c | 36 +++++++++++++++++++++++++++++++-----
+ 2 files changed, 46 insertions(+), 13 deletions(-)
 
 diff --git a/ssh-keygen.1 b/ssh-keygen.1
-index 7ceb1db95..6aa510fa0 100644
+index c5f3f7410..a1ecb9c94 100644
 --- a/ssh-keygen.1
 +++ b/ssh-keygen.1
 @@ -279,12 +279,12 @@ If
@@ -73,7 +73,7 @@ index 7ceb1db95..6aa510fa0 100644
  Provides the (old) passphrase.
  .It Fl p
 diff --git a/ssh-keygen.c b/ssh-keygen.c
-index 287b2118f..6137c84a2 100644
+index 6ae495163..a69f170c1 100644
 --- a/ssh-keygen.c
 +++ b/ssh-keygen.c
 @@ -153,7 +153,8 @@ static char *pkcs11provider = NULL;
@@ -82,33 +82,63 @@ index 287b2118f..6137c84a2 100644
  /* Format for writing private keys */
 -static int private_key_format = SSHKEY_PRIVATE_OPENSSH;
 +static int private_key_format = SSHKEY_PRIVATE_PEM;
-+int use_new_format = -1;
++static int use_new_format = -1;
  
  /* Cipher for new-format private keys */
  static char *openssh_format_cipher = NULL;
-@@ -1428,6 +1429,10 @@ do_change_passphrase(struct passwd *pw)
+@@ -1089,9 +1090,11 @@ do_gen_all_hostkeys(struct passwd *pw)
+ 			fatal_fr(r, "sshkey_from_private");
+ 		snprintf(comment, sizeof comment, "%s@%s", pw->pw_name,
+ 		    hostname);
++		/* SmartOS - ed25519 keys MUST use SSHKEY_PRIVATE_OPENSSH. */
+ 		if ((r = sshkey_save_private(private, prv_tmp, "",
+-		    comment, private_key_format, openssh_format_cipher,
+-		    rounds)) != 0) {
++		    comment, private->type == KEY_ED25519 ?
++		    SSHKEY_PRIVATE_OPENSSH : private_key_format,
++		    openssh_format_cipher, rounds)) != 0) {
+ 			error_r(r, "Saving key \"%s\" failed", prv_tmp);
+ 			goto failnext;
+ 		}
+@@ -1428,6 +1431,12 @@ do_change_passphrase(struct passwd *pw)
  		freezero(passphrase2, strlen(passphrase2));
  	}
  
-+	if (strlen(passphrase1) > 0 && use_new_format == -1) {
++	/* SmartOS - ed25519 keys use SSHKEY_PRIVATE_OPENSSH by default. */
++	if ((strlen(passphrase1) > 0 || private->type == KEY_ED25519) &&
++	    use_new_format == -1) {
 +		private_key_format = SSHKEY_PRIVATE_OPENSSH;
 +	}
 +
  	/* Save the file using the new passphrase. */
  	if ((r = sshkey_save_private(private, identity_file, passphrase1,
  	    comment, private_key_format, openssh_format_cipher, rounds)) != 0) {
-@@ -1522,6 +1527,10 @@ do_change_comment(struct passwd *pw, const char *identity_comment)
+@@ -1522,6 +1531,12 @@ do_change_comment(struct passwd *pw, const char *identity_comment)
  		}
  	}
  
-+	if (strlen(passphrase) > 0 && use_new_format == -1) {
++	/* SmartOS - ed25519 keys use SSHKEY_PRIVATE_OPENSSH by default. */
++	if ((strlen(passphrase) > 0 || private->type == KEY_ED25519) &&
++	    use_new_format == -1) {
 +		private_key_format = SSHKEY_PRIVATE_OPENSSH;
 +	}
 +
  	if (private->type != KEY_ED25519 &&
  	    private_key_format != SSHKEY_PRIVATE_OPENSSH) {
  		error("Comments are only supported for keys stored in "
-@@ -3399,11 +3408,13 @@ main(int argc, char **argv)
+@@ -3175,8 +3190,10 @@ do_download_sk(const char *skprovider, const char *device)
+ 		/* Save the key with the application string as the comment */
+ 		if (pass == NULL)
+ 			pass = private_key_passphrase(path);
++		/* SmartOS - ed25519 keys MUST use SSHKEY_PRIVATE_OPENSSH. */
+ 		if ((r = sshkey_save_private(key, path, pass,
+-		    key->sk_application, private_key_format,
++		    key->sk_application, key->type == KEY_ED25519 ?
++		    SSHKEY_PRIVATE_OPENSSH : private_key_format,
+ 		    openssh_format_cipher, rounds)) != 0) {
+ 			error_r(r, "Saving key \"%s\" failed", path);
+ 			free(path);
+@@ -3401,11 +3418,13 @@ main(int argc, char **argv)
  			if (strcasecmp(optarg, "PKCS8") == 0) {
  				convert_format = FMT_PKCS8;
  				private_key_format = SSHKEY_PRIVATE_PKCS8;
@@ -122,7 +152,7 @@ index 287b2118f..6137c84a2 100644
  				break;
  			}
  			fatal("Unsupported conversion format \"%s\"", optarg);
-@@ -3411,7 +3422,8 @@ main(int argc, char **argv)
+@@ -3413,7 +3432,8 @@ main(int argc, char **argv)
  			cert_principals = optarg;
  			break;
  		case 'o':
@@ -132,11 +162,13 @@ index 287b2118f..6137c84a2 100644
  			break;
  		case 'p':
  			change_passphrase = 1;
-@@ -3885,6 +3897,10 @@ main(int argc, char **argv)
+@@ -3896,6 +3916,12 @@ main(int argc, char **argv)
  		snprintf(comment, sizeof comment, "%s@%s", pw->pw_name, hostname);
  	}
  
-+	if (strlen(passphrase) > 0 && use_new_format == -1) {
++	/* SmartOS - ed25519 keys use SSHKEY_PRIVATE_OPENSSH by default. */
++	if ((strlen(passphrase) > 0 || private->type == KEY_ED25519) &&
++	    use_new_format == -1) {
 +		private_key_format = SSHKEY_PRIVATE_OPENSSH;
 +	}
 +
