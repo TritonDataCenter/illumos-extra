@@ -1,6 +1,7 @@
---- a/configure	Wed Jan  7 10:50:59 2026
-+++ b/configure	Wed Jan  7 10:52:57 2026
-@@ -26341,14 +26341,14 @@
+diff -ru a/configure b/configure
+--- a/configure	Thu Apr 23 23:42:35 2026
++++ b/configure	Thu Apr 23 23:43:35 2026
+@@ -27574,14 +27574,14 @@
    LDFLAGS="$LDFLAGS $SSL_LDFLAGS"
    LDFLAGSPC="$LDFLAGSPC $SSL_LDFLAGS"
  
@@ -18,7 +19,7 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26379,7 +26379,7 @@
+@@ -27612,7 +27612,7 @@
  then :
  
      HAVECRYPTO="yes"
@@ -27,13 +28,13 @@
  
  else $as_nop
  
-@@ -26394,14 +26394,14 @@
-     # Linking previously failed, try extra paths from --with-openssl or
-     # pkg-config.  Use a different function name to avoid reusing the earlier
-     # cached result.
--    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for HMAC_Init_ex in -lcrypto" >&5
+@@ -27623,14 +27623,14 @@
+     if test "$PKGCONFIG" = "no" && test -n "$PREFIX_OPENSSL"; then
+             CPPFLAGS="$CLEANCPPFLAGS -I$PREFIX_OPENSSL/include"
+     fi
+-                { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for HMAC_Init_ex in -lcrypto" >&5
 -printf %s "checking for HMAC_Init_ex in -lcrypto... " >&6; }
-+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for HMAC_Init_ex in -lsunw_crypto" >&5
++                { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for HMAC_Init_ex in -lsunw_crypto" >&5
 +printf %s "checking for HMAC_Init_ex in -lsunw_crypto... " >&6; }
  if test ${ac_cv_lib_crypto_HMAC_Init_ex+y}
  then :
@@ -45,7 +46,7 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26432,13 +26432,13 @@
+@@ -27661,13 +27661,13 @@
  then :
  
        HAVECRYPTO="yes"
@@ -61,7 +62,7 @@
        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26466,7 +26466,7 @@
+@@ -27695,7 +27695,7 @@
  
          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking OpenSSL linking with -ldl and -lpthread" >&5
  printf %s "checking OpenSSL linking with -ldl and -lpthread... " >&6; }
@@ -70,7 +71,7 @@
          cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26513,14 +26513,14 @@
+@@ -27742,14 +27742,14 @@
  
    if test "$HAVECRYPTO" = "yes"; then
  
@@ -89,7 +90,7 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  
-@@ -26528,35 +26528,35 @@
+@@ -27757,35 +27757,35 @@
  #ifdef __cplusplus
  extern "C"
  #endif
@@ -134,7 +135,7 @@
                     for ac_header in openssl/rsa.h openssl/crypto.h openssl/pem.h openssl/ssl.h openssl/err.h
  do :
    as_ac_Header=`printf "%s\n" "ac_cv_header_$ac_header" | $as_tr_sh`
-@@ -30360,7 +30360,7 @@
+@@ -32382,7 +32382,7 @@
      '-llber -lldap' \
      '-lldapssl -lldapx -lldapsdk' \
      '-lldapsdk -lldapx -lldapssl' \
