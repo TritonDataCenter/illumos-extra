@@ -23,7 +23,7 @@
 # Copyright 2026 Edgecast Cloud LLC.
 #
 
-VER =	expat-2.7.5
+VER =	expat-2.8.0
 
 include ../Makefile.defs
 
