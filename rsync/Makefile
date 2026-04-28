@@ -20,21 +20,22 @@
 #
 # Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 # Copyright 2025 MNX Cloud, Inc.
+# Copyright 2026 Edgecast Cloud LLC.
 #
 
-VER =	rsync-3.4.1
+VER =	rsync-3.4.3
 
 include ../Makefile.defs
 
 AUTOCONF_ENV += \
 	LD_OPTIONS="-M $(BASE)/mapfile_noexstk"
-AUTOCONF_OPTS += --with-included-popt \
+AUTOCONF_OPTS += --with-included-popt --enable-ipv6 \
 	--disable-zstd --disable-lz4 --disable-xxhash --disable-openssl
 
 BUILD32 =
 BUILD64 = yes
 
-PATCHES =	Patches/*
+# PATCHES =	Patches/*
 
 include ../Makefile.targ
 
