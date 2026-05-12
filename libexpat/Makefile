@@ -23,7 +23,7 @@
 # Copyright 2026 Edgecast Cloud LLC.
 #
 
-VER =	expat-2.8.0
+VER =	expat-2.8.1
 
 include ../Makefile.defs
 
@@ -38,8 +38,6 @@ CFLAGS +=	-g -fPIC
 
 AUTOCONF_ENV += \
 	INSTALL="/usr/ucb/install -c"
-
-# PATCHES = Patches/*
 
 include ../Makefile.targ
 
