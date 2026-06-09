@@ -23,7 +23,7 @@
 # Copyright 2026 Edgecast Cloud LLC.
 #
 
-VER =	rsync-3.4.3
+VER =	rsync-3.4.4
 
 include ../Makefile.defs
 
