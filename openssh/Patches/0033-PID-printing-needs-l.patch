@@ -1,17 +1,17 @@
-From 9428c0c2002819576e8ee96998260a4502801c86 Mon Sep 17 00:00:00 2001
+From 902d387d7c9bcfdf912edeff06ee4e1027ccc757 Mon Sep 17 00:00:00 2001
 From: Dan McDonald <danmcd@mnx.io>
 Date: Mon, 1 Jul 2024 21:20:42 -0400
-Subject: [PATCH 31/34] PID printing needs %l
+Subject: [PATCH 29/32] PID printing needs %l
 
 ---
  sshd-session.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/sshd-session.c b/sshd-session.c
-index e4a76a4aa..cfcc9b060 100644
+index c3da96a25..2e5ba234c 100644
 --- a/sshd-session.c
 +++ b/sshd-session.c
-@@ -1394,10 +1394,10 @@ cleanup_exit(int i)
+@@ -1395,10 +1395,10 @@ cleanup_exit(int i)
  		do_cleanup(the_active_state, the_authctxt);
  		if (privsep_is_preauth &&
  		    pmonitor != NULL && pmonitor->m_pid > 1) {

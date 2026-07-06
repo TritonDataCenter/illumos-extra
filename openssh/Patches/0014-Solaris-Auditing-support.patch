@@ -1,7 +1,7 @@
-From a3470ac45652f9aa18b8848d61bb9744bfed6c01 Mon Sep 17 00:00:00 2001
+From c33234fc7343dd32114a1e5847a068313d90ccb7 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:37:01 -0700
-Subject: [PATCH 13/34] Solaris Auditing support
+Subject: [PATCH 11/32] Solaris Auditing support
 
 ---
  INSTALL         |  15 +-
@@ -52,10 +52,10 @@ index 96b299477..c330eb575 100644
  --with-pam enables PAM support. If PAM support is compiled in, it must
  also be enabled in sshd_config (refer to the UsePAM directive).
 diff --git a/Makefile.in b/Makefile.in
-index 3980fc554..30d8b85c1 100644
+index eae9f1cd8..32029eb34 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -125,7 +125,7 @@ SSHDOBJS=sshd.o \
+@@ -126,7 +126,7 @@ SSHDOBJS=sshd.o \
  	$(P11OBJS) $(SKOBJS)
  
  SSHD_SESSION_OBJS=sshd-session.o auth-rhosts.o auth-passwd.o \
@@ -64,7 +64,7 @@ index 3980fc554..30d8b85c1 100644
  	sshpty.o sshlogin.o servconf.o serverloop.o \
  	auth.o auth2.o auth2-methods.o auth-options.o session.o \
  	auth2-chall.o groupaccess.o \
-@@ -145,7 +145,7 @@ SSHD_AUTH_OBJS=sshd-auth.o \
+@@ -146,7 +146,7 @@ SSHD_AUTH_OBJS=sshd-auth.o \
  	auth2-none.o auth2-passwd.o auth2-pubkey.o auth2-pubkeyfile.o \
  	auth2-gss.o gss-serv.o gss-serv-krb5.o \
  	monitor_wrap.o auth-krb5.o \
@@ -733,7 +733,7 @@ index 38cb5ad31..dd6f6d0a1 100644
  void	audit_session_open(struct logininfo *);
  void	audit_session_close(struct logininfo *);
 diff --git a/configure.ac b/configure.ac
-index b0f1c3c58..370b82934 100644
+index 12db0175c..83a61e4a4 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -1983,7 +1983,7 @@ AC_ARG_WITH([wtmpdb],
@@ -760,10 +760,10 @@ index b0f1c3c58..370b82934 100644
  		AUDIT_MODULE=debug
  		AC_MSG_RESULT([debug])
 diff --git a/defines.h b/defines.h
-index 1d5bc0498..0914d94ff 100644
+index 634db453e..5132480bd 100644
 --- a/defines.h
 +++ b/defines.h
-@@ -770,6 +770,11 @@ struct winsize {
+@@ -777,6 +777,11 @@ struct winsize {
  # define CUSTOM_SSH_AUDIT_EVENTS
  #endif
  
@@ -776,10 +776,10 @@ index 1d5bc0498..0914d94ff 100644
  #  define __func__ __FUNCTION__
  #elif !defined(HAVE___func__)
 diff --git a/sshd-session.c b/sshd-session.c
-index 8f5cce4b3..a4b5afc09 100644
+index c28514677..9b28f9178 100644
 --- a/sshd-session.c
 +++ b/sshd-session.c
-@@ -1185,7 +1185,7 @@ main(int ac, char **av)
+@@ -1186,7 +1186,7 @@ main(int ac, char **av)
  	remote_ip = ssh_remote_ipaddr(ssh);
  
  #ifdef SSH_AUDIT_EVENTS
@@ -788,7 +788,7 @@ index 8f5cce4b3..a4b5afc09 100644
  #endif
  
  	rdomain = ssh_packet_rdomain_in(ssh);
-@@ -1263,7 +1263,7 @@ main(int ac, char **av)
+@@ -1264,7 +1264,7 @@ main(int ac, char **av)
  	if (options.routing_domain != NULL)
  		set_process_rdomain(ssh, options.routing_domain);
  
@@ -797,7 +797,7 @@ index 8f5cce4b3..a4b5afc09 100644
  	audit_event(ssh, SSH_AUTH_SUCCESS);
  #endif
  
-@@ -1294,6 +1294,10 @@ bail_storecred: ;
+@@ -1295,6 +1295,10 @@ main(int ac, char **av)
  		do_pam_session(ssh);
  	}
  #endif

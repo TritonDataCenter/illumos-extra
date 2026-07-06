@@ -1,7 +1,7 @@
-From 799efb3a00769917e6694dfb59cde0a76e1e27bc Mon Sep 17 00:00:00 2001
+From 9e8089cba38844f1842434a0ca372d625e430a2e Mon Sep 17 00:00:00 2001
 From: Dan McDonald <danmcd@edgecast.io>
 Date: Mon, 6 Oct 2025 16:29:57 -0400
-Subject: [PATCH 32/34] gcc14 fixes for illumos
+Subject: [PATCH 30/32] gcc14 fixes for illumos
 
 ---
  auth-pam.c | 6 +++++-
@@ -26,7 +26,7 @@ index 96c4b008b..d34c9122a 100644
  # define sshpam_const	const	/* LinuxPAM, OpenPAM, AIX */
  #endif
 diff --git a/scp.c b/scp.c
-index 1faa9a555..ceefc8d2c 100644
+index 28ac7a29d..44134e0ef 100644
 --- a/scp.c
 +++ b/scp.c
 @@ -187,7 +187,7 @@ killchild(int signo)

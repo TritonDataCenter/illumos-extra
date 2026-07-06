@@ -1,35 +1,44 @@
-From a8fbdd12170c1e7cff0b468550f242f390aa0439 Mon Sep 17 00:00:00 2001
+From 896e669337dfa4c22e7f4f6193ec5ecf4c9aaa8c Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 4 Sep 2015 11:04:30 -0700
-Subject: [PATCH 26/34] Accept LANG and LC_* environment variables from clients
+Subject: [PATCH 24/32] Accept LANG and LC_* environment variables from clients
  by default
 
 This preserves most of the old SunSSH locale negotiation
 behaviour (at least the parts that are most commonly used).
 ---
- servconf.c    | 30 ++++++++++++++++++++++++++++++
- servconf.h    |  1 +
- session.c     | 25 +++++++++++++++++++++++--
+ servconf.c    | 58 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ servconf.h    |  3 +++
+ session.c     | 25 ++++++++++++++++++++--
  sshd_config   |  4 ++++
- sshd_config.5 | 15 ++++++++++++++-
- 5 files changed, 72 insertions(+), 3 deletions(-)
+ sshd_config.5 | 15 ++++++++++++-
+ 5 files changed, 102 insertions(+), 3 deletions(-)
 
 diff --git a/servconf.c b/servconf.c
-index 15993a28e..fbc1b99ce 100644
+index 15ec5007d..ba8b96024 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -197,6 +197,7 @@ initialize_server_options(ServerOptions *options)
- 	options->client_alive_count_max = -1;
- 	options->num_authkeys_files = 0;
- 	options->num_accept_env = 0;
+@@ -162,6 +162,8 @@ initialize_server_options(ServerOptions *options)
+ 	options->subsystem_args = NULL;
+ #define init_timingsecret(options) \
+ 	options->timing_secret = 0;
++#define init_defaultacceptenv(options) \
 +	options->default_accept_env = 1;
- 	options->num_setenv = 0;
- 	options->permit_tun = -1;
- 	options->permitted_opens = NULL;
-@@ -542,6 +543,32 @@ fill_default_server_options(ServerOptions *options)
- 		options->max_sessions = DEFAULT_SESSIONS_MAX;
- 	if (options->use_dns == -1)
- 		options->use_dns = 0;
+ #ifdef PAM_ENHANCEMENT
+ /*
+  * Each userauth method will have its own PAM service by default. However,
+@@ -190,6 +192,7 @@ initialize_server_options(ServerOptions *options)
+ #undef init_rekeylimit
+ #undef init_subsystem
+ #undef init_timingsecret
++#undef init_defaultacceptenv
+ #ifdef PAM_ENHANCEMENT
+ #undef init_pamserviceperauthmethod
+ #endif
+@@ -469,6 +472,32 @@ fill_default_server_options(ServerOptions *options)
+ 		    &options->num_authkeys_files,
+ 		    _PATH_SSH_USER_PERMITTED_KEYS2);
+ 	}
 +	if (options->default_accept_env == 1) {
 +		opt_array_append("[default]", 0, "AcceptEnv",
 +		    &options->accept_env, &options->num_accept_env,
@@ -56,10 +65,10 @@ index 15993a28e..fbc1b99ce 100644
 +		    &options->accept_env, &options->num_accept_env,
 +		    "LC_MESSAGES");
 +	}
- 	if (options->client_alive_interval == -1)
- 		options->client_alive_interval = 0;
- 	if (options->client_alive_count_max == -1)
-@@ -2424,9 +2451,12 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+ 	if (options->ip_qos_interactive == -1)
+ 		options->ip_qos_interactive = IPTOS_DSCP_EF;
+ 	if (options->ip_qos_bulk == -1)
+@@ -2173,9 +2202,12 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  			if (*arg == '\0' || strchr(arg, '=') != NULL)
  				fatal("%s line %d: Invalid environment name.",
  				    filename, linenum);
@@ -72,20 +81,83 @@ index 15993a28e..fbc1b99ce 100644
  			opt_array_append(filename, linenum, keyword,
  			    &options->accept_env, &options->num_accept_env,
  			    arg);
+@@ -3204,6 +3236,18 @@ serialise_timingsecret(const ServerOptions *options, struct sshbuf *buf)
+ 	return 0;
+ }
+ 
++static int
++serialise_defaultacceptenv(const ServerOptions *options, struct sshbuf *buf)
++{
++	int r;
++
++	if ((r = serialise_s32(buf, options->default_accept_env)) != 0) {
++		error_fr(r, "serialise");
++		return r;
++	}
++	return 0;
++}
++
+ #ifdef PAM_ENHANCEMENT
+ static int
+ serialise_pamserviceperauthmethod(const ServerOptions *options,
+@@ -3754,6 +3798,18 @@ deserialise_timingsecret(ServerOptions *options, struct sshbuf *buf)
+ 	return 0;
+ }
+ 
++static int
++deserialise_defaultacceptenv(ServerOptions *options, struct sshbuf *buf)
++{
++	int r;
++
++	if ((r = deserialise_s32(buf, &options->default_accept_env)) != 0) {
++		error_fr(r, "deserialise");
++		return r;
++	}
++	return 0;
++}
++
+ #ifdef PAM_ENHANCEMENT
+ static int
+ deserialise_pamserviceperauthmethod(ServerOptions *options,
+@@ -3933,6 +3989,7 @@ free_server_options(ServerOptions *options)
+ #define free_persourcepenalties(options)
+ #define free_rekeylimit(options)
+ #define free_timingsecret(options)
++#define free_defaultacceptenv(options)
+ #ifdef PAM_ENHANCEMENT
+ #define free_pamserviceperauthmethod(options)
+ #endif
+@@ -3951,6 +4008,7 @@ free_server_options(ServerOptions *options)
+ #undef free_persourcepenalties
+ #undef free_rekeylimit
+ #undef free_timingsecret
++#undef free_defaultacceptenv
+ #ifdef PAM_ENHANCEMENT
+ #undef free_pamserviceperauthmethod
+ #endif
 diff --git a/servconf.h b/servconf.h
-index b8b375229..9f719d3b3 100644
+index 67c24d909..99c06f163 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -184,6 +184,7 @@ typedef struct {
- 	char   **subsystem_args;
- 
- 	u_int num_accept_env;
-+	int    default_accept_env;
- 	char   **accept_env;
- 	u_int num_setenv;
- 	char   **setenv;
+@@ -204,6 +204,7 @@ SSHCONF_STRARRAY(deny_users, num_deny_users, DenyUsers, SSHCFG_ALL, SSHCFG_COPY_
+ SSHCONF_STRARRAY(allow_groups, num_allow_groups, AllowGroups, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+ SSHCONF_STRARRAY(deny_groups, num_deny_groups, DenyGroups, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+ SSHCONF_STRARRAY(accept_env, num_accept_env, AcceptEnv, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
++SSHCONF_NONCONF(defaultacceptenv) \
+ SSHCONF_STRARRAY(setenv, num_setenv, SetEnv, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+ SSHCONF_INT(per_source_max_startups, PerSourceMaxStartups, SSHCFG_GLOBAL, NULL, INT_MAX, SSHCFG_COPY_NONE) \
+ SSHCONF_STRING(per_source_penalty_exempt, PerSourcePenaltyExemptList, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
+@@ -412,6 +413,8 @@ typedef struct ServerOptions {
+ 	int	rekey_interval;
+ 	/* Passed by config but not keyword for this */
+ 	uint64_t timing_secret;
++	/* Cleared as a side-effect of AcceptEnv */
++	int	default_accept_env;
+ #ifdef PAM_ENHANCEMENT
+ 	/* Set as a side-effect of PAMServiceName */
+ 	int	pam_service_per_authmethod;
 diff --git a/session.c b/session.c
-index fb1019c60..09d948b65 100644
+index 49c0f4064..cd90f5dcb 100644
 --- a/session.c
 +++ b/session.c
 @@ -794,6 +794,18 @@ check_quietlogin(Session *s, const char *command)
@@ -130,7 +202,7 @@ index fb1019c60..09d948b65 100644
  
 -	if (getenv("TZ"))
 -		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
-+	child_inherit_env(&env, &envsize, "TZ");
++	child_set_env(&env, &envsize, "TZ", getenv("TZ"));
  
  #ifdef PER_SESSION_XAUTHFILE
          if (s->auth_file != NULL)
@@ -150,7 +222,7 @@ index 1c6d890df..a3e63c424 100644
  
  #LoginGraceTime 2m
 diff --git a/sshd_config.5 b/sshd_config.5
-index 738646ecc..088f888fa 100644
+index 4cc368ca5..fee2053ae 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
 @@ -86,7 +86,20 @@ directives.
