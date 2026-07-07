@@ -22,14 +22,14 @@ From the original Oracle one's commit message:
 Any future options that need deprecation entries go in the
 SSHD_CONFIG_ENTRIES_SMARTOS section of servconf.h .
 ---
- servconf.h | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ servconf.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
 diff --git a/servconf.h b/servconf.h
 index 89aa627dc..84c8e398a 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -346,10 +346,29 @@ SSHCONF_UNSUPPORTED_INT(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBA
+@@ -346,10 +346,30 @@ SSHCONF_UNSUPPORTED_INT(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBA
  SSHCONF_UNSUPPORTED_INT(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_GLOBAL)
  #endif /* GSSAPI */
  
@@ -47,6 +47,7 @@ index 89aa627dc..84c8e398a 100644
 + */
 +#define SSHD_CONFIG_ENTRIES_SMARTOS \
 +SSHCONF_DEPRECATE(MaxAuthTriesLog, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
++SSHCONF_DEPRECATE(PAMAuthenticationViaKBDInt, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
 +SSHCONF_DEPRECATE(LookupClientHostnames, SSHCFG_GLOBAL, SSHCONF_DEPRECATED)
 +
 +#endif /* DEPRECATE_SUNSSH_OPT */
