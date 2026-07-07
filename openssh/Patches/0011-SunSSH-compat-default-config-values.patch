@@ -1,4 +1,4 @@
-From 07a4ea7734cacf8083754e0155f60474ebdce75c Mon Sep 17 00:00:00 2001
+From ca8d41995049206078b916e2a835c7e61046159c Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:22 -0700
 Subject: [PATCH] SunSSH compat default config values
@@ -15,10 +15,10 @@ This is for Solaris only, we will not contribute back these changes to the
 upstream.
 ---
  readconf.c    | 8 ++++++++
- servconf.h    | 9 ++++++---
+ servconf.h    | 8 +++++---
  ssh_config.5  | 7 +++++--
  sshd_config.5 | 8 ++++----
- 4 files changed, 23 insertions(+), 9 deletions(-)
+ 4 files changed, 22 insertions(+), 9 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
 index f404947d7..7f38952b9 100644
@@ -49,7 +49,7 @@ index f404947d7..7f38952b9 100644
  		options->gss_deleg_creds = 0;
  	if (options->password_authentication == -1)
 diff --git a/servconf.h b/servconf.h
-index f504c0b32..89aa627dc 100644
+index 2579a5240..5bf79e962 100644
 --- a/servconf.h
 +++ b/servconf.h
 @@ -170,7 +170,8 @@ SSHCONF_INT(permit_root_login, PermitRootLogin, SSHCFG_ALL, multistate_permitroo
@@ -62,16 +62,15 @@ index f504c0b32..89aa627dc 100644
  SSHCONF_INT(x11_display_offset, X11DisplayOffset, SSHCFG_ALL, NULL, SSHD_DEFAULT_X11_DISPLAY_OFFSET, SSHCFG_COPY_MATCH) \
  SSHCONF_INTFLAG(x11_use_localhost, X11UseLocalhost, SSHCFG_ALL, 1, SSHCFG_COPY_MATCH) \
  SSHCONF_STRING(xauth_location, XAuthLocation, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
-@@ -324,13 +325,15 @@ SSHCONF_UNSUPPORTED_INT(kerberos_get_afs_token, KerberosGetAFSToken, SSHCFG_GLOB
+@@ -324,13 +325,14 @@ SSHCONF_UNSUPPORTED_INT(kerberos_get_afs_token, KerberosGetAFSToken, SSHCFG_GLOB
  #ifdef GSSAPI
  #ifdef USE_GSS_STORE_CRED
  #define SSHD_CONFIG_ENTRIES_GSS \
--SSHCONF_INTFLAG(gss_authentication, GssAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
-+/* XXX SmartOS - can't easily put OPTION_DEFAULT_VALUE CPP check here. */  \
-+SSHCONF_INTFLAG(gss_authentication, GssAuthentication, SSHCFG_ALL, 1, SSHCFG_COPY_MATCH) \
- SSHCONF_UNSUPPORTED_INT(gss_cleanup_creds, GssCleanupCreds, SSHCFG_GLOBAL) \
- SSHCONF_INTFLAG(gss_deleg_creds, GssDelegateCreds, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
- SSHCONF_INTFLAG(gss_strict_acceptor, GssStrictAcceptor, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
+-SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
++SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 1, SSHCFG_COPY_MATCH) \
+ SSHCONF_UNSUPPORTED_INT(gss_cleanup_creds, GSSAPICleanupCredentials, SSHCFG_GLOBAL) \
+ SSHCONF_INTFLAG(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
+ SSHCONF_INTFLAG(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
  #else	/* USE_GSS_STORE_CRED */
  #define SSHD_CONFIG_ENTRIES_GSS \
 -SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \

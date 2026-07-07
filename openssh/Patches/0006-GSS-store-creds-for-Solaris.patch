@@ -177,10 +177,10 @@ index 2604f3793..c82e8df05 100644
  #ifdef GSSAPI
 +#ifdef USE_GSS_STORE_CRED
 +#define SSHD_CONFIG_ENTRIES_GSS \
-+SSHCONF_INTFLAG(gss_authentication, GssAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
-+SSHCONF_UNSUPPORTED_INT(gss_cleanup_creds, GssCleanupCreds, SSHCFG_GLOBAL) \
-+SSHCONF_INTFLAG(gss_deleg_creds, GssDelegateCreds, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
-+SSHCONF_INTFLAG(gss_strict_acceptor, GssStrictAcceptor, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
++SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
++SSHCONF_UNSUPPORTED_INT(gss_cleanup_creds, GSSAPICleanupCredentials, SSHCFG_GLOBAL) \
++SSHCONF_INTFLAG(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
++SSHCONF_INTFLAG(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
 +#else	/* USE_GSS_STORE_CRED */
  #define SSHD_CONFIG_ENTRIES_GSS \
  SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
