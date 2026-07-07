@@ -1,7 +1,7 @@
-From 7913e28e709abe9df530a121f81875f576c5cace Mon Sep 17 00:00:00 2001
+From 5d0eb18eeb87b639b87756376238d0e1bbe8ef74 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:34 -0700
-Subject: [PATCH 05/32] GSS store creds for illumos
+Subject: [PATCH] GSS store creds for illumos
 
 ---
  configure.ac    |  3 +++
@@ -142,7 +142,7 @@ index f9ae303b5..5e109748b 100644
  
  /* This allows GSSAPI methods to do things to the child's environment based
 diff --git a/servconf.c b/servconf.c
-index cd6dd8fb8..659849702 100644
+index 950666651..eaa1716cf 100644
 --- a/servconf.c
 +++ b/servconf.c
 @@ -1445,9 +1445,11 @@ process_server_config_line_depth(ServerOptions *options, char *line,
@@ -150,25 +150,25 @@ index cd6dd8fb8..659849702 100644
  		goto parse_flag;
  
 +#ifndef USE_GSS_STORE_CRED
- 	case sGssCleanupCreds:
+ 	case sGSSAPICleanupCredentials:
  		intptr = &options->gss_cleanup_creds;
  		goto parse_flag;
 +#endif /* USE_GSS_STORE_CRED */
  
- 	case sGssDelegateCreds:
+ 	case sGSSAPIDelegateCredentials:
  		intptr = &options->gss_deleg_creds;
 @@ -4224,7 +4226,9 @@ dump_config(ServerOptions *o)
  #endif
  #ifdef GSSAPI
- 	dump_cfg_fmtint(sGssAuthentication, o->gss_authentication);
+ 	dump_cfg_fmtint(sGSSAPIAuthentication, o->gss_authentication);
 +#ifndef USE_GSS_STORE_CRED
- 	dump_cfg_fmtint(sGssCleanupCreds, o->gss_cleanup_creds);
+ 	dump_cfg_fmtint(sGSSAPICleanupCredentials, o->gss_cleanup_creds);
 +#endif /* USE_GSS_STORE_CRED */
- 	dump_cfg_fmtint(sGssDelegateCreds, o->gss_deleg_creds);
- 	dump_cfg_fmtint(sGssStrictAcceptor, o->gss_strict_acceptor);
+ 	dump_cfg_fmtint(sGSSAPIDelegateCredentials, o->gss_deleg_creds);
+ 	dump_cfg_fmtint(sGSSAPIStrictAcceptorCheck, o->gss_strict_acceptor);
  #endif
 diff --git a/servconf.h b/servconf.h
-index db329e4b2..6742e2a19 100644
+index 2604f3793..c82e8df05 100644
 --- a/servconf.h
 +++ b/servconf.h
 @@ -313,11 +313,19 @@ SSHCONF_UNSUPPORTED_INT(kerberos_get_afs_token, KerberosGetAFSToken, SSHCFG_GLOB
@@ -183,14 +183,14 @@ index db329e4b2..6742e2a19 100644
 +SSHCONF_INTFLAG(gss_strict_acceptor, GssStrictAcceptor, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
 +#else	/* USE_GSS_STORE_CRED */
  #define SSHD_CONFIG_ENTRIES_GSS \
- SSHCONF_INTFLAG(gss_authentication, GssAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
- SSHCONF_INTFLAG(gss_cleanup_creds, GssCleanupCreds, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
- SSHCONF_INTFLAG(gss_deleg_creds, GssDelegateCreds, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
- SSHCONF_INTFLAG(gss_strict_acceptor, GssStrictAcceptor, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
-+#endif	/* USE_GSS_STORE_CRED */
+ SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
+ SSHCONF_INTFLAG(gss_cleanup_creds, GSSAPICleanupCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
+ SSHCONF_INTFLAG(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
+ SSHCONF_INTFLAG(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
++#endif /* USE_GSS_STORE_CRED */
  #else /* GSSAPI */
  #define SSHD_CONFIG_ENTRIES_GSS \
- SSHCONF_UNSUPPORTED_INT(gss_authentication, GssAuthentication, SSHCFG_ALL) \
+ SSHCONF_UNSUPPORTED_INT(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL) \
 diff --git a/sshd-session.c b/sshd-session.c
 index be30c8d70..c28514677 100644
 --- a/sshd-session.c

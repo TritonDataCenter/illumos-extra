@@ -1,0 +1,26 @@
+From b16c4122ca0d5345aa8a7c305896db992c11b652 Mon Sep 17 00:00:00 2001
+From: Dan McDonald <danmcd@edgecast.io>
+Date: Tue, 7 Jul 2026 12:59:49 -0400
+Subject: [PATCH] Don't blow up on deprecated GSS key exchange options
+
+---
+ servconf.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/servconf.h b/servconf.h
+index 84c8e398a..b9c7cc768 100644
+--- a/servconf.h
++++ b/servconf.h
+@@ -360,7 +360,8 @@ SSHCONF_UNSUPPORTED_INT(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_G
+  */
+ #define SSHD_CONFIG_ENTRIES_SMARTOS \
+ SSHCONF_DEPRECATE(MaxAuthTriesLog, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
+-SSHCONF_DEPRECATE(LookupClientHostnames, SSHCFG_GLOBAL, SSHCONF_DEPRECATED)
++SSHCONF_DEPRECATE(LookupClientHostnames, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
++SSHCONF_DEPRECATE(GSSAPIKeyExchange, SSHCFG_GLOBAL, SSHCONF_DEPRECATED)
+ 
+ #endif /* DEPRECATE_SUNSSH_OPT */
+ 
+-- 
+2.50.1
+
