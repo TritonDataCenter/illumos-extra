@@ -1,7 +1,7 @@
-From bcb6d151bf5622340630cfc4264e9db372eeef40 Mon Sep 17 00:00:00 2001
+From ec878d2713d34bf5d4a8cb349f271ddabd15328c Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 16 Sep 2015 10:54:13 -0700
-Subject: [PATCH 28/34] Restore tcpwrappers/libwrap support
+Subject: [PATCH 26/32] Restore tcpwrappers/libwrap support
 
 This reverts commit f9696566fb41320820f3b257ab564fa321bb3751
 and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
@@ -12,7 +12,7 @@ and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
  3 files changed, 93 insertions(+)
 
 diff --git a/configure.ac b/configure.ac
-index 150611e69..4e40fd44a 100644
+index 4bca047aa..a9392a199 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -1836,6 +1836,62 @@ else
@@ -78,7 +78,7 @@ index 150611e69..4e40fd44a 100644
  # Check whether user wants to use ldns
  LDNS_MSG="no"
  AC_ARG_WITH(ldns,
-@@ -5958,6 +6014,7 @@ echo "                       PAM support: $PAM_MSG"
+@@ -5949,6 +6005,7 @@ echo "                       PAM support: $PAM_MSG"
  echo "                   OSF SIA support: $SIA_MSG"
  echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
@@ -87,7 +87,7 @@ index 150611e69..4e40fd44a 100644
  echo "                   libldns support: $LDNS_MSG"
  echo "  Solaris process contract support: $SPC_MSG"
 diff --git a/sshd-session.c b/sshd-session.c
-index a4b5afc09..e4a76a4aa 100644
+index 9b28f9178..c3da96a25 100644
 --- a/sshd-session.c
 +++ b/sshd-session.c
 @@ -96,6 +96,17 @@
@@ -108,7 +108,7 @@ index a4b5afc09..e4a76a4aa 100644
  /* Re-exec fds */
  #define REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
  #define REEXEC_CONFIG_PASS_FD		(STDERR_FILENO + 2)
-@@ -1187,6 +1198,24 @@ main(int ac, char **av)
+@@ -1188,6 +1199,24 @@ main(int ac, char **av)
  #ifdef SSH_AUDIT_EVENTS
  	audit_connection_from(ssh, remote_ip, remote_port);
  #endif
@@ -134,7 +134,7 @@ index a4b5afc09..e4a76a4aa 100644
  	rdomain = ssh_packet_rdomain_in(ssh);
  
 diff --git a/sshd.8 b/sshd.8
-index 1777f7820..21bfd6579 100644
+index 5656c0da5..a8612f1a6 100644
 --- a/sshd.8
 +++ b/sshd.8
 @@ -925,6 +925,12 @@ the user's home directory becomes accessible.
@@ -150,7 +150,7 @@ index 1777f7820..21bfd6579 100644
  .It Pa /etc/hosts.equiv
  This file is for host-based authentication (see
  .Xr ssh 1 ) .
-@@ -1054,6 +1060,7 @@ Each SSHv2 userauth type has its own PAM service name:
+@@ -1052,6 +1058,7 @@ Each SSHv2 userauth type has its own PAM service name:
  .Xr ssh-keygen 1 ,
  .Xr ssh-keyscan 1 ,
  .Xr chroot 2 ,

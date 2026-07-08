@@ -1,7 +1,7 @@
-From 96ace545d8426ec56c1a78b6628ddaa8af1bb43d Mon Sep 17 00:00:00 2001
+From f7e042d6da7a23ba6bf3179c63f9868da66f5c79 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:13 -0700
-Subject: [PATCH 08/34] PAM conversation fix
+Subject: [PATCH 08/32] PAM conversation fix
 
 ---
  auth-pam.c | 36 ++++++++++++++++++++++++++++++++++++

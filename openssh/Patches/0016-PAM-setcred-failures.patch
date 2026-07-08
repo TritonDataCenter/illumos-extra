@@ -1,7 +1,7 @@
-From 3c46b7b45cecdef2b32d0f66dc28fc796c820845 Mon Sep 17 00:00:00 2001
+From 32646eac24c5a90bd2e19a37c812075ff23bd65a Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:38:26 -0700
-Subject: [PATCH 15/34] PAM setcred failures
+Subject: [PATCH 13/32] PAM setcred failures
 
 #
 # This patch contains bug fixes to the PAM credential and session operations.

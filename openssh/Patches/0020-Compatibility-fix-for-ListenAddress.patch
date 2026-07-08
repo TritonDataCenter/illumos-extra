@@ -1,7 +1,7 @@
-From 46abb79d0b5531fc2482e3058252cc56780ddeaf Mon Sep 17 00:00:00 2001
+From 65b6451d582a9b2eb8c2b5d5171264cdb9db0b24 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 3 Aug 2015 17:27:41 -0700
-Subject: [PATCH 19/34] Compatibility fix for "ListenAddress ::"
+Subject: [PATCH 17/32] Compatibility fix for "ListenAddress ::"
 
 In SunSSH, a config that specifies only "ListenAddress ::" in
 fact will listen on both IPv4 and IPv6.
@@ -10,10 +10,10 @@ fact will listen on both IPv4 and IPv6.
  1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/servconf.c b/servconf.c
-index bd1414459..b63dd7ef4 100644
+index de9668980..84da89bc2 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -1027,10 +1027,21 @@ process_queued_listen_addrs(ServerOptions *options)
+@@ -747,10 +747,21 @@ process_queued_listen_addrs(ServerOptions *options)
  
  	for (i = 0; i < options->num_queued_listens; i++) {
  		qla = &options->queued_listen_addrs[i];

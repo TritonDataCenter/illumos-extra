@@ -1,25 +1,26 @@
-From 8bc5f647d8c1dd52cd910415c5501d38aa8ac5bf Mon Sep 17 00:00:00 2001
+From 5d0eb18eeb87b639b87756376238d0e1bbe8ef74 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:34 -0700
-Subject: [PATCH 05/34] GSS store creds for Solaris
+Subject: [PATCH] GSS store creds for illumos
 
 ---
  configure.ac    |  3 +++
  gss-serv-krb5.c |  7 ++++++-
- gss-serv.c      | 56 ++++++++++++++++++++++++++++++++++++++++++++-----
+ gss-serv.c      | 45 +++++++++++++++++++++++++++++++++++++++++++++
  servconf.c      |  4 ++++
- sshd-session.c  | 14 +++++++++++++
- 5 files changed, 78 insertions(+), 6 deletions(-)
+ servconf.h      |  8 ++++++++
+ sshd-session.c  | 14 ++++++++++++++
+ 6 files changed, 80 insertions(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index a8e9df66b..b0f1c3c58 100644
+index a4d544cc5..12db0175c 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -1283,6 +1283,9 @@ if (setsockopt(s, IPPROTO_IP, IP_TOS, &one, sizeof(one)) == -1)
  		],
  	)
  	TEST_SHELL=$SHELL	# let configure find us a capable shell
-+	AC_DEFINE([USE_GSS_STORE_CRED], [1], [Use the Solaris-style GSS cred store])
++	AC_DEFINE([USE_GSS_STORE_CRED], [1], [Use the illumos-style GSS cred store])
 +	AC_DEFINE([GSSAPI_STORECREDS_NEEDS_RUID], [1], [GSSAPI storecreds needs ruid])
 +	AC_DEFINE([HAVE_PAM_AUSER], [1], [pam_auser])
  	;;
@@ -59,18 +60,18 @@ index 4caac337c..46dbe3607 100644
  
  #endif /* KRB5 */
 diff --git a/gss-serv.c b/gss-serv.c
-index f9ae303b5..db1ecd221 100644
+index f9ae303b5..5e109748b 100644
 --- a/gss-serv.c
 +++ b/gss-serv.c
-@@ -45,6 +45,7 @@
- #include "channels.h"
+@@ -46,6 +46,7 @@
  #include "session.h"
  #include "misc.h"
-+#include "sshbuf.h"
  #include "servconf.h"
++#include "sshbuf.h"
  
  #include "ssh-gss.h"
-@@ -321,27 +322,72 @@ ssh_gssapi_getclient(Gssctxt *ctx, ssh_gssapi_client *client)
+ 
+@@ -321,18 +322,61 @@ ssh_gssapi_getclient(Gssctxt *ctx, ssh_gssapi_client *client)
  void
  ssh_gssapi_cleanup_creds(void)
  {
@@ -106,30 +107,24 @@ index f9ae303b5..db1ecd221 100644
 +		gss_buffer_desc msg;
 +		OM_uint32 lmin;
 +		OM_uint32 more = 0;
-+		int rc;
-+		b = sshbuf_new();
-+		if (b == NULL)
-+			fatal_f("sshbuf_new");
++		if ((b = sshbuf_new()) == NULL) fatal("malloc");
 +		/* GSS-API error */
 +		do {
 +			gss_display_status(&lmin, maj_status, GSS_C_GSS_CODE,
 +			    GSS_C_NULL_OID, &more, &msg);
-+			if ((rc = sshbuf_put(b, msg.value, msg.length)) != 0 ||
-+			    (rc = sshbuf_put_u8(b, '\n')) != 0)
-+				fatal_fr(rc, "append msg");
++			sshbuf_put(b, msg.value, msg.length);
++			sshbuf_put(b, "\n", 1);
 +			gss_release_buffer(&lmin, &msg);
 +		} while (more != 0);
 +		/* Mechanism specific error */
 +		do {
 +			gss_display_status(&lmin, min_status, GSS_C_MECH_CODE,
 +			    &gssapi_client.mech->oid, &more, &msg);
-+			if ((rc = sshbuf_put(b, msg.value, msg.length)) != 0 ||
-+			    (rc = sshbuf_put_u8(b, '\n')) != 0)
-+				fatal_fr(rc, "append msg");
++			sshbuf_put(b, msg.value, msg.length);
++			sshbuf_put(b, "\n", 1);
 +			gss_release_buffer(&lmin, &msg);
 +		} while (more != 0);
-+		if ((rc = sshbuf_put_u8(b, 0)) != 0)
-+			fatal_fr(rc, "append nul");
++		sshbuf_put(b, "\0", 1);
 +		error("GSS-API error while storing delegated credentials: %s",
 +		    sshbuf_ptr(b));
 +		sshbuf_free(b);
@@ -138,38 +133,69 @@ index f9ae303b5..db1ecd221 100644
  	if (options.gss_deleg_creds == 0) {
  		debug_f("delegate credential is disabled, doing nothing");
  		return;
- 	}
--
--	if (gssapi_client.mech && gssapi_client.mech->storecreds) {
--		(*gssapi_client.mech->storecreds)(&gssapi_client);
--	} else
--		debug("ssh_gssapi_storecreds: Not a GSSAPI mechanism");
+@@ -342,6 +386,7 @@ ssh_gssapi_storecreds(void)
+ 		(*gssapi_client.mech->storecreds)(&gssapi_client);
+ 	} else
+ 		debug("ssh_gssapi_storecreds: Not a GSSAPI mechanism");
 +#endif	/* #ifdef USE_GSS_STORE_CRED */
  }
  
  /* This allows GSSAPI methods to do things to the child's environment based
 diff --git a/servconf.c b/servconf.c
-index 0f169c83d..fc787d22a 100644
+index 950666651..eaa1716cf 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -655,8 +655,12 @@ static struct {
- 	{ "afstokenpassing", sUnsupported, SSHCFG_GLOBAL },
- #ifdef GSSAPI
- 	{ "gssapiauthentication", sGssAuthentication, SSHCFG_ALL },
-+#ifdef USE_GSS_STORE_CRED
-+	{ "gssapicleanupcredentials", sUnsupported, SSHCFG_GLOBAL },
-+#else /* USE_GSS_STORE_CRED */
- 	{ "gssapicleanupcredentials", sGssCleanupCreds, SSHCFG_GLOBAL },
- 	{ "gssapidelegatecredentials", sGssDelegateCreds, SSHCFG_GLOBAL },
+@@ -1445,9 +1445,11 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+ 		intptr = &options->gss_authentication;
+ 		goto parse_flag;
+ 
++#ifndef USE_GSS_STORE_CRED
+ 	case sGSSAPICleanupCredentials:
+ 		intptr = &options->gss_cleanup_creds;
+ 		goto parse_flag;
 +#endif /* USE_GSS_STORE_CRED */
- 	{ "gssapistrictacceptorcheck", sGssStrictAcceptor, SSHCFG_GLOBAL },
- #else
- 	{ "gssapiauthentication", sUnsupported, SSHCFG_ALL },
+ 
+ 	case sGSSAPIDelegateCredentials:
+ 		intptr = &options->gss_deleg_creds;
+@@ -4224,7 +4226,9 @@ dump_config(ServerOptions *o)
+ #endif
+ #ifdef GSSAPI
+ 	dump_cfg_fmtint(sGSSAPIAuthentication, o->gss_authentication);
++#ifndef USE_GSS_STORE_CRED
+ 	dump_cfg_fmtint(sGSSAPICleanupCredentials, o->gss_cleanup_creds);
++#endif /* USE_GSS_STORE_CRED */
+ 	dump_cfg_fmtint(sGSSAPIDelegateCredentials, o->gss_deleg_creds);
+ 	dump_cfg_fmtint(sGSSAPIStrictAcceptorCheck, o->gss_strict_acceptor);
+ #endif
+diff --git a/servconf.h b/servconf.h
+index 2604f3793..c82e8df05 100644
+--- a/servconf.h
++++ b/servconf.h
+@@ -313,11 +313,19 @@ SSHCONF_UNSUPPORTED_INT(kerberos_get_afs_token, KerberosGetAFSToken, SSHCFG_GLOB
+ #endif /* KRB5 */
+ 
+ #ifdef GSSAPI
++#ifdef USE_GSS_STORE_CRED
++#define SSHD_CONFIG_ENTRIES_GSS \
++SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
++SSHCONF_UNSUPPORTED_INT(gss_cleanup_creds, GSSAPICleanupCredentials, SSHCFG_GLOBAL) \
++SSHCONF_INTFLAG(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
++SSHCONF_INTFLAG(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
++#else	/* USE_GSS_STORE_CRED */
+ #define SSHD_CONFIG_ENTRIES_GSS \
+ SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
+ SSHCONF_INTFLAG(gss_cleanup_creds, GSSAPICleanupCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
+ SSHCONF_INTFLAG(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
+ SSHCONF_INTFLAG(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
++#endif /* USE_GSS_STORE_CRED */
+ #else /* GSSAPI */
+ #define SSHD_CONFIG_ENTRIES_GSS \
+ SSHCONF_UNSUPPORTED_INT(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL) \
 diff --git a/sshd-session.c b/sshd-session.c
-index e9a488d08..8f5cce4b3 100644
+index be30c8d70..c28514677 100644
 --- a/sshd-session.c
 +++ b/sshd-session.c
-@@ -1269,9 +1269,23 @@ main(int ac, char **av)
+@@ -1270,9 +1270,23 @@ main(int ac, char **av)
  
  #ifdef GSSAPI
  	if (options.gss_authentication) {
@@ -186,9 +212,9 @@ index e9a488d08..8f5cce4b3 100644
 +#ifdef GSSAPI_STORECREDS_NEEDS_RUID
 +		if (setuid(geteuid()) != 0) {
 +			fatal("setuid %u: %.100s", (u_int) geteuid(),
-+			strerror(errno));
++			    strerror(errno));
 +		}
-+bail_storecred: ;
++ bail_storecred: ;
 +#endif
  	}
  #endif

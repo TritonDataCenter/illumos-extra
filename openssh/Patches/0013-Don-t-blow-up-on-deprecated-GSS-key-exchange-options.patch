@@ -1,29 +1,26 @@
-From f674e64e96bdb75656b664c9d209762f9e699ed9 Mon Sep 17 00:00:00 2001
-From: Alex Wilson <alex@uq.edu.au>
-Date: Tue, 8 Jun 2021 15:37:04 +1000
-Subject: [PATCH 12/34] Don't blow up on deprecated GSS key exchange options
+From b16c4122ca0d5345aa8a7c305896db992c11b652 Mon Sep 17 00:00:00 2001
+From: Dan McDonald <danmcd@edgecast.io>
+Date: Tue, 7 Jul 2026 12:59:49 -0400
+Subject: [PATCH] Don't blow up on deprecated GSS key exchange options
 
 ---
- servconf.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ servconf.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/servconf.c b/servconf.c
-index f9cd33c7d..cf1451fe3 100644
---- a/servconf.c
-+++ b/servconf.c
-@@ -792,6 +792,12 @@ static struct {
- 	{ "useunsupportedsshv1", sDeprecated, SSHCFG_GLOBAL },
- 	{ "usefips140", sDeprecated, SSHCFG_ALL},
- 	{ "gssapistoredelegatedcredentials", sDeprecated, SSHCFG_ALL },
-+	/* The GSSAPIKeyExchange related options are now deprecated too. */
-+	{ "gssapikeyexchange", sDeprecated, SSHCFG_GLOBAL },
-+	{ "gssapicleanupcreds", sDeprecated, SSHCFG_GLOBAL },
-+	{ "gssapistorecredentialsonrekey", sDeprecated, SSHCFG_GLOBAL },
-+	{ "gssusesessionccache", sUnsupported, SSHCFG_GLOBAL },
-+	{ "gssapiusesessioncredcache", sUnsupported, SSHCFG_GLOBAL },
- #endif
- 	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
- 	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },
+diff --git a/servconf.h b/servconf.h
+index 84c8e398a..b9c7cc768 100644
+--- a/servconf.h
++++ b/servconf.h
+@@ -361,7 +361,8 @@ SSHCONF_UNSUPPORTED_INT(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_G
+ #define SSHD_CONFIG_ENTRIES_SMARTOS \
+ SSHCONF_DEPRECATE(MaxAuthTriesLog, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
+ SSHCONF_DEPRECATE(PAMAuthenticationViaKBDInt, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
+-SSHCONF_DEPRECATE(LookupClientHostnames, SSHCFG_GLOBAL, SSHCONF_DEPRECATED)
++SSHCONF_DEPRECATE(LookupClientHostnames, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
++SSHCONF_DEPRECATE(GSSAPIKeyExchange, SSHCFG_GLOBAL, SSHCONF_DEPRECATED)
+ 
+ #endif /* DEPRECATE_SUNSSH_OPT */
+ 
 -- 
 2.50.1
 

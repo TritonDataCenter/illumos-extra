@@ -1,7 +1,7 @@
-From 29cc05115aaf8aa706b5e2541131566492472cc3 Mon Sep 17 00:00:00 2001
+From e6be826f07967f49b222fe4ca08132f49f13722d Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:43 -0700
-Subject: [PATCH 06/34] DTrace support for SFTP
+Subject: [PATCH 06/32] DTrace support for SFTP
 
 ---
  Makefile.in          | 22 +++++++++++--
@@ -15,7 +15,7 @@ Subject: [PATCH 06/34] DTrace support for SFTP
  create mode 100644 sftp_provider_impl.h
 
 diff --git a/Makefile.in b/Makefile.in
-index bcf6757f5..3980fc554 100644
+index 858235592..eae9f1cd8 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -27,6 +27,7 @@ SSHD_SESSION=$(libexecdir)/sshd-session
@@ -34,7 +34,7 @@ index bcf6757f5..3980fc554 100644
  	smult_curve25519_ref.o \
  	poly1305.o chacha.o cipher-chachapoly.o cipher-chachapoly-libcrypto.o \
  	ssh-ed25519.o digest-openssl.o digest-libc.o \
-@@ -147,7 +149,7 @@ SSHD_AUTH_OBJS=sshd-auth.o \
+@@ -148,7 +150,7 @@ SSHD_AUTH_OBJS=sshd-auth.o \
  	loginrec.o auth-pam.o auth-shadow.o auth-sia.o \
  	sandbox-null.o sandbox-rlimit.o sandbox-darwin.o \
  	sandbox-seccomp-filter.o sandbox-capsicum.o  sandbox-solaris.o \
@@ -43,7 +43,7 @@ index bcf6757f5..3980fc554 100644
  	uidswap.o $(P11OBJS) $(SKOBJS)
  
  SFTP_CLIENT_OBJS=sftp-common.o sftp-client.o sftp-glob.o ssherr-nolibcrypto.o
-@@ -168,7 +170,7 @@ SKHELPER_OBJS=	ssh-sk-helper.o ssh-sk.o sk-usbhid.o ssherr-nolibcrypto.o
+@@ -169,7 +171,7 @@ SKHELPER_OBJS=	ssh-sk-helper.o ssh-sk.o sk-usbhid.o ssherr-nolibcrypto.o
  
  SSHKEYSCAN_OBJS=ssh-keyscan.o $(P11OBJS) $(SKOBJS)
  
@@ -52,7 +52,7 @@ index bcf6757f5..3980fc554 100644
  
  SFTP_OBJS=	sftp.o sftp-usergroup.o progressmeter.o $(SFTP_CLIENT_OBJS)
  
-@@ -296,9 +298,22 @@ $(CONFIGFILES): $(CONFIGFILES_IN) Makefile
+@@ -297,9 +299,22 @@ $(CONFIGFILES): $(CONFIGFILES_IN) Makefile
  moduli:
  	echo
  
@@ -76,7 +76,7 @@ index bcf6757f5..3980fc554 100644
  	rm -f regress/check-perm$(EXEEXT)
  	rm -f regress/mkdtemp$(EXEEXT)
  	rm -f regress/unittests/test_helper/*.a
-@@ -466,6 +481,7 @@ install-files:
+@@ -475,6 +490,7 @@ install-files:
  	$(INSTALL) -m 644 ssh-keysign.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
  	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
  	$(INSTALL) -m 644 ssh-sk-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-sk-helper.8
@@ -85,7 +85,7 @@ index bcf6757f5..3980fc554 100644
  install-sysconf:
  	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
 diff --git a/sftp-server.c b/sftp-server.c
-index ebdb31d32..f15105e0b 100644
+index f87fc5825..47e28e7c1 100644
 --- a/sftp-server.c
 +++ b/sftp-server.c
 @@ -48,6 +48,9 @@
