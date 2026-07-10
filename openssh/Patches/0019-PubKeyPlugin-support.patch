@@ -1,19 +1,19 @@
-From 5620076280de004d4f8f3df1c0cb9bfe9ed2ce8f Mon Sep 17 00:00:00 2001
-From: Alex Wilson <alex.wilson@joyent.com>
-Date: Mon, 3 Aug 2015 16:27:44 -0700
-Subject: [PATCH 16/32] PubKeyPlugin support
+From 8da8b165fd1d539e19516f05571b4b31f95eaf08 Mon Sep 17 00:00:00 2001
+From: Lexi Wilson <lexi@cooperi.net>
+Date: Fri, 10 Jul 2026 11:38:34 +1000
+Subject: [PATCH] PubKeyPlugin support
 
 This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called
 into to check public keys for authentication.
 ---
- auth2-pubkey.c | 149 +++++++++++++++++++++++++++++++++++++++++++++++++
+ auth2-pubkey.c | 163 +++++++++++++++++++++++++++++++++++++++++++++++++
  servconf.c     |  14 +++++
  servconf.h     |   3 +-
- 3 files changed, 165 insertions(+), 1 deletion(-)
+ 3 files changed, 179 insertions(+), 1 deletion(-)
 
 diff --git a/auth2-pubkey.c b/auth2-pubkey.c
-index e446ef412..7fe9bcf7d 100644
+index e446ef412..bc352ec77 100644
 --- a/auth2-pubkey.c
 +++ b/auth2-pubkey.c
 @@ -23,6 +23,11 @@
@@ -58,7 +58,7 @@ index e446ef412..7fe9bcf7d 100644
  static int
  userauth_pubkey(struct ssh *ssh, const char *method)
  {
-@@ -783,6 +799,135 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
+@@ -783,6 +799,148 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
  	return found_key;
  }
  
@@ -76,7 +76,8 @@ index e446ef412..7fe9bcf7d 100644
 + * it keeps this code minimally invasive.
 + */
 +static int
-+user_key_allowed_from_plugin(struct passwd *pw, struct sshkey *key)
++user_key_allowed_from_plugin(struct passwd *pw, struct sshkey *key,
++    struct sshauthopt **authoptsp)
 +{
 +	RSA_SYM rsa_sym = NULL;
 +	ECDSA_SYM ecdsa_sym = NULL;
@@ -85,6 +86,10 @@ index e446ef412..7fe9bcf7d 100644
 +	char *argfp = NULL;
 +	void *handle = NULL;
 +	int success = 0;
++	struct sshauthopt *opts;
++
++	if (authoptsp != NULL)
++		*authoptsp = NULL;
 +
 +	if (options.pubkey_plugin == NULL || pw == NULL || key == NULL ||
 +	    (key->type != KEY_RSA &&
@@ -179,9 +184,17 @@ index e446ef412..7fe9bcf7d 100644
 +		handle = NULL;
 +	}
 +
-+	if (success)
++	if (success) {
 +		verbose("Found matching %s key: %s", sshkey_type(key),
 +		    fp != NULL ? fp : "NULL");
++		if ((opts = sshauthopt_new_with_keys_defaults()) != NULL) {
++			*authoptsp = opts;
++		} else {
++			debug("sshauthopt_new failed");
++			success = 0;
++		}
++
++	}
 +
 +	if (fp != NULL) {
 +		free(fp);
@@ -194,22 +207,23 @@ index e446ef412..7fe9bcf7d 100644
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -857,6 +1002,10 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
+@@ -857,6 +1015,11 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
  	sshauthopt_free(opts);
  	opts = NULL;
  
-+	success = user_key_allowed_from_plugin(pw, key);
-+	if (success > 0)
++	if ((success = user_key_allowed_from_plugin(pw, key, &opts)) != 0)
 +		goto out;
++	sshauthopt_free(opts);
++	opts = NULL;
 +
  	if ((success = user_key_command_allowed2(pw, key, remote_ip,
  	    remote_host, conn_id, rdomain, &opts)) != 0)
  		goto out;
 diff --git a/servconf.c b/servconf.c
-index a06a0e39e..de9668980 100644
+index ce388f1dd..b2dba4a70 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -2608,6 +2608,20 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2554,6 +2554,20 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  		multistate_ptr = multistate_flag;
  		goto parse_multistate;
  
@@ -231,10 +245,10 @@ index a06a0e39e..de9668980 100644
  	case sIgnore:
  	case sUnsupported:
 diff --git a/servconf.h b/servconf.h
-index aa9b7fd8c..67c24d909 100644
+index 9e64e4673..ebef1c265 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -236,7 +236,8 @@ SSHCONF_STRARRAY(channel_timeouts, num_channel_timeouts, ChannelTimeout, SSHCFG_
+@@ -235,7 +235,8 @@ SSHCONF_STRARRAY(channel_timeouts, num_channel_timeouts, ChannelTimeout, SSHCFG_
  SSHCONF_INT(unused_connection_timeout, UnusedConnectionTimeout, SSHCFG_ALL, NULL, 0, SSHCFG_COPY_MATCH) \
  SSHCONF_STRING(sshd_session_path, SshdSessionPath, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
  SSHCONF_STRING(sshd_auth_path, SshdAuthPath, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
@@ -245,5 +259,5 @@ index aa9b7fd8c..67c24d909 100644
  #define SSHD_CONFIG_ENTRIES_LEGACY \
  SSHCONF_DEPRECATE(ServerKeyBits, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
 -- 
-2.50.1
+2.54.0
 
