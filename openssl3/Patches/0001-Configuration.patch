@@ -1,6 +1,6 @@
 diff -ru a/Configurations/10-main.conf b/Configurations/10-main.conf
 --- a/Configurations/10-main.conf	Tue Jun  9 07:54:25 2026
-+++ b/Configurations/10-main.conf	Fri Jul 17 14:19:52 2026
++++ b/Configurations/10-main.conf	Mon Jul 20 10:33:43 2026
 @@ -214,7 +214,7 @@
          inherit_from     => [ "BASE_unix" ],
          template         => 1,
@@ -61,7 +61,7 @@ diff -ru a/Configurations/10-main.conf b/Configurations/10-main.conf
      # primarily because vendor assembler can't assemble our modules
 diff -ru a/crypto/perlasm/x86_64-xlate.pl b/crypto/perlasm/x86_64-xlate.pl
 --- a/crypto/perlasm/x86_64-xlate.pl	Tue Jun  9 07:54:25 2026
-+++ b/crypto/perlasm/x86_64-xlate.pl	Fri Jul 17 14:49:45 2026
++++ b/crypto/perlasm/x86_64-xlate.pl	Mon Jul 20 10:40:10 2026
 @@ -73,7 +73,7 @@
  my $gas=1;	$gas=0 if ($output =~ /\.asm$/);
  my $elf=1;	$elf=0 if (!$gas);
@@ -89,18 +89,18 @@ diff -ru a/crypto/perlasm/x86_64-xlate.pl b/crypto/perlasm/x86_64-xlate.pl
  	    }
  
  	    if ($gas) {
-@@ -944,6 +948,8 @@
- 		    if (!$elf && $current_segment eq ".rodata") {
- 			if	($flavour eq "macosx") { $self->{value} = ".section\t__DATA,__const"; }
- 			elsif	($flavour eq "mingw64")	{ $self->{value} = ".section\t.rodata"; }
-+			### XXX SmartOS - need to use .hidden.
-+			else { $self->{value} = ".hidden\t$prefix$$line"; }
- 		    }
- 		    if (!$elf && $current_segment eq ".init") {
- 			if	($flavour eq "macosx")	{ $self->{value} = ".mod_init_func"; }
+@@ -962,6 +966,8 @@
+ 		} elsif ($dir =~ /\.hidden/) {
+ 		    if    ($flavour eq "macosx")  { $self->{value} = ".private_extern\t$prefix$$line"; }
+ 		    elsif ($flavour eq "mingw64") { $self->{value} = ""; }
++		    ### XXX SmartOS - need to use .hidden.
++		    else { $self->{value} = ".hidden\t$prefix$$line"; }
+ 		} elsif ($dir =~ /\.comm/) {
+ 		    $self->{value} = "$dir\t$prefix$$line";
+ 		    $self->{value} =~ s|,([0-9]+),([0-9]+)$|",$1,".log($2)/log(2)|e if ($flavour eq "macosx");
 diff -ru a/crypto/perlasm/x86asm.pl b/crypto/perlasm/x86asm.pl
 --- a/crypto/perlasm/x86asm.pl	Tue Jun  9 07:54:25 2026
-+++ b/crypto/perlasm/x86asm.pl	Fri Jul 17 14:35:20 2026
++++ b/crypto/perlasm/x86asm.pl	Mon Jul 20 10:33:43 2026
 @@ -185,6 +185,7 @@
  
  sub ::islabel		# see is argument is a known label
@@ -111,7 +111,7 @@ diff -ru a/crypto/perlasm/x86asm.pl b/crypto/perlasm/x86asm.pl
  }
 diff -ru a/crypto/perlasm/x86gas.pl b/crypto/perlasm/x86gas.pl
 --- a/crypto/perlasm/x86gas.pl	Tue Jun  9 07:54:25 2026
-+++ b/crypto/perlasm/x86gas.pl	Fri Jul 17 14:36:08 2026
++++ b/crypto/perlasm/x86gas.pl	Mon Jul 20 10:33:43 2026
 @@ -12,7 +12,7 @@
  *out=\@::out;
  
@@ -123,7 +123,7 @@ diff -ru a/crypto/perlasm/x86gas.pl b/crypto/perlasm/x86gas.pl
  
 diff -ru a/include/internal/cryptlib.h b/include/internal/cryptlib.h
 --- a/include/internal/cryptlib.h	Tue Jun  9 07:54:25 2026
-+++ b/include/internal/cryptlib.h	Fri Jul 17 14:36:55 2026
++++ b/include/internal/cryptlib.h	Mon Jul 20 10:33:43 2026
 @@ -32,7 +32,7 @@
  typedef struct mem_st MEM;
  DEFINE_LHASH_OF_EX(MEM);
@@ -135,7 +135,7 @@ diff -ru a/include/internal/cryptlib.h b/include/internal/cryptlib.h
  extern unsigned int OPENSSL_ia32cap_P[];
 diff -ru a/include/openssl/configuration.h.in b/include/openssl/configuration.h.in
 --- a/include/openssl/configuration.h.in	Tue Jun  9 07:54:25 2026
-+++ b/include/openssl/configuration.h.in	Fri Jul 17 14:37:59 2026
++++ b/include/openssl/configuration.h.in	Mon Jul 20 10:33:43 2026
 @@ -48,6 +48,9 @@
  -}
  /* clang-format on */
@@ -148,7 +148,7 @@ diff -ru a/include/openssl/configuration.h.in b/include/openssl/configuration.h.
  {- $config{processor} eq "386" ? "# define" : "# undef" -} I386_ONLY
 diff -ru a/test/provider_internal_test.c b/test/provider_internal_test.c
 --- a/test/provider_internal_test.c	Tue Jun  9 07:54:25 2026
-+++ b/test/provider_internal_test.c	Fri Jul 17 14:38:47 2026
++++ b/test/provider_internal_test.c	Mon Jul 20 10:33:43 2026
 @@ -12,6 +12,15 @@
  #include "internal/provider.h"
  #include "testutil.h"
@@ -167,7 +167,7 @@ diff -ru a/test/provider_internal_test.c b/test/provider_internal_test.c
  static char buf[256];
 diff -ru a/test/provider_test.c b/test/provider_test.c
 --- a/test/provider_test.c	Tue Jun  9 07:54:25 2026
-+++ b/test/provider_test.c	Fri Jul 17 14:39:37 2026
++++ b/test/provider_test.c	Mon Jul 20 10:33:43 2026
 @@ -12,6 +12,15 @@
  #include <openssl/param_build.h>
  #include "testutil.h"
@@ -186,7 +186,7 @@ diff -ru a/test/provider_test.c b/test/provider_test.c
  static char buf[256];
 diff -ru a/util/mkdef.pl b/util/mkdef.pl
 --- a/util/mkdef.pl	Tue Jun  9 07:54:25 2026
-+++ b/util/mkdef.pl	Fri Jul 17 14:41:56 2026
++++ b/util/mkdef.pl	Mon Jul 20 10:33:43 2026
 @@ -273,7 +273,7 @@
      global:
  _____
