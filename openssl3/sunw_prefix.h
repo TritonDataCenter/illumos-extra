@@ -6641,6 +6641,8 @@
  */
 #ifdef __amd64
 #pragma redefine_extname	OSSL_provider_init sunw_OSSL_provider_init
+#pragma redefine_extname	bind_engine sunw_bind_engine
+#pragma redefine_extname	v_check sunw_v_check
 #endif /* __amd64 */
 
 #endif /* _SUNW_PREFIX_H */
