@@ -61,7 +61,7 @@ diff -ru a/Configurations/10-main.conf b/Configurations/10-main.conf
      # primarily because vendor assembler can't assemble our modules
 diff -ru a/crypto/perlasm/x86_64-xlate.pl b/crypto/perlasm/x86_64-xlate.pl
 --- a/crypto/perlasm/x86_64-xlate.pl	Tue Jun  9 07:54:25 2026
-+++ b/crypto/perlasm/x86_64-xlate.pl	Mon Jul 20 10:40:10 2026
++++ b/crypto/perlasm/x86_64-xlate.pl	Mon Jul 20 10:54:38 2026
 @@ -73,7 +73,7 @@
  my $gas=1;	$gas=0 if ($output =~ /\.asm$/);
  my $elf=1;	$elf=0 if (!$gas);
@@ -89,11 +89,10 @@ diff -ru a/crypto/perlasm/x86_64-xlate.pl b/crypto/perlasm/x86_64-xlate.pl
  	    }
  
  	    if ($gas) {
-@@ -962,6 +966,8 @@
+@@ -962,6 +966,7 @@
  		} elsif ($dir =~ /\.hidden/) {
  		    if    ($flavour eq "macosx")  { $self->{value} = ".private_extern\t$prefix$$line"; }
  		    elsif ($flavour eq "mingw64") { $self->{value} = ""; }
-+		    ### XXX SmartOS - need to use .hidden.
 +		    else { $self->{value} = ".hidden\t$prefix$$line"; }
  		} elsif ($dir =~ /\.comm/) {
  		    $self->{value} = "$dir\t$prefix$$line";
@@ -148,8 +147,8 @@ diff -ru a/include/openssl/configuration.h.in b/include/openssl/configuration.h.
  {- $config{processor} eq "386" ? "# define" : "# undef" -} I386_ONLY
 diff -ru a/test/provider_internal_test.c b/test/provider_internal_test.c
 --- a/test/provider_internal_test.c	Tue Jun  9 07:54:25 2026
-+++ b/test/provider_internal_test.c	Mon Jul 20 10:33:43 2026
-@@ -12,6 +12,15 @@
++++ b/test/provider_internal_test.c	Tue Jul 21 03:03:28 2026
+@@ -12,6 +12,13 @@
  #include "internal/provider.h"
  #include "testutil.h"
  
@@ -157,29 +156,25 @@ diff -ru a/test/provider_internal_test.c b/test/provider_internal_test.c
 + * XXX SmartOS - hack PROVIDER_INIT_FUNCTION_NAME to use sunw_OSSL_provider_init
 + * because of 64-bit weirdness with THIS module.
 + */
-+#ifdef __amd64
 +#undef PROVIDER_INIT_FUNCTION_NAME
 +#define	PROVIDER_INIT_FUNCTION_NAME sunw_OSSL_provider_init
-+#endif
 +
  extern OSSL_provider_init_fn PROVIDER_INIT_FUNCTION_NAME;
  
  static char buf[256];
 diff -ru a/test/provider_test.c b/test/provider_test.c
 --- a/test/provider_test.c	Tue Jun  9 07:54:25 2026
-+++ b/test/provider_test.c	Mon Jul 20 10:33:43 2026
-@@ -12,6 +12,15 @@
++++ b/test/provider_test.c	Tue Jul 21 03:03:16 2026
+@@ -12,6 +12,13 @@
  #include <openssl/param_build.h>
  #include "testutil.h"
  
 +/*
 + * XXX SmartOS - hack PROVIDER_INIT_FUNCTION_NAME to use sunw_OSSL_provider_init
-+ * because of 64-bit weirdness with THIS module.
++ * because of weirdness with THIS module.
 + */
-+#ifdef __amd64
 +#undef PROVIDER_INIT_FUNCTION_NAME
 +#define	PROVIDER_INIT_FUNCTION_NAME sunw_OSSL_provider_init
-+#endif
 +
  extern OSSL_provider_init_fn PROVIDER_INIT_FUNCTION_NAME;
  

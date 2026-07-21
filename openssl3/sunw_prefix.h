@@ -6634,15 +6634,26 @@
 #pragma redefine_extname	SHA3_squeeze sunw_SHA3_squeeze
 
 /*
- * XXX WARNING: OpenSSL 3 introduces symbols that work differently between
- * 64-bit vs. 32-bit.  Without 64-bit guards, one or the other will fail.
- * These are mostly in the tests/ directory, but may become more important if
- * we re-enable PKCS#11 using the new "provider" interface.
+ * These symbols are mostly in the tests/ directory, but may become more
+ * important if we re-enable PKCS#11 using the new "provider" interface.
+ * In OpenSSL 3.0 these were guarded for 64-bit only, but it seems to be
+ * required for both 32-bit and 64-bit now.
+ *
+ * XXX KEBE SAYS If it's is an extra-only (vs. strap)
+ * consideration, we will need to guard that way instead.
  */
-#ifdef __amd64
 #pragma redefine_extname	OSSL_provider_init sunw_OSSL_provider_init
 #pragma redefine_extname	bind_engine sunw_bind_engine
 #pragma redefine_extname	v_check sunw_v_check
-#endif /* __amd64 */
+#pragma redefine_extname	padlock_xstore sunw_padlock_xstore
+#pragma redefine_extname	padlock_capability sunw_padlock_capability
+#pragma redefine_extname	padlock_reload_key sunw_padlock_reload_key
+#pragma redefine_extname	padlock_ctr32_encrypt sunw_padlock_ctr32_encrypt
+#pragma redefine_extname	padlock_key_bswap sunw_padlock_key_bswap
+#pragma redefine_extname	padlock_cbc_encrypt sunw_padlock_cbc_encrypt
+#pragma redefine_extname	padlock_cfb_encrypt sunw_padlock_cfb_encrypt
+#pragma redefine_extname	padlock_ecb_encrypt sunw_padlock_ecb_encrypt
+#pragma redefine_extname	padlock_ofb_encrypt sunw_padlock_ofb_encrypt
+#pragma redefine_extname	padlock_aes_block sunw_padlock_aes_block
 
 #endif /* _SUNW_PREFIX_H */
