@@ -426,8 +426,6 @@ f lib/svc/manifest/network/lldpd.xml 0444 root sys
 f usr/sbin/lldpd 0555 root bin
 f usr/sbin/lldpneighbors 0555 root bin
 # openssl
-f usr/bin/amd64/openssl 0555 root bin
-s usr/sfw/bin/amd64/openssl=../../../bin/amd64/openssl
 f lib/amd64/libcrypto-smartos.so.3 0755 root bin
 f lib/amd64/libsunw_crypto.so.1.0.0 0755 root bin
 s usr/lib/amd64/libcrypto-smartos.so.3=../../../lib/amd64/libcrypto-smartos.so.3
