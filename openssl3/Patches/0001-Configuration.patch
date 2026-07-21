@@ -1,7 +1,7 @@
 diff -ru a/Configurations/10-main.conf b/Configurations/10-main.conf
---- a/Configurations/10-main.conf	Tue Jan 27 09:09:55 2026
-+++ b/Configurations/10-main.conf	Tue Jan 27 15:22:07 2026
-@@ -213,7 +213,7 @@
+--- a/Configurations/10-main.conf	Tue Jun  9 07:54:25 2026
++++ b/Configurations/10-main.conf	Mon Jul 20 10:33:43 2026
+@@ -214,7 +214,7 @@
          inherit_from     => [ "BASE_unix" ],
          template         => 1,
          lib_cppflags     => "-DFILIO_H",
@@ -10,77 +10,58 @@ diff -ru a/Configurations/10-main.conf b/Configurations/10-main.conf
          dso_scheme       => "dlfcn",
          thread_scheme    => "pthreads",
      },
-@@ -241,8 +241,10 @@
+@@ -242,7 +242,10 @@
          CC               => "gcc",
          CFLAGS           => add_before(picker(default => "-Wall",
                                                debug   => "-O0 -g",
 -                                              release => "-O3 -fomit-frame-pointer")),
--        cflags           => add(threads("-pthread")),
 +                                              release => "-O3 -gdwarf-2 -gstrict-dwarf")),
-+	# XXX SmartOS - starting with gcc10, you need to specify -m32 for
-+	# 32-bit builds.  This should be a NOP on gcc7.
++        # XXX SmartOS - at least with gcc10, you need to specify -m32 for
++        # 32-bit builds.
 +        cflags           => add("-m32", threads("-pthread")),
          lib_cppflags     => add("-DL_ENDIAN"),
-         ex_libs          => add(threads("-pthread")),
          bn_ops           => "BN_LLONG",
-@@ -264,7 +266,7 @@
+         shared_cflag     => "-fPIC",
+@@ -263,7 +266,7 @@
          CC               => "gcc",
          CFLAGS           => add_before(picker(default => "-Wall",
                                                debug   => "-O0 -g",
 -                                              release => "-O3")),
 +                                              release => "-O3 -gdwarf-2 -gstrict-dwarf")),
-         cflags           => add_before("-m64", threads("-pthread")),
+         cflags           => add("-m64"),
          lib_cppflags     => add("-DL_ENDIAN"),
-         ex_libs          => add(threads("-pthread")),
-@@ -275,7 +277,28 @@
+         bn_ops           => "SIXTY_FOUR_BIT_LONG",
+@@ -273,7 +276,27 @@
          shared_ldflag    => add_before("-shared -static-libgcc"),
          multilib         => "/64",
      },
 +#### SmartOS variations
 +    # Inserted by SmartOS patching in illumos-extra to make sure we're
-+    # using the "sunw" prefix becuase for SmartOS, the platform's openssl
++    # using the "sunw" prefix because for SmartOS, the platform's openssl
 +    # is NOT intended to be used by user programs like libc, etc.  In
 +    # SmartOS, if a user program wants OpenSSL, they need to use one provided
 +    # by pkgsrc or themselves.
  
 +    "smartos-x86-gcc" => {
 +        inherit_from     => [ "solaris-x86-gcc" ],
-+	shlib_variant    => "-smartos",
++        shlib_variant    => "-smartos",
 +    },
-+
 +
 +    "smartos64-x86_64-gcc" => {
 +        inherit_from     => [ "solaris64-x86_64-gcc" ],
-+	# For some weird reason AR and ARFLAGS get cleared for this one.
-+	AR               => "ar",
-+	ARFLAGS          => "qc",
-+	shlib_variant    => "-smartos",
-+	multilib         => "/amd64",
++        # For some weird reason AR and ARFLAGS get cleared for this one.
++        AR               => "ar",
++        ARFLAGS          => "qc",
++        shlib_variant    => "-smartos",
++        multilib         => "/amd64",
 +    },
 +
  #### Solaris x86 with Sun C setups
      # There used to be solaris-x86-cc target, but it was removed,
      # primarily because vendor assembler can't assemble our modules
-diff -ru a/crypto/bio/bio_sock.c b/crypto/bio/bio_sock.c
---- a/crypto/bio/bio_sock.c	Tue Jan 27 09:09:55 2026
-+++ b/crypto/bio/bio_sock.c	Tue Jan 27 15:22:07 2026
-@@ -353,7 +353,12 @@
-     ERR_raise(ERR_LIB_BIO, ERR_R_PASSED_INVALID_ARGUMENT);
- #endif
- 
--    return (ret == 0);
-+    /*
-+     * XXX SmartOS:  We sometimes ignore 'l' after above use, which throws
-+     * an error.  Do stupid variable tricks.
-+     */
-+    l = ret;
-+    return (l == 0);
- }
- 
- int BIO_sock_info(int sock,
 diff -ru a/crypto/perlasm/x86_64-xlate.pl b/crypto/perlasm/x86_64-xlate.pl
---- a/crypto/perlasm/x86_64-xlate.pl	Tue Jan 27 09:09:55 2026
-+++ b/crypto/perlasm/x86_64-xlate.pl	Tue Jan 27 15:22:07 2026
+--- a/crypto/perlasm/x86_64-xlate.pl	Tue Jun  9 07:54:25 2026
++++ b/crypto/perlasm/x86_64-xlate.pl	Mon Jul 20 10:54:38 2026
 @@ -73,7 +73,7 @@
  my $gas=1;	$gas=0 if ($output =~ /\.asm$/);
  my $elf=1;	$elf=0 if (!$gas);
@@ -90,7 +71,7 @@ diff -ru a/crypto/perlasm/x86_64-xlate.pl b/crypto/perlasm/x86_64-xlate.pl
  my $decor=".L";
  
  my $masmref=8 + 50727*2**-32;	# 8.00.50727 shipped with VS2005
-@@ -808,6 +808,7 @@
+@@ -885,6 +885,7 @@
  				    }
  				    $$line =~ s/\@abi\-omnipotent/\@function/;
  				    $$line =~ s/\@function.*/\@function/;
@@ -98,17 +79,17 @@ diff -ru a/crypto/perlasm/x86_64-xlate.pl b/crypto/perlasm/x86_64-xlate.pl
  				    last;
  				  };
  		/\.asciz/   && do { if ($$line =~ /^"(.*)"$/) {
-@@ -821,6 +822,9 @@
+@@ -898,6 +899,9 @@
  				    $$line =~ s/\.L/$decor/g;
  				    last;
  				  };
 +		/\.size/    && do { $$line =~ s/([_a-z][_a-z0-9]*)/$globals{$1} or $1/gei;
 +				    last;
-+			    };
++				  };
  	    }
  
  	    if ($gas) {
-@@ -854,6 +858,7 @@
+@@ -962,6 +966,7 @@
  		} elsif ($dir =~ /\.hidden/) {
  		    if    ($flavour eq "macosx")  { $self->{value} = ".private_extern\t$prefix$$line"; }
  		    elsif ($flavour eq "mingw64") { $self->{value} = ""; }
@@ -117,8 +98,8 @@ diff -ru a/crypto/perlasm/x86_64-xlate.pl b/crypto/perlasm/x86_64-xlate.pl
  		    $self->{value} = "$dir\t$prefix$$line";
  		    $self->{value} =~ s|,([0-9]+),([0-9]+)$|",$1,".log($2)/log(2)|e if ($flavour eq "macosx");
 diff -ru a/crypto/perlasm/x86asm.pl b/crypto/perlasm/x86asm.pl
---- a/crypto/perlasm/x86asm.pl	Tue Jan 27 09:09:55 2026
-+++ b/crypto/perlasm/x86asm.pl	Tue Jan 27 15:22:07 2026
+--- a/crypto/perlasm/x86asm.pl	Tue Jun  9 07:54:25 2026
++++ b/crypto/perlasm/x86asm.pl	Mon Jul 20 10:33:43 2026
 @@ -185,6 +185,7 @@
  
  sub ::islabel		# see is argument is a known label
@@ -128,8 +109,8 @@ diff -ru a/crypto/perlasm/x86asm.pl b/crypto/perlasm/x86asm.pl
    $label{$_[0]};	# can be undef
  }
 diff -ru a/crypto/perlasm/x86gas.pl b/crypto/perlasm/x86gas.pl
---- a/crypto/perlasm/x86gas.pl	Tue Jan 27 09:09:55 2026
-+++ b/crypto/perlasm/x86gas.pl	Tue Jan 27 15:22:07 2026
+--- a/crypto/perlasm/x86gas.pl	Tue Jun  9 07:54:25 2026
++++ b/crypto/perlasm/x86gas.pl	Mon Jul 20 10:33:43 2026
 @@ -12,7 +12,7 @@
  *out=\@::out;
  
@@ -140,20 +121,20 @@ diff -ru a/crypto/perlasm/x86gas.pl b/crypto/perlasm/x86gas.pl
  $initseg="";
  
 diff -ru a/include/internal/cryptlib.h b/include/internal/cryptlib.h
---- a/include/internal/cryptlib.h	Tue Jan 27 09:09:55 2026
-+++ b/include/internal/cryptlib.h	Tue Jan 27 15:22:22 2026
-@@ -85,7 +85,7 @@
- #define DECIMAL_SIZE(type) ((sizeof(type) * 8 + 2) / 3 + 1)
- #define HEX_SIZE(type) (sizeof(type) * 2)
+--- a/include/internal/cryptlib.h	Tue Jun  9 07:54:25 2026
++++ b/include/internal/cryptlib.h	Mon Jul 20 10:33:43 2026
+@@ -32,7 +32,7 @@
+ typedef struct mem_st MEM;
+ DEFINE_LHASH_OF_EX(MEM);
  
 -void OPENSSL_cpuid_setup(void);
-+extern void OPENSSL_cpuid_setup(void);
++extern void OPENSSL_cpuid_setup(void); /* XXX SmartOS needs extern here */
  #if defined(__i386) || defined(__i386__) || defined(_M_IX86) || defined(__x86_64) || defined(__x86_64__) || defined(_M_AMD64) || defined(_M_X64)
+ #define OPENSSL_IA32CAP_P_MAX_INDEXES 10
  extern unsigned int OPENSSL_ia32cap_P[];
- #endif
 diff -ru a/include/openssl/configuration.h.in b/include/openssl/configuration.h.in
---- a/include/openssl/configuration.h.in	Tue Jan 27 09:09:55 2026
-+++ b/include/openssl/configuration.h.in	Tue Jan 27 15:22:07 2026
+--- a/include/openssl/configuration.h.in	Tue Jun  9 07:54:25 2026
++++ b/include/openssl/configuration.h.in	Mon Jul 20 10:33:43 2026
 @@ -48,6 +48,9 @@
  -}
  /* clang-format on */
@@ -165,9 +146,9 @@ diff -ru a/include/openssl/configuration.h.in b/include/openssl/configuration.h.
  /* clang-format off */
  {- $config{processor} eq "386" ? "# define" : "# undef" -} I386_ONLY
 diff -ru a/test/provider_internal_test.c b/test/provider_internal_test.c
---- a/test/provider_internal_test.c	Tue Jan 27 09:09:55 2026
-+++ b/test/provider_internal_test.c	Tue Jan 27 15:22:07 2026
-@@ -12,6 +12,15 @@
+--- a/test/provider_internal_test.c	Tue Jun  9 07:54:25 2026
++++ b/test/provider_internal_test.c	Tue Jul 21 03:03:28 2026
+@@ -12,6 +12,13 @@
  #include "internal/provider.h"
  #include "testutil.h"
  
@@ -175,42 +156,38 @@ diff -ru a/test/provider_internal_test.c b/test/provider_internal_test.c
 + * XXX SmartOS - hack PROVIDER_INIT_FUNCTION_NAME to use sunw_OSSL_provider_init
 + * because of 64-bit weirdness with THIS module.
 + */
-+#ifdef __amd64
 +#undef PROVIDER_INIT_FUNCTION_NAME
-+#define PROVIDER_INIT_FUNCTION_NAME sunw_OSSL_provider_init
-+#endif
++#define	PROVIDER_INIT_FUNCTION_NAME sunw_OSSL_provider_init
 +
  extern OSSL_provider_init_fn PROVIDER_INIT_FUNCTION_NAME;
  
  static char buf[256];
 diff -ru a/test/provider_test.c b/test/provider_test.c
---- a/test/provider_test.c	Tue Jan 27 09:09:55 2026
-+++ b/test/provider_test.c	Tue Jan 27 15:22:07 2026
-@@ -11,6 +11,15 @@
- #include <openssl/provider.h>
+--- a/test/provider_test.c	Tue Jun  9 07:54:25 2026
++++ b/test/provider_test.c	Tue Jul 21 03:03:16 2026
+@@ -12,6 +12,13 @@
+ #include <openssl/param_build.h>
  #include "testutil.h"
  
 +/*
 + * XXX SmartOS - hack PROVIDER_INIT_FUNCTION_NAME to use sunw_OSSL_provider_init
-+ * because of 64-bit weirdness with THIS module.
++ * because of weirdness with THIS module.
 + */
-+#ifdef __amd64
 +#undef PROVIDER_INIT_FUNCTION_NAME
-+#define PROVIDER_INIT_FUNCTION_NAME sunw_OSSL_provider_init
-+#endif
++#define	PROVIDER_INIT_FUNCTION_NAME sunw_OSSL_provider_init
 +
  extern OSSL_provider_init_fn PROVIDER_INIT_FUNCTION_NAME;
  
  static char buf[256];
 diff -ru a/util/mkdef.pl b/util/mkdef.pl
---- a/util/mkdef.pl	Tue Jan 27 09:09:55 2026
-+++ b/util/mkdef.pl	Tue Jan 27 15:22:07 2026
-@@ -272,7 +272,7 @@
+--- a/util/mkdef.pl	Tue Jun  9 07:54:25 2026
++++ b/util/mkdef.pl	Mon Jul 20 10:33:43 2026
+@@ -273,7 +273,7 @@
      global:
  _____
          }
 -        print '        ', $_->name(), ";\n";
-+        print '        sunw_', $_->name(), ";\n";
++        print '        sunw_', $_->name(), ";\n"; # SmartOS prefixing added...
      }
  
      print <<"_____";
