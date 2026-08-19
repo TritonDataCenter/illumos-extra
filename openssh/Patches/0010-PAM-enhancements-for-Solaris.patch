@@ -1,7 +1,7 @@
-From df94dbd7fba0e27d22367b00dba5d1afcb0e037c Mon Sep 17 00:00:00 2001
+From bcf2d5b7ab4968aaf1728991b59d958a2d798ffb Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 6 Jul 2026 16:59:27 -0400
-Subject: [PATCH 09/32] PAM enhancements for Solaris
+Subject: [PATCH] PAM enhancements for Solaris
 
 ---
  auth-pam.c     | 116 +++++++++++++++++++++++++++++++++++++++++++++++++
@@ -286,7 +286,7 @@ index 3f353a719..ae7125216 100644
  
  		/* If PAM returned a message, send it to the user. */
 diff --git a/monitor.c b/monitor.c
-index 73a85408e..8f4d6dd87 100644
+index 149671145..abf6ef189 100644
 --- a/monitor.c
 +++ b/monitor.c
 @@ -111,6 +111,9 @@ int mm_answer_sign(struct ssh *, int, struct sshbuf *);
@@ -363,7 +363,7 @@ index 73a85408e..8f4d6dd87 100644
  				struct sshbuf *m;
  
  				if ((m = sshbuf_new()) == NULL)
-@@ -921,6 +961,10 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
+@@ -933,6 +973,10 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
  	/* Allow service/style information on the auth context */
  	monitor_permit(mon_dispatch, MONITOR_REQ_AUTHSERV, 1);
  	monitor_permit(mon_dispatch, MONITOR_REQ_AUTH2_READ_BANNER, 1);
@@ -374,7 +374,7 @@ index 73a85408e..8f4d6dd87 100644
  
  #ifdef USE_PAM
  	if (options.use_pam)
-@@ -945,6 +989,27 @@ int mm_answer_auth2_read_banner(struct ssh *ssh, int sock, struct sshbuf *m)
+@@ -957,6 +1001,27 @@ int mm_answer_auth2_read_banner(struct ssh *ssh, int sock, struct sshbuf *m)
  	return (0);
  }
  
@@ -417,10 +417,10 @@ index fe0b00b2e..2f8cb07e0 100644
  };
  
 diff --git a/monitor_wrap.c b/monitor_wrap.c
-index e2b9a2802..035d13fc0 100644
+index e9a771b34..2fb2c044f 100644
 --- a/monitor_wrap.c
 +++ b/monitor_wrap.c
-@@ -438,6 +438,24 @@ mm_inform_authserv(char *service, char *style)
+@@ -440,6 +440,24 @@ mm_inform_authserv(char *service, char *style)
  	sshbuf_free(m);
  }
  
@@ -446,7 +446,7 @@ index e2b9a2802..035d13fc0 100644
  int
  mm_auth_password(struct ssh *ssh, char *password)
 diff --git a/servconf.c b/servconf.c
-index 659849702..a06a0e39e 100644
+index a89a5de58..0c34f6b7c 100644
 --- a/servconf.c
 +++ b/servconf.c
 @@ -161,6 +161,15 @@ initialize_server_options(ServerOptions *options)
@@ -489,7 +489,7 @@ index 659849702..a06a0e39e 100644
  #endif
  
  	if (options->num_host_key_files == 0) {
-@@ -1182,6 +1199,21 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -1180,6 +1197,21 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  		intptr = &options->use_pam;
  		goto parse_flag;
  #endif
@@ -511,7 +511,7 @@ index 659849702..a06a0e39e 100644
  	case sPAMServiceName:
  		charptr = &options->pam_service_name;
  		arg = argv_next(&ac, &av);
-@@ -1189,8 +1221,20 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -1187,8 +1219,20 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  			fatal("%s line %d: missing argument.",
  			    filename, linenum);
  		}
@@ -532,7 +532,7 @@ index 659849702..a06a0e39e 100644
  		break;
  #endif
  
-@@ -3074,6 +3118,22 @@ serialise_timingsecret(const ServerOptions *options, struct sshbuf *buf)
+@@ -3072,6 +3116,22 @@ serialise_timingsecret(const ServerOptions *options, struct sshbuf *buf)
  	return 0;
  }
  
@@ -555,7 +555,7 @@ index 659849702..a06a0e39e 100644
  
  int
  serialise_server_options(const ServerOptions *options, struct sshbuf **bufp)
-@@ -3608,6 +3668,22 @@ deserialise_timingsecret(ServerOptions *options, struct sshbuf *buf)
+@@ -3606,6 +3666,22 @@ deserialise_timingsecret(ServerOptions *options, struct sshbuf *buf)
  	return 0;
  }
  
@@ -578,7 +578,7 @@ index 659849702..a06a0e39e 100644
  int
  deserialise_server_options(struct sshbuf *buf, ServerOptions *options)
  {
-@@ -3771,6 +3847,9 @@ free_server_options(ServerOptions *options)
+@@ -3769,6 +3845,9 @@ free_server_options(ServerOptions *options)
  #define free_persourcepenalties(options)
  #define free_rekeylimit(options)
  #define free_timingsecret(options)
@@ -588,7 +588,7 @@ index 659849702..a06a0e39e 100644
  
  	SSHD_CONFIG_ENTRIES
  
-@@ -3786,6 +3865,9 @@ free_server_options(ServerOptions *options)
+@@ -3784,6 +3863,9 @@ free_server_options(ServerOptions *options)
  #undef free_persourcepenalties
  #undef free_rekeylimit
  #undef free_timingsecret
@@ -599,7 +599,7 @@ index 659849702..a06a0e39e 100644
  #undef SSHCONF_INT
  #undef SSHCONF_INTFLAG
 diff --git a/servconf.h b/servconf.h
-index 6742e2a19..b92f1dcb8 100644
+index 58d9dbb81..9c258c57e 100644
 --- a/servconf.h
 +++ b/servconf.h
 @@ -271,14 +271,23 @@ SSHCONF_ALIAS(KeepAlive, TCPKeepAlive, SSHCFG_GLOBAL)
@@ -621,7 +621,7 @@ index 6742e2a19..b92f1dcb8 100644
 +#else	/* USE_PAM */
  #define SSHD_CONFIG_ENTRIES_PAM \
  SSHCONF_UNSUPPORTED_INT(use_pam, UsePAM, SSHCFG_GLOBAL) \
--SSHCONF_UNSUPPORTED_STRING(pam_service_name, PAMServiceName, SSHCFG_GLOBAL)
+-SSHCONF_UNSUPPORTED_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL)
 -#endif
 +SSHCONF_UNSUPPORTED_STRING(pam_service_name, PAMServiceName, SSHCFG_GLOBAL) \
 +SSHCONF_UNSUPPORTED_STRING(pam_service_prefix, PAMServicePrefix, SSHCFG_GLOBAL)
@@ -641,10 +641,10 @@ index 6742e2a19..b92f1dcb8 100644
  #undef SSHCONF_INT
  #undef SSHCONF_INTFLAG
 diff --git a/sshd.8 b/sshd.8
-index 7fbca776a..5656c0da5 100644
+index a65aae75d..f2a4cdc20 100644
 --- a/sshd.8
 +++ b/sshd.8
-@@ -1018,6 +1018,31 @@ concurrently for different ports, this contains the process ID of the one
+@@ -1024,6 +1024,31 @@ concurrently for different ports, this contains the process ID of the one
  started last).
  The content of this file is not sensitive; it can be world-readable.
  .El
@@ -677,10 +677,10 @@ index 7fbca776a..5656c0da5 100644
  .Xr scp 1 ,
  .Xr sftp 1 ,
 diff --git a/sshd_config.5 b/sshd_config.5
-index ec905e5e7..6278642e9 100644
+index 26d139bd1..12a8b81c6 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
-@@ -1347,6 +1347,7 @@ Available keywords are
+@@ -1355,6 +1355,7 @@ Available keywords are
  .Cm MaxAuthTries ,
  .Cm MaxSessions ,
  .Cm PAMServiceName ,
@@ -688,7 +688,7 @@ index ec905e5e7..6278642e9 100644
  .Cm PasswordAuthentication ,
  .Cm PermitEmptyPasswords ,
  .Cm PermitListen ,
-@@ -1415,12 +1416,34 @@ key exchange methods.
+@@ -1423,12 +1424,34 @@ key exchange methods.
  The default is
  .Pa /etc/moduli .
  .It Cm PAMServiceName
@@ -729,7 +729,7 @@ index ec905e5e7..6278642e9 100644
  .It Cm PasswordAuthentication
  Specifies whether password authentication is allowed.
  The default is
-@@ -2085,8 +2108,7 @@ If
+@@ -2095,8 +2118,7 @@ If
  is enabled, you will not be able to run
  .Xr sshd 8
  as a non-root user.

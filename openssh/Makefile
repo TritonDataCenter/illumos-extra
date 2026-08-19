@@ -24,7 +24,7 @@
 # Copyright 2026 Edgecast Cloud LLC.
 #
 
-VER =	openssh-10.4p1
+VER =	openssh-10.5p1
 
 include ../Makefile.defs
 

@@ -1,7 +1,7 @@
-From a9139c92732b83f73bfd855717d3771957b27ea9 Mon Sep 17 00:00:00 2001
+From 32364b1599144f544d1fd4b97c9e26522ac79070 Mon Sep 17 00:00:00 2001
 From: Dan McDonald <danmcd@mnx.io>
 Date: Thu, 10 Aug 2023 18:11:52 -0400
-Subject: [PATCH 32/32] SmartOS local: use sunw_ssl lib from platform
+Subject: [PATCH] SmartOS local: use sunw_ssl lib from platform
 
 ---
  cipher-chachapoly-libcrypto.c        |  4 +-
@@ -51,10 +51,10 @@ index 4471fe2d2..010de2d38 100644
 -#endif /* !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
 +#endif /* !defined(HAVE_SUNW_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
 diff --git a/configure.ac b/configure.ac
-index 252c98ef5..7fd142255 100644
+index 0461d3164..04acc4da7 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3081,14 +3081,14 @@ AC_ARG_WITH([ssl-engine],
+@@ -3082,14 +3082,14 @@ AC_ARG_WITH([ssl-engine],
  
  nocrypto_saved_LIBS="$LIBS"
  if test "x$openssl" = "xyes" ; then
@@ -73,7 +73,7 @@ index 252c98ef5..7fd142255 100644
  		AC_MSG_ERROR([*** working libcrypto not found, check config.log])
  	    ])
  	])
-@@ -3133,7 +3133,7 @@ if test "x$openssl" = "xyes" ; then
+@@ -3134,7 +3134,7 @@ if test "x$openssl" = "xyes" ; then
  	)
  
  	# Determining OpenSSL library version is version dependent.
@@ -82,8 +82,8 @@ index 252c98ef5..7fd142255 100644
  
  	# Determine OpenSSL library version
  	AC_MSG_CHECKING([OpenSSL library version])
-@@ -3278,31 +3278,31 @@ if test "x$openssl" = "xyes" ; then
- 	)
+@@ -3292,31 +3292,31 @@ if test "x$openssl" = "xyes" ; then
+ 	AC_MSG_RESULT([$openssl_impl])
  
  	AC_CHECK_FUNCS([ \
 -		BN_is_prime_ex \
@@ -135,7 +135,7 @@ index 252c98ef5..7fd142255 100644
  	])
  
  	if test "x$openssl_engine" = "xyes" ; then
-@@ -3352,7 +3352,7 @@ if test "x$openssl" = "xyes" ; then
+@@ -3366,7 +3366,7 @@ if test "x$openssl" = "xyes" ; then
  	)
  
  	# Check for various EVP support in OpenSSL
@@ -143,18 +143,13 @@ index 252c98ef5..7fd142255 100644
 +	AC_CHECK_FUNCS([sunw_EVP_sha256 sunw_EVP_sha384 sunw_EVP_sha512 sunw_EVP_chacha20])
  
  	# Check complete ECC support in OpenSSL
- 	AC_MSG_CHECKING([whether OpenSSL has NID_X9_62_prime256v1])
-@@ -3432,7 +3432,7 @@ if test "x$openssl" = "xyes" ; then
- 	if test x$enable_nistp256 = x1 || test x$enable_nistp384 = x1 || \
- 	    test x$enable_nistp521 = x1; then
- 		AC_DEFINE(OPENSSL_HAS_ECC, [1], [OpenSSL has ECC])
--		AC_CHECK_FUNCS([EC_KEY_METHOD_new])
-+		AC_CHECK_FUNCS([sunw_EC_KEY_METHOD_new])
- 		openssl_ecc=yes
- 	else
- 		openssl_ecc=no
-@@ -3464,8 +3464,8 @@ if test "x$openssl" = "xyes" ; then
- 	fi
+ 	AC_MSG_CHECKING([whether OpenSSL has ECC support])
+@@ -3388,11 +3388,11 @@ if test "x$openssl" = "xyes" ; then
+ 		[ AC_MSG_ERROR([libcrypto does not have required ECC support]) ]
+ 	)
+ 	# Check for EC_KEY_METHOD support for ECDSA PKCS#11
+-	AC_CHECK_FUNCS([EC_KEY_METHOD_new])
++	AC_CHECK_FUNCS([sunw_EC_KEY_METHOD_new])
  
  	# Check libcrypto ED25519 support
 -	AC_CHECK_FUNCS([EVP_PKEY_get_raw_public_key])
@@ -164,7 +159,7 @@ index 252c98ef5..7fd142255 100644
  	AC_MSG_CHECKING([whether OpenSSL has ED25519 support])
  	AC_LINK_IFELSE(
  		[AC_LANG_PROGRAM([[
-@@ -3478,6 +3478,11 @@ if test "x$openssl" = "xyes" ; then
+@@ -3405,6 +3405,11 @@ if test "x$openssl" = "xyes" ; then
  		]], [[
  		unsigned char buf[64];
  		memset(buf, 0, sizeof(buf));
@@ -251,10 +246,10 @@ index 59be17397..543e11f85 100644
  
  #endif /* WITH_OPENSSL */
 diff --git a/openbsd-compat/openssl-compat.h b/openbsd-compat/openssl-compat.h
-index 42e2e2833..f27abaf6e 100644
+index 0dc0794d5..6f357a784 100644
 --- a/openbsd-compat/openssl-compat.h
 +++ b/openbsd-compat/openssl-compat.h
-@@ -75,14 +75,14 @@ int ssh_libcrypto_init(void);
+@@ -73,14 +73,14 @@ int ssh_libcrypto_init(void);
  # endif
  #endif
  

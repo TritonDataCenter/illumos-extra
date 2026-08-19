@@ -1,7 +1,7 @@
-From c5e48cc345ebdf4883119382cb7d85c3d03eea11 Mon Sep 17 00:00:00 2001
+From e6955456b45a87d9ac8f4e35141314c9e2e3b901 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:19 -0700
-Subject: [PATCH 02/32] PAM Support
+Subject: [PATCH] PAM Support
 
 #
 # To comply to the illumos PAM policy, the UsePAM option is changed to be
@@ -10,14 +10,14 @@ Subject: [PATCH 02/32] PAM Support
 #
 ---
  servconf.c | 8 ++++++++
- servconf.h | 2 +-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ servconf.h | 4 ++--
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
 diff --git a/servconf.c b/servconf.c
-index ce388f1dd..cd6dd8fb8 100644
+index ac0c31d95..1fbd28d63 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -1172,8 +1172,16 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -1170,8 +1170,16 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  	/* Portable-specific options */
  #ifdef USE_PAM
  	case sUsePAM:
@@ -35,18 +35,20 @@ index ce388f1dd..cd6dd8fb8 100644
  		charptr = &options->pam_service_name;
  		arg = argv_next(&ac, &av);
 diff --git a/servconf.h b/servconf.h
-index 9e64e4673..db329e4b2 100644
+index 3648e2be1..fb464121f 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -272,7 +272,7 @@ SSHCONF_ALIAS(KeepAlive, TCPKeepAlive, SSHCFG_GLOBAL)
+@@ -272,8 +272,8 @@ SSHCONF_ALIAS(KeepAlive, TCPKeepAlive, SSHCFG_GLOBAL)
  
  #ifdef USE_PAM
  #define SSHD_CONFIG_ENTRIES_PAM \
 -SSHCONF_INTFLAG(use_pam, UsePAM, SSHCFG_GLOBAL, 0, SSHCFG_COPY_NONE) \
+-SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL, SSHCFG_COPY_NONE)
 +SSHCONF_INTFLAG(use_pam, UsePAM, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
- SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_GLOBAL, SSHCFG_COPY_NONE)
++SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_GLOBAL, SSHCFG_COPY_NONE)
  #else
  #define SSHD_CONFIG_ENTRIES_PAM \
+ SSHCONF_UNSUPPORTED_INT(use_pam, UsePAM, SSHCFG_GLOBAL) \
 -- 
 2.50.1
 
