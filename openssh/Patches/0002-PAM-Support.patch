@@ -1,4 +1,4 @@
-From e6955456b45a87d9ac8f4e35141314c9e2e3b901 Mon Sep 17 00:00:00 2001
+From 171c5a0e3686d184d97ad7138dfb99507be891e6 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:19 -0700
 Subject: [PATCH] PAM Support
@@ -10,8 +10,8 @@ Subject: [PATCH] PAM Support
 #
 ---
  servconf.c | 8 ++++++++
- servconf.h | 4 ++--
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ servconf.h | 2 +-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/servconf.c b/servconf.c
 index ac0c31d95..1fbd28d63 100644
@@ -35,20 +35,18 @@ index ac0c31d95..1fbd28d63 100644
  		charptr = &options->pam_service_name;
  		arg = argv_next(&ac, &av);
 diff --git a/servconf.h b/servconf.h
-index 3648e2be1..fb464121f 100644
+index 3648e2be1..14df8a57d 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -272,8 +272,8 @@ SSHCONF_ALIAS(KeepAlive, TCPKeepAlive, SSHCFG_GLOBAL)
+@@ -272,7 +272,7 @@ SSHCONF_ALIAS(KeepAlive, TCPKeepAlive, SSHCFG_GLOBAL)
  
  #ifdef USE_PAM
  #define SSHD_CONFIG_ENTRIES_PAM \
 -SSHCONF_INTFLAG(use_pam, UsePAM, SSHCFG_GLOBAL, 0, SSHCFG_COPY_NONE) \
--SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL, SSHCFG_COPY_NONE)
 +SSHCONF_INTFLAG(use_pam, UsePAM, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
-+SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL, SSHCFG_COPY_NONE)
+ SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL, SSHCFG_COPY_NONE)
  #else
  #define SSHD_CONFIG_ENTRIES_PAM \
- SSHCONF_UNSUPPORTED_INT(use_pam, UsePAM, SSHCFG_GLOBAL) \
 -- 
 2.50.1
 

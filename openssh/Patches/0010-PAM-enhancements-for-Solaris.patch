@@ -1,4 +1,4 @@
-From bcf2d5b7ab4968aaf1728991b59d958a2d798ffb Mon Sep 17 00:00:00 2001
+From b6018f8eb33c53c6481d79e104e4c88febb9a0f5 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 6 Jul 2026 16:59:27 -0400
 Subject: [PATCH] PAM enhancements for Solaris
@@ -599,7 +599,7 @@ index a89a5de58..0c34f6b7c 100644
  #undef SSHCONF_INT
  #undef SSHCONF_INTFLAG
 diff --git a/servconf.h b/servconf.h
-index 58d9dbb81..9c258c57e 100644
+index b3b102b7d..9d440bcfd 100644
 --- a/servconf.h
 +++ b/servconf.h
 @@ -271,14 +271,23 @@ SSHCONF_ALIAS(KeepAlive, TCPKeepAlive, SSHCFG_GLOBAL)
@@ -615,7 +615,7 @@ index 58d9dbb81..9c258c57e 100644
 +#else	/* PAM_ENHANCEMENT */
  #define SSHD_CONFIG_ENTRIES_PAM \
  SSHCONF_INTFLAG(use_pam, UsePAM, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
- SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_GLOBAL, SSHCFG_COPY_NONE)
+ SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL, SSHCFG_COPY_NONE)
 -#else
 +#endif	/* PAM_ENHANCEMENT */
 +#else	/* USE_PAM */
