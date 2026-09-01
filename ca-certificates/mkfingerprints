@@ -1,0 +1,86 @@
+#!/bin/sh
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2026 Edgecast Cloud LLC.
+#
+
+#
+# Write the SHA-256 fingerprint and subject of each certificate in a PEM
+# bundle, sorted by fingerprint.
+#
+# The names in a bundle are comments, so a bad bundle can give a certificate
+# any name. A fingerprint is the identity of the certificate. Review the change
+# to this list, not the change to the bundle.
+#
+
+bundle=$1
+if [ -z "$bundle" ] || [ ! -f "$bundle" ]; then
+	echo "usage: $0 <bundle.pem>" >&2
+	exit 2
+fi
+
+out=`mktemp` || exit 1
+trap 'rm -f "$out"' EXIT INT TERM
+
+n=0
+cert=
+while IFS= read -r line; do
+	case "$line" in
+	"-----BEGIN CERTIFICATE-----")
+		cert=$line
+		;;
+	"-----END CERTIFICATE-----")
+		if [ -z "$cert" ]; then
+			echo "$0: END before BEGIN in $bundle" >&2
+			exit 1
+		fi
+		cert="$cert
+$line"
+		n=`expr $n + 1`
+		info=`printf '%s\n' "$cert" |
+		    openssl x509 -noout -fingerprint -sha256 -subject 2>&1`
+		if [ $? -ne 0 ]; then
+			echo "$0: certificate $n of $bundle does not parse" >&2
+			echo "$info" >&2
+			exit 1
+		fi
+		fp=`printf '%s\n' "$info" | sed -n 's/^.*Fingerprint=//p' |
+		    tr -d ':'`
+		subj=`printf '%s\n' "$info" | sed -n 's/^subject= *//p'`
+		if [ -z "$fp" ] || [ -z "$subj" ]; then
+			echo "$0: no fingerprint or subject for certificate $n" >&2
+			exit 1
+		fi
+		echo "$fp $subj"
+		cert=
+		;;
+	*)
+		if [ -n "$cert" ]; then
+			cert="$cert
+$line"
+		fi
+		;;
+	esac
+done < "$bundle" > "$out"
+
+if [ -n "$cert" ]; then
+	echo "$0: $bundle ends inside a certificate" >&2
+	exit 1
+fi
+
+if [ ! -s "$out" ]; then
+	echo "$0: no certificates in $bundle" >&2
+	exit 1
+fi
+
+sort "$out"
