@@ -22,6 +22,7 @@ BUNDLE_URL =	https://curl.se/ca/$(BUNDLE)
 CERTDIR =	usr/share/ca-certificates
 
 CURL =		curl -q -fsS --proto '=https' --tlsv1.2
+DIGEST =	/usr/bin/digest
 
 CLEANFILES =	$(BUNDLE).new $(BUNDLE_SHA).new $(BUNDLE_FP).new
 
@@ -29,7 +30,7 @@ all: verify
 
 verify:
 	@read expected junk < $(BUNDLE_SHA); \
-	actual=`digest -a sha256 $(BUNDLE)`; \
+	actual=`$(DIGEST) -a sha256 $(BUNDLE)`; \
 	if [ "$$expected" != "$$actual" ]; then \
 		echo "$(BUNDLE): sha256 mismatch" >&2; \
 		echo "  expected $$expected" >&2; \
@@ -49,7 +50,7 @@ update:
 	$(CURL) -o $(BUNDLE).new $(BUNDLE_URL)
 	$(CURL) -o $(BUNDLE_SHA).new $(BUNDLE_URL).sha256
 	@read expected junk < $(BUNDLE_SHA).new; \
-	actual=`digest -a sha256 $(BUNDLE).new`; \
+	actual=`$(DIGEST) -a sha256 $(BUNDLE).new`; \
 	if [ "$$expected" != "$$actual" ]; then \
 		echo "downloaded $(BUNDLE) does not match its sha256" >&2; \
 		exit 1; \
