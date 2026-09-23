@@ -14,6 +14,8 @@
 # Copyright 2026 Edgecast Cloud LLC.
 #
 
+OPENSSL=/usr/bin/openssl
+
 bundle=$1
 if [ -z "$bundle" ] || [ ! -f "$bundle" ]; then
 	echo "usage: $0 <bundle.pem>" >&2
@@ -39,7 +41,8 @@ while IFS= read -r line; do
 $line"
 		n=`expr $n + 1`
 		info=`printf '%s\n' "$cert" |
-		    openssl x509 -noout -fingerprint -sha256 -subject 2>&1`
+		    $OPENSSL x509 -noout -fingerprint -sha256 -subject \
+		    -nameopt oneline 2>&1`
 		if [ $? -ne 0 ]; then
 			echo "$0: certificate $n of $bundle does not parse" >&2
 			echo "$info" >&2
