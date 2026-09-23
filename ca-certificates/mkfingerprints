@@ -14,15 +14,6 @@
 # Copyright 2026 Edgecast Cloud LLC.
 #
 
-#
-# Write the SHA-256 fingerprint and subject of each certificate in a PEM
-# bundle, sorted by fingerprint.
-#
-# The names in a bundle are comments, so a bad bundle can give a certificate
-# any name. A fingerprint is the identity of the certificate. Review the change
-# to this list, not the change to the bundle.
-#
-
 bundle=$1
 if [ -z "$bundle" ] || [ ! -f "$bundle" ]; then
 	echo "usage: $0 <bundle.pem>" >&2
