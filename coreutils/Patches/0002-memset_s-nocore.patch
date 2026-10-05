@@ -1,0 +1,28 @@
+--- coreutils-9.7/configure     Wed Apr  9 06:45:23 2025
++++ coreutils-9.7-64/configure  Tue Dec  2 17:36:57 2025
+@@ -64682,7 +64682,13 @@
+ else case e in #(
+   e) cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
++/*
++ * XXX SmartOS - illumos wants this defined for memset_s usage.a
++ * May need to include it elsewhere in source too.
++ */
++#define __STDC_WANT_LIB_EXT1__ 1
+ #include <string.h>
++#include <stdlib.h>
+               #include <stddef.h>
+ 
+ int
+@@ -64689,6 +64695,11 @@
+ main (void)
+ {
+ 
++       /*
++        * XXX SmartOS - illumos checks NULL immediately, doesn't give
++        * exemptions for 0 max and 0 size like some libcs do.
++        */
++       set_constraint_handler_s(ignore_handler_s);
+               (void) memset_s (NULL, 0, '?', 0);
+ 
+   ;

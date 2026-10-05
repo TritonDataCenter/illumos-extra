@@ -21,14 +21,10 @@
 # Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2021 Joyent, Inc.
 # Copyright 2025 MNX Cloud, Inc.
-# Copyright 2025 Edgecast Cloud LLC.
+# Copyright 2026 Edgecast Cloud LLC.
 #
 
-# NOTE: The original tarball is named openssh-10.0p1.tar.gz.
-# We untarred it, renamed the expanded directory to p2, and the tarball as such.
-# This whole NOTE will be removed when name-of-tarball matches the code, likely
-# 10.0p3 or 10.1p1.
-VER =	openssh-10.0p2
+VER =	openssh-10.5p1
 
 include ../Makefile.defs
 

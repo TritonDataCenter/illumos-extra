@@ -1,47 +1,32 @@
-From bfab8958d5ecd04ee082104cbc7af332b1a953b5 Mon Sep 17 00:00:00 2001
+From 171c5a0e3686d184d97ad7138dfb99507be891e6 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:19 -0700
-Subject: [PATCH 02/34] PAM Support
+Subject: [PATCH] PAM Support
 
 #
-# To comply to the Solaris PAM policy, the UsePAM option is changed to be
-# always on and not configurable on Solaris.  This is for Solaris only, so we
+# To comply to the illumos PAM policy, the UsePAM option is changed to be
+# always on and not configurable on illumos.  This is for illumos only, so we
 # will not contribute the changes to the upstream community.
 #
-
-*** orig/servconf.c	Mon Dec  5 17:23:03 2011
 ---
- servconf.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ servconf.c | 8 ++++++++
+ servconf.h | 2 +-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/servconf.c b/servconf.c
-index f7bc92377..d389c247f 100644
+index ac0c31d95..1fbd28d63 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -299,7 +299,13 @@ fill_default_server_options(ServerOptions *options)
- 
+@@ -1170,8 +1170,16 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  	/* Portable-specific options */
- 	if (options->use_pam == -1)
-+#ifdef SET_USE_PAM
-+		/* use_pam should be always set to 1 on Solaris */
-+		options->use_pam = 1;
-+#else
- 		options->use_pam = 0;
-+#endif
-+
- 	if (options->pam_service_name == NULL)
- 		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
- 
-@@ -1389,8 +1395,16 @@ process_server_config_line_depth(ServerOptions *options, char *line,
- 	switch (opcode) {
- 	/* Portable-specific options */
+ #ifdef USE_PAM
  	case sUsePAM:
 +#ifdef SET_USE_PAM
-+		/* UsePAM is always on and not configurable on Solaris */
++		/* UsePAM is always on and not configurable on illumos */
 +		logit("%s line %d: ignoring UsePAM option value."
 +		    " This option is always on.", filename, linenum);
 +		argv_consume(&ac);
-+		break; 
++		break;
 +#else
  		intptr = &options->use_pam;
  		goto parse_flag;
@@ -49,6 +34,19 @@ index f7bc92377..d389c247f 100644
  	case sPAMServiceName:
  		charptr = &options->pam_service_name;
  		arg = argv_next(&ac, &av);
+diff --git a/servconf.h b/servconf.h
+index 3648e2be1..14df8a57d 100644
+--- a/servconf.h
++++ b/servconf.h
+@@ -272,7 +272,7 @@ SSHCONF_ALIAS(KeepAlive, TCPKeepAlive, SSHCFG_GLOBAL)
+ 
+ #ifdef USE_PAM
+ #define SSHD_CONFIG_ENTRIES_PAM \
+-SSHCONF_INTFLAG(use_pam, UsePAM, SSHCFG_GLOBAL, 0, SSHCFG_COPY_NONE) \
++SSHCONF_INTFLAG(use_pam, UsePAM, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
+ SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL, SSHCFG_COPY_NONE)
+ #else
+ #define SSHD_CONFIG_ENTRIES_PAM \
 -- 
-2.48.1
+2.50.1
 

@@ -25,17 +25,16 @@
 # Use is subject to license terms.
 #
 # Copyright 2021 Joyent, Inc.
+# Copyright 2026 Edgecast Cloud LLC.
 #
 
 set -o errexit
 
 LIBDIR=${DESTDIR}/lib
-BINDIR=${DESTDIR}/usr/bin
 USRLIBDIR=${DESTDIR}/usr/lib
 INCDIR=${DESTDIR}/usr/include
 
 mkdir -p $LIBDIR
-mkdir -p $BINDIR
 mkdir -p $USRLIBDIR
 mkdir -p $INCDIR
 
@@ -65,12 +64,6 @@ _install L ../../lib/libssl-smartos.so.${LIBVER} \
     ${USRLIBDIR}/libssl-smartos.so.${LIBVER}
 _install L ../../lib/libssl-smartos.so ${USRLIBDIR}/libssl-smartos.so
 _install L ../../lib/libssl-smartos.so ${USRLIBDIR}/libsunw_ssl.so
-
-# Install commands
-_install P apps/CA.pl ${BINDIR}/CA.pl 0555
-_install E apps/openssl ${BINDIR}/openssl 0555
-mkdir -p ${DESTDIR}/usr/sfw/bin
-_install L ../../bin/openssl ${DESTDIR}/usr/sfw/bin/openssl
 
 # Install etc
 mkdir -p ${DESTDIR}/etc/openssl

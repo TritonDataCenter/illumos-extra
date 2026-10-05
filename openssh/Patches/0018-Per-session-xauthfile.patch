@@ -1,7 +1,7 @@
-From 4c7bcfc98bd99d89dc2d7365ffe8b7886a2c1237 Mon Sep 17 00:00:00 2001
+From 2d961b40f978456d45acd09dbc60a4f727d61225 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Tue, 22 Dec 2015 17:12:50 -0800
-Subject: [PATCH 17/34] Per-session xauthfile
+Subject: [PATCH 15/32] Per-session xauthfile
 
 This patch is to fix a X11 connection failure when a user's home directory
 is read-only.
@@ -11,15 +11,15 @@ more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2440
 In the future, if this fix is accepted by the upsteam in a later release, we
 will remove this patch when we upgrade to that release.
 ---
- session.c | 139 ++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ session.c | 146 ++++++++++++++++++++++++++++++++++++++++++++++++++----
  session.h |   3 ++
- 2 files changed, 138 insertions(+), 4 deletions(-)
+ 2 files changed, 139 insertions(+), 10 deletions(-)
 
 diff --git a/session.c b/session.c
-index 6444c77f3..2ef4804f3 100644
+index fc9c9d6f8..49c0f4064 100644
 --- a/session.c
 +++ b/session.c
-@@ -62,6 +62,10 @@
+@@ -59,6 +59,11 @@
  #include <unistd.h>
  #include <limits.h>
  
@@ -27,10 +27,11 @@ index 6444c77f3..2ef4804f3 100644
 +#include <libgen.h>
 +#endif
 +
- #include "openbsd-compat/sys-queue.h"
++#include "openbsd-compat/sys-queue.h"
  #include "xmalloc.h"
  #include "ssh.h"
-@@ -139,6 +143,11 @@ static void do_authenticated2(struct ssh *, Authctxt *);
+ #include "ssh2.h"
+@@ -135,6 +140,11 @@ static void do_authenticated2(struct ssh *, Authctxt *);
  
  static int session_pty_req(struct ssh *, Session *);
  
@@ -42,10 +43,16 @@ index 6444c77f3..2ef4804f3 100644
  /* import */
  extern ServerOptions options;
  extern char *__progname;
-@@ -1050,6 +1059,12 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
+@@ -1013,12 +1023,12 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
  
  	if (getenv("TZ"))
  		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
+-#ifdef HAVE_LOGIN_CAP
+-	if (getenv("XDG_RUNTIME_DIR")) {
+-		child_set_env(&env, &envsize, "XDG_RUNTIME_DIR",
+-		    getenv("XDG_RUNTIME_DIR"));
+-	}
+-#endif /* HAVE_LOGIN_CAP */
 +
 +#ifdef PER_SESSION_XAUTHFILE
 +        if (s->auth_file != NULL)
@@ -55,7 +62,7 @@ index 6444c77f3..2ef4804f3 100644
  	if (s->term)
  		child_set_env(&env, &envsize, "TERM", s->term);
  	if (s->display)
-@@ -1984,6 +1999,11 @@ session_x11_req(struct ssh *ssh, Session *s)
+@@ -1957,6 +1967,11 @@ session_x11_req(struct ssh *ssh, Session *s)
  	int r, success;
  	u_char single_connection = 0;
  
@@ -67,7 +74,7 @@ index 6444c77f3..2ef4804f3 100644
  	if (s->auth_proto != NULL || s->auth_data != NULL) {
  		error("session_x11_req: session %d: "
  		    "x11 forwarding already active", s->self);
-@@ -1998,19 +2018,78 @@ session_x11_req(struct ssh *ssh, Session *s)
+@@ -1971,19 +1986,78 @@ session_x11_req(struct ssh *ssh, Session *s)
  
  	s->single_connection = single_connection;
  
@@ -150,7 +157,7 @@ index 6444c77f3..2ef4804f3 100644
  	return success;
  }
  
-@@ -2287,6 +2366,51 @@ session_pty_cleanup(Session *s)
+@@ -2261,6 +2335,51 @@ session_pty_cleanup(Session *s)
  	mm_session_pty_cleanup2(s);
  }
  
@@ -202,7 +209,7 @@ index 6444c77f3..2ef4804f3 100644
  static char *
  sig2name(int sig)
  {
-@@ -2434,6 +2558,9 @@ session_close(struct ssh *ssh, Session *s)
+@@ -2408,6 +2527,9 @@ session_close(struct ssh *ssh, Session *s)
  	free(s->auth_display);
  	free(s->auth_data);
  	free(s->auth_proto);
@@ -212,7 +219,7 @@ index 6444c77f3..2ef4804f3 100644
  	free(s->subsys);
  	if (s->env != NULL) {
  		for (i = 0; i < s->num_env; i++) {
-@@ -2680,6 +2807,10 @@ do_cleanup(struct ssh *ssh, Authctxt *authctxt)
+@@ -2654,6 +2776,10 @@ do_cleanup(struct ssh *ssh, Authctxt *authctxt)
  	/* remove agent socket */
  	auth_sock_cleanup_proc(authctxt->pw);
  
@@ -238,5 +245,5 @@ index 344a1ddf9..2a0cedd0b 100644
  
  	int	chanid;
 -- 
-2.48.1
+2.50.1
 

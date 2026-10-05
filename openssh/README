@@ -37,11 +37,11 @@ thus very challenging.
 
 # Updating OpenSSH
 
-Reconstitute the patches in the Patches/ directory into a git repo,
-based on the tag in https://github.com/openssh/openssh-portable that
+Reconstitute the patches in the Patches/ directory into a git repo, based on
+the branch (e.g. V_10_4) in https://github.com/openssh/openssh-portable that
 matches up with that version. (Use git am for this)
 
-Then you should be able to rebase onto a newer tag, merging as
+Then you should be able to rebase onto a newer branch (e.g. V_10_5), merging as
 needed.
 
 The tarball in this directory is a clean checkout of the OpenSSH-portable
@@ -49,7 +49,7 @@ source without its configure script or any generated files. The
 patches should only ever modify configure.ac and not configure, since
 the Makefile here will regenerate configure using autoreconf.
 
-NOTE: Some of these have been renumbered in Patches/ over time.
+NOTE: Some of these patches have been renumbered in Patches/ over time.
 
 # Patches for upstreaming
 

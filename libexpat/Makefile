@@ -20,9 +20,10 @@
 #
 # Copyright (c) 2012, Joyent, Inc.  All rights reserved.
 # Copyright 2025 MNX Cloud, Inc.
+# Copyright 2026 Edgecast Cloud LLC.
 #
 
-VER =	expat-2.7.1
+VER =	expat-2.8.2
 
 include ../Makefile.defs
 
@@ -37,8 +38,6 @@ CFLAGS +=	-g -fPIC
 
 AUTOCONF_ENV += \
 	INSTALL="/usr/ucb/install -c"
-
-# PATCHES = Patches/*
 
 include ../Makefile.targ
 

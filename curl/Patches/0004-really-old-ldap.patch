@@ -1,0 +1,12 @@
+diff -ru a/lib/ldap.c b/lib/ldap.c
+--- a/lib/ldap.c	2026-01-07 01:57:50
++++ b/lib/ldap.c	2026-01-07 11:18:05
+@@ -1041,7 +1041,7 @@
+                    api.ldapai_vendor_name, major, minor, patch, flavor);
+ 
+     ldap_memfree(api.ldapai_vendor_name);
+-    ber_memvfree((void **)api.ldapai_extensions);
++    ldap_value_free(api.ldapai_extensions);
+ #endif
+   }
+   else

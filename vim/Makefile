@@ -22,9 +22,10 @@
 # Use is subject to license terms.
 # Copyright 2020 Joyent, Inc.
 # Copyright 2024 MNX Cloud, Inc.
+# Copyright 2026 Edgecast Cloud LLC.
 #
 
-VER =	vim91
+VER =	vim-9.2
 
 include ../Makefile.defs
 
@@ -43,7 +44,7 @@ AUTOCONF_OPTS += \
 	--with-features=huge \
 	--without-x
 
-TARBALL =		vim-9.1.tar.bz2
+TARBALL =		vim-9.2.tar.bz2
 TARBALL_COMPRESS =	-j
 
 include ../Makefile.targ

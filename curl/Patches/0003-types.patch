@@ -1,6 +1,6 @@
---- a/configure	Fri May 23 13:38:11 2025
-+++ b/configure	Fri May 23 13:42:59 2025
-@@ -8265,7 +8265,7 @@
+--- a/configure	Wed Nov  5 15:18:39 2025
++++ b/configure	Wed Nov  5 15:21:01 2025
+@@ -8161,7 +8161,7 @@
      We can't simply define LARGE_OFF_T to be 9223372036854775807,
      since some C++ compilers masquerading as C compilers
      incorrectly reject 9223372036854775807.  */
@@ -9,7 +9,7 @@
    int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
  		       && LARGE_OFF_T % 2147483647 == 1)
  		      ? 1 : -1];
-@@ -8312,7 +8312,7 @@
+@@ -8208,7 +8208,7 @@
      We can't simply define LARGE_OFF_T to be 9223372036854775807,
      since some C++ compilers masquerading as C compilers
      incorrectly reject 9223372036854775807.  */
@@ -18,7 +18,7 @@
    int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
  		       && LARGE_OFF_T % 2147483647 == 1)
  		      ? 1 : -1];
-@@ -8335,7 +8335,7 @@
+@@ -8231,7 +8231,7 @@
      We can't simply define LARGE_OFF_T to be 9223372036854775807,
      since some C++ compilers masquerading as C compilers
      incorrectly reject 9223372036854775807.  */
@@ -27,7 +27,7 @@
    int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
  		       && LARGE_OFF_T % 2147483647 == 1)
  		      ? 1 : -1];
-@@ -8378,7 +8378,7 @@
+@@ -8274,7 +8274,7 @@
      We can't simply define LARGE_OFF_T to be 9223372036854775807,
      since some C++ compilers masquerading as C compilers
      incorrectly reject 9223372036854775807.  */
@@ -36,7 +36,7 @@
    int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
  		       && LARGE_OFF_T % 2147483647 == 1)
  		      ? 1 : -1];
-@@ -8401,7 +8401,7 @@
+@@ -8297,7 +8297,7 @@
      We can't simply define LARGE_OFF_T to be 9223372036854775807,
      since some C++ compilers masquerading as C compilers
      incorrectly reject 9223372036854775807.  */
