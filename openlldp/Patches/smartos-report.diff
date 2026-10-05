@@ -1,0 +1,402 @@
+--- openlldp-0.4alpha/src/lldp_main.c
++++ openlldp-0.4alpha-32/src/lldp_main.c
+@@ -21,6 +21,8 @@
+ #include <arpa/inet.h>
+ #include <sys/un.h>
+ #include <sys/socket.h>
++#include <fcntl.h>
++#include <poll.h>
+ #include <net/if.h>
+ #include <getopt.h>
+ #endif 
+@@ -102,6 +104,65 @@
+ int initializeLLDP();
+ void cleanupLLDP();
+ void handle_segfault();
++
++#ifndef WIN32
++/*
++ * Any local user can connect to the neighbor socket, and lldpd serves the
++ * clients in its main loop.  A client that does not read must not stop LLDP,
++ * thus the reply has one deadline for the whole send, not one per send().
++ */
++#define	LLDP_CLIENT_TIMEOUT_SEC	2
++
++/*
++ * Returns -1 if the client went away, or did not read the whole reply
++ * before the deadline.
++ */
++static int
++lldp_send_all(int sd, const char *buf, size_t len)
++{
++	struct timespec now, deadline;
++	struct pollfd pfd;
++	ssize_t n;
++	long ms;
++	int flags;
++
++	if ((flags = fcntl(sd, F_GETFL)) < 0 ||
++	    fcntl(sd, F_SETFL, flags | O_NONBLOCK) < 0)
++		return (-1);
++
++	(void) clock_gettime(CLOCK_MONOTONIC, &deadline);
++	deadline.tv_sec += LLDP_CLIENT_TIMEOUT_SEC;
++
++	pfd.fd = sd;
++	pfd.events = POLLOUT;
++
++	while (len > 0) {
++		(void) clock_gettime(CLOCK_MONOTONIC, &now);
++		ms = (deadline.tv_sec - now.tv_sec) * 1000 +
++		    (deadline.tv_nsec - now.tv_nsec) / 1000000;
++		if (ms <= 0) {
++			errno = ETIMEDOUT;
++			return (-1);
++		}
++
++		if ((n = send(sd, buf, len, 0)) >= 0) {
++			buf += n;
++			len -= n;
++			continue;
++		}
++
++		if (errno == EINTR)
++			continue;
++		if (errno != EAGAIN && errno != EWOULDBLOCK)
++			return (-1);
++
++		if (poll(&pfd, 1, (int)ms) < 0 && errno != EINTR)
++			return (-1);
++	}
++
++	return (0);
++}
++#endif /* WIN32 */
+ 
+ #ifndef IF_NAMESIZE
+ #define IF_NAMESIZE    16
+@@ -247,7 +308,13 @@
+     strcpy(local.sun_path, "/var/run/lldpd.sock");
+ 
+     debug_printf(DEBUG_NORMAL, "%s:%d\n", local.sun_path, strlen(local.sun_path));
+- 
++
++    /*
++     * The socket stays when lldpd stops, and bind() then fails with
++     * EADDRINUSE.  Remove it first.
++     */
++    (void) unlink(local.sun_path);
++
+     // Bind to the neighbor list socket.
+     result = bind(neighbor_local_sd, (struct sockaddr *)&local, sizeof(local));
+ 
+@@ -257,6 +324,17 @@
+ 
+     result = listen(neighbor_local_sd, 5);
+ 
++    /*
++     * A client can go away between select() and accept().  Then accept()
++     * must fail, not block the daemon.
++     */
++    {
++      int flags = fcntl(neighbor_local_sd, F_GETFL);
++
++      if (flags >= 0)
++	(void) fcntl(neighbor_local_sd, F_SETFL, flags | O_NONBLOCK);
++    }
++
+     if(result != 0) {
+       debug_printf(DEBUG_NORMAL, "[Error] Unable to listen to the unix domain socket for client registration!\n");
+     }
+@@ -432,23 +510,24 @@
+ 		      debug_printf(DEBUG_NORMAL, "Couldn't accept remote client socket!\n");
+ 		    } else {		    
+ 		      char *client_msg = lldp_neighbor_information(lldp_ports);
+-		      int bytes_tx = strlen(client_msg);
+-		      int bytes_sent = 0;
+ 
+-		      while(bytes_tx > 0) {
+-			
+-			debug_printf(DEBUG_NORMAL, "Transmitting %d bytes to client...\n", bytes_tx);
+-			
+-			bytes_sent = send(neighbor_remote_sd, client_msg, strlen(client_msg), 0);
++		      if (client_msg != NULL) {
++			size_t msg_len = strlen(client_msg);
+ 
+-			debug_printf(DEBUG_NORMAL, "%d bytes left to send.  Bytes already sent: %d\n\n", bytes_tx, bytes_sent);
+-		       
+-			bytes_tx -= bytes_sent;
++			debug_printf(DEBUG_NORMAL,
++			  "Transmitting %zu bytes to client...\n", msg_len);
+ 
+-		      }		    
++			if (lldp_send_all(neighbor_remote_sd, client_msg,
++			  msg_len) != 0) {
++			  debug_printf(DEBUG_NORMAL,
++			    "Unable to send the neighbor report: %s\n",
++			    strerror(errno));
++			}
+ 
+-		      free(client_msg);
+-		      close(neighbor_remote_sd);		      
++			free(client_msg);
++		      }
++
++		      close(neighbor_remote_sd);
+ 		    }
+ 		  }
+ 
+@@ -791,6 +870,7 @@
+ 	signal(SIGQUIT, cleanupLLDP);
+ 	signal(SIGSEGV, handle_segfault);
+ 	signal(SIGHUP, handle_hup);
++	signal(SIGPIPE, SIG_IGN);
+ #endif // WIN32
+ 
+ 	return (nb_ifaces);
+--- openlldp-0.4alpha/src/lldp_neighbor.c
++++ openlldp-0.4alpha-32/src/lldp_neighbor.c
+@@ -95,110 +95,88 @@
+ #endif // WIN32
+ }
+ 
++/*
++ * The report has no fixed size limit.  It grows with the number of neighbors
++ * and with the TLVs that they send, thus it is written to a memory stream and
++ * not to fixed buffers.  Returns NULL if memory is not available.
++ */
+ char *lldp_neighbor_information(struct lldp_port *lldp_ports) {
+-  struct lldp_port *lldp_port      = lldp_ports;
++  struct lldp_port *lldp_port      = NULL;
+   struct lldp_msap *msap_cache     = NULL;
+   struct lldp_tlv_list *tlv_list   = NULL;
+   int neighbor_count               = 0;
+-  char *result = malloc(2048);
+-  char *buffer = malloc(2048);
+-  char *info_buffer = malloc(2048);
+-  char *tmp_buffer = malloc(2048);
++  char *result = NULL;
++  size_t result_len = 0;
+   char *tlv_name = NULL;
+   char *tlv_subtype = NULL;
++  FILE *fp;
++  int failed;
+ 
+-  memset(result, 0x0, 2048);
+-  memset(buffer, 0x0, 2048);
+-  memset(info_buffer, 0x0, 2048);
+-  memset(tmp_buffer, 0x0, 2048);
++  if ((fp = open_memstream(&result, &result_len)) == NULL) {
++    debug_printf(DEBUG_NORMAL, "Unable to open the neighbor report: %s\n",
++      strerror(errno));
++    return (NULL);
++  }
+ 
+-  sprintf(result, "\nOpenLLDP Neighbor Info: \n\n");
++  (void) fprintf(fp, "\nOpenLLDP Neighbor Info: \n\n");
+ 
+-  while(lldp_port != NULL) {
++  for (lldp_port = lldp_ports; lldp_port != NULL; lldp_port = lldp_port->next) {
+     neighbor_count = 0;
+-    memset(buffer, 0x0, 2048);
+-    memset(info_buffer, 0x0, 2048);
+-    memset(tmp_buffer, 0x0, 2048);
+-    sprintf(buffer, "Interface '%s' has ", lldp_port->if_name);
+-
+-    strncat(result, buffer, 2047);
+-
+-    msap_cache = lldp_port->msap_cache;
+-
+-    while(msap_cache != NULL) {
+-      
++    for (msap_cache = lldp_port->msap_cache; msap_cache != NULL;
++      msap_cache = msap_cache->next)
+       neighbor_count++;
+ 
+-      tlv_list = msap_cache->tlv_list;
++    (void) fprintf(fp, "Interface '%s' has %d LLDP Neighbors: \n\n",
++      lldp_port->if_name, neighbor_count);
+ 
+-      sprintf(tmp_buffer, "Neighbor %d:\n", neighbor_count);
+-      
+-      strncat(info_buffer, tmp_buffer, 2047);
+-      
+-      memset(tmp_buffer, 0x0, 2048);
++    neighbor_count = 0;
++    for (msap_cache = lldp_port->msap_cache; msap_cache != NULL;
++      msap_cache = msap_cache->next) {
++      (void) fprintf(fp, "Neighbor %d:\n", ++neighbor_count);
+ 
+-      
+-      while(tlv_list != NULL) {
+-	  memset(tmp_buffer, 0x0, 2048);
++      for (tlv_list = msap_cache->tlv_list; tlv_list != NULL;
++        tlv_list = tlv_list->next) {
++	if (tlv_list->tlv == NULL) {
++	  debug_printf(DEBUG_NORMAL, "Yikes... NULL TLV in MSAP cache!\n");
++	  continue;
++	}
+ 
+-	if(tlv_list->tlv != NULL) {
++	tlv_name = tlv_typetoname(tlv_list->tlv->type);
+ 
+-	  tlv_name = tlv_typetoname(tlv_list->tlv->type);
++	if (tlv_name == NULL) {
++	  (void) fprintf(fp, "\t\tUnknown TLV Type (%d)\n",
++	    tlv_list->tlv->type);
++	  continue;
++	}
+ 
+-	  if(tlv_name != NULL) {
+-	    sprintf(tmp_buffer, "\t%s: ", tlv_name);
++	(void) fprintf(fp, "\t%s: ", tlv_name);
+ 
+-	    strncat(info_buffer, tmp_buffer, 2047);
++	tlv_subtype = decode_tlv_subtype(tlv_list->tlv);
+ 
+-	    //free(tlv_name);    
+-	    //tlv_name = NULL;
+-
+-	    memset(tmp_buffer, 0x0, 2048);
+-
+-	    tlv_subtype = decode_tlv_subtype(tlv_list->tlv);
+-
+-	    if(tlv_subtype != NULL) {	    
+-	      sprintf(tmp_buffer, "\t%s\n", tlv_subtype);
+-
+-	      strncat(info_buffer, tmp_buffer, 2047);
+-
+-	      memset(tmp_buffer, 0x0, 2048);
+-
+-	      free(tlv_subtype);
+-	      tlv_subtype = NULL;
+-	    }
+-	  } else {
+-	    sprintf(tmp_buffer, "\t\tUnknown TLV Type (%d)\n", tlv_list->tlv->type);
+-	    strncat(info_buffer, tmp_buffer, 2047);
+-	  }
+-       
+-	} else {
+-	  debug_printf(DEBUG_NORMAL, "Yikes... NULL TLV in MSAP cache!\n");
++	if (tlv_subtype != NULL) {
++	  (void) fprintf(fp, "\t%s\n", tlv_subtype);
++	  free(tlv_subtype);
++	  tlv_subtype = NULL;
+ 	}
+-
+-	tlv_list = tlv_list->next;
+       }
+ 
+-      strncat(info_buffer, "\n", 2048);
+-      
+-      msap_cache = msap_cache->next;
++      (void) fprintf(fp, "\n");
+     }
+-
+-    memset(buffer, 0x0, 2048);
+-    
+-    sprintf(buffer, "%d LLDP Neighbors: \n\n", neighbor_count);
+-    strncat(result, buffer, 2047);
+-    strncat(result, info_buffer, 2047);
+- 
+-    lldp_port = lldp_port->next;
+   }
+ 
++  /*
++   * A write error, such as no memory, sets the error flag of the stream, and
++   * a later flush can still succeed.  Check both, and always close.
++   */
++  failed = ferror(fp);
++  if (fclose(fp) != 0)
++    failed = 1;
+ 
+-  free(tmp_buffer);
+-  free(info_buffer);
+-  free(buffer);
++  if (failed) {
++    debug_printf(DEBUG_NORMAL, "Unable to build the neighbor report\n");
++    free(result);
++    return (NULL);
++  }
+ 
+-  return(result);
++  return (result);
+ }
+-
+-
+--- openlldp-0.4alpha/src/lldpneighbors.c
++++ openlldp-0.4alpha-32/src/lldpneighbors.c
+@@ -32,8 +32,9 @@
+   char *tmp            = NULL;
+   int s                = 0;
+   unsigned int msgSize = 0;
+-  size_t bytes         = 0;
++  ssize_t bytes        = 0;
+   int result           = 0;
++  int status           = 0;
+ 
+   buf = calloc(1, NEIGHBORLIST_SIZE);
+ 
+@@ -55,12 +56,30 @@
+     goto cleanup;
+   }
+ 
+-  while((bytes = recv(s, msg, NEIGHBORLIST_SIZE, 0))) {
++  /*
++   * recv() returns -1 if lldpd goes away during the reply.  Stop there,
++   * because the reply is not complete.
++   */
++  while((bytes = recv(s, msg, NEIGHBORLIST_SIZE, 0)) != 0) {
+     
+-    if(bytes > 0) {
++    if(bytes < 0) {
++      if(errno == EINTR)
++	continue;
++
++      fprintf(stderr, "%s: unable to read the reply from lldpd: %s\n",
++	argv[0], strerror(errno));
++      status = 1;
++      goto cleanup;
++    } else {
+       
+       tmp = calloc(1, msgSize + bytes + 1);
+ 
++      if(tmp == NULL) {
++	fprintf(stderr, "%s: out of memory\n", argv[0]);
++	status = 1;
++	goto cleanup;
++      }
++
+       if(buf != NULL) {
+ 	memcpy(tmp, buf, msgSize);
+ 	free(buf);
+@@ -72,10 +91,6 @@
+       
+       buf = tmp;
+       tmp = NULL;
+-    } else {
+-      if(DEBUG) {
+-	printf("Error reading %d bytes: %d:%s\n", NEIGHBORLIST_SIZE, errno, strerror(errno));
+-      }
+     }
+     
+     if(DEBUG) {
+@@ -100,6 +115,6 @@
+   close(s);
+ #endif
+ 
+-  return 0;
++  return (status);
+ }
+ 
+--- openlldp-0.4alpha/src/tlv/tlv.c
++++ openlldp-0.4alpha-32/src/tlv/tlv.c
+@@ -182,7 +182,7 @@
+                     case PORT_ID_LOCALLY_ASSIGNED:
+ 		      {
+ 			// According to 802.1AB 9.5.3.2, this is an alphanumeric
+-			char *tmp = calloc(1, tlv->length);
++			char *tmp = calloc(1, tlv->length + 1);
+ 			
+ 			memcpy(tmp, tlv->info_string, tlv->length);
+ 			strncat(result, "\tLocally Assigned - ", 2048);

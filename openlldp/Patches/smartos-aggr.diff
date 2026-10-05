@@ -1,0 +1,190 @@
+--- openlldp-0.4alpha/src/lldp_main.c
++++ openlldp-0.4alpha-32/src/lldp_main.c
+@@ -56,6 +56,7 @@
+ 
+ #ifdef __sun
+ #include <libdladm.h>
++#include <libdlaggr.h>
+ #include <libdllink.h>
+ #endif
+ 
+@@ -606,54 +607,156 @@
+ }
+ 
+ #ifdef __sun
+-static int
+-dladm_walk_cb(dladm_handle_t dah, datalink_id_t id, void *arg)
+-{
+-	char link[MAXLINKNAMELEN];
+-	uint32_t flags;
+-	dladm_status_t err;
+-	datalink_class_t class;
+-	uint32_t media;
+-	int *nlinkp = arg;
++/*
++ * A physical link that is a member of an aggregation cannot be opened with
++ * DLPI, thus LLDP runs on the aggregation and not on its members.  The
++ * aggregations are walked first to collect the member link ids, then the
++ * physical links are walked and the members are skipped.
++ */
++typedef struct lldp_dl_walk {
++	int		ldw_nlinks;
++	datalink_id_t	*ldw_members;
++	uint_t		ldw_nmembers;
++	uint_t		ldw_alloc;
++} lldp_dl_walk_t;
+ 
+-	if ((err = dladm_datalink_id2info(dah, id, &flags, &class, &media,
+-	    link, MAXLINKNAMELEN)) != DLADM_STATUS_OK) {
++static boolean_t
++lldp_add_member(lldp_dl_walk_t *walk, datalink_id_t id)
++{
++	if (walk->ldw_nmembers == walk->ldw_alloc) {
++		uint_t nalloc = walk->ldw_alloc == 0 ? 8 : walk->ldw_alloc * 2;
++		datalink_id_t *ids = realloc(walk->ldw_members,
++		    nalloc * sizeof (datalink_id_t));
++
++		if (ids == NULL)
++			return (B_FALSE);
++
++		walk->ldw_members = ids;
++		walk->ldw_alloc = nalloc;
++	}
++
++	walk->ldw_members[walk->ldw_nmembers++] = id;
++	return (B_TRUE);
++}
++
++static boolean_t
++lldp_is_member(lldp_dl_walk_t *walk, datalink_id_t id)
++{
++	uint_t i;
++
++	for (i = 0; i < walk->ldw_nmembers; i++) {
++		if (walk->ldw_members[i] == id)
++			return (B_TRUE);
++	}
++
++	return (B_FALSE);
++}
++
++static boolean_t
++lldp_link_info(dladm_handle_t dah, datalink_id_t id, datalink_class_t class,
++    char *link)
++{
++	uint32_t flags;
++	datalink_class_t lclass;
++	uint32_t media;
++
++	if (dladm_datalink_id2info(dah, id, &flags, &lclass, &media, link,
++	    MAXLINKNAMELEN) != DLADM_STATUS_OK) {
+ 		debug_printf(DEBUG_NORMAL,
+ 		    "failed to obtain datalink info for %u\n", id);
+-		return (DLADM_WALK_CONTINUE);
++		return (B_FALSE);
+ 	}
+ 
+-	if (class != DATALINK_CLASS_PHYS)
+-		return (DLADM_WALK_CONTINUE);
++	return (lclass == class && media == DL_ETHER);
++}
+ 
+-	if (media != DL_ETHER)
++static int
++lldp_aggr_walk_cb(dladm_handle_t dah, datalink_id_t id, void *arg)
++{
++	lldp_dl_walk_t *walk = arg;
++	dladm_aggr_grp_attr_t attr;
++	char link[MAXLINKNAMELEN];
++	dladm_status_t err;
++	static char errbuf[DLADM_STRSIZE];
++	uint32_t i;
++
++	if (!lldp_link_info(dah, id, DATALINK_CLASS_AGGR, link))
+ 		return (DLADM_WALK_CONTINUE);
+ 
++	bzero(&attr, sizeof (attr));
++	if ((err = dladm_aggr_info(dah, id, &attr, DLADM_OPT_ACTIVE)) !=
++	    DLADM_STATUS_OK) {
++		/*
++		 * The members stay unknown, so they are tried as ports of
++		 * their own and fail to open.
++		 */
++		debug_printf(DEBUG_NORMAL,
++		    "failed to obtain aggregation info for %s: %s\n", link,
++		    dladm_status2str(err, errbuf));
++	} else {
++		for (i = 0; i < attr.lg_nports; i++) {
++			if (!lldp_add_member(walk,
++			    attr.lg_ports[i].lp_linkid)) {
++				debug_printf(DEBUG_NORMAL,
++				    "failed to record members of %s\n", link);
++				break;
++			}
++		}
++		free(attr.lg_ports);
++	}
++
+ 	if (init_lldp_port(link, id) == 0)
+-		++*nlinkp;
++		walk->ldw_nlinks++;
+ 
+ 	return (DLADM_WALK_CONTINUE);
+ }
+ 
+ static int
++lldp_phys_walk_cb(dladm_handle_t dah, datalink_id_t id, void *arg)
++{
++	lldp_dl_walk_t *walk = arg;
++	char link[MAXLINKNAMELEN];
++
++	if (!lldp_link_info(dah, id, DATALINK_CLASS_PHYS, link))
++		return (DLADM_WALK_CONTINUE);
++
++	if (lldp_is_member(walk, id)) {
++		debug_printf(DEBUG_INT,
++		    "Skipping %s, it is a member of an aggregation\n", link);
++		return (DLADM_WALK_CONTINUE);
++	}
++
++	if (init_lldp_port(link, id) == 0)
++		walk->ldw_nlinks++;
++
++	return (DLADM_WALK_CONTINUE);
++}
++
++static int
+ dladm_iter_ports(void)
+ {
+ 	dladm_handle_t dah;
+ 	dladm_status_t err;
+ 	static char errbuf[DLADM_STRSIZE];
+-	int nlinks = 0;
++	lldp_dl_walk_t walk;
+ 
++	bzero(&walk, sizeof (walk));
++
+ 	if ((err = dladm_open(&dah)) != DLADM_STATUS_OK) {
+ 		debug_printf(DEBUG_NORMAL, "failed to open dladm handle: %s",
+ 		    dladm_status2str(err, errbuf));
+-	} else {
+-		(void) dladm_walk_datalink_id(dladm_walk_cb, dah,
+-		    (void *)&nlinks, DATALINK_CLASS_PHYS,
+-		    DL_ETHER, DLADM_OPT_ACTIVE);
+-		dladm_close(dah);
++		return (0);
+ 	}
+ 
+-	return (nlinks);
++	(void) dladm_walk_datalink_id(lldp_aggr_walk_cb, dah, (void *)&walk,
++	    DATALINK_CLASS_AGGR, DL_ETHER, DLADM_OPT_ACTIVE);
++	(void) dladm_walk_datalink_id(lldp_phys_walk_cb, dah, (void *)&walk,
++	    DATALINK_CLASS_PHYS, DL_ETHER, DLADM_OPT_ACTIVE);
++
++	free(walk.ldw_members);
++	dladm_close(dah);
++
++	return (walk.ldw_nlinks);
+ }
+ #endif /* __sun */
+ 

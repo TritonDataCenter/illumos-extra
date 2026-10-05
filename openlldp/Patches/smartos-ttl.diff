@@ -1,0 +1,78 @@
+--- openlldp-0.4alpha/src/msap.c
++++ openlldp-0.4alpha-32/src/msap.c
+@@ -60,6 +60,13 @@
+ 	destroy_tlv_list(&old_cache->tlv_list);
+ 	
+ 	old_cache->tlv_list = new_cache->tlv_list;
++
++	/*
++	 * Each frame restarts the TTL of its neighbor.  If not, the
++	 * neighbor expires one TTL after it was first seen, although it
++	 * continues to send frames.
++	 */
++	old_cache->rxInfoTTL = new_cache->rxInfoTTL;
+ 	
+ 	// Now free the rest of the MSAP cache
+ 	free(new_cache->id);
+--- openlldp-0.4alpha/src/rx_sm.c
++++ openlldp-0.4alpha-32/src/rx_sm.c
+@@ -77,6 +77,7 @@
+     uint8_t *msap_id           = NULL;
+     uint32_t msap_length       = 0;
+     uint8_t have_msap          = 0;
++    uint8_t have_ttl           = 0;
+     struct lldp_tlv *msap_tlv1 = NULL;
+     struct lldp_tlv *msap_tlv2 = NULL;
+     struct lldp_tlv *msap_ttl_tlv = NULL;
+@@ -224,6 +225,7 @@
+ #endif // WIN32
+             } else {
+                 lldp_port->rx.timers.rxTTL = htons(*(uint16_t *)&tlv_info_string[0]);
++		have_ttl = 1;
+ 		msap_ttl_tlv = tlv;
+                 debug_printf(DEBUG_EXCESSIVE, "rxTTL is: %d\n", lldp_port->rx.timers.rxTTL);
+             }
+@@ -419,7 +421,12 @@
+ 
+     /* We're done processing the frame and all TLVs... now we can cache it */
+     /* Only cache this TLV list if we have an MSAP for it */
+-    if(have_msap)
++    /*
++     * rxTTL is kept per port, thus a frame without a valid TTL TLV still
++     * has the TTL of the previous frame, maybe from another neighbor.
++     * 802.1AB makes the TTL TLV mandatory: discard such a frame.
++     */
++    if(have_msap && have_ttl)
+       {
+ #ifndef WIN32
+         #warning We need to verify whether this is actually the case.
+@@ -465,7 +472,14 @@
+       }
+     else
+       {
+-	debug_printf(DEBUG_NORMAL, "[ERROR] No MSAP for TLVs in Frame!\n");
++	debug_printf(DEBUG_NORMAL, "[ERROR] No MSAP or no valid TTL in Frame!\n");
++
++	/* The frame is discarded: free what it allocated. */
++	if(tlv_list != NULL)
++	  destroy_tlv_list(&tlv_list);
++	free(msap_id);
++	destroy_tlv(&msap_tlv1);
++	destroy_tlv(&msap_tlv2);
+       }
+ 
+     /* Report frame errors */
+@@ -671,6 +685,13 @@
+ 	  {
+ 	    rxChangeToState(lldp_port, UPDATE_INFO);
+ 	  }
++	/*
++	 * A discarded frame changes nothing.  802.1AB then goes back to
++	 * RX_WAIT_FOR_FRAME; without this the port stays in RX_FRAME and
++	 * does not delete aged neighbors until the next valid frame.
++	 */
++	if((lldp_port->rx.timers.rxTTL != 0) && (lldp_port->rxChanges == FALSE))
++	  rxChangeToState(lldp_port, RX_WAIT_FOR_FRAME);
+       }break;
+     case UPDATE_INFO:
+       {
