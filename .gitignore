@@ -3,6 +3,9 @@
 /binutils/binutils-2.34-32*
 /bzip2/bzip2-1.0.6*
 /bzip2/bzgrep.tmp
+/ca-certificates/cacert.pem.new
+/ca-certificates/cacert.pem.sha256.new
+/ca-certificates/cacert.fingerprints.new
 /coreutils/coreutils-9.7-64
 /cpp/cpp
 /cpp/cppstrap
