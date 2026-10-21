@@ -1,0 +1,51 @@
+#!/bin/sh
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2026 Edgecast Cloud LLC.
+#
+
+#
+# Write node's src/node_root_certs.h from a PEM bundle: one C string per
+# certificate, as node_crypto.cc includes it into its root_certs[] array.
+#
+
+bundle=$1
+if [ -z "$bundle" ] || [ ! -f "$bundle" ]; then
+	echo "usage: $0 <bundle.pem>" >&2
+	exit 2
+fi
+
+awk -v prog="$0" -v bundle="$bundle" '
+/^-----BEGIN CERTIFICATE-----$/ {
+	incert = 1
+	n++
+}
+incert && /^-----END CERTIFICATE-----$/ {
+	print "\"" $0 "\","
+	print ""
+	incert = 0
+	next
+}
+incert {
+	print "\"" $0 "\\n\""
+}
+END {
+	if (incert) {
+		print prog ": " bundle " ends inside a certificate" > "/dev/stderr"
+		exit 1
+	}
+	if (n == 0) {
+		print prog ": no certificates in " bundle > "/dev/stderr"
+		exit 1
+	}
+}' "$bundle"
