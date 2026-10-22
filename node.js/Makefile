@@ -20,6 +20,7 @@
 #
 # Copyright 2021 Joyent, Inc.
 # Copyright 2024 MNX Cloud, Inc.
+# Copyright 2026 Edgecast Cloud LLC.
 #
 
 MAJOR_VER =	0.10
@@ -122,9 +123,22 @@ AUTOCONF_OUT =	build/default/config.h
 PATCHES =	Patches/*
 CLEANFILES +=	genversionjs
 
+ROOT_CERTS_BUNDLE =	../ca-certificates/cacert.pem
+ROOT_CERTS_H =		$(VER.32)/src/node_root_certs.h
+
 all: all_autoconf
 
 all_autoconf: wrapper
+
+all_autoconf_32: $(ROOT_CERTS_H)
+
+#
+# Node compiles its trusted roots into the binary.  Build them from the same
+# Mozilla bundle we ship in ca-certificates, so the two cannot drift apart.
+#
+$(ROOT_CERTS_H): $(VER.32)/$(UNPACK_SENTINEL) $(ROOT_CERTS_BUNDLE) mkrootcerts
+	./mkrootcerts $(ROOT_CERTS_BUNDLE) > $@.tmp
+	mv -f $@.tmp $@
 
 #
 # We build a host tool against the installed header so that we can spew a
