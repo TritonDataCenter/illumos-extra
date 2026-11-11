@@ -1,4 +1,4 @@
-From ec87aae82bed7744415e1a49dc3fdeafdeeb6ee9 Mon Sep 17 00:00:00 2001
+From 90473cef9a9970966047b63e6bc3254f0c7aea4f Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 4 Sep 2015 11:04:30 -0700
 Subject: [PATCH] Accept LANG and LC_* environment variables from clients by
@@ -15,7 +15,7 @@ behaviour (at least the parts that are most commonly used).
  5 files changed, 102 insertions(+), 3 deletions(-)
 
 diff --git a/servconf.c b/servconf.c
-index 7cbe39039..7fc335747 100644
+index 646ce4c3f..d931b0e9e 100644
 --- a/servconf.c
 +++ b/servconf.c
 @@ -165,6 +165,8 @@ initialize_server_options(ServerOptions *options)
@@ -35,7 +35,7 @@ index 7cbe39039..7fc335747 100644
  #ifdef PAM_ENHANCEMENT
  #undef init_pamserviceperauthmethod
  #endif
-@@ -482,6 +485,32 @@ fill_default_server_options(ServerOptions *options)
+@@ -484,6 +487,32 @@ fill_default_server_options(ServerOptions *options)
  		    &options->num_authkeys_files,
  		    _PATH_SSH_USER_PERMITTED_KEYS2);
  	}

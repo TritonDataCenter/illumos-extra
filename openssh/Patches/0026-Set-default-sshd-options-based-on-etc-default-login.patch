@@ -1,4 +1,4 @@
-From 488c5ff21b27203acc8a2878f50aed10c14e4189 Mon Sep 17 00:00:00 2001
+From 80ca6b309f2c3cfb6a77c549eec934acedc7eeab Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 24 Aug 2015 18:57:27 -0700
 Subject: [PATCH] Set default sshd options based on /etc/default/login
@@ -22,7 +22,7 @@ index ab914f7c5..6edc6b599 100644
  #define _PATH_DH_PRIMES			SSHDIR "/primes"
  
 diff --git a/servconf.c b/servconf.c
-index 7319ac7e1..7cbe39039 100644
+index 7319ac7e1..646ce4c3f 100644
 --- a/servconf.c
 +++ b/servconf.c
 @@ -37,6 +37,7 @@
@@ -98,17 +98,17 @@ index 7319ac7e1..7cbe39039 100644
  static void
  assemble_algorithms(ServerOptions *o)
  {
-@@ -1285,6 +1344,8 @@ process_server_config_line_depth(ServerOptions *options, char *line,
- 		break;
- #endif
+@@ -285,6 +344,8 @@ fill_default_server_options(ServerOptions *options)
+ {
+ 	u_int i;
  
 +	deflt_fill_default_server_options(options);
 +
- 	/* Standard Options */
- 	case sBadOption:
- 		goto out;
+ 	/* Portable-specific overrides */
+ #ifdef SKIP_PRIVDROP
+ 	if (options->allow_streamlocal_forwarding != -1 &&
 diff --git a/sshd_config.5 b/sshd_config.5
-index b3d992cb8..b9db6abe0 100644
+index 9cb40c861..1c37f5ea8 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
 @@ -1411,7 +1411,14 @@ Specifies the maximum number of authentication attempts permitted per
