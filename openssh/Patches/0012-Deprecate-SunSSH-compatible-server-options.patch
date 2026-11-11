@@ -1,4 +1,4 @@
-From 5d222a5bf0036ffa00b70e7499e32252f6e6abe8 Mon Sep 17 00:00:00 2001
+From 9ccbdb4ba83be37a37827a2de19ec6012bb2996d Mon Sep 17 00:00:00 2001
 From: Dan McDonald <danmcd@edgecast.io>
 Date: Tue, 7 Jul 2026 12:50:32 -0400
 Subject: [PATCH] Deprecate SunSSH compatible server options
@@ -26,10 +26,10 @@ SSHD_CONFIG_ENTRIES_SMARTOS section of servconf.h .
  1 file changed, 20 insertions(+)
 
 diff --git a/servconf.h b/servconf.h
-index 89aa627dc..84c8e398a 100644
+index b99c328bf..bca82ed8c 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -346,10 +346,30 @@ SSHCONF_UNSUPPORTED_INT(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBA
+@@ -352,10 +352,30 @@ SSHCONF_UNSUPPORTED_INT(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBA
  SSHCONF_UNSUPPORTED_INT(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_GLOBAL)
  #endif /* GSSAPI */
  
@@ -61,5 +61,5 @@ index 89aa627dc..84c8e398a 100644
  /* Macros to declare ServerOptions member variables */
  #define SSHCONF_INT(var, conf, flags, ms, def, cp)	int var;
 -- 
-2.50.1
+2.44.0
 

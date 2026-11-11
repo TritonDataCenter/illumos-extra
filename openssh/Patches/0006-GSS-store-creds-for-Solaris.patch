@@ -1,4 +1,4 @@
-From 5d0eb18eeb87b639b87756376238d0e1bbe8ef74 Mon Sep 17 00:00:00 2001
+From 8c5821db8173360e52f6c1b2ebea2a4bdedeaeee Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:34 -0700
 Subject: [PATCH] GSS store creds for illumos
@@ -6,17 +6,17 @@ Subject: [PATCH] GSS store creds for illumos
 ---
  configure.ac    |  3 +++
  gss-serv-krb5.c |  7 ++++++-
- gss-serv.c      | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ gss-serv.c      | 47 +++++++++++++++++++++++++++++++++++++++++++++++
  servconf.c      |  4 ++++
  servconf.h      |  8 ++++++++
  sshd-session.c  | 14 ++++++++++++++
- 6 files changed, 80 insertions(+), 1 deletion(-)
+ 6 files changed, 82 insertions(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index a4d544cc5..12db0175c 100644
+index bb4d065f1..773304529 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1283,6 +1283,9 @@ if (setsockopt(s, IPPROTO_IP, IP_TOS, &one, sizeof(one)) == -1)
+@@ -1272,6 +1272,9 @@ if (setsockopt(s, IPPROTO_IP, IP_TOS, &one, sizeof(one)) == -1)
  		],
  	)
  	TEST_SHELL=$SHELL	# let configure find us a capable shell
@@ -60,7 +60,7 @@ index 4caac337c..46dbe3607 100644
  
  #endif /* KRB5 */
 diff --git a/gss-serv.c b/gss-serv.c
-index f9ae303b5..5e109748b 100644
+index 16f653202..cca7599e1 100644
 --- a/gss-serv.c
 +++ b/gss-serv.c
 @@ -46,6 +46,7 @@
@@ -71,7 +71,7 @@ index f9ae303b5..5e109748b 100644
  
  #include "ssh-gss.h"
  
-@@ -321,18 +322,61 @@ ssh_gssapi_getclient(Gssctxt *ctx, ssh_gssapi_client *client)
+@@ -322,18 +323,26 @@ ssh_gssapi_getclient(Gssctxt *ctx, ssh_gssapi_client *client)
  void
  ssh_gssapi_cleanup_creds(void)
  {
@@ -93,7 +93,16 @@ index f9ae303b5..5e109748b 100644
  {
 +#ifdef USE_GSS_STORE_CRED
 +	OM_uint32 maj_status, min_status;
++#endif
 +
+ 	if (!gssapi_client.userok) {
+ 		debug_f("GSSAPI client was not authorized, doing nothing");
+ 		return;
+@@ -344,10 +353,48 @@ ssh_gssapi_storecreds(void)
+ 		return;
+ 	}
+ 
++#ifdef USE_GSS_STORE_CRED
 +	if (gssapi_client.creds == NULL) {
 +		debug("No credentials stored");
 +		return;
@@ -130,10 +139,7 @@ index f9ae303b5..5e109748b 100644
 +		sshbuf_free(b);
 +	}
 +#else	/* #ifdef USE_GSS_STORE_CRED */
- 	if (options.gss_deleg_creds == 0) {
- 		debug_f("delegate credential is disabled, doing nothing");
- 		return;
-@@ -342,6 +386,7 @@ ssh_gssapi_storecreds(void)
+ 	if (gssapi_client.mech && gssapi_client.mech->storecreds) {
  		(*gssapi_client.mech->storecreds)(&gssapi_client);
  	} else
  		debug("ssh_gssapi_storecreds: Not a GSSAPI mechanism");
@@ -142,10 +148,10 @@ index f9ae303b5..5e109748b 100644
  
  /* This allows GSSAPI methods to do things to the child's environment based
 diff --git a/servconf.c b/servconf.c
-index 950666651..eaa1716cf 100644
+index e32c69f55..9b246bebf 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -1445,9 +1445,11 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -1492,9 +1492,11 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  		intptr = &options->gss_authentication;
  		goto parse_flag;
  
@@ -157,7 +163,7 @@ index 950666651..eaa1716cf 100644
  
  	case sGSSAPIDelegateCredentials:
  		intptr = &options->gss_deleg_creds;
-@@ -4224,7 +4226,9 @@ dump_config(ServerOptions *o)
+@@ -4352,7 +4354,9 @@ dump_config(ServerOptions *o)
  #endif
  #ifdef GSSAPI
  	dump_cfg_fmtint(sGSSAPIAuthentication, o->gss_authentication);
@@ -168,10 +174,10 @@ index 950666651..eaa1716cf 100644
  	dump_cfg_fmtint(sGSSAPIStrictAcceptorCheck, o->gss_strict_acceptor);
  #endif
 diff --git a/servconf.h b/servconf.h
-index 2604f3793..c82e8df05 100644
+index e12874d37..90ff81cfa 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -313,11 +313,19 @@ SSHCONF_UNSUPPORTED_INT(kerberos_get_afs_token, KerberosGetAFSToken, SSHCFG_GLOB
+@@ -320,11 +320,19 @@ SSHCONF_UNSUPPORTED_INT(kerberos_get_afs_token, KerberosGetAFSToken, SSHCFG_GLOB
  #endif /* KRB5 */
  
  #ifdef GSSAPI
@@ -192,10 +198,10 @@ index 2604f3793..c82e8df05 100644
  #define SSHD_CONFIG_ENTRIES_GSS \
  SSHCONF_UNSUPPORTED_INT(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL) \
 diff --git a/sshd-session.c b/sshd-session.c
-index be30c8d70..c28514677 100644
+index 1af9bcf4c..e7a3cf9ed 100644
 --- a/sshd-session.c
 +++ b/sshd-session.c
-@@ -1270,9 +1270,23 @@ main(int ac, char **av)
+@@ -1259,9 +1259,23 @@ main(int ac, char **av)
  
  #ifdef GSSAPI
  	if (options.gss_authentication) {
@@ -220,5 +226,5 @@ index be30c8d70..c28514677 100644
  #endif
  #ifdef USE_PAM
 -- 
-2.50.1
+2.44.0
 

@@ -1,4 +1,4 @@
-From ca8d41995049206078b916e2a835c7e61046159c Mon Sep 17 00:00:00 2001
+From 6ba64a67023e8f772873161f823c281f87f0cfb8 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:22 -0700
 Subject: [PATCH] SunSSH compat default config values
@@ -21,10 +21,10 @@ upstream.
  4 files changed, 22 insertions(+), 9 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
-index f404947d7..7f38952b9 100644
+index 1e7697ef3..575411639 100644
 --- a/readconf.c
 +++ b/readconf.c
-@@ -2901,7 +2901,11 @@ fill_default_options(Options * options)
+@@ -2913,7 +2913,11 @@ fill_default_options(Options * options)
  	if (options->forward_x11 == -1)
  		options->forward_x11 = 0;
  	if (options->forward_x11_trusted == -1)
@@ -36,7 +36,7 @@ index f404947d7..7f38952b9 100644
  	if (options->forward_x11_timeout == -1)
  		options->forward_x11_timeout = 1200;
  	/*
-@@ -2928,7 +2932,11 @@ fill_default_options(Options * options)
+@@ -2940,7 +2944,11 @@ fill_default_options(Options * options)
  	if (options->pubkey_authentication == -1)
  		options->pubkey_authentication = SSH_PUBKEY_AUTH_ALL;
  	if (options->gss_authentication == -1)
@@ -49,10 +49,10 @@ index f404947d7..7f38952b9 100644
  		options->gss_deleg_creds = 0;
  	if (options->password_authentication == -1)
 diff --git a/servconf.h b/servconf.h
-index 2579a5240..5bf79e962 100644
+index 77b036000..b99c328bf 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -170,7 +170,8 @@ SSHCONF_INT(permit_root_login, PermitRootLogin, SSHCFG_ALL, multistate_permitroo
+@@ -176,7 +176,8 @@ SSHCONF_INT(permit_root_login, PermitRootLogin, SSHCFG_ALL, multistate_permitroo
  SSHCONF_INT(ignore_rhosts, IgnoreRhosts, SSHCFG_ALL, multistate_ignore_rhosts, 1, SSHCFG_COPY_MATCH) \
  SSHCONF_INTFLAG(ignore_user_known_hosts, IgnoreUserKnownHosts, SSHCFG_GLOBAL, 0, SSHCFG_COPY_NONE) \
  SSHCONF_INTFLAG(print_motd, PrintMotd, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
@@ -62,7 +62,7 @@ index 2579a5240..5bf79e962 100644
  SSHCONF_INT(x11_display_offset, X11DisplayOffset, SSHCFG_ALL, NULL, SSHD_DEFAULT_X11_DISPLAY_OFFSET, SSHCFG_COPY_MATCH) \
  SSHCONF_INTFLAG(x11_use_localhost, X11UseLocalhost, SSHCFG_ALL, 1, SSHCFG_COPY_MATCH) \
  SSHCONF_STRING(xauth_location, XAuthLocation, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
-@@ -324,13 +325,14 @@ SSHCONF_UNSUPPORTED_INT(kerberos_get_afs_token, KerberosGetAFSToken, SSHCFG_GLOB
+@@ -331,13 +332,14 @@ SSHCONF_UNSUPPORTED_INT(kerberos_get_afs_token, KerberosGetAFSToken, SSHCFG_GLOB
  #ifdef GSSAPI
  #ifdef USE_GSS_STORE_CRED
  #define SSHD_CONFIG_ENTRIES_GSS \
@@ -80,10 +80,10 @@ index 2579a5240..5bf79e962 100644
  SSHCONF_INTFLAG(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
  SSHCONF_INTFLAG(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
 diff --git a/ssh_config.5 b/ssh_config.5
-index 76ae3f9d5..010bcf091 100644
+index 1b3900cd0..9dc0b1e4f 100644
 --- a/ssh_config.5
 +++ b/ssh_config.5
-@@ -993,6 +993,9 @@ Furthermore, the
+@@ -994,6 +994,9 @@ Furthermore, the
  token used for the session will be set to expire after 20 minutes.
  Remote clients will be refused access after this time.
  .Pp
@@ -93,7 +93,7 @@ index 76ae3f9d5..010bcf091 100644
  See the X11 SECURITY extension specification for full details on
  the restrictions imposed on untrusted clients.
  .It Cm GatewayPorts
-@@ -1019,8 +1022,8 @@ The default is
+@@ -1020,8 +1023,8 @@ The default is
  .Pa /etc/ssh/ssh_known_hosts2 .
  .It Cm GSSAPIAuthentication
  Specifies whether user authentication based on GSSAPI is allowed.
@@ -105,10 +105,10 @@ index 76ae3f9d5..010bcf091 100644
  Forward (delegate) credentials to the server.
  The default is
 diff --git a/sshd_config.5 b/sshd_config.5
-index 6278642e9..ae963410a 100644
+index b320104d9..b3d992cb8 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
-@@ -751,8 +751,8 @@ The default is
+@@ -778,8 +778,8 @@ The default is
  .Cm no .
  .It Cm GSSAPIAuthentication
  Specifies whether user authentication based on GSSAPI is allowed.
@@ -119,7 +119,7 @@ index 6278642e9..ae963410a 100644
  .It Cm GSSAPICleanupCredentials
  Specifies whether to automatically destroy the user's credentials cache
  on logout.
-@@ -2126,8 +2126,8 @@ The argument must be
+@@ -2196,8 +2196,8 @@ The argument must be
  .Cm yes
  or
  .Cm no .
@@ -131,5 +131,5 @@ index 6278642e9..ae963410a 100644
  When X11 forwarding is enabled, there may be additional exposure to
  the server and to client displays if the
 -- 
-2.50.1
+2.44.0
 

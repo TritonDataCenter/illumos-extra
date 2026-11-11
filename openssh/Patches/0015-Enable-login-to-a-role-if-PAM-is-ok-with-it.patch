@@ -1,7 +1,7 @@
-From 4f27f6959bf1a7d471e2980b6f32dad8e0f15f8e Mon Sep 17 00:00:00 2001
+From db1243b4a787156d8ec8b890873e0b5ca923a57f Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:38:19 -0700
-Subject: [PATCH 12/32] Enable login to a role if PAM is ok with it
+Subject: [PATCH] Enable login to a role if PAM is ok with it
 
 ---
  auth-pam.c        | 14 ++++++++++++++
@@ -53,10 +53,10 @@ index 491336701..5bbf4fd08 100644
  char ** fetch_pam_environment(void);
  char ** fetch_pam_child_environment(void);
 diff --git a/auth.h b/auth.h
-index ef83edee9..fa5a72245 100644
+index df8fd613c..f46545855 100644
 --- a/auth.h
 +++ b/auth.h
-@@ -98,6 +98,9 @@ struct Authctxt {
+@@ -100,6 +100,9 @@ struct Authctxt {
  #ifdef PAM_ENHANCEMENT
  	char		*authmethod_name;
  #endif
@@ -67,10 +67,10 @@ index ef83edee9..fa5a72245 100644
  
  /*
 diff --git a/auth2-hostbased.c b/auth2-hostbased.c
-index 8a1acdec3..a8ba703bb 100644
+index cca06745e..f1084a9c3 100644
 --- a/auth2-hostbased.c
 +++ b/auth2-hostbased.c
-@@ -80,6 +80,9 @@ userauth_hostbased(struct ssh *ssh, const char *method)
+@@ -79,6 +79,9 @@ userauth_hostbased(struct ssh *ssh, const char *method)
  #ifdef DEBUG_PK
  	debug("signature:");
  	sshbuf_dump_data(sig, slen, stderr);
@@ -80,7 +80,7 @@ index 8a1acdec3..a8ba703bb 100644
  #endif
  	pktype = sshkey_type_from_name(pkalg);
  	if (pktype == KEY_UNSPEC) {
-@@ -153,6 +156,13 @@ userauth_hostbased(struct ssh *ssh, const char *method)
+@@ -161,6 +164,13 @@ userauth_hostbased(struct ssh *ssh, const char *method)
  	    sshbuf_ptr(b), sshbuf_len(b), pkalg, ssh->compat, NULL) == 0)
  		authenticated = 1;
  
@@ -92,10 +92,10 @@ index 8a1acdec3..a8ba703bb 100644
 +#endif
 +
  	auth2_record_key(authctxt, authenticated, key);
- 	sshbuf_free(b);
  done:
+ 	debug2_f("authenticated %d", authenticated);
 diff --git a/monitor.c b/monitor.c
-index 8f4d6dd87..437d20beb 100644
+index 3f8cfd6f6..41dfddb0f 100644
 --- a/monitor.c
 +++ b/monitor.c
 @@ -394,6 +394,12 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
@@ -122,7 +122,7 @@ index 8f4d6dd87..437d20beb 100644
  	free(hostbased_chost);
  	sshauthopt_free(key_opts);
  	key_blob = NULL;
-@@ -1190,6 +1199,11 @@ mm_answer_pam_account(struct ssh *ssh, int sock, struct sshbuf *m)
+@@ -1202,6 +1211,11 @@ mm_answer_pam_account(struct ssh *ssh, int sock, struct sshbuf *m)
  	if (!options.use_pam)
  		fatal_f("PAM not enabled");
  
@@ -135,5 +135,5 @@ index 8f4d6dd87..437d20beb 100644
  
  	if ((r = sshbuf_put_u32(m, ret)) != 0 ||
 -- 
-2.50.1
+2.44.0
 

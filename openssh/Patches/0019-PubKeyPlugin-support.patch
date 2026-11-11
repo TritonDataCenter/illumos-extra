@@ -1,4 +1,4 @@
-From 8da8b165fd1d539e19516f05571b4b31f95eaf08 Mon Sep 17 00:00:00 2001
+From c765a77737c711a1394981dd29419eb3b1d2fabf Mon Sep 17 00:00:00 2001
 From: Lexi Wilson <lexi@cooperi.net>
 Date: Fri, 10 Jul 2026 11:38:34 +1000
 Subject: [PATCH] PubKeyPlugin support
@@ -8,12 +8,12 @@ SunSSH, allowing an in-process shared library to be called
 into to check public keys for authentication.
 ---
  auth2-pubkey.c | 163 +++++++++++++++++++++++++++++++++++++++++++++++++
- servconf.c     |  14 +++++
+ servconf.c     |  13 ++++
  servconf.h     |   3 +-
- 3 files changed, 179 insertions(+), 1 deletion(-)
+ 3 files changed, 178 insertions(+), 1 deletion(-)
 
 diff --git a/auth2-pubkey.c b/auth2-pubkey.c
-index e446ef412..bc352ec77 100644
+index 1a4afd473..aaf297fa9 100644
 --- a/auth2-pubkey.c
 +++ b/auth2-pubkey.c
 @@ -23,6 +23,11 @@
@@ -42,8 +42,8 @@ index e446ef412..bc352ec77 100644
  #include "kex.h"
  #include "sshbuf.h"
  #include "log.h"
-@@ -84,6 +91,15 @@ format_key(const struct sshkey *key)
- 	return ret;
+@@ -108,6 +115,15 @@ check_hostbound_hostkey(struct ssh *ssh)
+ 	sshbuf_free(their_hostkey_blob);
  }
  
 +static const char *RSA_SYM_NAME = "sshd_user_rsa_key_allowed";
@@ -58,7 +58,7 @@ index e446ef412..bc352ec77 100644
  static int
  userauth_pubkey(struct ssh *ssh, const char *method)
  {
-@@ -783,6 +799,148 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
+@@ -820,6 +836,148 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
  	return found_key;
  }
  
@@ -207,7 +207,7 @@ index e446ef412..bc352ec77 100644
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -857,6 +1015,11 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
+@@ -894,6 +1052,11 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
  	sshauthopt_free(opts);
  	opts = NULL;
  
@@ -220,13 +220,13 @@ index e446ef412..bc352ec77 100644
  	    remote_host, conn_id, rdomain, &opts)) != 0)
  		goto out;
 diff --git a/servconf.c b/servconf.c
-index ce388f1dd..b2dba4a70 100644
+index ea5d4b049..515ec776b 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -2554,6 +2554,20 @@ process_server_config_line_depth(ServerOptions *options, char *line,
- 		multistate_ptr = multistate_flag;
+@@ -2684,6 +2684,19 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+ 		intptr = &options->warn_weak_crypto;
+ 		multistate_ptr = multistate_warnweakcrypto;
  		goto parse_multistate;
- 
 +	case sPubKeyPlugin:
 +		/*
 +		 * Can't use parse_filename, as we need to support plain
@@ -240,24 +240,23 @@ index ce388f1dd..b2dba4a70 100644
 +		if (*activep && *charptr == NULL)
 +			*charptr = xstrdup(arg);
 +		break;
-+
+ 
  	case sDeprecated:
  	case sIgnore:
- 	case sUnsupported:
 diff --git a/servconf.h b/servconf.h
-index 9e64e4673..ebef1c265 100644
+index 7b08f482e..823273da0 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -235,7 +235,8 @@ SSHCONF_STRARRAY(channel_timeouts, num_channel_timeouts, ChannelTimeout, SSHCFG_
- SSHCONF_INT(unused_connection_timeout, UnusedConnectionTimeout, SSHCFG_ALL, NULL, 0, SSHCFG_COPY_MATCH) \
- SSHCONF_STRING(sshd_session_path, SshdSessionPath, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
+@@ -243,7 +243,8 @@ SSHCONF_STRING(sshd_session_path, SshdSessionPath, SSHCFG_GLOBAL, SSHCFG_COPY_NO
  SSHCONF_STRING(sshd_auth_path, SshdAuthPath, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
--SSHCONF_INTFLAG(refuse_connection, RefuseConnection, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH)
-+SSHCONF_INTFLAG(refuse_connection, RefuseConnection, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
+ SSHCONF_INTFLAG(refuse_connection, RefuseConnection, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
+ SSHCONF_STRING(agent_socket_path, AgentSocketPath, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+-SSHCONF_INT(warn_weak_crypto, WarnWeakCrypto, SSHCFG_GLOBAL, multistate_warnweakcrypto, 1, SSHCFG_COPY_NONE)
++SSHCONF_INT(warn_weak_crypto, WarnWeakCrypto, SSHCFG_GLOBAL, multistate_warnweakcrypto, 1, SSHCFG_COPY_NONE) \
 +SSHCONF_STRING(pubkey_plugin, PubKeyPlugin, SSHCFG_ALL, SSHCFG_COPY_MATCH)
  
  #define SSHD_CONFIG_ENTRIES_LEGACY \
  SSHCONF_DEPRECATE(ServerKeyBits, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
 -- 
-2.54.0
+2.44.0
 

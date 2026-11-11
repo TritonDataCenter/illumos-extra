@@ -1,4 +1,4 @@
-From b6018f8eb33c53c6481d79e104e4c88febb9a0f5 Mon Sep 17 00:00:00 2001
+From 94429ad46e30c33b63311503fbfcef3dfb093f81 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 6 Jul 2026 16:59:27 -0400
 Subject: [PATCH] PAM enhancements for Solaris
@@ -168,10 +168,10 @@ index 75d2ff5cd..9782c3169 100644
  	sshpam_authctxt = authctxt;
  
 diff --git a/auth.h b/auth.h
-index 0f11458ca..ef83edee9 100644
+index 17227cffb..df8fd613c 100644
 --- a/auth.h
 +++ b/auth.h
-@@ -95,6 +95,9 @@ struct Authctxt {
+@@ -97,6 +97,9 @@ struct Authctxt {
  
  	/* Information exposed to session */
  	struct sshbuf	*session_info;	/* Auth info for environment */
@@ -182,7 +182,7 @@ index 0f11458ca..ef83edee9 100644
  
  /*
 diff --git a/auth2.c b/auth2.c
-index 3f353a719..ae7125216 100644
+index 2da7a4da9..d219e17cd 100644
 --- a/auth2.c
 +++ b/auth2.c
 @@ -313,9 +313,17 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
@@ -204,7 +204,7 @@ index 3f353a719..ae7125216 100644
  		ssh_packet_set_log_preamble(ssh, "%suser %s",
  		    authctxt->valid ? "authenticating " : "invalid ", user);
  		setproctitle("%s [net]", authctxt->valid ? user : "unknown");
-@@ -348,6 +356,17 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
+@@ -350,6 +358,17 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
  	/* try to authenticate user */
  	m = authmethod_lookup(authctxt, method);
  	if (m != NULL && authctxt->failures < options.max_authtries) {
@@ -222,7 +222,7 @@ index 3f353a719..ae7125216 100644
  		debug2("input_userauth_request: try method %s", method);
  		authenticated =	m->userauth(ssh, method);
  	}
-@@ -373,6 +392,10 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
+@@ -375,6 +394,10 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
  	char *methods;
  	int r, partial = 0;
  
@@ -233,7 +233,7 @@ index 3f353a719..ae7125216 100644
  	if (authenticated) {
  		if (!authctxt->valid) {
  			fatal("INTERNAL ERROR: authenticated invalid user %s",
-@@ -396,6 +419,31 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
+@@ -398,6 +421,31 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
  	}
  
  	if (authenticated && options.num_auth_methods != 0) {
@@ -265,7 +265,7 @@ index 3f353a719..ae7125216 100644
  		if (!auth2_update_methods_lists(authctxt, method, submethod)) {
  			authenticated = 0;
  			partial = 1;
-@@ -413,7 +461,19 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
+@@ -415,7 +463,19 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
  		return;
  
  #ifdef USE_PAM
@@ -286,7 +286,7 @@ index 3f353a719..ae7125216 100644
  
  		/* If PAM returned a message, send it to the user. */
 diff --git a/monitor.c b/monitor.c
-index 149671145..abf6ef189 100644
+index 940dc275a..3f8cfd6f6 100644
 --- a/monitor.c
 +++ b/monitor.c
 @@ -111,6 +111,9 @@ int mm_answer_sign(struct ssh *, int, struct sshbuf *);
@@ -417,10 +417,10 @@ index fe0b00b2e..2f8cb07e0 100644
  };
  
 diff --git a/monitor_wrap.c b/monitor_wrap.c
-index e9a771b34..2fb2c044f 100644
+index c828fce04..351b2daee 100644
 --- a/monitor_wrap.c
 +++ b/monitor_wrap.c
-@@ -440,6 +440,24 @@ mm_inform_authserv(char *service, char *style)
+@@ -443,6 +443,24 @@ mm_inform_authserv(char *service, char *style)
  	sshbuf_free(m);
  }
  
@@ -446,11 +446,11 @@ index e9a771b34..2fb2c044f 100644
  int
  mm_auth_password(struct ssh *ssh, char *password)
 diff --git a/servconf.c b/servconf.c
-index a89a5de58..0c34f6b7c 100644
+index 9b246bebf..ea5d4b049 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -161,6 +161,15 @@ initialize_server_options(ServerOptions *options)
- 	options->subsystem_args = NULL;
+@@ -164,6 +164,15 @@ initialize_server_options(ServerOptions *options)
+ 	options->max_pubkey_ok = -1;
  #define init_timingsecret(options) \
  	options->timing_secret = 0;
 +#ifdef PAM_ENHANCEMENT
@@ -465,7 +465,7 @@ index a89a5de58..0c34f6b7c 100644
  
  	SSHD_CONFIG_ENTRIES
  
-@@ -180,6 +189,9 @@ initialize_server_options(ServerOptions *options)
+@@ -183,6 +192,9 @@ initialize_server_options(ServerOptions *options)
  #undef init_rekeylimit
  #undef init_subsystem
  #undef init_timingsecret
@@ -475,7 +475,7 @@ index a89a5de58..0c34f6b7c 100644
  #undef SSHCONF_INT
  #undef SSHCONF_INTFLAG
  #undef SSHCONF_STRING
-@@ -305,8 +317,13 @@ fill_default_server_options(ServerOptions *options)
+@@ -320,8 +332,13 @@ fill_default_server_options(ServerOptions *options)
  #undef SSHCONF_ALIAS
  
  #ifdef USE_PAM
@@ -489,7 +489,7 @@ index a89a5de58..0c34f6b7c 100644
  #endif
  
  	if (options->num_host_key_files == 0) {
-@@ -1180,6 +1197,21 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -1218,6 +1235,21 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  		intptr = &options->use_pam;
  		goto parse_flag;
  #endif
@@ -511,7 +511,7 @@ index a89a5de58..0c34f6b7c 100644
  	case sPAMServiceName:
  		charptr = &options->pam_service_name;
  		arg = argv_next(&ac, &av);
-@@ -1187,8 +1219,20 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -1225,8 +1257,20 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  			fatal("%s line %d: missing argument.",
  			    filename, linenum);
  		}
@@ -532,7 +532,7 @@ index a89a5de58..0c34f6b7c 100644
  		break;
  #endif
  
-@@ -3072,6 +3116,22 @@ serialise_timingsecret(const ServerOptions *options, struct sshbuf *buf)
+@@ -3164,6 +3208,22 @@ serialise_timingsecret(const ServerOptions *options, struct sshbuf *buf)
  	return 0;
  }
  
@@ -555,7 +555,7 @@ index a89a5de58..0c34f6b7c 100644
  
  int
  serialise_server_options(const ServerOptions *options, struct sshbuf **bufp)
-@@ -3606,6 +3666,22 @@ deserialise_timingsecret(ServerOptions *options, struct sshbuf *buf)
+@@ -3711,6 +3771,22 @@ deserialise_timingsecret(ServerOptions *options, struct sshbuf *buf)
  	return 0;
  }
  
@@ -578,9 +578,9 @@ index a89a5de58..0c34f6b7c 100644
  int
  deserialise_server_options(struct sshbuf *buf, ServerOptions *options)
  {
-@@ -3769,6 +3845,9 @@ free_server_options(ServerOptions *options)
- #define free_persourcepenalties(options)
+@@ -3875,6 +3951,9 @@ free_server_options(ServerOptions *options)
  #define free_rekeylimit(options)
+ #define free_pubkey_auth_options(options)
  #define free_timingsecret(options)
 +#ifdef PAM_ENHANCEMENT
 +#define free_pamserviceperauthmethod(options)
@@ -588,7 +588,7 @@ index a89a5de58..0c34f6b7c 100644
  
  	SSHD_CONFIG_ENTRIES
  
-@@ -3784,6 +3863,9 @@ free_server_options(ServerOptions *options)
+@@ -3890,6 +3969,9 @@ free_server_options(ServerOptions *options)
  #undef free_persourcepenalties
  #undef free_rekeylimit
  #undef free_timingsecret
@@ -599,23 +599,23 @@ index a89a5de58..0c34f6b7c 100644
  #undef SSHCONF_INT
  #undef SSHCONF_INTFLAG
 diff --git a/servconf.h b/servconf.h
-index b3b102b7d..9d440bcfd 100644
+index 90ff81cfa..77b036000 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -271,14 +271,23 @@ SSHCONF_ALIAS(KeepAlive, TCPKeepAlive, SSHCFG_GLOBAL)
+@@ -278,14 +278,23 @@ SSHCONF_ALIAS(KeepAlive, TCPKeepAlive, SSHCFG_GLOBAL)
  	SSHD_CONFIG_ENTRIES_LASTLOG
  
  #ifdef USE_PAM
 +#ifdef PAM_ENHANCEMENT
 +#define SSHD_CONFIG_ENTRIES_PAM \
 +SSHCONF_INTFLAG(use_pam, UsePAM, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
-+SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL, SSHCFG_COPY_NONE) \
++SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 +SSHCONF_STRING(pam_service_prefix, PAMServicePrefix, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 +SSHCONF_NONCONF(pamserviceperauthmethod)
 +#else	/* PAM_ENHANCEMENT */
  #define SSHD_CONFIG_ENTRIES_PAM \
  SSHCONF_INTFLAG(use_pam, UsePAM, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
- SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL, SSHCFG_COPY_NONE)
+ SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL, SSHCFG_COPY_MATCH)
 -#else
 +#endif	/* PAM_ENHANCEMENT */
 +#else	/* USE_PAM */
@@ -629,8 +629,8 @@ index b3b102b7d..9d440bcfd 100644
  
  #ifdef DISABLE_LASTLOG
  #define SSHD_CONFIG_ENTRIES_LASTLOG \
-@@ -399,6 +408,10 @@ typedef struct ServerOptions {
- 	int	rekey_interval;
+@@ -409,6 +418,10 @@ typedef struct ServerOptions {
+ 	int	max_pubkey_ok;
  	/* Passed by config but not keyword for this */
  	uint64_t timing_secret;
 +#ifdef PAM_ENHANCEMENT
@@ -641,7 +641,7 @@ index b3b102b7d..9d440bcfd 100644
  #undef SSHCONF_INT
  #undef SSHCONF_INTFLAG
 diff --git a/sshd.8 b/sshd.8
-index a65aae75d..f2a4cdc20 100644
+index 92842e345..a5d7f306a 100644
 --- a/sshd.8
 +++ b/sshd.8
 @@ -1024,6 +1024,31 @@ concurrently for different ports, this contains the process ID of the one
@@ -677,10 +677,10 @@ index a65aae75d..f2a4cdc20 100644
  .Xr scp 1 ,
  .Xr sftp 1 ,
 diff --git a/sshd_config.5 b/sshd_config.5
-index 26d139bd1..12a8b81c6 100644
+index aaa589957..b320104d9 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
-@@ -1355,6 +1355,7 @@ Available keywords are
+@@ -1381,6 +1381,7 @@ Available keywords are
  .Cm MaxAuthTries ,
  .Cm MaxSessions ,
  .Cm PAMServiceName ,
@@ -688,7 +688,7 @@ index 26d139bd1..12a8b81c6 100644
  .Cm PasswordAuthentication ,
  .Cm PermitEmptyPasswords ,
  .Cm PermitListen ,
-@@ -1423,12 +1424,34 @@ key exchange methods.
+@@ -1449,12 +1450,34 @@ key exchange methods.
  The default is
  .Pa /etc/moduli .
  .It Cm PAMServiceName
@@ -729,7 +729,7 @@ index 26d139bd1..12a8b81c6 100644
  .It Cm PasswordAuthentication
  Specifies whether password authentication is allowed.
  The default is
-@@ -2095,8 +2118,7 @@ If
+@@ -2141,8 +2164,7 @@ If
  is enabled, you will not be able to run
  .Xr sshd 8
  as a non-root user.
@@ -740,5 +740,5 @@ index 26d139bd1..12a8b81c6 100644
  Optionally specifies additional text to append to the SSH protocol banner
  sent by the server upon connection.
 -- 
-2.50.1
+2.44.0
 

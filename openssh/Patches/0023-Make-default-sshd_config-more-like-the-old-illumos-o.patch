@@ -1,14 +1,14 @@
-From 54cefad1adc04cd83da391be3bc65ff32e243544 Mon Sep 17 00:00:00 2001
+From c53d4119e5dc7e9289f5046cd010e3c00f2b5bb8 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 13:24:58 -0700
-Subject: [PATCH 20/32] Make default sshd_config more like the old illumos one
+Subject: [PATCH] Make default sshd_config more like the old illumos one
 
 ---
  sshd_config | 43 ++++++++++++++++++++++---------------------
  1 file changed, 22 insertions(+), 21 deletions(-)
 
 diff --git a/sshd_config b/sshd_config
-index 0f4a3a724..1c6d890df 100644
+index 57ecabb86..b8869d172 100644
 --- a/sshd_config
 +++ b/sshd_config
 @@ -10,7 +10,7 @@
@@ -20,7 +20,7 @@ index 0f4a3a724..1c6d890df 100644
  #AddressFamily any
  #ListenAddress 0.0.0.0
  #ListenAddress ::
-@@ -23,13 +23,13 @@
+@@ -24,13 +24,13 @@
  #RekeyLimit default none
  
  # Logging
@@ -37,7 +37,7 @@ index 0f4a3a724..1c6d890df 100644
  #StrictModes yes
  #MaxAuthTries 6
  #MaxSessions 10
-@@ -54,8 +54,8 @@ AuthorizedKeysFile	.ssh/authorized_keys
+@@ -55,8 +55,8 @@ AuthorizedKeysFile	.ssh/authorized_keys
  #IgnoreRhosts yes
  
  # To disable tunneled clear text passwords, change to "no" here!
@@ -48,7 +48,7 @@ index 0f4a3a724..1c6d890df 100644
  
  # Change to "no" to disable keyboard-interactive authentication.  Depending on
  # the system's configuration, this may involve passwords, challenge-response,
-@@ -72,26 +72,27 @@ AuthorizedKeysFile	.ssh/authorized_keys
+@@ -73,26 +73,27 @@ AuthorizedKeysFile	.ssh/authorized_keys
  #GSSAPIAuthentication no
  #GSSAPICleanupCredentials yes
  
@@ -92,5 +92,5 @@ index 0f4a3a724..1c6d890df 100644
  #PermitUserEnvironment no
  #Compression delayed
 -- 
-2.50.1
+2.44.0
 

@@ -1,4 +1,4 @@
-From 32364b1599144f544d1fd4b97c9e26522ac79070 Mon Sep 17 00:00:00 2001
+From 4eac4c6361a3138a6bc376505f03b08d8be4b535 Mon Sep 17 00:00:00 2001
 From: Dan McDonald <danmcd@mnx.io>
 Date: Thu, 10 Aug 2023 18:11:52 -0400
 Subject: [PATCH] SmartOS local: use sunw_ssl lib from platform
@@ -51,10 +51,10 @@ index 4471fe2d2..010de2d38 100644
 -#endif /* !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
 +#endif /* !defined(HAVE_SUNW_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
 diff --git a/configure.ac b/configure.ac
-index 0461d3164..04acc4da7 100644
+index ca0b98090..0184de2d3 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3082,14 +3082,14 @@ AC_ARG_WITH([ssl-engine],
+@@ -3088,14 +3088,14 @@ AC_ARG_WITH([ssl-engine],
  
  nocrypto_saved_LIBS="$LIBS"
  if test "x$openssl" = "xyes" ; then
@@ -73,7 +73,7 @@ index 0461d3164..04acc4da7 100644
  		AC_MSG_ERROR([*** working libcrypto not found, check config.log])
  	    ])
  	])
-@@ -3134,7 +3134,7 @@ if test "x$openssl" = "xyes" ; then
+@@ -3140,7 +3140,7 @@ if test "x$openssl" = "xyes" ; then
  	)
  
  	# Determining OpenSSL library version is version dependent.
@@ -82,7 +82,7 @@ index 0461d3164..04acc4da7 100644
  
  	# Determine OpenSSL library version
  	AC_MSG_CHECKING([OpenSSL library version])
-@@ -3292,31 +3292,31 @@ if test "x$openssl" = "xyes" ; then
+@@ -3298,31 +3298,31 @@ if test "x$openssl" = "xyes" ; then
  	AC_MSG_RESULT([$openssl_impl])
  
  	AC_CHECK_FUNCS([ \
@@ -135,7 +135,7 @@ index 0461d3164..04acc4da7 100644
  	])
  
  	if test "x$openssl_engine" = "xyes" ; then
-@@ -3366,7 +3366,7 @@ if test "x$openssl" = "xyes" ; then
+@@ -3372,7 +3372,7 @@ if test "x$openssl" = "xyes" ; then
  	)
  
  	# Check for various EVP support in OpenSSL
@@ -144,7 +144,7 @@ index 0461d3164..04acc4da7 100644
  
  	# Check complete ECC support in OpenSSL
  	AC_MSG_CHECKING([whether OpenSSL has ECC support])
-@@ -3388,11 +3388,11 @@ if test "x$openssl" = "xyes" ; then
+@@ -3394,11 +3394,11 @@ if test "x$openssl" = "xyes" ; then
  		[ AC_MSG_ERROR([libcrypto does not have required ECC support]) ]
  	)
  	# Check for EC_KEY_METHOD support for ECDSA PKCS#11
@@ -159,7 +159,7 @@ index 0461d3164..04acc4da7 100644
  	AC_MSG_CHECKING([whether OpenSSL has ED25519 support])
  	AC_LINK_IFELSE(
  		[AC_LANG_PROGRAM([[
-@@ -3405,6 +3405,11 @@ if test "x$openssl" = "xyes" ; then
+@@ -3411,6 +3411,11 @@ if test "x$openssl" = "xyes" ; then
  		]], [[
  		unsigned char buf[64];
  		memset(buf, 0, sizeof(buf));
@@ -270,5 +270,5 @@ index 0dc0794d5..6f357a784 100644
  #ifndef HAVE_EVP_CIPHER_CTX_SET_IV
  int EVP_CIPHER_CTX_set_iv(EVP_CIPHER_CTX *ctx,
 -- 
-2.50.1
+2.44.0
 

@@ -1,7 +1,7 @@
-From 2d961b40f978456d45acd09dbc60a4f727d61225 Mon Sep 17 00:00:00 2001
+From 7b806ed89eccf658ba5252381a88c8f17c0178e4 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Tue, 22 Dec 2015 17:12:50 -0800
-Subject: [PATCH 15/32] Per-session xauthfile
+Subject: [PATCH] Per-session xauthfile
 
 This patch is to fix a X11 connection failure when a user's home directory
 is read-only.
@@ -16,7 +16,7 @@ will remove this patch when we upgrade to that release.
  2 files changed, 139 insertions(+), 10 deletions(-)
 
 diff --git a/session.c b/session.c
-index fc9c9d6f8..49c0f4064 100644
+index 9125cbb83..e1455dc41 100644
 --- a/session.c
 +++ b/session.c
 @@ -59,6 +59,11 @@
@@ -43,7 +43,7 @@ index fc9c9d6f8..49c0f4064 100644
  /* import */
  extern ServerOptions options;
  extern char *__progname;
-@@ -1013,12 +1023,12 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
+@@ -1018,12 +1028,12 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
  
  	if (getenv("TZ"))
  		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
@@ -62,7 +62,7 @@ index fc9c9d6f8..49c0f4064 100644
  	if (s->term)
  		child_set_env(&env, &envsize, "TERM", s->term);
  	if (s->display)
-@@ -1957,6 +1967,11 @@ session_x11_req(struct ssh *ssh, Session *s)
+@@ -1962,6 +1972,11 @@ session_x11_req(struct ssh *ssh, Session *s)
  	int r, success;
  	u_char single_connection = 0;
  
@@ -74,7 +74,7 @@ index fc9c9d6f8..49c0f4064 100644
  	if (s->auth_proto != NULL || s->auth_data != NULL) {
  		error("session_x11_req: session %d: "
  		    "x11 forwarding already active", s->self);
-@@ -1971,19 +1986,78 @@ session_x11_req(struct ssh *ssh, Session *s)
+@@ -1976,19 +1991,78 @@ session_x11_req(struct ssh *ssh, Session *s)
  
  	s->single_connection = single_connection;
  
@@ -157,7 +157,7 @@ index fc9c9d6f8..49c0f4064 100644
  	return success;
  }
  
-@@ -2261,6 +2335,51 @@ session_pty_cleanup(Session *s)
+@@ -2266,6 +2340,51 @@ session_pty_cleanup(Session *s)
  	mm_session_pty_cleanup2(s);
  }
  
@@ -209,7 +209,7 @@ index fc9c9d6f8..49c0f4064 100644
  static char *
  sig2name(int sig)
  {
-@@ -2408,6 +2527,9 @@ session_close(struct ssh *ssh, Session *s)
+@@ -2413,6 +2532,9 @@ session_close(struct ssh *ssh, Session *s)
  	free(s->auth_display);
  	free(s->auth_data);
  	free(s->auth_proto);
@@ -219,7 +219,7 @@ index fc9c9d6f8..49c0f4064 100644
  	free(s->subsys);
  	if (s->env != NULL) {
  		for (i = 0; i < s->num_env; i++) {
-@@ -2654,6 +2776,10 @@ do_cleanup(struct ssh *ssh, Authctxt *authctxt)
+@@ -2659,6 +2781,10 @@ do_cleanup(struct ssh *ssh, Authctxt *authctxt)
  	/* remove agent socket */
  	auth_sock_cleanup_proc(authctxt->pw);
  
@@ -245,5 +245,5 @@ index 344a1ddf9..2a0cedd0b 100644
  
  	int	chanid;
 -- 
-2.50.1
+2.44.0
 

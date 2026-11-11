@@ -1,8 +1,7 @@
-From 818a8bd30a6138b19f8a094dd77d4a0e815307df Mon Sep 17 00:00:00 2001
+From f4f396e844ebfc6ef7709cbe7c70b55a0bde9917 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Thu, 15 Oct 2015 16:02:37 -0700
-Subject: [PATCH 27/32] Let us put a fallback copy of DH moduli in a system
- path
+Subject: [PATCH] Let us put a fallback copy of DH moduli in a system path
 
 Live distributions like SmartOS can't keep and update default
 config in directories like /etc/ssh very easily, so we should
@@ -15,7 +14,7 @@ that if we can't find one in the SSHKEYDIR.
  3 files changed, 34 insertions(+), 13 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index ee959d426..3dd4162ab 100644
+index 67f4c2082..d1acff00f 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -18,6 +18,7 @@ top_srcdir=@top_srcdir@
@@ -64,10 +63,10 @@ index ee959d426..3dd4162ab 100644
  host-key: ssh-keygen$(EXEEXT)
  	@if [ -z "$(DESTDIR)" ] ; then \
 diff --git a/configure.ac b/configure.ac
-index a9392a199..252c98ef5 100644
+index e1421f65f..ca0b98090 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -5648,6 +5648,21 @@ AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
+@@ -5586,6 +5586,21 @@ AC_DEFINE_UNQUOTED([SSHKEYDIR], ["$keydir"],
  	[Specify location of SSH host keys])
  AC_SUBST([keydir])
  
@@ -123,5 +122,5 @@ index b291750d8..af6fb70f9 100644
  
  static int
 -- 
-2.50.1
+2.44.0
 
