@@ -1,4 +1,4 @@
-From c5d9ca86b954a6d2e43bf1a16e6de8f9653425de Mon Sep 17 00:00:00 2001
+From ec87aae82bed7744415e1a49dc3fdeafdeeb6ee9 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 4 Sep 2015 11:04:30 -0700
 Subject: [PATCH] Accept LANG and LC_* environment variables from clients by
@@ -157,7 +157,7 @@ index 5b160ea6a..e37f3d8a4 100644
  	/* Set as a side-effect of PAMServiceName */
  	int	pam_service_per_authmethod;
 diff --git a/session.c b/session.c
-index e1455dc41..498b696ff 100644
+index 488533802..1becdfa53 100644
 --- a/session.c
 +++ b/session.c
 @@ -799,6 +799,18 @@ check_quietlogin(Session *s, const char *command)
@@ -202,10 +202,10 @@ index e1455dc41..498b696ff 100644
  
 -	if (getenv("TZ"))
 -		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
-+	child_set_env(&env, &envsize, "TZ", getenv("TZ"));
- 
- #ifdef PER_SESSION_XAUTHFILE
-         if (s->auth_file != NULL)
++	child_inherit_env(&env, &envsize, "TZ");
+ #ifdef HAVE_LOGIN_CAP
+ 	if (getenv("XDG_RUNTIME_DIR")) {
+ 		child_set_env(&env, &envsize, "XDG_RUNTIME_DIR",
 diff --git a/sshd_config b/sshd_config
 index b8869d172..3f4d6c0fd 100644
 --- a/sshd_config
