@@ -1,4 +1,4 @@
-From c765a77737c711a1394981dd29419eb3b1d2fabf Mon Sep 17 00:00:00 2001
+From 59da7356f9fc16594d02c427353bfce3774d3947 Mon Sep 17 00:00:00 2001
 From: Lexi Wilson <lexi@cooperi.net>
 Date: Fri, 10 Jul 2026 11:38:34 +1000
 Subject: [PATCH] PubKeyPlugin support
@@ -8,9 +8,9 @@ SunSSH, allowing an in-process shared library to be called
 into to check public keys for authentication.
 ---
  auth2-pubkey.c | 163 +++++++++++++++++++++++++++++++++++++++++++++++++
- servconf.c     |  13 ++++
+ servconf.c     |  14 +++++
  servconf.h     |   3 +-
- 3 files changed, 178 insertions(+), 1 deletion(-)
+ 3 files changed, 179 insertions(+), 1 deletion(-)
 
 diff --git a/auth2-pubkey.c b/auth2-pubkey.c
 index 1a4afd473..aaf297fa9 100644
@@ -220,7 +220,7 @@ index 1a4afd473..aaf297fa9 100644
  	    remote_host, conn_id, rdomain, &opts)) != 0)
  		goto out;
 diff --git a/servconf.c b/servconf.c
-index ea5d4b049..515ec776b 100644
+index a5a000b0c..a1fb92d1c 100644
 --- a/servconf.c
 +++ b/servconf.c
 @@ -2684,6 +2684,19 @@ process_server_config_line_depth(ServerOptions *options, char *line,
@@ -243,8 +243,16 @@ index ea5d4b049..515ec776b 100644
  
  	case sDeprecated:
  	case sIgnore:
+@@ -4494,6 +4507,7 @@ dump_config(ServerOptions *o)
+ 	dump_cfg_string(sHostKeyAgent, o->host_key_agent);
+ 	dump_cfg_string(sKexAlgorithms, o->kex_algorithms);
+ 	dump_cfg_string(sCASignatureAlgorithms, o->ca_sign_algorithms);
++	dump_cfg_string(sPubKeyPlugin, o->pubkey_plugin);
+ 	dump_cfg_string(sHostbasedAcceptedAlgorithms, o->hostbased_accepted_algos);
+ 	dump_cfg_string(sHostKeyAlgorithms, o->hostkeyalgorithms);
+ 	dump_cfg_string(sPubkeyAcceptedAlgorithms, o->pubkey_accepted_algos);
 diff --git a/servconf.h b/servconf.h
-index 7b08f482e..823273da0 100644
+index 9d4012935..5b160ea6a 100644
 --- a/servconf.h
 +++ b/servconf.h
 @@ -243,7 +243,8 @@ SSHCONF_STRING(sshd_session_path, SshdSessionPath, SSHCFG_GLOBAL, SSHCFG_COPY_NO

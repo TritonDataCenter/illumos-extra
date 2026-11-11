@@ -1,4 +1,4 @@
-From 94429ad46e30c33b63311503fbfcef3dfb093f81 Mon Sep 17 00:00:00 2001
+From 885f0b9297af31de4cd916e6653ef6aa5009563e Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 6 Jul 2026 16:59:27 -0400
 Subject: [PATCH] PAM enhancements for Solaris
@@ -10,11 +10,11 @@ Subject: [PATCH] PAM enhancements for Solaris
  monitor.c      |  65 +++++++++++++++++++++++++++
  monitor.h      |   3 ++
  monitor_wrap.c |  18 ++++++++
- servconf.c     |  82 ++++++++++++++++++++++++++++++++++
+ servconf.c     |  85 ++++++++++++++++++++++++++++++++++++
  servconf.h     |  19 ++++++--
  sshd.8         |  25 +++++++++++
  sshd_config.5  |  38 ++++++++++++----
- 10 files changed, 419 insertions(+), 12 deletions(-)
+ 10 files changed, 422 insertions(+), 12 deletions(-)
 
 diff --git a/auth-pam.c b/auth-pam.c
 index 75d2ff5cd..9782c3169 100644
@@ -446,7 +446,7 @@ index c828fce04..351b2daee 100644
  int
  mm_auth_password(struct ssh *ssh, char *password)
 diff --git a/servconf.c b/servconf.c
-index 9b246bebf..ea5d4b049 100644
+index 9b246bebf..a5a000b0c 100644
 --- a/servconf.c
 +++ b/servconf.c
 @@ -164,6 +164,15 @@ initialize_server_options(ServerOptions *options)
@@ -598,6 +598,16 @@ index 9b246bebf..ea5d4b049 100644
  
  #undef SSHCONF_INT
  #undef SSHCONF_INTFLAG
+@@ -4325,6 +4407,9 @@ dump_config(ServerOptions *o)
+ #ifdef USE_PAM
+ 	dump_cfg_fmtint(sUsePAM, o->use_pam);
+ 	dump_cfg_string(sPAMServiceName, o->pam_service_name);
++#ifdef PAM_ENHANCEMENT
++	dump_cfg_string(sPAMServicePrefix, o->pam_service_prefix);
++#endif
+ #endif
+ 	dump_cfg_int(sLoginGraceTime, o->login_grace_time);
+ 	dump_cfg_int(sX11DisplayOffset, o->x11_display_offset);
 diff --git a/servconf.h b/servconf.h
 index 90ff81cfa..77b036000 100644
 --- a/servconf.h
