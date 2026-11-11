@@ -1,4 +1,4 @@
-From b095fbd44e3745fec3b9350e48133703fdbdd227 Mon Sep 17 00:00:00 2001
+From c5d9ca86b954a6d2e43bf1a16e6de8f9653425de Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 4 Sep 2015 11:04:30 -0700
 Subject: [PATCH] Accept LANG and LC_* environment variables from clients by
@@ -136,7 +136,7 @@ index 7cbe39039..7fc335747 100644
  #undef free_pamserviceperauthmethod
  #endif
 diff --git a/servconf.h b/servconf.h
-index 823273da0..4b81f4f16 100644
+index 5b160ea6a..e37f3d8a4 100644
 --- a/servconf.h
 +++ b/servconf.h
 @@ -209,6 +209,7 @@ SSHCONF_STRARRAY(deny_users, num_deny_users, DenyUsers, SSHCFG_ALL, SSHCFG_COPY_
@@ -147,7 +147,7 @@ index 823273da0..4b81f4f16 100644
  SSHCONF_STRARRAY(setenv, num_setenv, SetEnv, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
  SSHCONF_INT(per_source_max_startups, PerSourceMaxStartups, SSHCFG_GLOBAL, NULL, INT_MAX, SSHCFG_COPY_NONE) \
  SSHCONF_STRING(per_source_penalty_exempt, PerSourcePenaltyExemptList, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
-@@ -442,6 +443,8 @@ typedef struct ServerOptions {
+@@ -441,6 +442,8 @@ typedef struct ServerOptions {
  	int	max_pubkey_ok;
  	/* Passed by config but not keyword for this */
  	uint64_t timing_secret;
@@ -222,7 +222,7 @@ index b8869d172..3f4d6c0fd 100644
  
  #LoginGraceTime 2m
 diff --git a/sshd_config.5 b/sshd_config.5
-index b9db6abe0..d309b381c 100644
+index 1c37f5ea8..6253763f5 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
 @@ -86,7 +86,20 @@ directives.

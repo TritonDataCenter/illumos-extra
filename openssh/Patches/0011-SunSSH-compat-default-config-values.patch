@@ -1,4 +1,4 @@
-From 6ba64a67023e8f772873161f823c281f87f0cfb8 Mon Sep 17 00:00:00 2001
+From c24ee62a2b48b82eeab297217b516a8c7570f82f Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:22 -0700
 Subject: [PATCH] SunSSH compat default config values
@@ -7,21 +7,20 @@ Some options in OpenSSH have different default values from those in SunSSH.
 To make the transition smoother from SunSSH to OpenSSH, we change default
 values for the following options to be as same as those in SunSSH.
 
-  GSSAPIAuthentication (for both server and client)
   X11Forwarding        (for server)
   ForwardX11Trusted    (for client)
 
 This is for Solaris only, we will not contribute back these changes to the
 upstream.
 ---
- readconf.c    | 8 ++++++++
- servconf.h    | 8 +++++---
- ssh_config.5  | 7 +++++--
- sshd_config.5 | 8 ++++----
- 4 files changed, 22 insertions(+), 9 deletions(-)
+ readconf.c    | 4 ++++
+ servconf.h    | 3 ++-
+ ssh_config.5  | 3 +++
+ sshd_config.5 | 4 ++--
+ 4 files changed, 11 insertions(+), 3 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
-index 1e7697ef3..575411639 100644
+index 1e7697ef3..f51428f53 100644
 --- a/readconf.c
 +++ b/readconf.c
 @@ -2913,7 +2913,11 @@ fill_default_options(Options * options)
@@ -36,20 +35,8 @@ index 1e7697ef3..575411639 100644
  	if (options->forward_x11_timeout == -1)
  		options->forward_x11_timeout = 1200;
  	/*
-@@ -2940,7 +2944,11 @@ fill_default_options(Options * options)
- 	if (options->pubkey_authentication == -1)
- 		options->pubkey_authentication = SSH_PUBKEY_AUTH_ALL;
- 	if (options->gss_authentication == -1)
-+#ifdef OPTION_DEFAULT_VALUE
-+		options->gss_authentication = 1;
-+#else
- 		options->gss_authentication = 0;
-+#endif
- 	if (options->gss_deleg_creds == -1)
- 		options->gss_deleg_creds = 0;
- 	if (options->password_authentication == -1)
 diff --git a/servconf.h b/servconf.h
-index 77b036000..b99c328bf 100644
+index 77b036000..85fc6b1f0 100644
 --- a/servconf.h
 +++ b/servconf.h
 @@ -176,7 +176,8 @@ SSHCONF_INT(permit_root_login, PermitRootLogin, SSHCFG_ALL, multistate_permitroo
@@ -62,25 +49,8 @@ index 77b036000..b99c328bf 100644
  SSHCONF_INT(x11_display_offset, X11DisplayOffset, SSHCFG_ALL, NULL, SSHD_DEFAULT_X11_DISPLAY_OFFSET, SSHCFG_COPY_MATCH) \
  SSHCONF_INTFLAG(x11_use_localhost, X11UseLocalhost, SSHCFG_ALL, 1, SSHCFG_COPY_MATCH) \
  SSHCONF_STRING(xauth_location, XAuthLocation, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
-@@ -331,13 +332,14 @@ SSHCONF_UNSUPPORTED_INT(kerberos_get_afs_token, KerberosGetAFSToken, SSHCFG_GLOB
- #ifdef GSSAPI
- #ifdef USE_GSS_STORE_CRED
- #define SSHD_CONFIG_ENTRIES_GSS \
--SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
-+SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 1, SSHCFG_COPY_MATCH) \
- SSHCONF_UNSUPPORTED_INT(gss_cleanup_creds, GSSAPICleanupCredentials, SSHCFG_GLOBAL) \
- SSHCONF_INTFLAG(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
- SSHCONF_INTFLAG(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
- #else	/* USE_GSS_STORE_CRED */
- #define SSHD_CONFIG_ENTRIES_GSS \
--SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
-+/* XXX SmartOS - can't easily put OPTION_DEFAULT_VALUE CPP check here. */  \
-+SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 1, SSHCFG_COPY_MATCH) \
- SSHCONF_INTFLAG(gss_cleanup_creds, GSSAPICleanupCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
- SSHCONF_INTFLAG(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
- SSHCONF_INTFLAG(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
 diff --git a/ssh_config.5 b/ssh_config.5
-index 1b3900cd0..9dc0b1e4f 100644
+index 1b3900cd0..e7db41c11 100644
 --- a/ssh_config.5
 +++ b/ssh_config.5
 @@ -994,6 +994,9 @@ Furthermore, the
@@ -93,32 +63,10 @@ index 1b3900cd0..9dc0b1e4f 100644
  See the X11 SECURITY extension specification for full details on
  the restrictions imposed on untrusted clients.
  .It Cm GatewayPorts
-@@ -1020,8 +1023,8 @@ The default is
- .Pa /etc/ssh/ssh_known_hosts2 .
- .It Cm GSSAPIAuthentication
- Specifies whether user authentication based on GSSAPI is allowed.
--The default is
--.Cm no .
-+The default on Solaris is
-+.Dq yes .
- .It Cm GSSAPIDelegateCredentials
- Forward (delegate) credentials to the server.
- The default is
 diff --git a/sshd_config.5 b/sshd_config.5
-index b320104d9..b3d992cb8 100644
+index b320104d9..9cb40c861 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
-@@ -778,8 +778,8 @@ The default is
- .Cm no .
- .It Cm GSSAPIAuthentication
- Specifies whether user authentication based on GSSAPI is allowed.
--The default is
--.Cm no .
-+The default on Solaris is
-+.Cm yes .
- .It Cm GSSAPICleanupCredentials
- Specifies whether to automatically destroy the user's credentials cache
- on logout.
 @@ -2196,8 +2196,8 @@ The argument must be
  .Cm yes
  or
