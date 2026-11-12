@@ -1,4 +1,4 @@
-From c24ee62a2b48b82eeab297217b516a8c7570f82f Mon Sep 17 00:00:00 2001
+From ca8d41995049206078b916e2a835c7e61046159c Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:22 -0700
 Subject: [PATCH] SunSSH compat default config values
@@ -79,5 +79,5 @@ index b320104d9..9cb40c861 100644
  When X11 forwarding is enabled, there may be additional exposure to
  the server and to client displays if the
 -- 
-2.44.0
+2.50.1
 

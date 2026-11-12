@@ -1,4 +1,4 @@
-From 9ced79aeda9addd72d22184125b6e1cfa0e49b64 Mon Sep 17 00:00:00 2001
+From 171c5a0e3686d184d97ad7138dfb99507be891e6 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:19 -0700
 Subject: [PATCH] PAM Support
@@ -48,5 +48,5 @@ index f31668549..e12874d37 100644
  #else
  #define SSHD_CONFIG_ENTRIES_PAM \
 -- 
-2.44.0
+2.50.1
 

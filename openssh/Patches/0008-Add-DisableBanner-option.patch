@@ -1,7 +1,7 @@
-From b2a8911365eaea6e7f972df9fb8eb73a0bd18683 Mon Sep 17 00:00:00 2001
+From 0f136001a68d408d564667ff34bc1bb8d216b238 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:00 -0700
-Subject: [PATCH] Add DisableBanner option
+Subject: [PATCH 07/34] Add DisableBanner option
 
 ---
  readconf.c    | 31 +++++++++++++++++++++++++++++++
@@ -11,7 +11,7 @@ Subject: [PATCH] Add DisableBanner option
  4 files changed, 75 insertions(+), 4 deletions(-)
 
 diff --git a/readconf.c b/readconf.c
-index d9e732a97..1e7697ef3 100644
+index 20fb8588b..78cfa70b5 100644
 --- a/readconf.c
 +++ b/readconf.c
 @@ -156,6 +156,9 @@ typedef enum {
@@ -34,7 +34,7 @@ index d9e732a97..1e7697ef3 100644
  	{ "tunnel", oTunnel },
  	{ "tunneldevice", oTunnelDevice },
  	{ "localcommand", oLocalCommand },
-@@ -1143,6 +1149,17 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
+@@ -1134,6 +1140,17 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
  	return -1;
  }
  
@@ -52,7 +52,7 @@ index d9e732a97..1e7697ef3 100644
  /*
   * Processes a single option line as used in the configuration files. This
   * only sets those values that have not already been set.
-@@ -2477,6 +2494,13 @@ parse_pubkey_algos:
+@@ -2465,6 +2482,13 @@ parse_pubkey_algos:
  		intptr = &options->enable_escape_commandline;
  		goto parse_flag;
  
@@ -66,7 +66,7 @@ index d9e732a97..1e7697ef3 100644
  	case oRequiredRSASize:
  		intptr = &options->required_rsa_size;
  		goto parse_int;
-@@ -2832,6 +2856,9 @@ initialize_options(Options * options)
+@@ -2820,6 +2844,9 @@ initialize_options(Options * options)
  	options->stdin_null = -1;
  	options->fork_after_authentication = -1;
  	options->proxy_use_fdpass = -1;
@@ -76,7 +76,7 @@ index d9e732a97..1e7697ef3 100644
  	options->ignored_unknown = NULL;
  	options->num_canonical_domains = 0;
  	options->num_permitted_cnames = 0;
-@@ -3038,6 +3065,10 @@ fill_default_options(Options * options)
+@@ -3026,6 +3053,10 @@ fill_default_options(Options * options)
  		options->canonicalize_fallback_local = 1;
  	if (options->canonicalize_hostname == -1)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
@@ -88,7 +88,7 @@ index d9e732a97..1e7697ef3 100644
  		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
  #ifdef ENABLE_SK_INTERNAL
 diff --git a/readconf.h b/readconf.h
-index 3a7dfc1ff..437f3a182 100644
+index dbcb41725..b05c3613f 100644
 --- a/readconf.h
 +++ b/readconf.h
 @@ -190,6 +190,9 @@ typedef struct {
@@ -101,7 +101,7 @@ index 3a7dfc1ff..437f3a182 100644
  }       Options;
  
  #define SSH_PUBKEY_AUTH_NO	0x00
-@@ -242,6 +245,13 @@ typedef struct {
+@@ -238,6 +241,13 @@ typedef struct {
  const char *kex_default_pk_alg(void);
  char	*ssh_connection_hash(const char *thishost, const char *host,
      const char *portstr, const char *user, const char *jump_host);
@@ -116,10 +116,10 @@ index 3a7dfc1ff..437f3a182 100644
  int      fill_default_options(Options *);
  void	 fill_default_options_for_canonicalization(Options *);
 diff --git a/ssh_config.5 b/ssh_config.5
-index e65bc1252..1b3900cd0 100644
+index b459b0449..895e71708 100644
 --- a/ssh_config.5
 +++ b/ssh_config.5
-@@ -786,6 +786,14 @@ If set to a time in seconds, or a time in any of the formats documented in
+@@ -748,6 +748,14 @@ If set to a time in seconds, or a time in any of the formats documented in
  then the backgrounded master connection will automatically terminate
  after it has remained idle (with no client connections) for the
  specified time.
@@ -135,7 +135,7 @@ index e65bc1252..1b3900cd0 100644
  Specifies that a TCP port on the local machine be forwarded
  over the secure channel, and the application
 diff --git a/sshconnect2.c b/sshconnect2.c
-index 265ebfccc..f6ed80643 100644
+index 478a9a52f..5cdd4de1c 100644
 --- a/sshconnect2.c
 +++ b/sshconnect2.c
 @@ -78,6 +78,10 @@
@@ -189,5 +189,5 @@ index 265ebfccc..f6ed80643 100644
   out:
  	free(msg);
 -- 
-2.44.0
+2.50.1
 

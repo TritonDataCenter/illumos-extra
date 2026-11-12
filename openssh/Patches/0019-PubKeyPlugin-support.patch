@@ -1,4 +1,4 @@
-From e2a3196efa3e8671053887a3816148da8b35673a Mon Sep 17 00:00:00 2001
+From 8da8b165fd1d539e19516f05571b4b31f95eaf08 Mon Sep 17 00:00:00 2001
 From: Lexi Wilson <lexi@cooperi.net>
 Date: Fri, 10 Jul 2026 11:38:34 +1000
 Subject: [PATCH] PubKeyPlugin support
@@ -220,10 +220,10 @@ index 1a4afd473..aaf297fa9 100644
  	    remote_host, conn_id, rdomain, &opts)) != 0)
  		goto out;
 diff --git a/servconf.c b/servconf.c
-index 590faf56c..98f949141 100644
+index a5a000b0c..a1fb92d1c 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -2685,6 +2685,19 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2684,6 +2684,19 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  		intptr = &options->warn_weak_crypto;
  		multistate_ptr = multistate_warnweakcrypto;
  		goto parse_multistate;
@@ -243,7 +243,7 @@ index 590faf56c..98f949141 100644
  
  	case sDeprecated:
  	case sIgnore:
-@@ -4500,6 +4513,7 @@ dump_config(ServerOptions *o)
+@@ -4494,6 +4507,7 @@ dump_config(ServerOptions *o)
  	dump_cfg_string(sHostKeyAgent, o->host_key_agent);
  	dump_cfg_string(sKexAlgorithms, o->kex_algorithms);
  	dump_cfg_string(sCASignatureAlgorithms, o->ca_sign_algorithms);
@@ -266,5 +266,5 @@ index 9d4012935..5b160ea6a 100644
  #define SSHD_CONFIG_ENTRIES_LEGACY \
  SSHCONF_DEPRECATE(ServerKeyBits, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
 -- 
-2.44.0
+2.54.0
 

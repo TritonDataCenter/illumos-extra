@@ -1,4 +1,4 @@
-From 8c5821db8173360e52f6c1b2ebea2a4bdedeaeee Mon Sep 17 00:00:00 2001
+From 5d0eb18eeb87b639b87756376238d0e1bbe8ef74 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:34 -0700
 Subject: [PATCH] GSS store creds for illumos
@@ -226,5 +226,5 @@ index 1af9bcf4c..e7a3cf9ed 100644
  #endif
  #ifdef USE_PAM
 -- 
-2.44.0
+2.50.1
 

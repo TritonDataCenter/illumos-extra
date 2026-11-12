@@ -1,4 +1,4 @@
-From ce962a1e5ca74d251ad3b658ab654ddf649d5578 Mon Sep 17 00:00:00 2001
+From b6018f8eb33c53c6481d79e104e4c88febb9a0f5 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 6 Jul 2026 16:59:27 -0400
 Subject: [PATCH] PAM enhancements for Solaris
@@ -861,5 +861,5 @@ index aaa589957..b320104d9 100644
  Optionally specifies additional text to append to the SSH protocol banner
  sent by the server upon connection.
 -- 
-2.44.0
+2.50.1
 

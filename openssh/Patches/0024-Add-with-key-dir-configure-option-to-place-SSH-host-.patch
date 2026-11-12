@@ -1,7 +1,8 @@
-From 79af8aa4e893ee0b96abcb20e2858c1f30c3def9 Mon Sep 17 00:00:00 2001
+From c633f7a2e0c5821020bd45ae4bcd4d3bf97ae5ba Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 7 Aug 2015 13:32:53 -0700
-Subject: [PATCH] Add --with-key-dir configure option to place SSH host keys
+Subject: [PATCH 21/32] Add --with-key-dir configure option to place SSH host
+ keys
 
 ---
  Makefile.in  | 10 ++++++----
@@ -121,5 +122,5 @@ index 8713153dc..ab914f7c5 100644
  #ifndef _PATH_SSH_PROGRAM
  #define _PATH_SSH_PROGRAM		"/usr/bin/ssh"
 -- 
-2.44.0
+2.50.1
 

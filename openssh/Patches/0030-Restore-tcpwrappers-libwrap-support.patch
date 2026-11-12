@@ -1,7 +1,7 @@
-From 38b25cdb7e3619493322ade1f9065126652e4c6a Mon Sep 17 00:00:00 2001
+From ec878d2713d34bf5d4a8cb349f271ddabd15328c Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 16 Sep 2015 10:54:13 -0700
-Subject: [PATCH] Restore tcpwrappers/libwrap support
+Subject: [PATCH 26/32] Restore tcpwrappers/libwrap support
 
 This reverts commit f9696566fb41320820f3b257ab564fa321bb3751
 and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
@@ -12,10 +12,10 @@ and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
  3 files changed, 93 insertions(+)
 
 diff --git a/configure.ac b/configure.ac
-index 167eacf4a..e1421f65f 100644
+index 4bca047aa..a9392a199 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1841,6 +1841,62 @@ else
+@@ -1836,6 +1836,62 @@ else
  	AC_MSG_RESULT([no])
  fi
  
@@ -78,7 +78,7 @@ index 167eacf4a..e1421f65f 100644
  # Check whether user wants to use ldns
  LDNS_MSG="no"
  AC_ARG_WITH(ldns,
-@@ -5887,6 +5943,7 @@ echo "                       PAM support: $PAM_MSG"
+@@ -5949,6 +6005,7 @@ echo "                       PAM support: $PAM_MSG"
  echo "                   OSF SIA support: $SIA_MSG"
  echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
@@ -87,7 +87,7 @@ index 167eacf4a..e1421f65f 100644
  echo "                   libldns support: $LDNS_MSG"
  echo "  Solaris process contract support: $SPC_MSG"
 diff --git a/sshd-session.c b/sshd-session.c
-index 63b4ec787..4fb43d442 100644
+index 9b28f9178..c3da96a25 100644
 --- a/sshd-session.c
 +++ b/sshd-session.c
 @@ -96,6 +96,17 @@
@@ -108,7 +108,7 @@ index 63b4ec787..4fb43d442 100644
  /* Re-exec fds */
  #define REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
  #define REEXEC_CONFIG_PASS_FD		(STDERR_FILENO + 2)
-@@ -1175,6 +1186,24 @@ main(int ac, char **av)
+@@ -1188,6 +1199,24 @@ main(int ac, char **av)
  #ifdef SSH_AUDIT_EVENTS
  	audit_connection_from(ssh, remote_ip, remote_port);
  #endif
@@ -134,10 +134,10 @@ index 63b4ec787..4fb43d442 100644
  	rdomain = ssh_packet_rdomain_in(ssh);
  
 diff --git a/sshd.8 b/sshd.8
-index a5d7f306a..b589a52de 100644
+index 5656c0da5..a8612f1a6 100644
 --- a/sshd.8
 +++ b/sshd.8
-@@ -929,6 +929,12 @@ the user's home directory becomes accessible.
+@@ -925,6 +925,12 @@ the user's home directory becomes accessible.
  This file should be writable only by the user, and need not be
  readable by anyone else.
  .Pp
@@ -150,7 +150,7 @@ index a5d7f306a..b589a52de 100644
  .It Pa /etc/hosts.equiv
  This file is for host-based authentication (see
  .Xr ssh 1 ) .
-@@ -1058,6 +1064,7 @@ Each SSHv2 userauth type has its own PAM service name:
+@@ -1052,6 +1058,7 @@ Each SSHv2 userauth type has its own PAM service name:
  .Xr ssh-keygen 1 ,
  .Xr ssh-keyscan 1 ,
  .Xr chroot 2 ,
@@ -159,5 +159,5 @@ index a5d7f306a..b589a52de 100644
  .Xr moduli 5 ,
  .Xr sshd_config 5 ,
 -- 
-2.44.0
+2.50.1
 
