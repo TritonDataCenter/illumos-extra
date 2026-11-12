@@ -1,26 +1,26 @@
-From 17c79b1f4ce05a57b0f4fb4987639ea96523bc07 Mon Sep 17 00:00:00 2001
+From acf79428091b63aeddd6f5545477d9d599ac9598 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 6 Jul 2026 16:59:27 -0400
 Subject: [PATCH] PAM enhancements for Solaris
 
 ---
- auth-pam.c     | 116 +++++++++++++++++++++++++++++++++++++++++++++++++
+ auth-pam.c     | 113 +++++++++++++++++++++++++++++++++++++++++++++++++
  auth.h         |   3 ++
- auth2.c        |  62 +++++++++++++++++++++++++-
- monitor.c      |  65 +++++++++++++++++++++++++++
+ auth2.c        |  62 ++++++++++++++++++++++++++-
+ monitor.c      |  65 ++++++++++++++++++++++++++++
  monitor.h      |   3 ++
  monitor_wrap.c |  18 ++++++++
- servconf.c     |  91 ++++++++++++++++++++++++++++++++++++++
- servconf.h     |  19 ++++++--
+ servconf.c     |  91 +++++++++++++++++++++++++++++++++++++++
+ servconf.h     |  19 +++++++--
  sshd.8         |  25 +++++++++++
- sshd_config.5  |  38 ++++++++++++----
- 10 files changed, 428 insertions(+), 12 deletions(-)
+ sshd_config.5  |  38 +++++++++++++----
+ 10 files changed, 425 insertions(+), 12 deletions(-)
 
 diff --git a/auth-pam.c b/auth-pam.c
-index 75d2ff5cd..9782c3169 100644
+index 75d2ff5cd..59c2fda36 100644
 --- a/auth-pam.c
 +++ b/auth-pam.c
-@@ -699,14 +699,83 @@ sshpam_cleanup(void)
+@@ -699,14 +699,80 @@ sshpam_cleanup(void)
  	sshpam_initial_user = NULL;
  }
  
@@ -52,26 +52,21 @@ index 75d2ff5cd..9782c3169 100644
 +	if (strcmp(method_name, "none") == 0) {
 +		snprintf(svcname, BUFSIZ, "%s-none",
 +		    options.pam_service_prefix);
-+	}
-+	if (strcmp(method_name, "password") == 0) {
++	} else if (strcmp(method_name, "password") == 0) {
 +		snprintf(svcname, BUFSIZ, "%s-password",
 +		    options.pam_service_prefix);
-+	}
-+	if (strcmp(method_name, "keyboard-interactive") == 0) {
++	} else if (strcmp(method_name, "keyboard-interactive") == 0) {
 +		/* "keyboard-interactive" is too long, shorten it */
 +		snprintf(svcname, BUFSIZ, "%s-kbdint",
 +		    options.pam_service_prefix);
-+	}
-+	if (strcmp(method_name, "publickey") == 0) {
++	} else if (strcmp(method_name, "publickey") == 0) {
 +		/* "publickey" is too long, shorten it */
 +		snprintf(svcname, BUFSIZ, "%s-pubkey",
 +		    options.pam_service_prefix);
-+	}
-+	if (strcmp(method_name, "hostbased") == 0) {
++	} else if (strcmp(method_name, "hostbased") == 0) {
 +		snprintf(svcname, BUFSIZ, "%s-hostbased",
 +		    options.pam_service_prefix);
-+	}
-+	if (strncmp(method_name, "gssapi-", 7) == 0) {
++	} else if (strncmp(method_name, "gssapi-", 7) == 0) {
 +		/*
 +		 * Although OpenSSH only supports "gssapi-with-mic"
 +		 * for now. We will still map any userauth method
@@ -79,6 +74,8 @@ index 75d2ff5cd..9782c3169 100644
 +		 */
 +		snprintf(svcname, BUFSIZ, "%s-gssapi",
 +		    options.pam_service_prefix);
++	} else {
++		fatal("Userauth method %s has no PAM service", method_name);
 +	}
 +	return svcname;
 +}
@@ -104,7 +101,7 @@ index 75d2ff5cd..9782c3169 100644
  #if defined(PAM_SUN_CODEBASE) && defined(PAM_MAX_RESP_SIZE)
  	/* Protect buggy PAM implementations from excessively long usernames */
  	if (strlen(user) >= PAM_MAX_RESP_SIZE)
-@@ -716,15 +785,62 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
+@@ -716,15 +782,62 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
  	if (sshpam_handle == NULL && ssh == NULL)
  		fatal("%s: called initially with no packet context", __func__);
  	if (sshpam_handle != NULL) {
@@ -182,7 +179,7 @@ index 17227cffb..df8fd613c 100644
  
  /*
 diff --git a/auth2.c b/auth2.c
-index 2da7a4da9..d219e17cd 100644
+index 2da7a4da9..28a620f3c 100644
 --- a/auth2.c
 +++ b/auth2.c
 @@ -313,9 +313,17 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
@@ -214,8 +211,8 @@ index 2da7a4da9..d219e17cd 100644
 +			extern void mm_inform_authmethod(char *);
 +			if (authctxt->authmethod_name != NULL)
 +				free(authctxt->authmethod_name);
-+			authctxt->authmethod_name = xstrdup(method);
-+			mm_inform_authmethod(method);
++			authctxt->authmethod_name = xstrdup(m->cfg->name);
++			mm_inform_authmethod(authctxt->authmethod_name);
 +			mm_start_pam(ssh);
 +		}
 +#endif
