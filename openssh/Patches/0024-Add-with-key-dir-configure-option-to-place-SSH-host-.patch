@@ -11,7 +11,7 @@ Subject: [PATCH 21/32] Add --with-key-dir configure option to place SSH host
  3 files changed, 35 insertions(+), 9 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index b5468bed8..ee959d426 100644
+index 9f4226bf2..67f4c2082 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -17,6 +17,7 @@ srcdir=@srcdir@
@@ -46,12 +46,12 @@ index b5468bed8..ee959d426 100644
  install-sysconf:
  	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
 diff --git a/configure.ac b/configure.ac
-index 83a61e4a4..598b29202 100644
+index 842b2814b..4c509457f 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -5592,6 +5592,21 @@ AC_ARG_ENABLE([fd-passing],
- 	]
- )
+@@ -5530,6 +5530,21 @@ AC_DEFINE_UNQUOTED([_PATH_SSH_PIDDIR], ["$piddir"],
+ 	[Specify location of ssh.pid])
+ AC_SUBST([piddir])
  
 +keydir=$sysconfdir
 +AC_ARG_WITH([key-dir],
@@ -71,7 +71,7 @@ index 83a61e4a4..598b29202 100644
  dnl allow user to disable some login recording features
  AC_ARG_ENABLE([lastlog],
  	[  --disable-lastlog       disable use of lastlog even if detected [no]],
-@@ -5918,12 +5933,14 @@ G=`eval echo ${piddir}` ; G=`eval echo ${G}`
+@@ -5856,12 +5871,14 @@ G=`eval echo ${piddir}` ; G=`eval echo ${G}`
  H=`eval echo ${PRIVSEP_PATH}` ; H=`eval echo ${H}`
  I=`eval echo ${user_path}` ; I=`eval echo ${I}`
  J=`eval echo ${superuser_path}` ; J=`eval echo ${J}`
@@ -87,7 +87,7 @@ index 83a61e4a4..598b29202 100644
  echo "                      Manual pages: $F"
  echo "                          PID file: $G"
 diff --git a/pathnames.h b/pathnames.h
-index 2f0b9f4f6..9df854a32 100644
+index 8713153dc..ab914f7c5 100644
 --- a/pathnames.h
 +++ b/pathnames.h
 @@ -22,6 +22,10 @@

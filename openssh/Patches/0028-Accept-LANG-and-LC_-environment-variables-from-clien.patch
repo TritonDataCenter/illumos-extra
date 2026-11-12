@@ -15,11 +15,11 @@ behaviour (at least the parts that are most commonly used).
  5 files changed, 102 insertions(+), 3 deletions(-)
 
 diff --git a/servconf.c b/servconf.c
-index 15ec5007d..ba8b96024 100644
+index 7cbe39039..7fc335747 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -162,6 +162,8 @@ initialize_server_options(ServerOptions *options)
- 	options->subsystem_args = NULL;
+@@ -165,6 +165,8 @@ initialize_server_options(ServerOptions *options)
+ 	options->max_pubkey_ok = -1;
  #define init_timingsecret(options) \
  	options->timing_secret = 0;
 +#define init_defaultacceptenv(options) \
@@ -27,7 +27,7 @@ index 15ec5007d..ba8b96024 100644
  #ifdef PAM_ENHANCEMENT
  /*
   * Each userauth method will have its own PAM service by default. However,
-@@ -190,6 +192,7 @@ initialize_server_options(ServerOptions *options)
+@@ -193,6 +195,7 @@ initialize_server_options(ServerOptions *options)
  #undef init_rekeylimit
  #undef init_subsystem
  #undef init_timingsecret
@@ -35,7 +35,7 @@ index 15ec5007d..ba8b96024 100644
  #ifdef PAM_ENHANCEMENT
  #undef init_pamserviceperauthmethod
  #endif
-@@ -469,6 +472,32 @@ fill_default_server_options(ServerOptions *options)
+@@ -482,6 +485,32 @@ fill_default_server_options(ServerOptions *options)
  		    &options->num_authkeys_files,
  		    _PATH_SSH_USER_PERMITTED_KEYS2);
  	}
@@ -68,7 +68,7 @@ index 15ec5007d..ba8b96024 100644
  	if (options->ip_qos_interactive == -1)
  		options->ip_qos_interactive = IPTOS_DSCP_EF;
  	if (options->ip_qos_bulk == -1)
-@@ -2173,9 +2202,12 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -2244,9 +2273,12 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  			if (*arg == '\0' || strchr(arg, '=') != NULL)
  				fatal("%s line %d: Invalid environment name.",
  				    filename, linenum);
@@ -81,7 +81,7 @@ index 15ec5007d..ba8b96024 100644
  			opt_array_append(filename, linenum, keyword,
  			    &options->accept_env, &options->num_accept_env,
  			    arg);
-@@ -3204,6 +3236,18 @@ serialise_timingsecret(const ServerOptions *options, struct sshbuf *buf)
+@@ -3293,6 +3325,18 @@ serialise_timingsecret(const ServerOptions *options, struct sshbuf *buf)
  	return 0;
  }
  
@@ -100,7 +100,7 @@ index 15ec5007d..ba8b96024 100644
  #ifdef PAM_ENHANCEMENT
  static int
  serialise_pamserviceperauthmethod(const ServerOptions *options,
-@@ -3754,6 +3798,18 @@ deserialise_timingsecret(ServerOptions *options, struct sshbuf *buf)
+@@ -3856,6 +3900,18 @@ deserialise_timingsecret(ServerOptions *options, struct sshbuf *buf)
  	return 0;
  }
  
@@ -119,15 +119,15 @@ index 15ec5007d..ba8b96024 100644
  #ifdef PAM_ENHANCEMENT
  static int
  deserialise_pamserviceperauthmethod(ServerOptions *options,
-@@ -3933,6 +3989,7 @@ free_server_options(ServerOptions *options)
- #define free_persourcepenalties(options)
+@@ -4036,6 +4092,7 @@ free_server_options(ServerOptions *options)
  #define free_rekeylimit(options)
+ #define free_pubkey_auth_options(options)
  #define free_timingsecret(options)
 +#define free_defaultacceptenv(options)
  #ifdef PAM_ENHANCEMENT
  #define free_pamserviceperauthmethod(options)
  #endif
-@@ -3951,6 +4008,7 @@ free_server_options(ServerOptions *options)
+@@ -4054,6 +4111,7 @@ free_server_options(ServerOptions *options)
  #undef free_persourcepenalties
  #undef free_rekeylimit
  #undef free_timingsecret
@@ -136,10 +136,10 @@ index 15ec5007d..ba8b96024 100644
  #undef free_pamserviceperauthmethod
  #endif
 diff --git a/servconf.h b/servconf.h
-index 67c24d909..99c06f163 100644
+index 5b160ea6a..e37f3d8a4 100644
 --- a/servconf.h
 +++ b/servconf.h
-@@ -204,6 +204,7 @@ SSHCONF_STRARRAY(deny_users, num_deny_users, DenyUsers, SSHCFG_ALL, SSHCFG_COPY_
+@@ -209,6 +209,7 @@ SSHCONF_STRARRAY(deny_users, num_deny_users, DenyUsers, SSHCFG_ALL, SSHCFG_COPY_
  SSHCONF_STRARRAY(allow_groups, num_allow_groups, AllowGroups, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
  SSHCONF_STRARRAY(deny_groups, num_deny_groups, DenyGroups, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
  SSHCONF_STRARRAY(accept_env, num_accept_env, AcceptEnv, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
@@ -147,8 +147,8 @@ index 67c24d909..99c06f163 100644
  SSHCONF_STRARRAY(setenv, num_setenv, SetEnv, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
  SSHCONF_INT(per_source_max_startups, PerSourceMaxStartups, SSHCFG_GLOBAL, NULL, INT_MAX, SSHCFG_COPY_NONE) \
  SSHCONF_STRING(per_source_penalty_exempt, PerSourcePenaltyExemptList, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
-@@ -412,6 +413,8 @@ typedef struct ServerOptions {
- 	int	rekey_interval;
+@@ -441,6 +442,8 @@ typedef struct ServerOptions {
+ 	int	max_pubkey_ok;
  	/* Passed by config but not keyword for this */
  	uint64_t timing_secret;
 +	/* Cleared as a side-effect of AcceptEnv */
@@ -157,10 +157,10 @@ index 67c24d909..99c06f163 100644
  	/* Set as a side-effect of PAMServiceName */
  	int	pam_service_per_authmethod;
 diff --git a/session.c b/session.c
-index 49c0f4064..cd90f5dcb 100644
+index 488533802..1becdfa53 100644
 --- a/session.c
 +++ b/session.c
-@@ -794,6 +794,18 @@ check_quietlogin(Session *s, const char *command)
+@@ -799,6 +799,18 @@ check_quietlogin(Session *s, const char *command)
  	return 0;
  }
  
@@ -179,7 +179,7 @@ index 49c0f4064..cd90f5dcb 100644
  /*
   * Reads environment variables from the given file and adds/overrides them
   * into the environment.  If the file does not exist, this does nothing.
-@@ -978,6 +990,16 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
+@@ -983,6 +995,16 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
  	ssh_gssapi_do_child(&env, &envsize);
  #endif
  
@@ -196,21 +196,21 @@ index 49c0f4064..cd90f5dcb 100644
  	/* Set basic environment. */
  	for (i = 0; i < s->num_env; i++)
  		child_set_env(&env, &envsize, s->env[i].name, s->env[i].val);
-@@ -1021,8 +1043,7 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
+@@ -1026,8 +1048,7 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
  	/* Normal systems set SHELL by default. */
  	child_set_env(&env, &envsize, "SHELL", shell);
  
 -	if (getenv("TZ"))
 -		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
-+	child_set_env(&env, &envsize, "TZ", getenv("TZ"));
- 
- #ifdef PER_SESSION_XAUTHFILE
-         if (s->auth_file != NULL)
++	child_inherit_env(&env, &envsize, "TZ");
+ #ifdef HAVE_LOGIN_CAP
+ 	if (getenv("XDG_RUNTIME_DIR")) {
+ 		child_set_env(&env, &envsize, "XDG_RUNTIME_DIR",
 diff --git a/sshd_config b/sshd_config
-index 1c6d890df..a3e63c424 100644
+index b8869d172..3f4d6c0fd 100644
 --- a/sshd_config
 +++ b/sshd_config
-@@ -26,6 +26,10 @@ Port 22
+@@ -27,6 +27,10 @@ Port 22
  SyslogFacility AUTH
  LogLevel INFO
  
@@ -222,7 +222,7 @@ index 1c6d890df..a3e63c424 100644
  
  #LoginGraceTime 2m
 diff --git a/sshd_config.5 b/sshd_config.5
-index 4cc368ca5..fee2053ae 100644
+index 1c37f5ea8..6253763f5 100644
 --- a/sshd_config.5
 +++ b/sshd_config.5
 @@ -86,7 +86,20 @@ directives.
