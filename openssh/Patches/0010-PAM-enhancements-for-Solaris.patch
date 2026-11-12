@@ -1,48 +1,35 @@
-From acf79428091b63aeddd6f5545477d9d599ac9598 Mon Sep 17 00:00:00 2001
+From 86a0f25d0ce23bf232363ef2616845547131307b Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 6 Jul 2026 16:59:27 -0400
 Subject: [PATCH] PAM enhancements for Solaris
 
 ---
- auth-pam.c     | 113 +++++++++++++++++++++++++++++++++++++++++++++++++
+ auth-pam.c     | 133 +++++++++++++++++++++++++++++++++++++++++++++++++
+ auth-pam.h     |   3 ++
  auth.h         |   3 ++
- auth2.c        |  62 ++++++++++++++++++++++++++-
- monitor.c      |  65 ++++++++++++++++++++++++++++
+ auth2.c        |  62 ++++++++++++++++++++++-
+ monitor.c      | 102 +++++++++++++++++++++++++++++++++++++
  monitor.h      |   3 ++
- monitor_wrap.c |  18 ++++++++
- servconf.c     |  91 +++++++++++++++++++++++++++++++++++++++
- servconf.h     |  19 +++++++--
- sshd.8         |  25 +++++++++++
- sshd_config.5  |  38 +++++++++++++----
- 10 files changed, 425 insertions(+), 12 deletions(-)
+ monitor_wrap.c |  18 +++++++
+ servconf.c     |  91 +++++++++++++++++++++++++++++++++
+ servconf.h     |  19 +++++--
+ sshd.8         |  25 ++++++++++
+ sshd_config.5  |  38 +++++++++++---
+ 11 files changed, 485 insertions(+), 12 deletions(-)
 
 diff --git a/auth-pam.c b/auth-pam.c
-index 75d2ff5cd..59c2fda36 100644
+index 75d2ff5cd..690914910 100644
 --- a/auth-pam.c
 +++ b/auth-pam.c
-@@ -699,14 +699,80 @@ sshpam_cleanup(void)
+@@ -699,14 +699,100 @@ sshpam_cleanup(void)
  	sshpam_initial_user = NULL;
  }
  
 +#ifdef PAM_ENHANCEMENT
-+char *
-+derive_pam_service_name(Authctxt *authctxt)
++static char *
++pam_service_for_method(const char *method_name)
 +{
 +	char *svcname = xmalloc(BUFSIZ);
-+
-+	/*
-+	 * If PamServiceName is set we use that for everything, including
-+	 * SSHv1
-+	 */
-+	if (options.pam_service_name != NULL) {
-+		(void) strlcpy(svcname, options.pam_service_name, BUFSIZ);
-+		return (svcname);
-+	}
-+
-+	char *method_name = authctxt->authmethod_name;
-+
-+	if (!method_name)
-+		fatal("Userauth method unknown while starting PAM");
 +
 +	/*
 +	 * For SSHv2 we use "sshd-<userauth name>
@@ -79,6 +66,40 @@ index 75d2ff5cd..59c2fda36 100644
 +	}
 +	return svcname;
 +}
++
++char *
++derive_pam_service_name(Authctxt *authctxt)
++{
++	/*
++	 * If PamServiceName is set we use that for everything, including
++	 * SSHv1
++	 */
++	if (options.pam_service_name != NULL)
++		return xstrdup(options.pam_service_name);
++
++	if (authctxt->authmethod_name == NULL)
++		fatal("Userauth method unknown while starting PAM");
++
++	return pam_service_for_method(authctxt->authmethod_name);
++}
++
++/* Returns 1 if PAM was started with the service for this userauth method. */
++int
++sshpam_service_is_for(const char *method_name)
++{
++	const char *cur = NULL;
++	const char **ptr_cur = &cur;
++	char *svc;
++	int r;
++
++	if (sshpam_handle == NULL || pam_get_item(sshpam_handle, PAM_SERVICE,
++	    (sshpam_const void **)ptr_cur) != PAM_SUCCESS || cur == NULL)
++		return 0;
++	svc = pam_service_for_method(method_name);
++	r = strcmp(svc, cur) == 0;
++	free(svc);
++	return r;
++}
 +#endif /* PAM_ENHANCEMENT */
 +
  static int
@@ -101,7 +122,7 @@ index 75d2ff5cd..59c2fda36 100644
  #if defined(PAM_SUN_CODEBASE) && defined(PAM_MAX_RESP_SIZE)
  	/* Protect buggy PAM implementations from excessively long usernames */
  	if (strlen(user) >= PAM_MAX_RESP_SIZE)
-@@ -716,15 +782,62 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
+@@ -716,15 +802,62 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
  	if (sshpam_handle == NULL && ssh == NULL)
  		fatal("%s: called initially with no packet context", __func__);
  	if (sshpam_handle != NULL) {
@@ -164,6 +185,19 @@ index 75d2ff5cd..59c2fda36 100644
  	sshpam_initial_user = xstrdup(user);
  	sshpam_authctxt = authctxt;
  
+diff --git a/auth-pam.h b/auth-pam.h
+index 491336701..db9b27191 100644
+--- a/auth-pam.h
++++ b/auth-pam.h
+@@ -43,5 +43,8 @@ int sshpam_get_maxtries_reached(void);
+ void sshpam_set_maxtries_reached(int);
+ int is_pam_session_open(void);
+ int sshpam_priv_kbdint_authdone(void *ctxtp);
++#ifdef PAM_ENHANCEMENT
++int sshpam_service_is_for(const char *);
++#endif
+ 
+ #endif /* USE_PAM */
 diff --git a/auth.h b/auth.h
 index 17227cffb..df8fd613c 100644
 --- a/auth.h
@@ -283,7 +317,7 @@ index 2da7a4da9..28a620f3c 100644
  
  		/* If PAM returned a message, send it to the user. */
 diff --git a/monitor.c b/monitor.c
-index 940dc275a..3f8cfd6f6 100644
+index 940dc275a..ff9bf4f7d 100644
 --- a/monitor.c
 +++ b/monitor.c
 @@ -111,6 +111,9 @@ int mm_answer_sign(struct ssh *, int, struct sshbuf *);
@@ -314,8 +348,46 @@ index 940dc275a..3f8cfd6f6 100644
      {MONITOR_REQ_PAM_ACCOUNT, 0, mm_answer_pam_account},
      {MONITOR_REQ_PAM_INIT_CTX, MON_ONCE, mm_answer_pam_init_ctx},
      {MONITOR_REQ_PAM_QUERY, 0, mm_answer_pam_query},
-@@ -305,6 +315,23 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
+@@ -262,6 +272,27 @@ monitor_permit_authentications(int permit)
+ 	}
+ }
  
++#if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
++static int authpassword_empty;
++
++/*
++ * The child names the userauth method that selects the PAM service, so
++ * check that PAM was started for the method this process verified.
++ */
++static int
++pam_service_method_ok(const char *method)
++{
++	/*
++	 * mm_answer_authpassword() serves both of these and may report
++	 * either one.  The "none" method only ever sends an empty password.
++	 */
++	if (strcmp(method, "none") == 0 || strcmp(method, "password") == 0)
++		return sshpam_service_is_for("password") ||
++		    (authpassword_empty && sshpam_service_is_for("none"));
++	return sshpam_service_is_for(method);
++}
++#endif
++
+ void
+ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
+ {
+@@ -303,8 +334,33 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
+ 		if ((ent->flags & MON_AUTH) != 0)
+ 			auth_attempted = 1;
+ 
++#if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
++		if (authenticated && options.use_pam &&
++		    options.pam_service_per_authmethod &&
++		    !pam_service_method_ok(auth_method))
++			fatal_f("method %s authenticated under another "
++			    "method's PAM service", auth_method);
++#endif
++
  		/* Special handling for multiple required authentications */
  		if (options.num_auth_methods != 0) {
 +#if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
@@ -338,7 +410,7 @@ index 940dc275a..3f8cfd6f6 100644
  			if (authenticated &&
  			    !auth2_update_methods_lists(authctxt,
  			    auth_method, auth_submethod)) {
-@@ -322,8 +349,21 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
+@@ -322,8 +378,21 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
  			    !auth_root_allowed(ssh, auth_method))
  				authenticated = 0;
  #ifdef USE_PAM
@@ -360,7 +432,7 @@ index 940dc275a..3f8cfd6f6 100644
  				struct sshbuf *m;
  
  				if ((m = sshbuf_new()) == NULL)
-@@ -933,6 +973,10 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
+@@ -933,6 +1002,10 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
  	/* Allow service/style information on the auth context */
  	monitor_permit(mon_dispatch, MONITOR_REQ_AUTHSERV, 1);
  	monitor_permit(mon_dispatch, MONITOR_REQ_AUTH2_READ_BANNER, 1);
@@ -371,7 +443,7 @@ index 940dc275a..3f8cfd6f6 100644
  
  #ifdef USE_PAM
  	if (options.use_pam)
-@@ -957,6 +1001,27 @@ int mm_answer_auth2_read_banner(struct ssh *ssh, int sock, struct sshbuf *m)
+@@ -957,6 +1030,27 @@ int mm_answer_auth2_read_banner(struct ssh *ssh, int sock, struct sshbuf *m)
  	return (0);
  }
  
@@ -399,6 +471,28 @@ index 940dc275a..3f8cfd6f6 100644
  int
  mm_answer_authserv(struct ssh *ssh, int sock, struct sshbuf *m)
  {
+@@ -1018,6 +1112,9 @@ mm_answer_authpassword(struct ssh *ssh, int sock, struct sshbuf *m)
+ 		fatal_f("password authentication not enabled");
+ 	if ((r = sshbuf_get_cstring(m, &passwd, &plen)) != 0)
+ 		fatal_fr(r, "parse");
++#if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
++	authpassword_empty = (plen == 0);
++#endif
+ 	/* Only authenticate if the context is valid */
+ 	authenticated = options.password_authentication &&
+ 	    auth_password(ssh, passwd);
+@@ -1164,6 +1261,11 @@ mm_answer_pam_init_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
+ 	if (sshpam_ctxt != NULL)
+ 		fatal_f("already called");
+ 	sshpam_ctxt = (sshpam_device.init_ctx)(authctxt);
++#ifdef PAM_ENHANCEMENT
++	if (sshpam_ctxt != NULL && options.pam_service_per_authmethod &&
++	    !sshpam_service_is_for("keyboard-interactive"))
++		fatal_f("PAM was not started for keyboard-interactive");
++#endif
+ 	sshpam_authok = NULL;
+ 	sshbuf_reset(m);
+ 	if (sshpam_ctxt != NULL) {
 diff --git a/monitor.h b/monitor.h
 index fe0b00b2e..2f8cb07e0 100644
 --- a/monitor.h
