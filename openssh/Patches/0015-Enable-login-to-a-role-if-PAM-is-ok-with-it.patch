@@ -1,4 +1,4 @@
-From f8bed159db4cd817d06fd38236e30fd731c5ebe3 Mon Sep 17 00:00:00 2001
+From b29c9c5ac0ffd34d932a34298960ab8f1cc2d4c4 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:38:19 -0700
 Subject: [PATCH] Enable login to a role if PAM is ok with it
@@ -12,10 +12,10 @@ Subject: [PATCH] Enable login to a role if PAM is ok with it
  5 files changed, 46 insertions(+)
 
 diff --git a/auth-pam.c b/auth-pam.c
-index 690914910..57fcf30e0 100644
+index fad85c3d8..5fd0bea81 100644
 --- a/auth-pam.c
 +++ b/auth-pam.c
-@@ -1220,6 +1220,20 @@ do_pam_account(void)
+@@ -1223,6 +1223,20 @@ do_pam_account(void)
  	return (sshpam_account_status);
  }
  
@@ -95,10 +95,10 @@ index cca06745e..f1084a9c3 100644
  done:
  	debug2_f("authenticated %d", authenticated);
 diff --git a/monitor.c b/monitor.c
-index ff9bf4f7d..cd8ca7e54 100644
+index 3555cb3cd..6cc17c2af 100644
 --- a/monitor.c
 +++ b/monitor.c
-@@ -423,6 +423,12 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
+@@ -406,6 +406,12 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
  		}
  	}
  
@@ -111,7 +111,7 @@ index ff9bf4f7d..cd8ca7e54 100644
  	if (!authctxt->valid)
  		fatal_f("authenticated invalid user");
  	if (strcmp(auth_method, "unknown") == 0)
-@@ -647,7 +653,10 @@ monitor_reset_key_state(void)
+@@ -630,7 +636,10 @@ monitor_reset_key_state(void)
  {
  	/* reset state */
  	free(key_blob);
@@ -122,7 +122,7 @@ index ff9bf4f7d..cd8ca7e54 100644
  	free(hostbased_chost);
  	sshauthopt_free(key_opts);
  	key_blob = NULL;
-@@ -1234,6 +1243,11 @@ mm_answer_pam_account(struct ssh *ssh, int sock, struct sshbuf *m)
+@@ -1227,6 +1236,11 @@ mm_answer_pam_account(struct ssh *ssh, int sock, struct sshbuf *m)
  	if (!options.use_pam)
  		fatal_f("PAM not enabled");
  

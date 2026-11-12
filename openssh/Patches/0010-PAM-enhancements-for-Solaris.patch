@@ -1,24 +1,24 @@
-From 86a0f25d0ce23bf232363ef2616845547131307b Mon Sep 17 00:00:00 2001
+From ce962a1e5ca74d251ad3b658ab654ddf649d5578 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 6 Jul 2026 16:59:27 -0400
 Subject: [PATCH] PAM enhancements for Solaris
 
 ---
- auth-pam.c     | 133 +++++++++++++++++++++++++++++++++++++++++++++++++
+ auth-pam.c     | 136 +++++++++++++++++++++++++++++++++++++++++++++++++
  auth-pam.h     |   3 ++
  auth.h         |   3 ++
- auth2.c        |  62 ++++++++++++++++++++++-
- monitor.c      | 102 +++++++++++++++++++++++++++++++++++++
+ auth2.c        |  62 +++++++++++++++++++++-
+ monitor.c      |  99 ++++++++++++++++++++++++++++++++++-
  monitor.h      |   3 ++
  monitor_wrap.c |  18 +++++++
  servconf.c     |  91 +++++++++++++++++++++++++++++++++
  servconf.h     |  19 +++++--
- sshd.8         |  25 ++++++++++
+ sshd.8         |  25 +++++++++
  sshd_config.5  |  38 +++++++++++---
- 11 files changed, 485 insertions(+), 12 deletions(-)
+ 11 files changed, 483 insertions(+), 14 deletions(-)
 
 diff --git a/auth-pam.c b/auth-pam.c
-index 75d2ff5cd..690914910 100644
+index 75d2ff5cd..fad85c3d8 100644
 --- a/auth-pam.c
 +++ b/auth-pam.c
 @@ -699,14 +699,100 @@ sshpam_cleanup(void)
@@ -122,7 +122,7 @@ index 75d2ff5cd..690914910 100644
  #if defined(PAM_SUN_CODEBASE) && defined(PAM_MAX_RESP_SIZE)
  	/* Protect buggy PAM implementations from excessively long usernames */
  	if (strlen(user) >= PAM_MAX_RESP_SIZE)
-@@ -716,15 +802,62 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
+@@ -716,15 +802,65 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
  	if (sshpam_handle == NULL && ssh == NULL)
  		fatal("%s: called initially with no packet context", __func__);
  	if (sshpam_handle != NULL) {
@@ -151,6 +151,9 @@ index 75d2ff5cd..690914910 100644
 +			free(svc);
 +			return (0);
 +		}
++
++		if (cleanup_ctxt != NULL)
++			fatal("PAM service changed during a conversation");
 +
 +		/*
 +		 * Clean up previous PAM state.  No need to clean up session
@@ -317,7 +320,7 @@ index 2da7a4da9..28a620f3c 100644
  
  		/* If PAM returned a message, send it to the user. */
 diff --git a/monitor.c b/monitor.c
-index 940dc275a..ff9bf4f7d 100644
+index 940dc275a..3555cb3cd 100644
 --- a/monitor.c
 +++ b/monitor.c
 @@ -111,6 +111,9 @@ int mm_answer_sign(struct ssh *, int, struct sshbuf *);
@@ -348,42 +351,18 @@ index 940dc275a..ff9bf4f7d 100644
      {MONITOR_REQ_PAM_ACCOUNT, 0, mm_answer_pam_account},
      {MONITOR_REQ_PAM_INIT_CTX, MON_ONCE, mm_answer_pam_init_ctx},
      {MONITOR_REQ_PAM_QUERY, 0, mm_answer_pam_query},
-@@ -262,6 +272,27 @@ monitor_permit_authentications(int permit)
- 	}
- }
- 
-+#if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
-+static int authpassword_empty;
-+
-+/*
-+ * The child names the userauth method that selects the PAM service, so
-+ * check that PAM was started for the method this process verified.
-+ */
-+static int
-+pam_service_method_ok(const char *method)
-+{
-+	/*
-+	 * mm_answer_authpassword() serves both of these and may report
-+	 * either one.  The "none" method only ever sends an empty password.
-+	 */
-+	if (strcmp(method, "none") == 0 || strcmp(method, "password") == 0)
-+		return sshpam_service_is_for("password") ||
-+		    (authpassword_empty && sshpam_service_is_for("none"));
-+	return sshpam_service_is_for(method);
-+}
-+#endif
-+
- void
- monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
- {
-@@ -303,8 +334,33 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
+@@ -303,8 +313,37 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
  		if ((ent->flags & MON_AUTH) != 0)
  			auth_attempted = 1;
  
 +#if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
++		/*
++		 * The child chose the PAM service, so check it is the one
++		 * for the method this process verified.
++		 */
 +		if (authenticated && options.use_pam &&
 +		    options.pam_service_per_authmethod &&
-+		    !pam_service_method_ok(auth_method))
++		    !sshpam_service_is_for(auth_method))
 +			fatal_f("method %s authenticated under another "
 +			    "method's PAM service", auth_method);
 +#endif
@@ -410,7 +389,7 @@ index 940dc275a..ff9bf4f7d 100644
  			if (authenticated &&
  			    !auth2_update_methods_lists(authctxt,
  			    auth_method, auth_submethod)) {
-@@ -322,8 +378,21 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
+@@ -322,8 +361,21 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
  			    !auth_root_allowed(ssh, auth_method))
  				authenticated = 0;
  #ifdef USE_PAM
@@ -432,7 +411,7 @@ index 940dc275a..ff9bf4f7d 100644
  				struct sshbuf *m;
  
  				if ((m = sshbuf_new()) == NULL)
-@@ -933,6 +1002,10 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
+@@ -933,6 +985,10 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
  	/* Allow service/style information on the auth context */
  	monitor_permit(mon_dispatch, MONITOR_REQ_AUTHSERV, 1);
  	monitor_permit(mon_dispatch, MONITOR_REQ_AUTH2_READ_BANNER, 1);
@@ -443,7 +422,7 @@ index 940dc275a..ff9bf4f7d 100644
  
  #ifdef USE_PAM
  	if (options.use_pam)
-@@ -957,6 +1030,27 @@ int mm_answer_auth2_read_banner(struct ssh *ssh, int sock, struct sshbuf *m)
+@@ -957,6 +1013,27 @@ int mm_answer_auth2_read_banner(struct ssh *ssh, int sock, struct sshbuf *m)
  	return (0);
  }
  
@@ -471,17 +450,45 @@ index 940dc275a..ff9bf4f7d 100644
  int
  mm_answer_authserv(struct ssh *ssh, int sock, struct sshbuf *m)
  {
-@@ -1018,6 +1112,9 @@ mm_answer_authpassword(struct ssh *ssh, int sock, struct sshbuf *m)
+@@ -1010,7 +1087,7 @@ int
+ mm_answer_authpassword(struct ssh *ssh, int sock, struct sshbuf *m)
+ {
+ 	static int call_count;
+-	char *passwd;
++	char *passwd, *method = NULL;
+ 	int r, authenticated;
+ 	size_t plen;
+ 
+@@ -1018,6 +1095,17 @@ mm_answer_authpassword(struct ssh *ssh, int sock, struct sshbuf *m)
  		fatal_f("password authentication not enabled");
  	if ((r = sshbuf_get_cstring(m, &passwd, &plen)) != 0)
  		fatal_fr(r, "parse");
 +#if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
-+	authpassword_empty = (plen == 0);
++	if (options.use_pam && options.pam_service_per_authmethod) {
++		/* The PAM service tells the two methods apart. */
++		method = sshpam_service_is_for("none") ? "none" : "password";
++		if (!sshpam_service_is_for(method))
++			fatal_f("PAM was not started for password or none");
++		/* The "none" method only ever sends an empty password. */
++		if (plen != 0 && strcmp(method, "none") == 0)
++			fatal_f("password sent for the none method");
++	}
 +#endif
  	/* Only authenticate if the context is valid */
  	authenticated = options.password_authentication &&
  	    auth_password(ssh, passwd);
-@@ -1164,6 +1261,11 @@ mm_answer_pam_init_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
+@@ -1035,7 +1123,9 @@ mm_answer_authpassword(struct ssh *ssh, int sock, struct sshbuf *m)
+ 	mm_request_send(sock, MONITOR_ANS_AUTHPASSWORD, m);
+ 
+ 	call_count++;
+-	if (plen == 0 && call_count == 1)
++	if (method != NULL)
++		auth_method = method;
++	else if (plen == 0 && call_count == 1)
+ 		auth_method = "none";
+ 	else
+ 		auth_method = "password";
+@@ -1164,6 +1254,11 @@ mm_answer_pam_init_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
  	if (sshpam_ctxt != NULL)
  		fatal_f("already called");
  	sshpam_ctxt = (sshpam_device.init_ctx)(authctxt);
