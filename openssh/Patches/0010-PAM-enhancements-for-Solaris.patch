@@ -1,4 +1,4 @@
-From 885f0b9297af31de4cd916e6653ef6aa5009563e Mon Sep 17 00:00:00 2001
+From 17c79b1f4ce05a57b0f4fb4987639ea96523bc07 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 6 Jul 2026 16:59:27 -0400
 Subject: [PATCH] PAM enhancements for Solaris
@@ -10,11 +10,11 @@ Subject: [PATCH] PAM enhancements for Solaris
  monitor.c      |  65 +++++++++++++++++++++++++++
  monitor.h      |   3 ++
  monitor_wrap.c |  18 ++++++++
- servconf.c     |  85 ++++++++++++++++++++++++++++++++++++
+ servconf.c     |  91 ++++++++++++++++++++++++++++++++++++++
  servconf.h     |  19 ++++++--
  sshd.8         |  25 +++++++++++
  sshd_config.5  |  38 ++++++++++++----
- 10 files changed, 422 insertions(+), 12 deletions(-)
+ 10 files changed, 428 insertions(+), 12 deletions(-)
 
 diff --git a/auth-pam.c b/auth-pam.c
 index 75d2ff5cd..9782c3169 100644
@@ -446,7 +446,7 @@ index c828fce04..351b2daee 100644
  int
  mm_auth_password(struct ssh *ssh, char *password)
 diff --git a/servconf.c b/servconf.c
-index 9b246bebf..a5a000b0c 100644
+index 9b246bebf..590faf56c 100644
 --- a/servconf.c
 +++ b/servconf.c
 @@ -164,6 +164,15 @@ initialize_server_options(ServerOptions *options)
@@ -511,7 +511,7 @@ index 9b246bebf..a5a000b0c 100644
  	case sPAMServiceName:
  		charptr = &options->pam_service_name;
  		arg = argv_next(&ac, &av);
-@@ -1225,8 +1257,20 @@ process_server_config_line_depth(ServerOptions *options, char *line,
+@@ -1225,8 +1257,21 @@ process_server_config_line_depth(ServerOptions *options, char *line,
  			fatal("%s line %d: missing argument.",
  			    filename, linenum);
  		}
@@ -527,12 +527,13 @@ index 9b246bebf..a5a000b0c 100644
 +		 * When this option is specified, we will not have
 +		 * PAM service for each auth method.
 +		 */
-+		options->pam_service_per_authmethod = 0;
++		if (*activep)
++			options->pam_service_per_authmethod = 0;
 +#endif
  		break;
  #endif
  
-@@ -3164,6 +3208,22 @@ serialise_timingsecret(const ServerOptions *options, struct sshbuf *buf)
+@@ -3164,6 +3209,22 @@ serialise_timingsecret(const ServerOptions *options, struct sshbuf *buf)
  	return 0;
  }
  
@@ -555,7 +556,7 @@ index 9b246bebf..a5a000b0c 100644
  
  int
  serialise_server_options(const ServerOptions *options, struct sshbuf **bufp)
-@@ -3711,6 +3771,22 @@ deserialise_timingsecret(ServerOptions *options, struct sshbuf *buf)
+@@ -3711,6 +3772,22 @@ deserialise_timingsecret(ServerOptions *options, struct sshbuf *buf)
  	return 0;
  }
  
@@ -578,7 +579,7 @@ index 9b246bebf..a5a000b0c 100644
  int
  deserialise_server_options(struct sshbuf *buf, ServerOptions *options)
  {
-@@ -3875,6 +3951,9 @@ free_server_options(ServerOptions *options)
+@@ -3875,6 +3952,9 @@ free_server_options(ServerOptions *options)
  #define free_rekeylimit(options)
  #define free_pubkey_auth_options(options)
  #define free_timingsecret(options)
@@ -588,7 +589,7 @@ index 9b246bebf..a5a000b0c 100644
  
  	SSHD_CONFIG_ENTRIES
  
-@@ -3890,6 +3969,9 @@ free_server_options(ServerOptions *options)
+@@ -3890,6 +3970,9 @@ free_server_options(ServerOptions *options)
  #undef free_persourcepenalties
  #undef free_rekeylimit
  #undef free_timingsecret
@@ -598,7 +599,19 @@ index 9b246bebf..a5a000b0c 100644
  
  #undef SSHCONF_INT
  #undef SSHCONF_INTFLAG
-@@ -4325,6 +4407,9 @@ dump_config(ServerOptions *o)
+@@ -4061,6 +4144,11 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
+ #undef SSHCONF_UNSUPPORTED_STRING
+ #undef SSHCONF_ALIAS
+ 
++#if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
++	if (src->pam_service_name != NULL)
++		dst->pam_service_per_authmethod = 0;
++#endif
++
+ 	/*
+ 	 * The bind_mask is a mode_t that may be unsigned, so we can't use
+ 	 * copy_server_option_int - it does a signed comparison that causes
+@@ -4325,6 +4413,9 @@ dump_config(ServerOptions *o)
  #ifdef USE_PAM
  	dump_cfg_fmtint(sUsePAM, o->use_pam);
  	dump_cfg_string(sPAMServiceName, o->pam_service_name);
