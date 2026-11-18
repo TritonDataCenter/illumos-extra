@@ -38,10 +38,10 @@ thus very challenging.
 # Updating OpenSSH
 
 Reconstitute the patches in the Patches/ directory into a git repo, based on
-the branch (e.g. V_10_4) in https://github.com/openssh/openssh-portable that
+the branch (e.g. V_10_5) in https://github.com/openssh/openssh-portable that
 matches up with that version. (Use git am for this)
 
-Then you should be able to rebase onto a newer branch (e.g. V_10_5), merging as
+Then you should be able to rebase onto a newer branch (e.g. V_10_6), merging as
 needed.
 
 The tarball in this directory is a clean checkout of the OpenSSH-portable
