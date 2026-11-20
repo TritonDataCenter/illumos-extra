@@ -11,12 +11,12 @@ more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2440
 In the future, if this fix is accepted by the upsteam in a later release, we
 will remove this patch when we upgrade to that release.
 ---
- session.c | 146 ++++++++++++++++++++++++++++++++++++++++++++++++++----
+ session.c | 139 ++++++++++++++++++++++++++++++++++++++++++++++++++++--
  session.h |   3 ++
- 2 files changed, 139 insertions(+), 10 deletions(-)
+ 2 files changed, 138 insertions(+), 4 deletions(-)
 
 diff --git a/session.c b/session.c
-index fc9c9d6f8..49c0f4064 100644
+index 9125cbb83..488533802 100644
 --- a/session.c
 +++ b/session.c
 @@ -59,6 +59,11 @@
@@ -43,17 +43,10 @@ index fc9c9d6f8..49c0f4064 100644
  /* import */
  extern ServerOptions options;
  extern char *__progname;
-@@ -1013,12 +1023,12 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
- 
- 	if (getenv("TZ"))
- 		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
--#ifdef HAVE_LOGIN_CAP
--	if (getenv("XDG_RUNTIME_DIR")) {
--		child_set_env(&env, &envsize, "XDG_RUNTIME_DIR",
--		    getenv("XDG_RUNTIME_DIR"));
--	}
--#endif /* HAVE_LOGIN_CAP */
-+
+@@ -1024,6 +1034,11 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
+ 		    getenv("XDG_RUNTIME_DIR"));
+ 	}
+ #endif /* HAVE_LOGIN_CAP */
 +#ifdef PER_SESSION_XAUTHFILE
 +        if (s->auth_file != NULL)
 +                child_set_env(&env, &envsize, "XAUTHORITY", s->auth_file);
@@ -62,7 +55,7 @@ index fc9c9d6f8..49c0f4064 100644
  	if (s->term)
  		child_set_env(&env, &envsize, "TERM", s->term);
  	if (s->display)
-@@ -1957,6 +1967,11 @@ session_x11_req(struct ssh *ssh, Session *s)
+@@ -1962,6 +1977,11 @@ session_x11_req(struct ssh *ssh, Session *s)
  	int r, success;
  	u_char single_connection = 0;
  
@@ -74,7 +67,7 @@ index fc9c9d6f8..49c0f4064 100644
  	if (s->auth_proto != NULL || s->auth_data != NULL) {
  		error("session_x11_req: session %d: "
  		    "x11 forwarding already active", s->self);
-@@ -1971,19 +1986,78 @@ session_x11_req(struct ssh *ssh, Session *s)
+@@ -1976,19 +1996,78 @@ session_x11_req(struct ssh *ssh, Session *s)
  
  	s->single_connection = single_connection;
  
@@ -157,7 +150,7 @@ index fc9c9d6f8..49c0f4064 100644
  	return success;
  }
  
-@@ -2261,6 +2335,51 @@ session_pty_cleanup(Session *s)
+@@ -2266,6 +2345,51 @@ session_pty_cleanup(Session *s)
  	mm_session_pty_cleanup2(s);
  }
  
@@ -209,7 +202,7 @@ index fc9c9d6f8..49c0f4064 100644
  static char *
  sig2name(int sig)
  {
-@@ -2408,6 +2527,9 @@ session_close(struct ssh *ssh, Session *s)
+@@ -2413,6 +2537,9 @@ session_close(struct ssh *ssh, Session *s)
  	free(s->auth_display);
  	free(s->auth_data);
  	free(s->auth_proto);
@@ -219,7 +212,7 @@ index fc9c9d6f8..49c0f4064 100644
  	free(s->subsys);
  	if (s->env != NULL) {
  		for (i = 0; i < s->num_env; i++) {
-@@ -2654,6 +2776,10 @@ do_cleanup(struct ssh *ssh, Authctxt *authctxt)
+@@ -2659,6 +2786,10 @@ do_cleanup(struct ssh *ssh, Authctxt *authctxt)
  	/* remove agent socket */
  	auth_sock_cleanup_proc(authctxt->pw);
  

@@ -19,7 +19,7 @@ Subject: [PATCH 11/32] Solaris Auditing support
  create mode 100644 audit-solaris.c
 
 diff --git a/INSTALL b/INSTALL
-index 96b299477..c330eb575 100644
+index 12fc397e5..7483fe7e3 100644
 --- a/INSTALL
 +++ b/INSTALL
 @@ -108,9 +108,13 @@ http://www.gnu.org/software/automake/
@@ -52,7 +52,7 @@ index 96b299477..c330eb575 100644
  --with-pam enables PAM support. If PAM support is compiled in, it must
  also be enabled in sshd_config (refer to the UsePAM directive).
 diff --git a/Makefile.in b/Makefile.in
-index eae9f1cd8..32029eb34 100644
+index 86350a0d2..cf46d37d1 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -126,7 +126,7 @@ SSHDOBJS=sshd.o \
@@ -74,11 +74,11 @@ index eae9f1cd8..32029eb34 100644
  	sandbox-null.o sandbox-rlimit.o sandbox-darwin.o \
  	sandbox-seccomp-filter.o sandbox-capsicum.o  sandbox-solaris.o \
 diff --git a/README.platform b/README.platform
-index 4edf9d1f5..77fac619f 100644
+index 2f57fde7c..3bfd73aad 100644
 --- a/README.platform
 +++ b/README.platform
-@@ -72,8 +72,8 @@ zlib-devel and pam-devel, on Debian based distros these may be
- libssl-dev, libz-dev and libpam-dev.
+@@ -72,8 +72,8 @@ zlib-devel and pam-devel, on Debian based distros these may be libc-dev,
+ libcrypt-dev, libssl-dev, libz-dev and libpam-dev.
  
  
 -Solaris
@@ -733,10 +733,10 @@ index 38cb5ad31..dd6f6d0a1 100644
  void	audit_session_open(struct logininfo *);
  void	audit_session_close(struct logininfo *);
 diff --git a/configure.ac b/configure.ac
-index 12db0175c..83a61e4a4 100644
+index 773304529..842b2814b 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1983,7 +1983,7 @@ AC_ARG_WITH([wtmpdb],
+@@ -1988,7 +1988,7 @@ AC_ARG_WITH([wtmpdb],
  
  AUDIT_MODULE=none
  AC_ARG_WITH([audit],
@@ -745,7 +745,7 @@ index 12db0175c..83a61e4a4 100644
  	[
  	  AC_MSG_CHECKING([for supported audit module])
  	  case "$withval" in
-@@ -2020,6 +2020,13 @@ AC_ARG_WITH([audit],
+@@ -2025,6 +2025,13 @@ AC_ARG_WITH([audit],
  		SSHDLIBS="$SSHDLIBS -laudit"
  		AC_DEFINE([USE_LINUX_AUDIT], [1], [Use Linux audit module])
  		;;
@@ -760,7 +760,7 @@ index 12db0175c..83a61e4a4 100644
  		AUDIT_MODULE=debug
  		AC_MSG_RESULT([debug])
 diff --git a/defines.h b/defines.h
-index 634db453e..5132480bd 100644
+index c0b9ad549..c67e8029b 100644
 --- a/defines.h
 +++ b/defines.h
 @@ -777,6 +777,11 @@ struct winsize {
@@ -776,10 +776,10 @@ index 634db453e..5132480bd 100644
  #  define __func__ __FUNCTION__
  #elif !defined(HAVE___func__)
 diff --git a/sshd-session.c b/sshd-session.c
-index c28514677..9b28f9178 100644
+index e7a3cf9ed..63b4ec787 100644
 --- a/sshd-session.c
 +++ b/sshd-session.c
-@@ -1186,7 +1186,7 @@ main(int ac, char **av)
+@@ -1173,7 +1173,7 @@ main(int ac, char **av)
  	remote_ip = ssh_remote_ipaddr(ssh);
  
  #ifdef SSH_AUDIT_EVENTS
@@ -788,7 +788,7 @@ index c28514677..9b28f9178 100644
  #endif
  
  	rdomain = ssh_packet_rdomain_in(ssh);
-@@ -1264,7 +1264,7 @@ main(int ac, char **av)
+@@ -1253,7 +1253,7 @@ main(int ac, char **av)
  	if (options.routing_domain != NULL)
  		set_process_rdomain(ssh, options.routing_domain);
  
@@ -797,7 +797,7 @@ index c28514677..9b28f9178 100644
  	audit_event(ssh, SSH_AUTH_SUCCESS);
  #endif
  
-@@ -1295,6 +1295,10 @@ main(int ac, char **av)
+@@ -1284,6 +1284,10 @@ main(int ac, char **av)
  		do_pam_session(ssh);
  	}
  #endif
